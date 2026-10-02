@@ -3,2317 +3,1976 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>LMA Club Manager 2007 RE - Career Edition</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:ital,wght@0,400;0,600;0,700;1,600&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-  
+  <title>Football League Manager - 2026/27 Career Edition</title>
   <style>
     :root {
-      --bg-dark: #090d16;
-      --card-bg: #111827;
-      --panel-border: #1e293b;
-      --accent-blue: #0284c7;
-      --accent-cyan: #38bdf8;
-      --gold-glow: #fbbf24;
-      --retro-green: #22c55e;
-      --pitch-grass: #1b4332;
+      --bg-dark: #0a0e17;
+      --bg-card: #121824;
+      --bg-panel: #182030;
+      --bg-panel-hover: #1e283d;
+      --border: #243048;
+      --accent: #00d2ff;
+      --accent-rgb: 0, 210, 255;
+      --fm-green: #10b981;
+      --fm-amber: #f59e0b;
+      --fm-red: #ef4444;
+      --gold: #fbc02d;
+      --text-main: #f1f5f9;
+      --text-muted: #94a3b8;
+      --pitch-grass-1: #235c31;
+      --pitch-grass-2: #1e4e2a;
+      --pitch-line: rgba(255, 255, 255, 0.4);
     }
 
-    body {
-      background-color: var(--bg-dark);
-      font-family: 'Inter', sans-serif;
-      color: #e2e8f0;
-      overflow-x: hidden;
-      user-select: none;
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; user-select: none; }
+    body { background-color: var(--bg-dark); color: var(--text-main); min-height: 100vh; display: flex; flex-direction: column; overflow-x: hidden; }
+
+    /* TOP HEADER */
+    header {
+      background: linear-gradient(180deg, #151d2d 0%, #0d131f 100%);
+      border-bottom: 2px solid var(--border);
+      padding: 10px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+    }
+    .brand-group { display: flex; align-items: center; gap: 12px; }
+    .brand-logo {
+      background: linear-gradient(135deg, var(--accent) 0%, #0072ff 100%);
+      color: #000;
+      font-weight: 900;
+      font-size: 1.1rem;
+      padding: 6px 12px;
+      border-radius: 6px;
+      letter-spacing: 1px;
+    }
+    .brand-titles h1 { font-size: 1.15rem; font-weight: 800; letter-spacing: 0.5px; color: #fff; }
+    .brand-titles p { font-size: 0.75rem; color: var(--text-muted); font-weight: 600; }
+
+    .header-metrics { display: flex; align-items: center; gap: 14px; }
+    .metric-pill {
+      background: var(--bg-panel);
+      border: 1px solid var(--border);
+      padding: 6px 12px;
+      border-radius: 8px;
+      font-size: 0.8rem;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+    }
+    .metric-pill span.label { font-size: 0.65rem; color: var(--text-muted); text-transform: uppercase; font-weight: 700; }
+    .metric-pill span.val { font-weight: 800; color: #fff; }
+
+    .btn-advance-master {
+      background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+      color: #000;
+      font-weight: 900;
+      font-size: 0.95rem;
+      padding: 10px 20px;
+      border-radius: 8px;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 0 15px rgba(245, 158, 11, 0.4);
+      transition: all 0.2s;
+    }
+    .btn-advance-master:hover { transform: translateY(-1px); box-shadow: 0 0 25px rgba(245, 158, 11, 0.7); }
+    .btn-icon { background: var(--bg-panel); border: 1px solid var(--border); color: #fff; padding: 8px 12px; border-radius: 6px; cursor: pointer; }
+
+    /* LAYOUT WRAPPER */
+    .app-container { display: flex; flex: 1; min-height: calc(100vh - 120px); }
+
+    /* SIDEBAR */
+    nav.sidebar {
+      width: 240px;
+      background: #0d121c;
+      border-right: 1px solid var(--border);
+      padding: 16px 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .nav-label { font-size: 0.68rem; font-weight: 800; color: #475569; text-transform: uppercase; padding: 8px 12px 4px; letter-spacing: 0.5px; }
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 11px 14px;
+      color: #94a3b8;
+      border-radius: 8px;
+      font-size: 0.88rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .nav-item:hover { background: var(--bg-panel); color: #fff; }
+    .nav-item.active {
+      background: linear-gradient(90deg, rgba(0, 210, 255, 0.15) 0%, rgba(0, 210, 255, 0.03) 100%);
+      color: var(--accent);
+      border-left: 3px solid var(--accent);
+    }
+    .nav-item span.icon { font-size: 1.1rem; }
+
+    /* MAIN VIEW */
+    main.viewport { flex: 1; padding: 20px; overflow-y: auto; background: var(--bg-dark); }
+
+    .club-banner {
+      background: linear-gradient(90deg, #162032 0%, #111724 100%);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 14px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+    .club-info-badge { display: flex; align-items: center; gap: 16px; }
+    .club-badge-box {
+      width: 48px; height: 48px; border-radius: 10px; background: #e11d48;
+      display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 1.1rem; color: #fff;
+    }
+    .club-text h2 { font-size: 1.3rem; font-weight: 800; }
+    .club-text p { font-size: 0.8rem; color: var(--text-muted); }
+
+    .team-stats-strip { display: flex; gap: 20px; }
+    .strip-stat { text-align: center; }
+    .strip-stat .val { font-size: 1.25rem; font-weight: 900; color: #fff; }
+    .strip-stat .lbl { font-size: 0.65rem; color: var(--text-muted); text-transform: uppercase; font-weight: 700; }
+
+    /* FOOTBALL MANAGER TACTICS LAYOUT */
+    .tactics-container { display: grid; grid-template-columns: 460px 1fr; gap: 20px; }
+
+    /* PITCH CONTAINER */
+    .pitch-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .tactics-toolbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+    }
+    .tactics-select {
+      background: var(--bg-panel);
+      color: #fff;
+      border: 1px solid var(--border);
+      padding: 8px 12px;
+      border-radius: 6px;
+      font-weight: 700;
+      font-size: 0.85rem;
+      outline: none;
+    }
+    .btn-auto-pick {
+      background: linear-gradient(135deg, #059669 0%, #047857 100%);
+      color: #fff;
+      border: none;
+      padding: 8px 14px;
+      border-radius: 6px;
+      font-weight: 800;
+      font-size: 0.8rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
     }
 
-    .font-console {
-      font-family: 'Chakra Petch', sans-serif;
-      letter-spacing: 0.05em;
-    }
-
-    /* Metallic Panel Gradient */
-    .lma-panel {
-      background: linear-gradient(180deg, rgba(30, 41, 59, 0.9) 0%, rgba(15, 23, 42, 0.98) 100%);
-      border: 1px solid rgba(56, 189, 248, 0.22);
-      box-shadow: 0 4px 24px -2px rgba(0, 0, 0, 0.65), inset 0 1px 0 rgba(255, 255, 255, 0.08);
-    }
-
-    .lma-panel-header {
-      background: linear-gradient(90deg, #0369a1 0%, #075985 55%, #0f172a 100%);
-      border-bottom: 2px solid #38bdf8;
-    }
-
-    .tab-active {
-      background: linear-gradient(180deg, #0284c7 0%, #0369a1 100%);
-      color: #ffffff !important;
-      border-bottom: 3px solid #fbbf24;
-      box-shadow: 0 -2px 12px rgba(56, 189, 248, 0.45);
-    }
-
-    /* Football Pitch Graphic */
+    /* 2D PITCH GRAPHIC */
     .football-pitch {
+      width: 100%;
+      height: 520px;
       background: repeating-linear-gradient(
         0deg,
-        #1b4332,
-        #1b4332 30px,
-        #245a44 30px,
-        #245a44 60px
+        var(--pitch-grass-1),
+        var(--pitch-grass-1) 52px,
+        var(--pitch-grass-2) 52px,
+        var(--pitch-grass-2) 104px
       );
+      border: 2px solid rgba(255, 255, 255, 0.7);
+      border-radius: 8px;
       position: relative;
-      border: 2px solid rgba(255, 255, 255, 0.4);
-      box-shadow: inset 0 0 50px rgba(0,0,0,0.7);
+      overflow: hidden;
+      box-shadow: inset 0 0 40px rgba(0,0,0,0.6);
+    }
+    .pitch-line-half { position: absolute; top: 50%; left: 0; right: 0; height: 2px; background: var(--pitch-line); transform: translateY(-50%); }
+    .pitch-circle-center {
+      position: absolute; top: 50%; left: 50%; width: 110px; height: 110px;
+      border: 2px solid var(--pitch-line); border-radius: 50%; transform: translate(-50%, -50%);
+    }
+    .pitch-spot-center { position: absolute; top: 50%; left: 50%; width: 6px; height: 6px; background: #fff; border-radius: 50%; transform: translate(-50%, -50%); }
+    .penalty-box-top {
+      position: absolute; top: 0; left: 50%; width: 210px; height: 85px;
+      border: 2px solid var(--pitch-line); border-top: none; transform: translateX(-50%);
+    }
+    .six-yard-top {
+      position: absolute; top: 0; left: 50%; width: 100px; height: 35px;
+      border: 2px solid var(--pitch-line); border-top: none; transform: translateX(-50%);
+    }
+    .penalty-box-bottom {
+      position: absolute; bottom: 0; left: 50%; width: 210px; height: 85px;
+      border: 2px solid var(--pitch-line); border-bottom: none; transform: translateX(-50%);
+    }
+    .six-yard-bottom {
+      position: absolute; bottom: 0; left: 50%; width: 100px; height: 35px;
+      border: 2px solid var(--pitch-line); border-bottom: none; transform: translateX(-50%);
     }
 
-    .pitch-line-center {
+    /* PITCH PLAYER TOKENS (FM STYLE) */
+    .pitch-node {
       position: absolute;
-      top: 50%;
-      left: 0;
-      right: 0;
-      height: 2px;
-      background: rgba(255,255,255,0.4);
-    }
-
-    .pitch-center-circle {
-      position: absolute;
-      top: 50%;
-      left: 50%;
       transform: translate(-50%, -50%);
-      width: 66px;
-      height: 66px;
-      border: 2px solid rgba(255,255,255,0.4);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      cursor: pointer;
+      z-index: 10;
+      transition: transform 0.15s ease;
+      width: 72px;
+    }
+    .pitch-node:hover { transform: translate(-50%, -50%) scale(1.12); z-index: 20; }
+    .pitch-node.selected-for-swap {
+      transform: translate(-50%, -50%) scale(1.18);
+      z-index: 30;
+      filter: drop-shadow(0 0 10px #f59e0b);
+    }
+    .pitch-kit {
+      width: 38px;
+      height: 38px;
+      background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+      border: 2px solid #fff;
       border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 900;
+      font-size: 0.9rem;
+      color: #fff;
+      box-shadow: 0 3px 8px rgba(0,0,0,0.6);
+      position: relative;
     }
-
-    .pitch-penalty-box-top {
+    .pitch-node.selected-for-swap .pitch-kit { border-color: #f59e0b; background: #d97706; }
+    .pitch-role-tag {
       position: absolute;
-      top: 0;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 140px;
-      height: 55px;
-      border: 2px solid rgba(255,255,255,0.4);
-      border-top: none;
-    }
-
-    .pitch-penalty-box-bottom {
-      position: absolute;
-      bottom: 0;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 140px;
-      height: 55px;
-      border: 2px solid rgba(255,255,255,0.4);
-      border-bottom: none;
-    }
-
-    /* Custom Scrollbars */
-    ::-webkit-scrollbar {
-      width: 6px;
-      height: 6px;
-    }
-    ::-webkit-scrollbar-track {
-      background: #090d16;
-    }
-    ::-webkit-scrollbar-thumb {
-      background: #1e293b;
-      border-radius: 4px;
-    }
-    ::-webkit-scrollbar-thumb:hover {
+      bottom: -6px;
       background: #0284c7;
+      color: #fff;
+      font-size: 0.6rem;
+      font-weight: 800;
+      padding: 1px 4px;
+      border-radius: 4px;
+      line-height: 1;
+      text-transform: uppercase;
+    }
+    .pitch-name-card {
+      margin-top: 5px;
+      background: rgba(15, 23, 42, 0.9);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 4px;
+      padding: 2px 6px;
+      text-align: center;
+      width: 100%;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .pitch-name-card .p-name { font-size: 0.72rem; font-weight: 800; color: #fff; }
+    .pitch-name-card .p-role { font-size: 0.6rem; font-weight: 700; color: #38bdf8; }
+
+    /* SWAP BANNER */
+    .swap-status-bar {
+      background: linear-gradient(90deg, #b45309 0%, #d97706 100%);
+      color: #fff;
+      padding: 8px 14px;
+      border-radius: 8px;
+      font-size: 0.82rem;
+      font-weight: 800;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+      animation: pulse 1.5s infinite;
+    }
+    @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.85; } }
+    .swap-status-bar button {
+      background: rgba(0,0,0,0.3); border: 1px solid #fff; color: #fff;
+      padding: 3px 8px; border-radius: 4px; cursor: pointer; font-size: 0.75rem; font-weight: 700;
     }
 
-    input[type=range] {
-      accent-color: #38bdf8;
+    /* FM SQUAD TABLE */
+    .squad-roster-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      overflow-x: auto;
+    }
+    .section-title-strip {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 8px;
+    }
+    .section-title-strip h3 { font-size: 0.95rem; font-weight: 800; text-transform: uppercase; color: var(--text-main); }
+    .section-title-strip span.count { font-size: 0.75rem; color: var(--text-muted); font-weight: 700; }
+
+    table.fm-table { width: 100%; border-collapse: collapse; font-size: 0.8rem; text-align: left; }
+    table.fm-table th {
+      background: var(--bg-panel);
+      color: var(--text-muted);
+      font-size: 0.68rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      padding: 8px 10px;
+      border-bottom: 2px solid var(--border);
+    }
+    table.fm-table td {
+      padding: 8px 10px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      vertical-align: middle;
+      font-weight: 600;
+    }
+    table.fm-table tr.fm-row { cursor: pointer; transition: background 0.15s; }
+    table.fm-table tr.fm-row:hover { background: var(--bg-panel-hover); }
+    table.fm-table tr.fm-row.selected-for-swap { background: rgba(245, 158, 11, 0.2) !important; outline: 1px solid #f59e0b; }
+
+    .badge-pick {
+      display: inline-block; padding: 2px 6px; border-radius: 4px;
+      font-size: 0.68rem; font-weight: 800; text-align: center;
+    }
+    .pick-starter { background: rgba(16, 185, 129, 0.2); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.4); }
+    .pick-sub { background: rgba(245, 158, 11, 0.2); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.4); }
+
+    .role-badge {
+      background: #0369a1; color: #fff; font-size: 0.65rem; font-weight: 800;
+      padding: 2px 6px; border-radius: 4px;
     }
 
-    @keyframes pulse-gold {
-      0%, 100% { box-shadow: 0 0 10px #fbbf24; }
-      50% { box-shadow: 0 0 20px #f59e0b; }
+    .btn-swap-pill {
+      background: var(--bg-panel);
+      color: var(--text-main);
+      border: 1px solid var(--border);
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 0.72rem;
+      font-weight: 700;
+      cursor: pointer;
     }
-    .turn-glow {
-      animation: pulse-gold 2s infinite ease-in-out;
+    .btn-swap-pill:hover { background: var(--accent); color: #000; }
+
+    .condition-bar { width: 44px; height: 6px; background: #334155; border-radius: 3px; overflow: hidden; display: inline-block; vertical-align: middle; margin-right: 6px; }
+    .condition-fill { height: 100%; border-radius: 3px; }
+
+    /* MATCHDAY SCREEN */
+    .matchday-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 20px; }
+    .broadcast-card {
+      background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; padding: 20px;
+      display: flex; flex-direction: column; gap: 16px;
+    }
+    .scoreboard-box {
+      background: linear-gradient(180deg, #151d2c 0%, #0c121d 100%);
+      border: 2px solid var(--border);
+      border-radius: 12px;
+      padding: 20px;
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      text-align: center;
+    }
+    .sb-team h2 { font-size: 1.4rem; font-weight: 900; }
+    .sb-team p { font-size: 0.8rem; color: var(--text-muted); }
+    .sb-score { font-size: 3rem; font-weight: 900; color: #fff; letter-spacing: 4px; }
+    .sb-minute { background: var(--bg-panel); padding: 4px 10px; border-radius: 6px; font-weight: 800; font-size: 0.85rem; color: var(--accent); }
+
+    .commentary-box {
+      background: #090d14; border: 1px solid var(--border); border-radius: 8px; height: 260px;
+      overflow-y: auto; padding: 12px; display: flex; flex-direction: column; gap: 8px;
+    }
+    .comm-line { font-size: 0.82rem; padding: 6px 10px; border-radius: 6px; background: var(--bg-panel); border-left: 3px solid var(--accent); }
+    .comm-line.goal { border-left-color: #10b981; background: rgba(16, 185, 129, 0.15); font-weight: 800; color: #34d399; }
+    .comm-line.card { border-left-color: #f59e0b; color: #fbbf24; }
+
+    /* LEAGUE TABLES */
+    .standings-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; padding: 16px; }
+    .league-tabs { display: flex; gap: 10px; margin-bottom: 14px; }
+    .league-tab-btn {
+      background: var(--bg-panel); color: var(--text-muted); border: 1px solid var(--border);
+      padding: 8px 16px; border-radius: 8px; font-weight: 800; font-size: 0.82rem; cursor: pointer;
+    }
+    .league-tab-btn.active { background: var(--accent); color: #000; border-color: var(--accent); }
+
+    .zone-ucl { border-left: 4px solid #3b82f6 !important; }
+    .zone-promo { border-left: 4px solid #10b981 !important; }
+    .zone-playoff { border-left: 4px solid #06b6d4 !important; }
+    .zone-relegation { border-left: 4px solid #ef4444 !important; }
+
+    /* MODAL */
+    .modal-backdrop {
+      position: fixed; inset: 0; background: rgba(0,0,0,0.85);
+      display: flex; align-items: center; justify-content: center; z-index: 1000;
+    }
+    .modal-window {
+      background: var(--bg-card); border: 2px solid var(--border); border-radius: 16px;
+      width: 650px; max-width: 95vw; max-height: 90vh; overflow-y: auto; padding: 24px;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.8);
+    }
+    .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+    .modal-header h2 { font-size: 1.3rem; font-weight: 900; }
+    .modal-close { background: none; border: none; color: #fff; font-size: 1.4rem; cursor: pointer; }
+
+    /* FOOTER */
+    footer {
+      background: #080c14;
+      border-top: 1px solid var(--border);
+      padding: 12px 20px;
+      text-align: center;
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: #64748b;
+      letter-spacing: 0.5px;
     }
   </style>
 </head>
-<body class="min-h-screen flex flex-col justify-between antialiased">
+<body>
 
-  <header class="border-b border-sky-900/50 bg-slate-950/95 backdrop-blur-md sticky top-0 z-40 px-3 md:px-5 py-2 shadow-2xl">
-    <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-3">
-      
-      <!-- Brand & Season -->
-      <div class="flex items-center gap-3">
-        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-sky-600 via-cyan-400 to-amber-400 p-0.5 shadow-lg flex items-center justify-center font-console font-bold text-xl text-black">
-          LMA
-        </div>
-        <div>
-          <div class="flex items-center gap-2">
-            <h1 class="text-base md:text-lg font-console font-bold tracking-wider text-white">LMA CLUB MANAGER</h1>
-            <span class="text-[10px] bg-sky-900/80 text-sky-300 font-semibold px-2 py-0.5 rounded border border-sky-600">2007 RE</span>
-          </div>
-          <p class="text-xs text-slate-400 flex items-center gap-2">
-            <span>Season 2026/27</span> &bull; 
-            <span id="header-week" class="text-amber-400 font-semibold">Week 1 of 14</span>
-          </p>
-        </div>
-      </div>
-
-      <!-- Turn & Active Manager Indicator -->
-      <div class="flex items-center gap-2 md:gap-3 bg-slate-900/90 px-3 py-1.5 rounded-xl border border-slate-700/60 shadow-inner">
-        <div class="w-3 h-3 rounded-full bg-amber-400 turn-glow"></div>
-        <div class="text-xs">
-          <span class="text-slate-400 block uppercase text-[9px] tracking-widest font-semibold">Active Turn</span>
-          <span id="header-manager-name" class="font-console font-bold text-xs md:text-sm text-sky-300">Manager Alex (MR)</span>
-        </div>
-        <button onclick="switchManagerTurn()" class="ml-1 text-[11px] bg-sky-950 hover:bg-sky-800 text-sky-200 border border-sky-600/50 px-2.5 py-1 rounded font-console transition">
-          Pass Turn 🔁
-        </button>
-      </div>
-
-      <!-- Club Financials & System Controls -->
-      <div class="flex items-center gap-3 md:gap-4">
-        <div class="text-right">
-          <span class="text-[9px] text-slate-400 uppercase tracking-widest block font-bold">Transfer Budget</span>
-          <span id="header-budget" class="font-console text-emerald-400 font-bold text-sm md:text-base">£45.0M</span>
-        </div>
-        <button id="btn-sound" onclick="toggleAudio()" class="p-2 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-lg border border-slate-700 text-xs transition" title="Sound FX">
-          🔊
-        </button>
-        <button onclick="openSaveModal()" class="p-2 bg-slate-800 hover:bg-slate-700 text-amber-300 rounded-lg border border-slate-700 text-xs transition" title="Save / Load Game">
-          💾 Save/Load
-        </button>
+  <!-- HEADER -->
+  <header>
+    <div class="brand-group">
+      <div class="brand-logo">FLM</div>
+      <div class="brand-titles">
+        <h1>FOOTBALL LEAGUE MANAGER</h1>
+        <p id="headerSeasonTag">2026/27 Career &bull; English Football Pyramid</p>
       </div>
     </div>
 
-    <!-- Navigation Tabs -->
-    <div class="max-w-7xl mx-auto flex overflow-x-auto gap-1 mt-2 border-t border-slate-800/80 pt-1 text-xs md:text-sm font-console">
-      <button onclick="switchTab('tactics')" id="tab-btn-tactics" class="tab-btn tab-active px-3 py-2 rounded-t font-semibold flex items-center gap-1.5 transition whitespace-nowrap">
-        <span>📋</span> Squad & Pitch
+    <div class="header-metrics">
+      <div class="metric-pill">
+        <span class="label">Division</span>
+        <span class="val" id="headerDivName">Premier League</span>
+      </div>
+      <div class="metric-pill">
+        <span class="label">Calendar</span>
+        <span class="val" id="headerWeek">Week 1 of 38</span>
+      </div>
+      <div class="metric-pill">
+        <span class="label">Board Approval</span>
+        <span class="val" id="headerConfidence" style="color: #34d399;">82% &bull; Stable</span>
+      </div>
+      <div class="metric-pill">
+        <span class="label">Transfer Budget</span>
+        <span class="val" id="headerBudget">£24.5M</span>
+      </div>
+      
+      <button class="btn-advance-master" id="btnAdvanceMaster" onclick="advanceMasterWeek()">
+        <span>⏩</span> ADVANCE WEEK
       </button>
-      <button onclick="switchTab('fixtures')" id="tab-btn-fixtures" class="tab-btn px-3 py-2 rounded-t font-semibold text-slate-400 hover:text-white flex items-center gap-1.5 transition whitespace-nowrap">
-        <span>⏱️</span> Matchday
-      </button>
-      <button onclick="switchTab('stadium')" id="tab-btn-stadium" class="tab-btn px-3 py-2 rounded-t font-semibold text-slate-400 hover:text-white flex items-center gap-1.5 transition whitespace-nowrap">
-        <span>🏟️</span> Stadium & Facilities
-      </button>
-      <button onclick="switchTab('youth')" id="tab-btn-youth" class="tab-btn px-3 py-2 rounded-t font-semibold text-slate-400 hover:text-white flex items-center gap-1.5 transition whitespace-nowrap">
-        <span>🌱</span> Youth Academy
-      </button>
-      <button onclick="switchTab('transfers')" id="tab-btn-transfers" class="tab-btn px-3 py-2 rounded-t font-semibold text-slate-400 hover:text-white flex items-center gap-1.5 transition whitespace-nowrap">
-        <span>💷</span> Transfers
-      </button>
-      <button onclick="switchTab('table')" id="tab-btn-table" class="tab-btn px-3 py-2 rounded-t font-semibold text-slate-400 hover:text-white flex items-center gap-1.5 transition whitespace-nowrap">
-        <span>🏆</span> Standings
-      </button>
-      <button onclick="switchTab('trophies')" id="tab-btn-trophies" class="tab-btn px-3 py-2 rounded-t font-semibold text-slate-400 hover:text-white flex items-center gap-1.5 transition whitespace-nowrap">
-        <span>🎖️</span> Trophy Cabinet
-      </button>
-      <button onclick="switchTab('multiplayer')" id="tab-btn-multiplayer" class="tab-btn px-3 py-2 rounded-t font-semibold text-slate-400 hover:text-white flex items-center gap-1.5 transition whitespace-nowrap">
-        <span>👥</span> Manager Room (<span id="tab-ready-counter">0/2</span>)
-      </button>
+
+      <button class="btn-icon" onclick="toggleAudio()" id="btnAudio" title="Toggle Sound">🔊</button>
+      <button class="btn-icon" onclick="resetToFreshSeason()" title="Reset / New Game">🔄</button>
     </div>
   </header>
 
-  <main class="max-w-7xl mx-auto w-full p-3 md:p-4 flex-1">
+  <!-- CONTAINER -->
+  <div class="app-container">
+    
+    <!-- SIDEBAR -->
+    <nav class="sidebar">
+      <div class="nav-label">Squad Management</div>
+      <div class="nav-item active" onclick="switchTab('tactics')" id="nav-tactics">
+        <span class="icon">👕</span> Tactics & Squad
+      </div>
+      <div class="nav-item" onclick="switchTab('matchday')" id="nav-matchday">
+        <span class="icon">⏱️</span> Matchday Live
+      </div>
 
-    <!-- ================= TAB 1: SQUAD & TACTICS ================= -->
-    <section id="tab-tactics" class="space-y-4">
-      <div class="lma-panel p-4 rounded-xl flex flex-wrap items-center justify-between gap-4">
-        <div class="flex items-center gap-3">
-          <div id="club-badge" class="w-12 h-12 rounded-xl flex items-center justify-center font-console font-bold text-xl text-white shadow-lg">
-            MR
-          </div>
-          <div>
-            <h2 id="club-display-name" class="text-lg md:text-xl font-bold font-console text-white">Manchester Red</h2>
-            <p id="club-stadium-sub" class="text-xs text-slate-400">Old Trafford Park &bull; Capacity: 74,000</p>
+      <div class="nav-label">Club Operations</div>
+      <div class="nav-item" onclick="switchTab('standings')" id="nav-standings">
+        <span class="icon">🏆</span> League Tables
+      </div>
+      <div class="nav-item" onclick="switchTab('transfers')" id="nav-transfers">
+        <span class="icon">🔄</span> Scouting & Market
+      </div>
+      <div class="nav-item" onclick="switchTab('facilities')" id="nav-facilities">
+        <span class="icon">🏟️</span> Ground & Facilities
+      </div>
+
+      <div class="nav-label">Management Office</div>
+      <div class="nav-item" onclick="switchTab('manager')" id="nav-manager">
+        <span class="icon">📋</span> Board & Career
+      </div>
+      <div class="nav-item" onclick="switchTab('honours')" id="nav-honours">
+        <span class="icon">🎖️</span> Honours & Awards
+      </div>
+      <div class="nav-item" onclick="openClubSelectorModal()" id="nav-switch">
+        <span class="icon">🔀</span> Switch Club
+      </div>
+    </nav>
+
+    <!-- MAIN VIEWPORT -->
+    <main class="viewport" id="mainViewport">
+      
+      <!-- CLUB HERO BANNER -->
+      <div class="club-banner" id="clubBanner">
+        <div class="club-info-badge">
+          <div class="club-badge-box" id="bannerBadge">SOU</div>
+          <div class="club-text">
+            <h2 id="bannerClubName">Southampton</h2>
+            <p id="bannerStadium">St Mary's Stadium &bull; Capacity: 32,384</p>
           </div>
         </div>
-        <div class="flex items-center gap-4 md:gap-6 text-sm">
-          <div class="text-center">
-            <span class="text-[10px] text-slate-400 block font-semibold">ATTACK</span>
-            <span id="stat-att" class="text-amber-400 font-bold font-console text-base md:text-lg">84</span>
+        <div class="team-stats-strip">
+          <div class="strip-stat">
+            <div class="val" id="statAttack">78</div>
+            <div class="lbl">Attack</div>
           </div>
-          <div class="text-center">
-            <span class="text-[10px] text-slate-400 block font-semibold">MIDFIELD</span>
-            <span id="stat-mid" class="text-cyan-400 font-bold font-console text-base md:text-lg">82</span>
+          <div class="strip-stat">
+            <div class="val" id="statMidfield">77</div>
+            <div class="lbl">Midfield</div>
           </div>
-          <div class="text-center">
-            <span class="text-[10px] text-slate-400 block font-semibold">DEFENCE</span>
-            <span id="stat-def" class="text-emerald-400 font-bold font-console text-base md:text-lg">80</span>
+          <div class="strip-stat">
+            <div class="val" id="statDefence">76</div>
+            <div class="lbl">Defence</div>
           </div>
-          <div class="text-center">
-            <span class="text-[10px] text-slate-400 block font-semibold">OVERALL</span>
-            <span id="stat-ovr" class="text-white font-bold font-console text-base md:text-lg">82</span>
+          <div class="strip-stat">
+            <div class="val" id="statOvr">77</div>
+            <div class="lbl">Team Rating</div>
           </div>
         </div>
       </div>
 
-      <div class="grid grid-cols-1 lg:grid-cols-12 gap-5">
-        <!-- Interactive Pitch View -->
-        <div class="lg:col-span-5 lma-panel rounded-xl p-4 flex flex-col items-center">
-          <div class="w-full flex justify-between items-center mb-3">
-            <h3 class="text-xs font-console font-bold tracking-wide text-sky-300">PITCH FORMATION</h3>
-            <select id="formation-select" onchange="changeFormation(this.value)" class="bg-slate-900 border border-sky-600/40 text-xs rounded px-2 py-1 text-white focus:outline-none focus:border-sky-400 font-console">
-              <option value="4-4-2">4 - 4 - 2 (Classic LMA)</option>
-              <option value="4-3-3">4 - 3 - 3 (High Press)</option>
-              <option value="3-5-2">3 - 5 - 2 (Wing Attack)</option>
-            </select>
-          </div>
-
-          <div class="football-pitch w-full h-[400px] rounded-lg overflow-hidden relative shadow-2xl flex flex-col justify-between py-2">
-            <div class="pitch-line-center"></div>
-            <div class="pitch-center-circle"></div>
-            <div class="pitch-penalty-box-top"></div>
-            <div class="pitch-penalty-box-bottom"></div>
-            <div id="pitch-players-container" class="relative w-full h-full z-10"></div>
-          </div>
-          <p class="text-[11px] text-slate-400 mt-2 text-center italic">
-            Click any pitch node or roster player to swap starters with substitutes.
-          </p>
+      <!-- TACTICS TAB -->
+      <div id="tab-tactics" class="tab-pane">
+        
+        <!-- SWAP NOTIFICATION BANNER -->
+        <div id="swapNotificationBar" class="swap-status-bar" style="display: none;">
+          <span id="swapNotificationText">🔄 SELECT PLAYER TO SWAP</span>
+          <button onclick="cancelPlayerSwap()">Cancel Selection</button>
         </div>
 
-        <!-- Squad List and Tactical Sliders -->
-        <div class="lg:col-span-7 flex flex-col gap-4">
-          <div class="lma-panel p-4 rounded-xl space-y-3">
-            <h3 class="text-xs font-console font-bold text-sky-300 border-b border-slate-700/60 pb-1">
-              TEAM INSTRUCTIONS
-            </h3>
-            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
-              <div>
-                <div class="flex justify-between font-semibold mb-1">
-                  <span class="text-slate-300">Attacking Mentality</span>
-                  <span id="label-mentality" class="text-amber-400 font-console">Balanced</span>
-                </div>
-                <input type="range" min="1" max="5" value="3" id="slider-mentality" oninput="updateTacticsSlider('mentality', this.value)" class="w-full h-1.5 bg-slate-700 rounded-lg cursor-pointer">
-              </div>
+        <div class="tactics-container">
+          
+          <!-- LEFT: FM 2D PITCH -->
+          <div class="pitch-card">
+            <div class="tactics-toolbar">
+              <select class="tactics-select" id="formationSelect" onchange="changeFormation(this.value)">
+                <option value="4-3-3">4 - 3 - 3 (Gegenpress)</option>
+                <option value="4-2-3-1">4 - 2 - 3 - 1 (Wide Attacking)</option>
+                <option value="4-4-2">4 - 4 - 2 (Flat Balance)</option>
+                <option value="5-3-2">5 - 3 - 2 (Wing-Backs)</option>
+                <option value="3-5-2">3 - 5 - 2 (Direct Counter)</option>
+              </select>
 
-              <div>
-                <div class="flex justify-between font-semibold mb-1">
-                  <span class="text-slate-300">Passing Style</span>
-                  <span id="label-passing" class="text-cyan-400 font-console">Mixed</span>
-                </div>
-                <input type="range" min="1" max="5" value="3" id="slider-passing" oninput="updateTacticsSlider('passing', this.value)" class="w-full h-1.5 bg-slate-700 rounded-lg cursor-pointer">
-              </div>
-
-              <div>
-                <div class="flex justify-between font-semibold mb-1">
-                  <span class="text-slate-300">Pressing Intensity</span>
-                  <span id="label-pressing" class="text-emerald-400 font-console">High</span>
-                </div>
-                <input type="range" min="1" max="5" value="4" id="slider-pressing" oninput="updateTacticsSlider('pressing', this.value)" class="w-full h-1.5 bg-slate-700 rounded-lg cursor-pointer">
-              </div>
+              <button class="btn-auto-pick" onclick="autoPickBestXI()">
+                ⚡ Auto-Pick XI
+              </button>
             </div>
-          </div>
 
-          <div class="lma-panel rounded-xl overflow-hidden flex-1 flex flex-col">
-            <div class="lma-panel-header px-4 py-2 flex justify-between items-center">
-              <h3 class="font-console font-bold text-white text-xs tracking-wider">FIRST TEAM ROSTER & FITNESS</h3>
-              <span id="selected-swap-indicator" class="text-[11px] text-amber-300 font-semibold truncate max-w-xs"></span>
+            <!-- THE PITCH -->
+            <div class="football-pitch" id="pitchSurface">
+              <div class="pitch-line-half"></div>
+              <div class="pitch-circle-center"></div>
+              <div class="pitch-spot-center"></div>
+              <div class="penalty-box-top"></div>
+              <div class="six-yard-top"></div>
+              <div class="penalty-box-bottom"></div>
+              <div class="six-yard-bottom"></div>
+
+              <!-- PITCH NODES INJECTED VIA JS -->
+              <div id="pitchNodesWrapper"></div>
             </div>
             
-            <div class="overflow-x-auto flex-1 max-h-[300px]">
-              <table class="w-full text-left text-xs">
-                <thead class="bg-slate-900/90 text-slate-400 uppercase tracking-wider text-[10px] sticky top-0 border-b border-slate-700">
-                  <tr>
-                    <th class="p-2">Role</th>
-                    <th class="p-2">Pos</th>
-                    <th class="p-2">Player</th>
-                    <th class="p-2">Age</th>
-                    <th class="p-2 text-center">H/T/P/S/Sp</th>
-                    <th class="p-2">OVR</th>
-                    <th class="p-2">Condition</th>
-                    <th class="p-2">Status</th>
-                    <th class="p-2 text-right">Action</th>
-                  </tr>
-                </thead>
-                <tbody id="squad-table-body" class="divide-y divide-slate-800/60 font-mono"></tbody>
-              </table>
-            </div>
+            <p style="font-size: 0.72rem; color: var(--text-muted); text-align: center;">
+              💡 <b>Click any player on the pitch or roster</b> to swap their positions and tactical roles.
+            </p>
           </div>
+
+          <!-- RIGHT: FM SQUAD SELECTION TABLE -->
+          <div class="squad-roster-card">
+            <div class="section-title-strip">
+              <h3>Starting Eleven</h3>
+              <span class="count">11 Selected</span>
+            </div>
+
+            <table class="fm-table" id="startersTable">
+              <thead>
+                <tr>
+                  <th style="width: 48px;">PK</th>
+                  <th style="width: 75px;">Role</th>
+                  <th>Player Name</th>
+                  <th style="width: 45px;">Nat</th>
+                  <th style="width: 40px;">Age</th>
+                  <th style="width: 45px;">OVR</th>
+                  <th style="width: 80px;">Con</th>
+                  <th style="width: 90px;">Action</th>
+                </tr>
+              </thead>
+              <tbody id="startersTableBody"></tbody>
+            </table>
+
+            <div class="section-title-strip" style="margin-top: 10px;">
+              <h3>Substitutes Bench</h3>
+              <span class="count">7 Available</span>
+            </div>
+
+            <table class="fm-table" id="benchTable">
+              <thead>
+                <tr>
+                  <th style="width: 48px;">PK</th>
+                  <th style="width: 75px;">Role</th>
+                  <th>Player Name</th>
+                  <th style="width: 45px;">Nat</th>
+                  <th style="width: 40px;">Age</th>
+                  <th style="width: 45px;">OVR</th>
+                  <th style="width: 80px;">Con</th>
+                  <th style="width: 90px;">Action</th>
+                </tr>
+              </thead>
+              <tbody id="benchTableBody"></tbody>
+            </table>
+          </div>
+
         </div>
       </div>
-    </section>
 
-    <!-- ================= TAB 2: FIXTURES & MATCHDAY ================= -->
-    <section id="tab-fixtures" class="space-y-4 hidden">
-      <div class="lma-panel rounded-xl p-4 flex flex-col md:flex-row items-center justify-between gap-4">
-        <div>
-          <h2 class="text-base md:text-lg font-console font-bold text-white">LEAGUE FIXTURE ROUND</h2>
-          <p class="text-xs text-slate-400">Week <span id="fixtures-week-num">1</span> of 14 &bull; Simultaneous matchday simulation</p>
-        </div>
-        <div class="flex items-center gap-3">
-          <button id="btn-play-matchday" onclick="startMatchdaySimulation()" class="bg-gradient-to-r from-emerald-600 to-green-500 hover:from-emerald-500 hover:to-green-400 text-white font-console font-bold px-6 py-2.5 rounded-lg shadow-lg text-xs md:text-sm tracking-wider flex items-center gap-2 transition active:scale-95">
-            <span>⚽</span> PLAY MATCHDAY
-          </button>
-        </div>
-      </div>
-
-      <div class="grid grid-cols-1 lg:grid-cols-12 gap-5">
-        <!-- Feature Match Live Scorecard -->
-        <div class="lg:col-span-8 flex flex-col gap-4">
-          <div class="lma-panel rounded-xl p-5 border border-sky-500/30">
-            <div class="flex justify-between items-center border-b border-slate-700 pb-2 mb-3">
-              <span class="text-xs font-console uppercase tracking-wider text-sky-300">BROADCAST LIVE FEED</span>
-              <div class="flex items-center gap-2">
-                <span id="match-status-badge" class="px-2 py-0.5 rounded text-[10px] font-bold bg-slate-800 text-slate-300 uppercase">Pre-Match</span>
-                <span id="match-minute-timer" class="font-console text-lg font-bold text-amber-400">00:00</span>
-                <button id="btn-pause-match" onclick="toggleMatchPause()" class="hidden text-xs bg-slate-800 border border-slate-600 hover:bg-slate-700 px-2 py-0.5 rounded font-console text-amber-300">
-                  ⏸ Pause
-                </button>
+      <!-- MATCHDAY TAB -->
+      <div id="tab-matchday" class="tab-pane" style="display: none;">
+        <div class="matchday-grid">
+          <div class="broadcast-card">
+            <div class="scoreboard-box">
+              <div class="sb-team">
+                <h2 id="sbHomeName">Southampton</h2>
+                <p id="sbHomeRole">HOME &bull; 4-3-3</p>
               </div>
-            </div>
-
-            <!-- Scoreboard -->
-            <div class="grid grid-cols-7 items-center text-center py-4 bg-slate-950/70 rounded-xl border border-slate-800/80">
-              <div class="col-span-3 flex flex-col items-center">
-                <div id="home-team-badge" class="w-12 h-12 rounded-lg flex items-center justify-center font-console font-bold text-lg text-white mb-2 shadow">HOM</div>
-                <h4 id="home-team-name" class="font-console font-bold text-white text-sm md:text-base truncate max-w-[160px]">Home Team</h4>
-                <span id="home-tactics-tag" class="text-[10px] text-slate-400">4-4-2 Balanced</span>
-              </div>
-
-              <div class="col-span-1 flex flex-col items-center">
-                <div class="text-3xl sm:text-4xl font-console font-bold text-white flex items-center gap-1">
-                  <span id="live-home-goals">0</span>
-                  <span class="text-slate-600">-</span>
-                  <span id="live-away-goals">0</span>
-                </div>
-              </div>
-
-              <div class="col-span-3 flex flex-col items-center">
-                <div id="away-team-badge" class="w-12 h-12 rounded-lg flex items-center justify-center font-console font-bold text-lg text-white mb-2 shadow">AWY</div>
-                <h4 id="away-team-name" class="font-console font-bold text-white text-sm md:text-base truncate max-w-[160px]">Away Team</h4>
-                <span id="away-tactics-tag" class="text-[10px] text-slate-400">4-3-3 Press</span>
-              </div>
-            </div>
-
-            <!-- In-Match Tactical Shouts Banner -->
-            <div id="in-match-shouts" class="mt-3 p-2 bg-slate-900/90 rounded-lg border border-sky-900/60 flex flex-wrap items-center justify-between gap-2">
-              <span class="text-[10px] uppercase font-console font-bold text-amber-400">Touchline Shouts:</span>
-              <div class="flex gap-1.5 flex-wrap">
-                <button onclick="applyMatchShout('park')" class="px-2 py-0.5 rounded text-[10px] bg-slate-800 hover:bg-slate-700 text-sky-200 border border-slate-700 font-console transition">
-                  🛡️ Park The Bus
-                </button>
-                <button onclick="applyMatchShout('press')" class="px-2 py-0.5 rounded text-[10px] bg-slate-800 hover:bg-slate-700 text-sky-200 border border-slate-700 font-console transition">
-                  ⚡ Push Higher
-                </button>
-                <button onclick="applyMatchShout('shoot')" class="px-2 py-0.5 rounded text-[10px] bg-slate-800 hover:bg-slate-700 text-sky-200 border border-slate-700 font-console transition">
-                  🎯 Shoot on Sight
-                </button>
-                <button onclick="applyMatchShout('tackle')" class="px-2 py-0.5 rounded text-[10px] bg-slate-800 hover:bg-slate-700 text-sky-200 border border-slate-700 font-console transition">
-                  💥 Get Stuck In
-                </button>
-              </div>
-            </div>
-
-            <!-- Match Stats Bars -->
-            <div class="mt-3 space-y-2 text-xs">
               <div>
-                <div class="flex justify-between text-[11px] text-slate-300 mb-1">
-                  <span id="stat-home-poss">50%</span>
-                  <span class="font-bold text-slate-400">Possession</span>
-                  <span id="stat-away-poss">50%</span>
-                </div>
-                <div class="w-full bg-slate-800 rounded-full h-1.5 flex overflow-hidden">
-                  <div id="bar-home-poss" class="bg-sky-500 h-full w-1/2 transition-all duration-300"></div>
-                  <div id="bar-away-poss" class="bg-amber-500 h-full w-1/2 transition-all duration-300"></div>
-                </div>
+                <div class="sb-score" id="sbScore">0 - 0</div>
+                <span class="sb-minute" id="sbMinute">PRE-MATCH</span>
               </div>
-
-              <div class="flex justify-around pt-1 text-slate-300 text-center font-mono text-[11px]">
-                <div><span id="stat-home-shots" class="font-bold text-white">0</span> Shots <span id="stat-away-shots" class="font-bold text-white">0</span></div>
-                <div><span id="stat-home-target" class="font-bold text-white">0</span> On Target <span id="stat-away-target" class="font-bold text-white">0</span></div>
-                <div><span id="stat-home-corners" class="font-bold text-white">0</span> Corners <span id="stat-away-corners" class="font-bold text-white">0</span></div>
+              <div class="sb-team">
+                <h2 id="sbAwayName">Opponent</h2>
+                <p id="sbAwayRole">AWAY &bull; 4-4-2</p>
               </div>
             </div>
-          </div>
 
-          <!-- Commentary Feed -->
-          <div class="lma-panel rounded-xl p-4 flex flex-col h-[230px]">
-            <h3 class="text-xs font-console font-bold text-sky-300 mb-2 border-b border-slate-700 pb-1 flex items-center justify-between">
-              <span>MATCH COMMENTARY LOG</span>
-              <span id="active-shout-indicator" class="text-[10px] text-amber-300 font-semibold"></span>
-            </h3>
-            <div id="match-commentary-feed" class="flex-1 overflow-y-auto space-y-2 pr-1 font-mono text-xs">
-              <div class="text-slate-500 italic">Waiting for kickoff... press 'PLAY MATCHDAY' to simulate this round.</div>
+            <div style="display: flex; gap: 10px;">
+              <button class="btn-advance-master" style="flex: 1;" onclick="startMatchdaySim()" id="btnStartMatch">
+                ▶️ SIMULATE 90 MINUTES
+              </button>
+            </div>
+
+            <h4 style="font-size: 0.85rem; text-transform: uppercase; color: var(--text-muted);">Match Commentary</h4>
+            <div class="commentary-box" id="commentaryFeed">
+              <div class="comm-line">Teams have completed their warmups and are emerging from the tunnel.</div>
             </div>
           </div>
-        </div>
 
-        <!-- Simultaneous Fixtures & Live Bench -->
-        <div class="lg:col-span-4 flex flex-col gap-3">
-          <div class="lma-panel rounded-xl p-3">
-            <h3 class="text-xs font-console font-bold text-sky-300 mb-2 border-b border-slate-700 pb-1">
-              AROUND THE GROUNDS
-            </h3>
-            <div id="simulcast-fixtures-list" class="space-y-2"></div>
-          </div>
-
-          <!-- Live Mid-Match Bench Substitutions -->
-          <div class="lma-panel rounded-xl p-3 flex-1 flex flex-col">
-            <h3 class="text-xs font-console font-bold text-amber-400 mb-2 border-b border-slate-700 pb-1 flex justify-between items-center">
-              <span>LIVE BENCH (SUBSTITUTES)</span>
-              <span class="text-[10px] text-slate-400 font-normal">Click to bring on</span>
-            </h3>
-            <div id="match-bench-container" class="space-y-1.5 overflow-y-auto max-h-[200px] font-mono text-xs">
-              <!-- Dynamically populated bench players -->
-            </div>
+          <div class="standings-card">
+            <h3 style="font-size: 0.95rem; font-weight: 800; margin-bottom: 12px;">Around The Grounds</h3>
+            <div id="aroundGroundsList" style="display: flex; flex-direction: column; gap: 8px; font-size: 0.8rem;"></div>
           </div>
         </div>
       </div>
-    </section>
 
-    <!-- ================= TAB 3: STADIUM & FACILITIES ================= -->
-    <section id="tab-stadium" class="space-y-4 hidden">
-      <div class="lma-panel rounded-xl p-4 flex justify-between items-center flex-wrap gap-4">
-        <div>
-          <h2 class="text-base md:text-lg font-console font-bold text-white">STADIUM EXPANSION & CLUB FACILITIES</h2>
-          <p class="text-xs text-slate-400">Expand stadium stands to increase gate receipts; upgrade medical and youth centres.</p>
-        </div>
-        <div class="text-right">
-          <span class="text-xs text-slate-400 uppercase tracking-widest block font-bold">Estimated Gate per Home Game</span>
-          <span id="stadium-estimated-income" class="font-console text-emerald-400 font-bold text-sm md:text-base">£1.85M</span>
-        </div>
-      </div>
-
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4" id="stadium-stands-grid">
-        <!-- Injected via JavaScript for stands (North, South, East, West) -->
-      </div>
-
-      <div class="lma-panel rounded-xl p-4">
-        <h3 class="font-console font-bold text-white text-sm border-b border-slate-700 pb-2 mb-4">
-          TRAINING & MEDICAL INFRASTRUCTURE
-        </h3>
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4" id="facilities-grid">
-          <!-- Injected via JS (Medical Centre, Youth Facility, Training Pitch) -->
-        </div>
-      </div>
-    </section>
-
-    <!-- ================= TAB 4: YOUTH ACADEMY ================= -->
-    <section id="tab-youth" class="space-y-4 hidden">
-      <div class="lma-panel rounded-xl p-4 flex justify-between items-center flex-wrap gap-4">
-        <div>
-          <h2 class="text-base md:text-lg font-console font-bold text-white">YOUTH SCOUTING & ACADEMY PROSPECTS</h2>
-          <p class="text-xs text-slate-400">Graduates scouted by your Youth Network. Sign promising teenagers on free contracts!</p>
-        </div>
-        <div class="text-right">
-          <span class="text-xs text-sky-300 font-console font-bold">New scouts arrive every week</span>
-        </div>
-      </div>
-
-      <div class="lma-panel rounded-xl overflow-hidden">
-        <div class="overflow-x-auto max-h-[450px]">
-          <table class="w-full text-left text-xs">
-            <thead class="bg-slate-900/90 text-slate-400 uppercase tracking-wider text-[10px] sticky top-0 border-b border-slate-700">
-              <tr>
-                <th class="p-3">Prospect</th>
-                <th class="p-3">Pos</th>
-                <th class="p-3">Age</th>
-                <th class="p-3">Current OVR</th>
-                <th class="p-3">Scouted Potential</th>
-                <th class="p-3">Stats (H/T/P/S/Sp)</th>
-                <th class="p-3 text-right">Action</th>
-              </tr>
-            </thead>
-            <tbody id="youth-table-body" class="divide-y divide-slate-800 font-mono"></tbody>
-          </table>
-        </div>
-      </div>
-    </section>
-
-    <!-- ================= TAB 5: TRANSFER MARKET ================= -->
-    <section id="tab-transfers" class="space-y-4 hidden">
-      <div class="lma-panel rounded-xl p-4 flex flex-wrap items-center justify-between gap-4">
-        <div>
-          <h2 class="text-base md:text-lg font-console font-bold text-white">WORLD SCOUTING NETWORK</h2>
-          <p class="text-xs text-slate-400">Bid on players, negotiate contracts, and strengthen your squad.</p>
-        </div>
-        <div class="flex items-center gap-2">
-          <input type="text" id="market-search" oninput="filterTransfers()" placeholder="Search player..." class="bg-slate-900 border border-slate-700 text-xs rounded px-3 py-1.5 text-white focus:outline-none focus:border-sky-500">
-          <select id="market-pos-filter" onchange="filterTransfers()" class="bg-slate-900 border border-slate-700 text-xs rounded px-2 py-1.5 text-white">
-            <option value="ALL">All Positions</option>
-            <option value="GK">Goalkeepers</option>
-            <option value="DEF">Defenders</option>
-            <option value="MID">Midfielders</option>
-            <option value="FWD">Forwards</option>
-          </select>
-        </div>
-      </div>
-
-      <div class="lma-panel rounded-xl overflow-hidden">
-        <div class="overflow-x-auto max-h-[480px]">
-          <table class="w-full text-left text-xs">
-            <thead class="bg-slate-900/90 text-slate-400 uppercase tracking-wider text-[10px] sticky top-0 border-b border-slate-700">
-              <tr>
-                <th class="p-3">Player</th>
-                <th class="p-3">Pos</th>
-                <th class="p-3">Club</th>
-                <th class="p-3">Age</th>
-                <th class="p-3">OVR</th>
-                <th class="p-3">Stats (H/T/P/S/Sp)</th>
-                <th class="p-3">Market Fee</th>
-                <th class="p-3">Wage</th>
-                <th class="p-3 text-right">Action</th>
-              </tr>
-            </thead>
-            <tbody id="transfer-table-body" class="divide-y divide-slate-800 font-mono"></tbody>
-          </table>
-        </div>
-      </div>
-    </section>
-
-    <!-- ================= TAB 6: STANDINGS ================= -->
-    <section id="tab-table" class="space-y-4 hidden">
-      <div class="lma-panel rounded-xl p-4 flex justify-between items-center">
-        <div>
-          <h2 class="text-base md:text-lg font-console font-bold text-white">PREMIERSHIP LEAGUE TABLE</h2>
-          <p class="text-xs text-slate-400">Top 4 qualify for Europe &bull; Bottom 2 face relegation</p>
-        </div>
-        <div class="text-right">
-          <span class="text-xs text-amber-400 font-console font-bold">14 GAMES TOTAL</span>
-        </div>
-      </div>
-
-      <div class="lma-panel rounded-xl overflow-hidden shadow-2xl">
-        <div class="overflow-x-auto">
-          <table class="w-full text-left text-xs">
-            <thead class="bg-slate-900 text-slate-400 uppercase tracking-wider text-[10px] border-b border-slate-700">
-              <tr>
-                <th class="p-3 text-center">Pos</th>
-                <th class="p-3">Club</th>
-                <th class="p-3 text-center">Pld</th>
-                <th class="p-3 text-center">W</th>
-                <th class="p-3 text-center">D</th>
-                <th class="p-3 text-center">L</th>
-                <th class="p-3 text-center">GF</th>
-                <th class="p-3 text-center">GA</th>
-                <th class="p-3 text-center">GD</th>
-                <th class="p-3 text-center font-bold text-white">Pts</th>
-                <th class="p-3 text-center">Type</th>
-              </tr>
-            </thead>
-            <tbody id="league-table-body" class="divide-y divide-slate-800 font-mono"></tbody>
-          </table>
-        </div>
-      </div>
-    </section>
-
-    <!-- ================= TAB 7: TROPHY CABINET ================= -->
-    <section id="tab-trophies" class="space-y-4 hidden">
-      <div class="lma-panel rounded-xl p-4 flex justify-between items-center flex-wrap gap-4">
-        <div>
-          <h2 class="text-base md:text-lg font-console font-bold text-white">TROPHY CABINET & HONOURS</h2>
-          <p class="text-xs text-slate-400">Career silverware, clean sheets, and managerial records.</p>
-        </div>
-        <div class="text-right font-console text-amber-400 font-bold text-xs">
-          HALL OF FAME
-        </div>
-      </div>
-
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-4" id="trophy-cabinet-grid">
-        <!-- Dynamic Trophies injected -->
-      </div>
-
-      <div class="lma-panel rounded-xl p-4">
-        <h3 class="font-console font-bold text-sky-300 text-xs uppercase mb-3 border-b border-slate-700 pb-1">
-          MANAGER MILESTONES & RECORDS
-        </h3>
-        <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 text-center font-mono" id="milestones-container">
-          <!-- Dynamic records -->
-        </div>
-      </div>
-    </section>
-
-    <!-- ================= TAB 8: MANAGER ROOM ================= -->
-    <section id="tab-multiplayer" class="space-y-4 hidden">
-      <div class="lma-panel rounded-xl p-5">
-        <h2 class="text-base md:text-lg font-console font-bold text-white mb-1">LOCAL MULTIPLAYER / PASS & PLAY</h2>
-        <p class="text-xs text-slate-400 mb-4">
-          Compete against your friends! Toggle <span class="text-emerald-400 font-bold">READY</span> once your lineup, tactics, and stadium decisions are set.
-        </p>
-
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4" id="multiplayer-managers-grid"></div>
-
-        <div class="mt-6 p-4 bg-slate-950/80 rounded-xl border border-slate-800 flex flex-wrap items-center justify-between gap-4">
-          <div>
-            <h4 class="text-xs md:text-sm font-console font-bold text-white">ALL MANAGERS STATUS</h4>
-            <p class="text-xs text-slate-400">When all human managers are ready, match simulation advances.</p>
+      <!-- STANDINGS TAB -->
+      <div id="tab-standings" class="tab-pane" style="display: none;">
+        <div class="standings-card">
+          <div class="league-tabs">
+            <button class="league-tab-btn active" onclick="renderStandingsTable(0)" id="tabTier0">Premier League</button>
+            <button class="league-tab-btn" onclick="renderStandingsTable(1)" id="tabTier1">Championship</button>
+            <button class="league-tab-btn" onclick="renderStandingsTable(2)" id="tabTier2">League One</button>
+            <button class="league-tab-btn" onclick="renderStandingsTable(3)" id="tabTier3">League Two</button>
           </div>
-          <button id="btn-advance-matchday-room" onclick="advanceFromMultiplayerRoom()" class="px-5 py-2 rounded-lg font-console text-xs font-bold uppercase tracking-wider bg-slate-700 text-slate-400 cursor-not-allowed transition" disabled>
-            Advance to Matchday ⚽
-          </button>
+
+          <table class="fm-table" id="leagueTableElem">
+            <thead>
+              <tr>
+                <th style="width: 40px;">Pos</th>
+                <th>Club</th>
+                <th style="width: 45px;">P</th>
+                <th style="width: 45px;">W</th>
+                <th style="width: 45px;">D</th>
+                <th style="width: 45px;">L</th>
+                <th style="width: 50px;">GD</th>
+                <th style="width: 55px;">PTS</th>
+              </tr>
+            </thead>
+            <tbody id="leagueTableBody"></tbody>
+          </table>
         </div>
       </div>
-    </section>
-  </main>
 
-  <!-- Transfer Modal -->
-  <div id="transfer-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
-    <div class="lma-panel rounded-2xl max-w-md w-full p-5 border border-sky-400/30 shadow-2xl space-y-4">
-      <div class="flex justify-between items-center border-b border-slate-700 pb-2">
-        <h3 class="font-console font-bold text-base text-white">NEGOTIATE CONTRACT</h3>
-        <button onclick="closeBidModal()" class="text-slate-400 hover:text-white">&times;</button>
-      </div>
-      <div id="bid-modal-content" class="text-xs space-y-3 font-mono"></div>
-      <div class="flex gap-2 justify-end pt-2">
-        <button onclick="closeBidModal()" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 rounded text-slate-300 font-console text-xs">Cancel</button>
-        <button onclick="confirmPlayerSigning()" class="px-4 py-1.5 bg-emerald-600 hover:bg-emerald-500 rounded text-white font-console text-xs font-bold">Confirm Transfer</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- Save / Load / Import Modal -->
-  <div id="save-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
-    <div class="lma-panel rounded-2xl max-w-md w-full p-5 border border-amber-400/30 shadow-2xl space-y-4">
-      <div class="flex justify-between items-center border-b border-slate-700 pb-2">
-        <h3 class="font-console font-bold text-base text-white">CAREER SAVE MANAGEMENT</h3>
-        <button onclick="closeSaveModal()" class="text-slate-400 hover:text-white">&times;</button>
-      </div>
-      <div class="text-xs text-slate-300 space-y-3 font-mono">
-        <p>Your game automatically persists to browser <span class="text-amber-400 font-semibold">localStorage</span>. You can also export the save file to pass it to a friend playing on GitHub Pages!</p>
-        
-        <div class="flex flex-col gap-2 pt-2">
-          <button onclick="exportSaveFile()" class="w-full py-2 bg-sky-700 hover:bg-sky-600 text-white rounded font-console text-xs font-bold uppercase transition flex items-center justify-center gap-2">
-            <span>📥</span> Export Save File (JSON)
-          </button>
-          
-          <label class="w-full py-2 bg-emerald-700 hover:bg-emerald-600 text-white rounded font-console text-xs font-bold uppercase transition flex items-center justify-center gap-2 cursor-pointer">
-            <span>📤</span> Import Friend's Save File
-            <input type="file" id="import-save-input" accept=".json" onchange="importSaveFile(event)" class="hidden">
-          </label>
-
-          <button onclick="resetGameCareer()" class="w-full py-2 bg-rose-900/60 hover:bg-rose-800 text-rose-300 border border-rose-700/50 rounded font-console text-xs font-bold uppercase transition">
-            ⚠️ Reset New Season
-          </button>
+      <!-- TRANSFERS TAB -->
+      <div id="tab-transfers" class="tab-pane" style="display: none;">
+        <div class="standings-card">
+          <h3 style="margin-bottom: 12px;">Transfer & Free Agent Scouting Market</h3>
+          <table class="fm-table">
+            <thead>
+              <tr>
+                <th>Target Player</th>
+                <th>Position</th>
+                <th>Age</th>
+                <th>Rating</th>
+                <th>Asking Price</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="transferMarketBody"></tbody>
+          </table>
         </div>
       </div>
-    </div>
-  </div>
 
-  <!-- In-Match Sub Selection Modal -->
-  <div id="match-sub-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
-    <div class="lma-panel rounded-2xl max-w-md w-full p-5 border border-sky-400/40 shadow-2xl space-y-3">
-      <div class="flex justify-between items-center border-b border-slate-700 pb-2">
-        <h3 class="font-console font-bold text-sm text-white">SELECT PITCH PLAYER TO REPLACE</h3>
-        <button onclick="closeSubModal()" class="text-slate-400 hover:text-white">&times;</button>
+      <!-- FACILITIES TAB -->
+      <div id="tab-facilities" class="tab-pane" style="display: none;">
+        <div class="standings-card">
+          <h3 style="margin-bottom: 12px;">Stadium Expansion & Medical Facilities</h3>
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 14px;" id="facilitiesList"></div>
+        </div>
       </div>
-      <p id="sub-incoming-player-desc" class="text-xs text-emerald-400 font-mono"></p>
-      <div id="sub-pitch-candidates" class="space-y-1 max-h-[220px] overflow-y-auto font-mono text-xs"></div>
+
+      <!-- MANAGER OFFICE TAB -->
+      <div id="tab-manager" class="tab-pane" style="display: none;">
+        <div class="standings-card">
+          <h3 style="margin-bottom: 12px;">Manager Dossier & Board Objectives</h3>
+          <div id="managerProfileSummary" style="font-size: 0.88rem; line-height: 1.6;"></div>
+        </div>
+      </div>
+
+      <!-- HONOURS TAB -->
+      <div id="tab-honours" class="tab-pane" style="display: none;">
+        <div class="standings-card">
+          <h3 style="margin-bottom: 12px;">Manager Trophy Room & Monthly Accolades</h3>
+          <div id="honoursList" style="display: flex; gap: 16px; flex-wrap: wrap;"></div>
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+  <!-- END OF SEASON REVIEW MODAL -->
+  <div id="endSeasonModal" class="modal-backdrop" style="display: none;">
+    <div class="modal-window">
+      <div class="modal-header">
+        <h2 id="eosTitle">🏆 End of Season Gala</h2>
+        <button class="modal-close" onclick="closeEosModal()">✕</button>
+      </div>
+      <div id="eosSummaryContent" style="font-size: 0.85rem; line-height: 1.6; margin-bottom: 20px;"></div>
+      <button class="btn-advance-master" style="width: 100%; justify-content: center;" onclick="executeNextSeasonTransition()">
+        🎉 COMMENCE NEXT SEASON
+      </button>
     </div>
   </div>
 
-  <!-- Notification Toast -->
-  <div id="game-toast" class="fixed bottom-5 right-5 z-50 bg-slate-900 border border-sky-500 text-white px-4 py-2.5 rounded-lg shadow-2xl font-console text-xs transform translate-y-20 opacity-0 transition-all duration-300 flex items-center gap-2">
-    <span id="toast-icon">ℹ️</span>
-    <span id="toast-msg">Notification text</span>
+  <!-- CLUB SELECTOR MODAL -->
+  <div id="clubSelectorModal" class="modal-backdrop" style="display: none;">
+    <div class="modal-window" style="width: 800px;">
+      <div class="modal-header">
+        <h2>Choose Your Club</h2>
+        <button class="modal-close" onclick="closeClubSelectorModal()">✕</button>
+      </div>
+      <div style="display: flex; gap: 8px; margin-bottom: 14px;">
+        <button class="league-tab-btn active" onclick="filterModalClubs(0)" id="mTab0">Premier League (20)</button>
+        <button class="league-tab-btn" onclick="filterModalClubs(1)" id="mTab1">Championship (24)</button>
+        <button class="league-tab-btn" onclick="filterModalClubs(2)" id="mTab2">League One (24)</button>
+        <button class="league-tab-btn" onclick="filterModalClubs(3)" id="mTab3">League Two (24)</button>
+      </div>
+      <div id="modalClubsGrid" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; max-height: 400px; overflow-y: auto;"></div>
+    </div>
   </div>
 
-  <footer class="bg-slate-950/80 border-t border-slate-900 py-3 text-center text-[11px] text-slate-500 font-console">
-    LMA Club Manager &bull; Retro 2007 Simulation Engine &bull; Ready for GitHub Pages
+  <!-- FOOTER -->
+  <footer>
+    Created by Jason Adams &amp; Jonathan Brewer - Football League Manager
   </footer>
 
   <script>
-    let audioCtx = null;
-    let soundEnabled = true;
+    /* =====================================================================
+       FOOTBALL LEAGUE MANAGER 2026/27 - CORE ENGINE
+       ===================================================================== */
 
-    function initAudio() {
-      if (!audioCtx) {
-        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-      }
-    }
+    const STORAGE_KEY = 'FLM_CAREER_V2026_FINAL';
 
-    function toggleAudio() {
-      soundEnabled = !soundEnabled;
-      const btn = document.getElementById('btn-sound');
-      btn.innerText = soundEnabled ? '🔊' : '🔇';
-      showToast(soundEnabled ? 'Sound FX Enabled' : 'Sound FX Muted', '🔊');
-    }
-
-    function playSound(type) {
-      if (!soundEnabled) return;
-      try {
-        initAudio();
-        const now = audioCtx.currentTime;
-
-        if (type === 'click') {
-          const osc = audioCtx.createOscillator();
-          const gain = audioCtx.createGain();
-          osc.type = 'triangle';
-          osc.frequency.setValueAtTime(450, now);
-          osc.frequency.exponentialRampToValueAtTime(850, now + 0.05);
-          gain.gain.setValueAtTime(0.12, now);
-          gain.gain.linearRampToValueAtTime(0.01, now + 0.05);
-          osc.connect(gain);
-          gain.connect(audioCtx.destination);
-          osc.start(now);
-          osc.stop(now + 0.05);
-        } else if (type === 'whistle') {
-          [0, 0.11].forEach(offset => {
-            const osc = audioCtx.createOscillator();
-            const gain = audioCtx.createGain();
-            osc.type = 'sine';
-            osc.frequency.setValueAtTime(2500, now + offset);
-            osc.frequency.exponentialRampToValueAtTime(3000, now + offset + 0.08);
-            gain.gain.setValueAtTime(0.2, now + offset);
-            gain.gain.linearRampToValueAtTime(0.01, now + offset + 0.08);
-            osc.connect(gain);
-            gain.connect(audioCtx.destination);
-            osc.start(now + offset);
-            osc.stop(now + offset + 0.08);
-          });
-        } else if (type === 'goal') {
-          const bufferSize = audioCtx.sampleRate * 0.9;
-          const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
-          const data = buffer.getChannelData(0);
-          for (let i = 0; i < bufferSize; i++) {
-            data[i] = (Math.random() * 2 - 1) * 0.35;
-          }
-          const noise = audioCtx.createBufferSource();
-          noise.buffer = buffer;
-          const filter = audioCtx.createBiquadFilter();
-          filter.type = 'bandpass';
-          filter.frequency.setValueAtTime(700, now);
-          filter.frequency.linearRampToValueAtTime(1500, now + 0.4);
-          const gain = audioCtx.createGain();
-          gain.gain.setValueAtTime(0.4, now);
-          gain.gain.exponentialRampToValueAtTime(0.01, now + 0.9);
-          noise.connect(filter);
-          filter.connect(gain);
-          gain.connect(audioCtx.destination);
-          noise.start(now);
-        } else if (type === 'cash') {
-          const osc = audioCtx.createOscillator();
-          const gain = audioCtx.createGain();
-          osc.type = 'sine';
-          osc.frequency.setValueAtTime(987, now);
-          osc.frequency.setValueAtTime(1318, now + 0.08);
-          gain.gain.setValueAtTime(0.15, now);
-          gain.gain.linearRampToValueAtTime(0.01, now + 0.2);
-          osc.connect(gain);
-          gain.connect(audioCtx.destination);
-          osc.start(now);
-          osc.stop(now + 0.2);
-        }
-      } catch (e) {
-        console.warn('Audio play error:', e);
-      }
-    }
-
-    const TEAMS = [
-      { id: 'MR', name: 'Manchester Red', short: 'MR', color: '#dc2626', budget: 45000000, isHuman: true, managerName: 'Manager Alex', isReady: false },
-      { id: 'NL', name: 'North London', short: 'NL', color: '#ef4444', budget: 40000000, isHuman: true, managerName: 'Manager Arsène', isReady: false },
-      { id: 'MB', name: 'Merseyside Blue', short: 'MB', color: '#2563eb', budget: 28000000, isHuman: false, managerName: 'AI Moyes', isReady: true },
-      { id: 'MW', name: 'Merseyside Red', short: 'MW', color: '#b91c1c', budget: 38000000, isHuman: false, managerName: 'AI Rafa', isReady: true },
-      { id: 'WM', name: 'West London Blues', short: 'WM', color: '#1d4ed8', budget: 55000000, isHuman: false, managerName: 'AI Jose', isReady: true },
-      { id: 'NC', name: 'Tyne Castle', short: 'NC', color: '#475569', budget: 22000000, isHuman: false, managerName: 'AI Keegan', isReady: true },
-      { id: 'AV', name: 'Midland Lions', short: 'AV', color: '#7c2d12', budget: 20000000, isHuman: false, managerName: 'AI Martin', isReady: true },
-      { id: 'TH', name: 'North White', short: 'TH', color: '#0369a1', budget: 30000000, isHuman: false, managerName: 'AI Harry', isReady: true }
-    ];
-
+    // Formation Coordinate Templates for 2D Pitch (FM Style)
     const FORMATIONS = {
-      '4-4-2': [
-        { role: 'GK', x: 50, y: 88 },
-        { role: 'LB', x: 18, y: 70 },
-        { role: 'CB', x: 38, y: 72 },
-        { role: 'CB', x: 62, y: 72 },
-        { role: 'RB', x: 82, y: 70 },
-        { role: 'LM', x: 18, y: 44 },
-        { role: 'CM', x: 38, y: 48 },
-        { role: 'CM', x: 62, y: 48 },
-        { role: 'RM', x: 82, y: 44 },
-        { role: 'ST', x: 40, y: 20 },
-        { role: 'ST', x: 60, y: 20 }
-      ],
       '4-3-3': [
-        { role: 'GK', x: 50, y: 88 },
-        { role: 'LB', x: 18, y: 70 },
-        { role: 'CB', x: 38, y: 72 },
-        { role: 'CB', x: 62, y: 72 },
-        { role: 'RB', x: 82, y: 70 },
-        { role: 'DM', x: 50, y: 52 },
-        { role: 'CM', x: 32, y: 42 },
-        { role: 'CM', x: 68, y: 42 },
-        { role: 'LW', x: 22, y: 22 },
-        { role: 'ST', x: 50, y: 16 },
-        { role: 'RW', x: 78, y: 22 }
+        { role: 'GK', duty: 'SK-De', x: 50, y: 88 },
+        { role: 'DR', duty: 'WB-At', x: 86, y: 70 },
+        { role: 'DCR', duty: 'BPD-De', x: 62, y: 73 },
+        { role: 'DCL', duty: 'CD-De', x: 38, y: 73 },
+        { role: 'DL', duty: 'WB-Su', x: 14, y: 70 },
+        { role: 'DM', duty: 'DLP-De', x: 50, y: 55 },
+        { role: 'MCR', duty: 'MEZ-At', x: 68, y: 44 },
+        { role: 'MCL', duty: 'BBM-Su', x: 32, y: 44 },
+        { role: 'AMR', duty: 'IF-At', x: 84, y: 25 },
+        { role: 'AML', duty: 'IW-At', x: 16, y: 25 },
+        { role: 'STC', duty: 'AF-At', x: 50, y: 15 }
+      ],
+      '4-2-3-1': [
+        { role: 'GK', duty: 'SK-De', x: 50, y: 88 },
+        { role: 'DR', duty: 'FB-At', x: 86, y: 70 },
+        { role: 'DCR', duty: 'BPD-De', x: 62, y: 73 },
+        { role: 'DCL', duty: 'CD-De', x: 38, y: 73 },
+        { role: 'DL', duty: 'FB-Su', x: 14, y: 70 },
+        { role: 'MCR', duty: 'BBM-Su', x: 64, y: 53 },
+        { role: 'MCL', duty: 'DLP-De', x: 36, y: 53 },
+        { role: 'AMR', duty: 'W-At', x: 84, y: 32 },
+        { role: 'AMC', duty: 'AP-Su', x: 50, y: 32 },
+        { role: 'AML', duty: 'IF-At', x: 16, y: 32 },
+        { role: 'STC', duty: 'PF-At', x: 50, y: 14 }
+      ],
+      '4-4-2': [
+        { role: 'GK', duty: 'GK-De', x: 50, y: 88 },
+        { role: 'DR', duty: 'FB-Su', x: 86, y: 70 },
+        { role: 'DCR', duty: 'CD-De', x: 62, y: 73 },
+        { role: 'DCL', duty: 'CD-De', x: 38, y: 73 },
+        { role: 'DL', duty: 'FB-Su', x: 14, y: 70 },
+        { role: 'MR', duty: 'W-Su', x: 86, y: 46 },
+        { role: 'MCR', duty: 'CM-At', x: 62, y: 48 },
+        { role: 'MCL', duty: 'BBM-Su', x: 38, y: 48 },
+        { role: 'ML', duty: 'W-At', x: 14, y: 46 },
+        { role: 'STR', duty: 'AF-At', x: 60, y: 18 },
+        { role: 'STL', duty: 'TF-Su', x: 40, y: 18 }
+      ],
+      '5-3-2': [
+        { role: 'GK', duty: 'SK-De', x: 50, y: 88 },
+        { role: 'WBR', duty: 'CWB-At', x: 88, y: 58 },
+        { role: 'DCR', duty: 'BPD-De', x: 68, y: 73 },
+        { role: 'DC', duty: 'CD-Co', x: 50, y: 75 },
+        { role: 'DCL', duty: 'BPD-De', x: 32, y: 73 },
+        { role: 'WBL', duty: 'CWB-At', x: 12, y: 58 },
+        { role: 'MCR', duty: 'MEZ-Su', x: 66, y: 42 },
+        { role: 'MC', duty: 'DLP-De', x: 50, y: 45 },
+        { role: 'MCL', duty: 'BBM-Su', x: 34, y: 42 },
+        { role: 'STR', duty: 'AF-At', x: 60, y: 16 },
+        { role: 'STL', duty: 'PF-At', x: 40, y: 16 }
       ],
       '3-5-2': [
-        { role: 'GK', x: 50, y: 88 },
-        { role: 'CB', x: 28, y: 72 },
-        { role: 'CB', x: 50, y: 74 },
-        { role: 'CB', x: 72, y: 72 },
-        { role: 'LWB', x: 14, y: 48 },
-        { role: 'CM', x: 36, y: 50 },
-        { role: 'CAM', x: 50, y: 38 },
-        { role: 'CM', x: 64, y: 50 },
-        { role: 'RWB', x: 86, y: 48 },
-        { role: 'ST', x: 38, y: 18 },
-        { role: 'ST', x: 62, y: 18 }
+        { role: 'GK', duty: 'SK-De', x: 50, y: 88 },
+        { role: 'DCR', duty: 'WCB-Su', x: 70, y: 73 },
+        { role: 'DC', duty: 'CD-De', x: 50, y: 75 },
+        { role: 'DCL', duty: 'WCB-Su', x: 30, y: 73 },
+        { role: 'MR', duty: 'DW-Su', x: 88, y: 46 },
+        { role: 'MCR', duty: 'CM-At', x: 64, y: 44 },
+        { role: 'MC', duty: 'BBM-Su', x: 50, y: 48 },
+        { role: 'MCL', duty: 'DLP-De', x: 36, y: 44 },
+        { role: 'ML', duty: 'DW-Su', x: 12, y: 46 },
+        { role: 'STR', duty: 'AF-At', x: 60, y: 18 },
+        { role: 'STL', duty: 'DLF-Su', x: 40, y: 18 }
       ]
     };
 
-    let currentWeek = 1;
-    const maxWeeks = 14;
-    let activeTeamIndex = 0;
-    let selectedPlayerForSwap = null;
-    let pendingBidPlayer = null;
-    let isSimulating = false;
-    let isMatchPaused = false;
-    let matchInterval = null;
-    let activeTacticalShout = null;
-    let pendingSubBenchIdx = null;
+    // Full 92 English Clubs Catalog
+    const CLUBS_DATABASE = [
+      // PREMIER LEAGUE (20)
+      { id: 'ARS', name: 'Arsenal', div: 0, budget: 65, stadium: 'Emirates Stadium', cap: 60704, att: 89, mid: 88, def: 88, col: '#ef4444' },
+      { id: 'AVL', name: 'Aston Villa', div: 0, budget: 35, stadium: 'Villa Park', cap: 42682, att: 83, mid: 82, def: 81, col: '#9333ea' },
+      { id: 'BOU', name: 'Bournemouth', div: 0, budget: 18, stadium: 'Vitality Stadium', cap: 11307, att: 77, mid: 76, def: 75, col: '#dc2626' },
+      { id: 'BRE', name: 'Brentford', div: 0, budget: 20, stadium: 'Gtech Community Stadium', cap: 17250, att: 78, mid: 77, def: 76, col: '#e11d48' },
+      { id: 'BHA', name: 'Brighton & Hove Albion', div: 0, budget: 30, stadium: 'Amex Stadium', cap: 31800, att: 81, mid: 81, def: 79, col: '#0284c7' },
+      { id: 'CHE', name: 'Chelsea', div: 0, budget: 75, stadium: 'Stamford Bridge', cap: 40341, att: 84, mid: 83, def: 82, col: '#2563eb' },
+      { id: 'CRY', name: 'Crystal Palace', div: 0, budget: 22, stadium: 'Selhurst Park', cap: 25486, att: 78, mid: 77, def: 78, col: '#1d4ed8' },
+      { id: 'EVE', name: 'Everton', div: 0, budget: 15, stadium: 'Hill Dickinson Stadium', cap: 52888, att: 76, mid: 76, def: 77, col: '#1e40af' },
+      { id: 'FUL', name: 'Fulham', div: 0, budget: 22, stadium: 'Craven Cottage', cap: 25700, att: 78, mid: 78, def: 77, col: '#ffffff' },
+      { id: 'IPS', name: 'Ipswich Town', div: 0, budget: 15, stadium: 'Portman Road', cap: 30014, att: 74, mid: 74, def: 73, col: '#1d4ed8' },
+      { id: 'LEI', name: 'Leicester City', div: 0, budget: 20, stadium: 'King Power Stadium', cap: 32262, att: 76, mid: 76, def: 75, col: '#2563eb' },
+      { id: 'LIV', name: 'Liverpool', div: 0, budget: 70, stadium: 'Anfield', cap: 61276, att: 88, mid: 86, def: 87, col: '#dc2626' },
+      { id: 'MCI', name: 'Manchester City', div: 0, budget: 95, stadium: 'Etihad Stadium', cap: 53400, att: 90, mid: 90, def: 89, col: '#38bdf8' },
+      { id: 'MUN', name: 'Manchester United', div: 0, budget: 60, stadium: 'Old Trafford', cap: 74310, att: 83, mid: 82, def: 81, col: '#b91c1c' },
+      { id: 'NEW', name: 'Newcastle United', div: 0, budget: 50, stadium: "St James' Park", cap: 52305, att: 84, mid: 83, def: 82, col: '#334155' },
+      { id: 'NFO', name: 'Nottingham Forest', div: 0, budget: 25, stadium: 'City Ground', cap: 30445, att: 79, mid: 78, def: 78, col: '#dc2626' },
+      { id: 'SOU', name: 'Southampton', div: 0, budget: 24, stadium: "St Mary's Stadium", cap: 32384, att: 77, mid: 76, def: 75, col: '#e11d48' },
+      { id: 'TOT', name: 'Tottenham Hotspur', div: 0, budget: 55, stadium: 'Tottenham Hotspur Stadium', cap: 62850, att: 85, mid: 83, def: 82, col: '#ffffff' },
+      { id: 'WHU', name: 'West Ham United', div: 0, budget: 35, stadium: 'London Stadium', cap: 62500, att: 81, mid: 80, def: 79, col: '#831843' },
+      { id: 'WOL', name: 'Wolverhampton Wanderers', div: 0, budget: 22, stadium: 'Molineux', cap: 31750, att: 78, mid: 77, def: 77, col: '#d97706' },
 
-    // Team Tactical Settings
-    const teamTactics = {};
-    TEAMS.forEach(team => {
-      teamTactics[team.id] = {
-        formation: '4-4-2',
-        mentality: 3,
-        passing: 3,
-        pressing: 4
-      };
-    });
+      // CHAMPIONSHIP (24)
+      { id: 'BLA', name: 'Blackburn Rovers', div: 1, budget: 7, stadium: 'Ewood Park', cap: 31367, att: 71, mid: 70, def: 70, col: '#2563eb' },
+      { id: 'BRC', name: 'Bristol City', div: 1, budget: 8, stadium: 'Ashton Gate', cap: 27000, att: 70, mid: 71, def: 70, col: '#dc2626' },
+      { id: 'BUR', name: 'Burnley', div: 1, budget: 18, stadium: 'Turf Moor', cap: 21944, att: 76, mid: 75, def: 75, col: '#831843' },
+      { id: 'CAR', name: 'Cardiff City', div: 1, budget: 8, stadium: 'Cardiff City Stadium', cap: 33280, att: 69, mid: 70, def: 69, col: '#1d4ed8' },
+      { id: 'COV', name: 'Coventry City', div: 1, budget: 10, stadium: 'Coventry Building Society Arena', cap: 32609, att: 73, mid: 72, def: 71, col: '#38bdf8' },
+      { id: 'DER', name: 'Derby County', div: 1, budget: 7, stadium: 'Pride Park', cap: 33597, att: 69, mid: 69, def: 69, col: '#ffffff' },
+      { id: 'HUL', name: 'Hull City', div: 1, budget: 8, stadium: 'MKM Stadium', cap: 25586, att: 71, mid: 71, def: 70, col: '#f59e0b' },
+      { id: 'LEE', name: 'Leeds United', div: 1, budget: 22, stadium: 'Elland Road', cap: 37608, att: 78, mid: 77, def: 76, col: '#ffffff' },
+      { id: 'LUT', name: 'Luton Town', div: 1, budget: 14, stadium: 'Kenilworth Road', cap: 12000, att: 74, mid: 73, def: 73, col: '#ea580c' },
+      { id: 'MID', name: 'Middlesbrough', div: 1, budget: 12, stadium: 'Riverside Stadium', cap: 34742, att: 74, mid: 73, def: 72, col: '#dc2626' },
+      { id: 'MIL', name: 'Millwall', div: 1, budget: 6, stadium: 'The Den', cap: 20146, att: 70, mid: 70, def: 71, col: '#1e3a8a' },
+      { id: 'NOR', name: 'Norwich City', div: 1, budget: 11, stadium: 'Carrow Road', cap: 27244, att: 73, mid: 72, def: 72, col: '#eab308' },
+      { id: 'OXF', name: 'Oxford United', div: 1, budget: 5, stadium: 'Kassam Stadium', cap: 12500, att: 68, mid: 68, def: 67, col: '#facc15' },
+      { id: 'PLY', name: 'Plymouth Argyle', div: 1, budget: 6, stadium: 'Home Park', cap: 17900, att: 69, mid: 68, def: 68, col: '#065f46' },
+      { id: 'POR', name: 'Portsmouth', div: 1, budget: 7, stadium: 'Fratton Park', cap: 20895, att: 69, mid: 69, def: 69, col: '#1d4ed8' },
+      { id: 'PNE', name: 'Preston North End', div: 1, budget: 6, stadium: 'Deepdale', cap: 23408, att: 70, mid: 69, def: 70, col: '#ffffff' },
+      { id: 'QPR', name: 'Queens Park Rangers', div: 1, budget: 7, stadium: 'Loftus Road', cap: 18439, att: 70, mid: 70, def: 69, col: '#1e40af' },
+      { id: 'SHU', name: 'Sheffield United', div: 1, budget: 16, stadium: 'Bramall Lane', cap: 32050, att: 75, mid: 74, def: 74, col: '#dc2626' },
+      { id: 'SHW', name: 'Sheffield Wednesday', div: 1, budget: 8, stadium: 'Hillsborough', cap: 39732, att: 72, mid: 71, def: 71, col: '#2563eb' },
+      { id: 'STO', name: 'Stoke City', div: 1, budget: 8, stadium: 'bet365 Stadium', cap: 30089, att: 71, mid: 70, def: 70, col: '#dc2626' },
+      { id: 'SUN', name: 'Sunderland', div: 1, budget: 14, stadium: 'Stadium of Light', cap: 49000, att: 75, mid: 74, def: 73, col: '#dc2626' },
+      { id: 'SWA', name: 'Swansea City', div: 1, budget: 8, stadium: '.com Stadium', cap: 21088, att: 71, mid: 71, def: 70, col: '#ffffff' },
+      { id: 'WAT', name: 'Watford', div: 1, budget: 9, stadium: 'Vicarage Road', cap: 22200, att: 72, mid: 71, def: 71, col: '#eab308' },
+      { id: 'WBA', name: 'West Bromwich Albion', div: 1, budget: 11, stadium: 'The Hawthorns', cap: 26850, att: 74, mid: 73, def: 73, col: '#1e3a8a' },
 
-    // Stadium & Infrastructure Data
-    const clubFacilities = {};
-    TEAMS.forEach(t => {
-      clubFacilities[t.id] = {
-        stadiumName: `${t.name} Stadium`,
-        stands: {
-          North: { level: 3, capacity: 18000 },
-          South: { level: 3, capacity: 18000 },
-          East: { level: 3, capacity: 19000 },
-          West: { level: 3, capacity: 19000 }
-        },
-        ticketPrice: 35, // in £
-        medicalCentre: 2, // 1 to 5 (reduces injury lengths)
-        youthFacility: 2, // 1 to 5 (yields better prospects)
-        trainingPitch: 2  // 1 to 5 (boosts fitness recovery)
-      };
-    });
+      // LEAGUE ONE (24)
+      { id: 'BAR', name: 'Barnsley', div: 2, budget: 3.5, stadium: 'Oakwell', cap: 23287, att: 66, mid: 65, def: 65, col: '#dc2626' },
+      { id: 'BIR', name: 'Birmingham City', div: 2, budget: 8.0, stadium: "St Andrew's", cap: 29409, att: 73, mid: 72, def: 71, col: '#1d4ed8' },
+      { id: 'BKP', name: 'Blackpool', div: 2, budget: 3.0, stadium: 'Bloomfield Road', cap: 16616, att: 66, mid: 65, def: 64, col: '#ea580c' },
+      { id: 'BOL', name: 'Bolton Wanderers', div: 2, budget: 4.0, stadium: 'Toughsheet Stadium', cap: 28723, att: 68, mid: 67, def: 66, col: '#1e3a8a' },
+      { id: 'BRR', name: 'Bristol Rovers', div: 2, budget: 2.5, stadium: 'Memorial Stadium', cap: 12011, att: 64, mid: 63, def: 63, col: '#2563eb' },
+      { id: 'BUR1', name: 'Burton Albion', div: 2, budget: 2.0, stadium: 'Pirelli Stadium', cap: 6912, att: 62, mid: 62, def: 62, col: '#facc15' },
+      { id: 'CAM', name: 'Cambridge United', div: 2, budget: 2.0, stadium: 'Abbey Stadium', cap: 7937, att: 62, mid: 61, def: 62, col: '#f59e0b' },
+      { id: 'CHA', name: 'Charlton Athletic', div: 2, budget: 3.5, stadium: 'The Valley', cap: 27111, att: 67, mid: 66, def: 65, col: '#dc2626' },
+      { id: 'CRA', name: 'Crawley Town', div: 2, budget: 1.8, stadium: 'Broadfield Stadium', cap: 6134, att: 61, mid: 60, def: 60, col: '#dc2626' },
+      { id: 'EXE', name: 'Exeter City', div: 2, budget: 2.0, stadium: 'St James Park', cap: 8720, att: 63, mid: 62, def: 62, col: '#dc2626' },
+      { id: 'HUD', name: 'Huddersfield Town', div: 2, budget: 4.5, stadium: 'John Smith Stadium', cap: 24121, att: 68, mid: 67, def: 67, col: '#38bdf8' },
+      { id: 'LEY', name: 'Leyton Orient', div: 2, budget: 2.5, stadium: 'Brisbane Road', cap: 9271, att: 64, mid: 63, def: 63, col: '#dc2626' },
+      { id: 'LIN', name: 'Lincoln City', div: 2, budget: 2.8, stadium: 'LNER Stadium', cap: 10669, att: 65, mid: 65, def: 65, col: '#dc2626' },
+      { id: 'MAN', name: 'Mansfield Town', div: 2, budget: 2.2, stadium: 'Field Mill', cap: 9186, att: 63, mid: 63, def: 62, col: '#eab308' },
+      { id: 'NOR1', name: 'Northampton Town', div: 2, budget: 2.0, stadium: 'Sixfields Stadium', cap: 7798, att: 62, mid: 62, def: 62, col: '#831843' },
+      { id: 'PET', name: 'Peterborough United', div: 2, budget: 3.5, stadium: 'London Road', cap: 15314, att: 67, mid: 66, def: 64, col: '#2563eb' },
+      { id: 'REA', name: 'Reading', div: 2, budget: 3.0, stadium: 'Select Car Leasing Stadium', cap: 24161, att: 66, mid: 65, def: 64, col: '#1e40af' },
+      { id: 'ROT', name: 'Rotherham United', div: 2, budget: 3.5, stadium: 'New York Stadium', cap: 12021, att: 67, mid: 66, def: 66, col: '#dc2626' },
+      { id: 'SHR', name: 'Shrewsbury Town', div: 2, budget: 2.0, stadium: 'New Meadow', cap: 9875, att: 62, mid: 61, def: 61, col: '#1d4ed8' },
+      { id: 'STE', name: 'Stevenage', div: 2, budget: 2.2, stadium: 'Broadhall Way', cap: 7800, att: 63, mid: 63, def: 63, col: '#dc2626' },
+      { id: 'STK', name: 'Stockport County', div: 2, budget: 3.0, stadium: 'Edgeley Park', cap: 10852, att: 66, mid: 65, def: 64, col: '#2563eb' },
+      { id: 'WIG', name: 'Wigan Athletic', div: 2, budget: 3.2, stadium: 'Brick Community Stadium', cap: 25138, att: 65, mid: 65, def: 64, col: '#1d4ed8' },
+      { id: 'WRX', name: 'Wrexham', div: 2, budget: 5.5, stadium: 'Racecourse Ground', cap: 12600, att: 69, mid: 68, def: 67, col: '#dc2626' },
+      { id: 'WYC', name: 'Wycombe Wanderers', div: 2, budget: 2.5, stadium: 'Adams Park', cap: 10137, att: 65, mid: 64, def: 64, col: '#38bdf8' },
 
-    // Trophy Room & Milestones Tracking
-    const clubHonours = {};
-    TEAMS.forEach(t => {
-      clubHonours[t.id] = {
-        leagueTitles: t.id === 'MR' ? 1 : 0,
-        managerOfTheMonth: 0,
-        cleanSheets: 0,
-        recordWin: '-',
-        topGoalscorer: '-'
-      };
-    });
+      // LEAGUE TWO (24)
+      { id: 'ACC', name: 'Accrington Stanley', div: 3, budget: 1.2, stadium: 'Wham Stadium', cap: 5450, att: 59, mid: 59, def: 58, col: '#dc2626' },
+      { id: 'WIM', name: 'AFC Wimbledon', div: 3, budget: 1.5, stadium: 'Plough Lane', cap: 9215, att: 61, mid: 60, def: 60, col: '#1d4ed8' },
+      { id: 'BAR1', name: 'Barrow', div: 3, budget: 1.2, stadium: 'Holker Street', cap: 5045, att: 59, mid: 59, def: 58, col: '#2563eb' },
+      { id: 'BRA', name: 'Bradford City', div: 3, budget: 2.2, stadium: 'Valley Parade', cap: 25136, att: 64, mid: 63, def: 63, col: '#831843' },
+      { id: 'BRO', name: 'Bromley', div: 3, budget: 1.0, stadium: 'Hayes Lane', cap: 5110, att: 57, mid: 57, def: 57, col: '#ffffff' },
+      { id: 'CAR1', name: 'Carlisle United', div: 3, budget: 1.5, stadium: 'Brunton Park', cap: 17949, att: 60, mid: 60, def: 59, col: '#1e40af' },
+      { id: 'CHE1', name: 'Cheltenham Town', div: 3, budget: 1.3, stadium: 'Whaddon Road', cap: 7066, att: 59, mid: 59, def: 58, col: '#dc2626' },
+      { id: 'CHF', name: 'Chesterfield', div: 3, budget: 2.0, stadium: 'SMH Group Stadium', cap: 10504, att: 63, mid: 62, def: 61, col: '#1d4ed8' },
+      { id: 'COL', name: 'Colchester United', div: 3, budget: 1.4, stadium: 'Colchester Stadium', cap: 10105, att: 59, mid: 59, def: 59, col: '#2563eb' },
+      { id: 'CRE', name: 'Crewe Alexandra', div: 3, budget: 1.4, stadium: 'Gresty Road', cap: 10153, att: 60, mid: 60, def: 59, col: '#dc2626' },
+      { id: 'DON', name: 'Doncaster Rovers', div: 3, budget: 1.8, stadium: 'Eco-Power Stadium', cap: 15231, att: 62, mid: 61, def: 60, col: '#dc2626' },
+      { id: 'FLE', name: 'Fleetwood Town', div: 3, budget: 1.4, stadium: 'Highbury Stadium', cap: 5472, att: 60, mid: 59, def: 59, col: '#dc2626' },
+      { id: 'GIL', name: 'Gillingham', div: 3, budget: 1.7, stadium: 'Priestfield Stadium', cap: 11582, att: 61, mid: 61, def: 60, col: '#1d4ed8' },
+      { id: 'GRI', name: 'Grimsby Town', div: 3, budget: 1.3, stadium: 'Blundell Park', cap: 9052, att: 59, mid: 59, def: 58, col: '#334155' },
+      { id: 'HAR', name: 'Harrogate Town', div: 3, budget: 1.0, stadium: 'Wetherby Road', cap: 5000, att: 58, mid: 58, def: 57, col: '#eab308' },
+      { id: 'MKD', name: 'MK Dons', div: 3, budget: 2.2, stadium: 'Stadium MK', cap: 30500, att: 63, mid: 62, def: 61, col: '#ffffff' },
+      { id: 'MOR', name: 'Morecambe', div: 3, budget: 1.0, stadium: 'Mazuma Stadium', cap: 6476, att: 57, mid: 57, def: 56, col: '#dc2626' },
+      { id: 'NEW1', name: 'Newport County', div: 3, budget: 1.1, stadium: 'Rodney Parade', cap: 7850, att: 58, mid: 58, def: 57, col: '#f59e0b' },
+      { id: 'NOT', name: 'Notts County', div: 3, budget: 2.0, stadium: 'Meadow Lane', cap: 19841, att: 64, mid: 62, def: 61, col: '#334155' },
+      { id: 'POV', name: 'Port Vale', div: 3, budget: 1.8, stadium: 'Vale Park', cap: 15695, att: 62, mid: 61, def: 61, col: '#ffffff' },
+      { id: 'SAL', name: 'Salford City', div: 3, budget: 1.6, stadium: 'Moor Lane', cap: 5108, att: 60, mid: 60, def: 59, col: '#dc2626' },
+      { id: 'SWI', name: 'Swindon Town', div: 3, budget: 1.5, stadium: 'County Ground', cap: 15728, att: 60, mid: 60, def: 59, col: '#dc2626' },
+      { id: 'TRA', name: 'Tranmere Rovers', div: 3, budget: 1.4, stadium: 'Prenton Park', cap: 16587, att: 59, mid: 59, def: 59, col: '#ffffff' },
+      { id: 'WAL', name: 'Walsall', div: 3, budget: 1.6, stadium: 'Bescot Stadium', cap: 11300, att: 61, mid: 61, def: 60, col: '#dc2626' }
+    ];
 
-    function createPlayer(id, name, pos, age, hnd, tck, pas, sho, spd, sta, teamId, value, wage) {
-      let ovr = 0;
-      if (pos === 'GK') ovr = Math.round(hnd * 0.7 + pas * 0.15 + sta * 0.15);
-      else if (pos === 'DEF') ovr = Math.round(tck * 0.55 + sta * 0.2 + spd * 0.15 + pas * 0.1);
-      else if (pos === 'MID') ovr = Math.round(pas * 0.45 + sta * 0.2 + tck * 0.15 + sho * 0.1 + spd * 0.1);
-      else ovr = Math.round(sho * 0.5 + spd * 0.25 + pas * 0.15 + sta * 0.1);
+    // Real Southampton 2026/27 Roster Preset
+    const SOU_REAL_ROSTER = [
+      { id: 'sou_1', name: 'Aaron Ramsdale', pos: 'GK', nat: 'ENG', age: 28, ovr: 81, con: 98, role: 'SK-De', starter: true },
+      { id: 'sou_2', name: 'Kyle Walker-Peters', pos: 'DR', nat: 'ENG', age: 29, ovr: 79, con: 96, role: 'WB-At', starter: true },
+      { id: 'sou_3', name: 'Taylor Harwood-Bellis', pos: 'DCR', nat: 'ENG', age: 24, ovr: 78, con: 97, role: 'BPD-De', starter: true },
+      { id: 'sou_4', name: 'Jan Bednarek', pos: 'DCL', nat: 'POL', age: 30, ovr: 77, con: 95, role: 'CD-De', starter: true },
+      { id: 'sou_5', name: 'Yukinari Sugawara', pos: 'DL', nat: 'JPN', age: 26, ovr: 77, con: 96, role: 'WB-Su', starter: true },
+      { id: 'sou_6', name: 'Flynn Downes', pos: 'DM', nat: 'ENG', age: 27, ovr: 77, con: 98, role: 'DLP-De', starter: true },
+      { id: 'sou_7', name: 'Mateus Fernandes', pos: 'MCR', nat: 'POR', age: 22, ovr: 78, con: 96, role: 'MEZ-At', starter: true },
+      { id: 'sou_8', name: 'Will Smallbone', pos: 'MCL', nat: 'IRL', age: 26, ovr: 75, con: 94, role: 'BBM-Su', starter: true },
+      { id: 'sou_9', name: 'Tyler Dibling', pos: 'AMR', nat: 'ENG', age: 20, ovr: 78, con: 97, role: 'IF-At', starter: true },
+      { id: 'sou_10', name: 'Ryan Fraser', pos: 'AML', nat: 'SCO', age: 32, ovr: 75, con: 93, role: 'IW-At', starter: true },
+      { id: 'sou_11', name: 'Cameron Archer', pos: 'STC', nat: 'ENG', age: 24, ovr: 77, con: 96, role: 'AF-At', starter: true },
+      // Bench
+      { id: 'sou_12', name: 'Alex McCarthy', pos: 'GK', nat: 'ENG', age: 36, ovr: 73, con: 100, role: 'GK-De', starter: false },
+      { id: 'sou_13', name: 'Jack Stephens', pos: 'DC', nat: 'ENG', age: 32, ovr: 74, con: 100, role: 'CD-De', starter: false },
+      { id: 'sou_14', name: 'Adam Armstrong', pos: 'ST', nat: 'ENG', age: 29, ovr: 76, con: 98, role: 'AF-At', starter: false },
+      { id: 'sou_15', name: 'Kamaldeen Sulemana', pos: 'AML', nat: 'GHA', age: 24, ovr: 76, con: 98, role: 'W-At', starter: false },
+      { id: 'sou_16', name: 'Paul Onuachu', pos: 'ST', nat: 'NGA', age: 32, ovr: 75, con: 95, role: 'TF-Su', starter: false },
+      { id: 'sou_17', name: 'Adam Lallana', pos: 'MC', nat: 'ENG', age: 38, ovr: 74, con: 90, role: 'AP-Su', starter: false },
+      { id: 'sou_18', name: 'Joe Lumley', pos: 'GK', nat: 'ENG', age: 31, ovr: 71, con: 100, role: 'GK-De', starter: false }
+    ];
 
-      return {
-        id, name, pos, age, hnd, tck, pas, sho, spd, sta,
-        ovr, teamId, value, wage,
-        condition: 96 + Math.floor(Math.random() * 5),
-        morale: 'Good',
-        injury: null // e.g. { type: 'Hamstring Tear', weeksRemaining: 2 }
-      };
-    }
+    // Procedural Name Pools for Realistic Squad Hydration
+    const SURNAMES = ['Smith', 'Johnson', 'Williams', 'Brown', 'Jones', 'Miller', 'Davis', 'Wilson', 'Anderson', 'Taylor', 'Thomas', 'Moore', 'Jackson', 'Martin', 'Lee', 'Perez', 'Thompson', 'White', 'Harris', 'Sanchez', 'Clark', 'Ramirez', 'Lewis', 'Robinson', 'Walker', 'Young', 'Allen', 'King', 'Wright', 'Scott', 'Torres', 'Nguyen', 'Hill', 'Flores', 'Green', 'Adams', 'Nelson', 'Baker', 'Hall', 'Rivera', 'Campbell', 'Mitchell', 'Carter', 'Roberts', 'Gomez', 'Phillips', 'Evans', 'Turner', 'Diaz', 'Parker', 'Cruz', 'Edwards', 'Collins', 'Reyes', 'Stewart', 'Morris', 'Morales', 'Murphy', 'Cook', 'Rogers', 'Gutierrez', 'Ortiz', 'Morgan', 'Cooper', 'Peterson', 'Bailey', 'Reed', 'Kelly', 'Howard', 'Ramos', 'Kim', 'Cox', 'Ward', 'Richardson', 'Watson', 'Brooks', 'Chavez', 'Wood', 'James', 'Bennett', 'Gray', 'Mendoza', 'Ruiz', 'Hughes', 'Price', 'Alvarez', 'Castillo', 'Sanders', 'Patel', 'Myers', 'Long', 'Ross', 'Foster', 'Jimenez', 'Powell', 'Jenkins', 'Perry', 'Russell', 'Sullivan', 'Bell', 'Coleman'];
+    const FIRSTNAMES = ['Jack', 'Oliver', 'Harry', 'George', 'Noah', 'Charlie', 'Jacob', 'Alfie', 'Freddie', 'Oscar', 'Leo', 'Logan', 'Archie', 'Theo', 'Thomas', 'James', 'Joshua', 'William', 'Henry', 'Lucas', 'Ethan', 'Mason', 'Harrison', 'Isaac', 'Finley', 'Teddy', 'Alexander', 'Daniel', 'Arthur', 'Edward'];
+    const NATIONS = ['ENG', 'ENG', 'ENG', 'SCO', 'WAL', 'IRL', 'NIR', 'FRA', 'ESP', 'GER', 'NED', 'POR', 'BRA', 'ARG'];
 
-    const SQUADS = {
-      'MR': [
-        createPlayer('p1', 'E. Van Der Sar', 'GK', 36, 88, 30, 72, 20, 58, 80, 'MR', 5000000, 55000),
-        createPlayer('p2', 'G. Neville', 'DEF', 32, 20, 84, 80, 52, 75, 85, 'MR', 6000000, 60000),
-        createPlayer('p3', 'R. Ferdinand', 'DEF', 28, 20, 90, 78, 45, 84, 88, 'MR', 18000000, 95000),
-        createPlayer('p4', 'N. Vidic', 'DEF', 25, 20, 89, 65, 55, 78, 90, 'MR', 16000000, 85000),
-        createPlayer('p5', 'P. Evra', 'DEF', 26, 20, 83, 79, 58, 87, 89, 'MR', 14000000, 80000),
-        createPlayer('p6', 'C. Ronaldo', 'MID', 22, 20, 50, 86, 91, 95, 90, 'MR', 35000000, 110000),
-        createPlayer('p7', 'P. Scholes', 'MID', 32, 20, 75, 94, 88, 68, 82, 'MR', 14000000, 90000),
-        createPlayer('p8', 'M. Carrick', 'MID', 26, 20, 80, 88, 72, 74, 85, 'MR', 12000000, 75000),
-        createPlayer('p9', 'R. Giggs', 'MID', 33, 20, 60, 89, 81, 84, 80, 'MR', 10000000, 85000),
-        createPlayer('p10', 'W. Rooney', 'FWD', 21, 20, 65, 84, 91, 89, 94, 'MR', 32000000, 105000),
-        createPlayer('p11', 'L. Saha', 'FWD', 28, 20, 40, 74, 83, 85, 80, 'MR', 9000000, 65000),
+    function generateProceduralSquad(club) {
+      const baseRating = Math.round((club.att + club.mid + club.def) / 3);
+      const rolesPattern = [
+        { pos: 'GK', role: 'SK-De', starter: true },
+        { pos: 'DR', role: 'WB-At', starter: true },
+        { pos: 'DCR', role: 'BPD-De', starter: true },
+        { pos: 'DCL', role: 'CD-De', starter: true },
+        { pos: 'DL', role: 'WB-Su', starter: true },
+        { pos: 'DM', role: 'DLP-De', starter: true },
+        { pos: 'MCR', role: 'MEZ-At', starter: true },
+        { pos: 'MCL', role: 'BBM-Su', starter: true },
+        { pos: 'AMR', role: 'IF-At', starter: true },
+        { pos: 'AML', role: 'IW-At', starter: true },
+        { pos: 'STC', role: 'AF-At', starter: true },
         // Subs
-        createPlayer('p12', 'T. Kuszczak', 'GK', 25, 76, 25, 60, 20, 55, 78, 'MR', 3000000, 30000),
-        createPlayer('p13', 'W. Brown', 'DEF', 27, 20, 81, 70, 40, 79, 82, 'MR', 6500000, 50000),
-        createPlayer('p14', 'D. Fletcher', 'MID', 23, 20, 81, 80, 70, 78, 89, 'MR', 8000000, 45000),
-        createPlayer('p15', 'A. Smith', 'FWD', 26, 20, 70, 72, 79, 80, 88, 'MR', 7000000, 45000)
-      ],
-      'NL': [
-        createPlayer('a1', 'J. Lehmann', 'GK', 37, 85, 25, 68, 15, 52, 78, 'NL', 4000000, 60000),
-        createPlayer('a2', 'E. Eboue', 'DEF', 24, 20, 79, 78, 54, 88, 85, 'NL', 8000000, 50000),
-        createPlayer('a3', 'K. Toure', 'DEF', 26, 20, 87, 72, 50, 85, 91, 'NL', 16000000, 85000),
-        createPlayer('a4', 'W. Gallas', 'DEF', 29, 20, 88, 70, 55, 81, 86, 'NL', 15000000, 85000),
-        createPlayer('a5', 'G. Clichy', 'DEF', 22, 20, 80, 76, 45, 90, 88, 'NL', 9000000, 55000),
-        createPlayer('a6', 'A. Hleb', 'MID', 26, 20, 52, 88, 74, 85, 83, 'NL', 12000000, 70000),
-        createPlayer('a7', 'C. Fabregas', 'MID', 20, 20, 70, 93, 78, 76, 86, 'NL', 26000000, 90000),
-        createPlayer('a8', 'Gilberto Silva', 'MID', 30, 20, 88, 82, 65, 74, 89, 'NL', 14000000, 80000),
-        createPlayer('a9', 'T. Rosicky', 'MID', 26, 20, 55, 87, 82, 83, 80, 'NL', 13000000, 75000),
-        createPlayer('a10', 'T. Henry', 'FWD', 29, 20, 45, 88, 96, 94, 86, 'NL', 38000000, 120000),
-        createPlayer('a11', 'R. Van Persie', 'FWD', 23, 20, 40, 84, 87, 85, 80, 'NL', 16000000, 75000),
-        // Subs
-        createPlayer('a12', 'M. Almunia', 'GK', 30, 75, 20, 60, 15, 52, 75, 'NL', 2500000, 30000),
-        createPlayer('a13', 'J. Djourou', 'DEF', 20, 20, 78, 65, 40, 77, 80, 'NL', 5000000, 35000),
-        createPlayer('a14', 'M. Flamini', 'MID', 23, 20, 82, 77, 65, 80, 90, 'NL', 7000000, 40000),
-        createPlayer('a15', 'E. Adebayor', 'FWD', 23, 20, 45, 72, 81, 84, 84, 'NL', 11000000, 55000)
-      ]
-    };
-
-    ['MB', 'MW', 'WM', 'NC', 'AV', 'TH'].forEach(cid => {
-      SQUADS[cid] = [
-        createPlayer(cid+'1', cid+' Keeper', 'GK', 28, 81, 20, 65, 10, 55, 80, cid, 5000000, 40000),
-        createPlayer(cid+'2', cid+' Fullback L', 'DEF', 25, 20, 79, 72, 45, 82, 85, cid, 6000000, 45000),
-        createPlayer(cid+'3', cid+' Stopper 1', 'DEF', 27, 20, 84, 65, 40, 76, 88, cid, 8500000, 50000),
-        createPlayer(cid+'4', cid+' Stopper 2', 'DEF', 26, 20, 83, 62, 42, 75, 87, cid, 8000000, 50000),
-        createPlayer(cid+'5', cid+' Fullback R', 'DEF', 24, 20, 80, 73, 46, 84, 84, cid, 6500000, 45000),
-        createPlayer(cid+'6', cid+' Winger L', 'MID', 25, 20, 55, 81, 75, 87, 82, cid, 9000000, 55000),
-        createPlayer(cid+'7', cid+' Anchor Mid', 'MID', 28, 20, 83, 80, 65, 74, 88, cid, 9500000, 60000),
-        createPlayer(cid+'8', cid+' Playmaker', 'MID', 26, 20, 60, 85, 78, 78, 83, cid, 11000000, 65000),
-        createPlayer(cid+'9', cid+' Winger R', 'MID', 24, 20, 50, 82, 76, 88, 82, cid, 8500000, 55000),
-        createPlayer(cid+'10', cid+' Target Man', 'FWD', 27, 20, 45, 72, 84, 79, 85, cid, 12000000, 70000),
-        createPlayer(cid+'11', cid+' Poacher', 'FWD', 23, 20, 35, 75, 85, 89, 82, cid, 13000000, 70000),
-        createPlayer(cid+'12', cid+' Sub GK', 'GK', 23, 73, 20, 58, 10, 50, 75, cid, 2000000, 20000),
-        createPlayer(cid+'13', cid+' Sub DEF', 'DEF', 22, 20, 76, 64, 40, 76, 80, cid, 4000000, 30000),
-        createPlayer(cid+'14', cid+' Sub MID', 'MID', 22, 20, 74, 76, 68, 77, 82, cid, 4500000, 30000),
-        createPlayer(cid+'15', cid+' Sub FWD', 'FWD', 21, 20, 38, 69, 78, 82, 80, cid, 5000000, 35000)
+        { pos: 'GK', role: 'GK-De', starter: false },
+        { pos: 'DC', role: 'CD-De', starter: false },
+        { pos: 'FB', role: 'FB-Su', starter: false },
+        { pos: 'MC', role: 'CM-At', starter: false },
+        { pos: 'W', role: 'W-At', starter: false },
+        { pos: 'ST', role: 'AF-At', starter: false },
+        { pos: 'AMC', role: 'AP-Su', starter: false }
       ];
-    });
 
-    // Transfer Market Pool
-    let TRANSFER_MARKET = [
-      createPlayer('tm1', 'L. Modric', 'MID', 21, 20, 68, 89, 81, 80, 85, 'Free Agent', 14000000, 65000),
-      createPlayer('tm2', 'G. Bale', 'DEF', 17, 20, 74, 78, 68, 91, 88, 'Free Agent', 11000000, 45000),
-      createPlayer('tm3', 'F. Torres', 'FWD', 23, 20, 40, 76, 90, 92, 86, 'Free Agent', 25000000, 95000),
-      createPlayer('tm4', 'G. Buffon', 'GK', 29, 93, 25, 70, 15, 60, 85, 'Free Agent', 28000000, 110000),
-      createPlayer('tm5', 'D. Alves', 'DEF', 24, 20, 82, 84, 70, 92, 92, 'Free Agent', 18000000, 80000),
-      createPlayer('tm6', 'Kaka', 'MID', 25, 20, 55, 92, 93, 91, 86, 'Free Agent', 38000000, 125000),
-      createPlayer('tm7', 'M. Richards', 'DEF', 19, 20, 83, 68, 50, 86, 92, 'Free Agent', 10000000, 40000),
-      createPlayer('tm8', 'K. Benzema', 'FWD', 19, 20, 38, 77, 85, 84, 82, 'Free Agent', 15000000, 60000)
-    ];
+      return rolesPattern.map((p, idx) => {
+        const fn = FIRSTNAMES[Math.floor(Math.random() * FIRSTNAMES.length)];
+        const sn = SURNAMES[Math.floor(Math.random() * SURNAMES.length)];
+        const nat = NATIONS[Math.floor(Math.random() * NATIONS.length)];
+        const age = 19 + Math.floor(Math.random() * 15);
+        const ratingVariance = (idx < 11) ? (Math.floor(Math.random() * 5) - 2) : (Math.floor(Math.random() * 6) - 4);
+        const ovr = Math.max(52, Math.min(94, baseRating + ratingVariance));
 
-    // Youth Academy Scouting Pool
-    let YOUTH_PROSPECTS = [
-      { id: 'y1', name: 'J. Wilshere', pos: 'MID', age: 16, ovr: 68, potential: 92, hnd: 20, tck: 60, pas: 78, sho: 70, spd: 82, sta: 80 },
-      { id: 'y2', name: 'A. Ramsey', pos: 'MID', age: 16, ovr: 66, potential: 88, hnd: 20, tck: 58, pas: 74, sho: 68, spd: 79, sta: 82 },
-      { id: 'y3', name: 'K. Walker', pos: 'DEF', age: 17, ovr: 67, potential: 87, hnd: 20, tck: 70, pas: 65, sho: 50, spd: 91, sta: 86 },
-      { id: 'y4', name: 'D. Welbeck', pos: 'FWD', age: 16, ovr: 65, potential: 85, hnd: 20, tck: 35, pas: 62, sho: 73, spd: 85, sta: 80 }
-    ];
-
-    // League Standings
-    let LEAGUE_TABLE = TEAMS.map(team => ({
-      teamId: team.id,
-      name: team.name,
-      played: 0,
-      won: 0,
-      drawn: 0,
-      lost: 0,
-      gf: 0,
-      ga: 0,
-      gd: 0,
-      points: 0,
-      isHuman: team.isHuman
-    }));
-
-    function generateLeagueSchedule() {
-      const rounds = [];
-      const teamIDs = TEAMS.map(t => t.id);
-
-      for (let w = 1; w <= maxWeeks; w++) {
-        const matches = [];
-        const offset = (w - 1) % (teamIDs.length - 1);
-        const list = [...teamIDs];
-        const fixed = list.shift();
-        
-        for (let i = 0; i < offset; i++) {
-          list.push(list.shift());
-        }
-        list.unshift(fixed);
-
-        for (let i = 0; i < list.length / 2; i++) {
-          const home = (w % 2 === 0) ? list[list.length - 1 - i] : list[i];
-          const away = (w % 2 === 0) ? list[i] : list[list.length - 1 - i];
-          matches.push({
-            homeId: home,
-            awayId: away,
-            homeScore: null,
-            awayScore: null,
-            played: false
-          });
-        }
-        rounds.push(matches);
-      }
-      return rounds;
-    }
-
-    let FIXTURES_SCHEDULE = generateLeagueSchedule();
-
-    function getActiveTeam() {
-      return TEAMS[activeTeamIndex];
-    }
-
-    function updateHeader() {
-      const team = getActiveTeam();
-      document.getElementById('header-week').innerText = `Week ${currentWeek} of ${maxWeeks}`;
-      document.getElementById('header-manager-name').innerText = `${team.managerName} (${team.short})`;
-      document.getElementById('header-budget').innerText = `£${(team.budget / 1000000).toFixed(1)}M`;
-      
-      const humanCount = TEAMS.filter(t => t.isHuman).length;
-      const readyCount = TEAMS.filter(t => t.isHuman && t.isReady).length;
-      document.getElementById('tab-ready-counter').innerText = `${readyCount}/${humanCount}`;
-    }
-
-    function switchManagerTurn() {
-      playSound('click');
-      const humanIndices = TEAMS.map((t, idx) => t.isHuman ? idx : -1).filter(idx => idx !== -1);
-      const currentPos = humanIndices.indexOf(activeTeamIndex);
-      const nextPos = (currentPos + 1) % humanIndices.length;
-      activeTeamIndex = humanIndices[nextPos];
-      
-      selectedPlayerForSwap = null;
-      renderCurrentSquadView();
-      renderMultiplayerLounge();
-      renderStadiumScreen();
-      renderTrophyRoom();
-      updateHeader();
-      showToast(`Active Turn: ${getActiveTeam().managerName} (${getActiveTeam().name})`, '🎮');
-    }
-
-    function switchTab(tabId) {
-      playSound('click');
-      document.querySelectorAll('.tab-btn').forEach(btn => {
-        btn.classList.remove('tab-active');
-        btn.classList.add('text-slate-400');
+        return {
+          id: `${club.id.toLowerCase()}_${idx + 1}`,
+          name: `${fn} ${sn}`,
+          pos: p.pos,
+          nat: nat,
+          age: age,
+          ovr: ovr,
+          con: 95 + Math.floor(Math.random() * 5),
+          role: p.role,
+          starter: p.starter
+        };
       });
-      ['tactics', 'fixtures', 'stadium', 'youth', 'transfers', 'table', 'trophies', 'multiplayer'].forEach(id => {
-        const el = document.getElementById(`tab-${id}`);
-        if (el) el.classList.add('hidden');
-      });
+    }
 
-      const activeSection = document.getElementById(`tab-${tabId}`);
-      if (activeSection) activeSection.classList.remove('hidden');
+    // GAME STATE
+    let state = {
+      seasonYear: 2026,
+      currentWeek: 1,
+      totalWeeks: 38,
+      userClubId: 'SOU',
+      currentFormation: '4-3-3',
+      audioEnabled: true,
+      activeStandingsTab: 0,
+      clubs: [],
+      standings: {},
+      manager: {
+        name: 'Jason Adams',
+        confidence: 82,
+        matches: 0,
+        wins: 0,
+        draws: 0,
+        losses: 0,
+        motmAwards: 0,
+        trophies: []
+      },
+      fixtures: []
+    };
 
-      const activeBtn = document.getElementById(`tab-btn-${tabId}`);
-      if (activeBtn) {
-        activeBtn.classList.add('tab-active');
-        activeBtn.classList.remove('text-slate-400');
+    let selectedPlayerSwapId = null;
+    let matchSimInterval = null;
+
+    /* =====================================================================
+       INITIALIZATION & SAVE LOGIC
+       ===================================================================== */
+
+    function initGame() {
+      const saved = localStorage.getItem(STORAGE_KEY);
+      if (saved) {
+        try {
+          state = JSON.parse(saved);
+        } catch(e) {
+          setupFreshState();
+        }
+      } else {
+        setupFreshState();
       }
 
-      if (tabId === 'fixtures') renderFixturesTab();
-      if (tabId === 'stadium') renderStadiumScreen();
-      if (tabId === 'youth') renderYouthAcademy();
-      if (tabId === 'transfers') renderTransferMarket();
-      if (tabId === 'table') renderLeagueTable();
-      if (tabId === 'trophies') renderTrophyRoom();
-      if (tabId === 'multiplayer') renderMultiplayerLounge();
+      // Safeguard: Ensure every single club has a valid, non-empty 18-player squad
+      ensureAllSquadsHydrated();
+      saveGame();
+      renderAll();
     }
 
-    function renderCurrentSquadView() {
-      const team = getActiveTeam();
-      const squad = SQUADS[team.id];
-      const tactics = teamTactics[team.id];
-      const fac = clubFacilities[team.id];
+    function setupFreshState() {
+      state.clubs = JSON.parse(JSON.stringify(CLUBS_DATABASE));
+      state.standings = {};
 
-      const badge = document.getElementById('club-badge');
-      badge.style.backgroundColor = team.color;
-      badge.innerText = team.short;
-      document.getElementById('club-display-name').innerText = team.name;
+      for (let div = 0; div <= 3; div++) {
+        state.standings[div] = state.clubs
+          .filter(c => c.div === div)
+          .map(c => ({
+            id: c.id,
+            name: c.name,
+            played: 0,
+            won: 0,
+            drawn: 0,
+            lost: 0,
+            gf: 0,
+            ga: 0,
+            gd: 0,
+            pts: 0
+          }));
+      }
 
-      const totalCap = Object.values(fac.stands).reduce((a, b) => a + b.capacity, 0);
-      document.getElementById('club-stadium-sub').innerText = `${fac.stadiumName} &bull; Capacity: ${totalCap.toLocaleString()}`;
+      state.clubs.forEach(c => {
+        if (c.id === 'SOU') {
+          c.players = JSON.parse(JSON.stringify(SOU_REAL_ROSTER));
+        } else {
+          c.players = generateProceduralSquad(c);
+        }
+      });
 
-      // Starters sector calculation
-      const starters = squad.slice(0, 11);
-      const attScore = Math.round(starters.filter(p => p.pos === 'FWD').reduce((a,b) => a + b.sho, 0) / (starters.filter(p => p.pos === 'FWD').length || 1));
-      const midScore = Math.round(starters.filter(p => p.pos === 'MID').reduce((a,b) => a + b.pas, 0) / (starters.filter(p => p.pos === 'MID').length || 1));
-      const defScore = Math.round(starters.filter(p => p.pos === 'DEF' || p.pos === 'GK').reduce((a,b) => a + (p.pos === 'GK' ? b.hnd : b.tck), 0) / (starters.filter(p => p.pos === 'DEF' || p.pos === 'GK').length || 1));
-      const ovrScore = Math.round((attScore + midScore + defScore) / 3);
-
-      document.getElementById('stat-att').innerText = attScore || 80;
-      document.getElementById('stat-mid').innerText = midScore || 80;
-      document.getElementById('stat-def').innerText = defScore || 80;
-      document.getElementById('stat-ovr').innerText = ovrScore || 80;
-
-      document.getElementById('formation-select').value = tactics.formation;
-      document.getElementById('slider-mentality').value = tactics.mentality;
-      document.getElementById('slider-passing').value = tactics.passing;
-      document.getElementById('slider-pressing').value = tactics.pressing;
-      updateTacticsLabels();
-
-      renderPitchNodes();
-      renderSquadTable();
+      generateSeasonFixtures();
     }
 
-    function updateTacticsLabels() {
-      const tactics = teamTactics[getActiveTeam().id];
-      const mentalityMap = { 1: 'Ultra Def', 2: 'Defensive', 3: 'Balanced', 4: 'Attacking', 5: 'All-Out Attack' };
-      const passingMap = { 1: 'Short / Tika', 2: 'Controlled', 3: 'Mixed', 4: 'Direct', 5: 'Long Ball' };
-      const pressingMap = { 1: 'Contain', 2: 'Low Block', 3: 'Medium', 4: 'High Press', 5: 'Gegenpress' };
-
-      document.getElementById('label-mentality').innerText = mentalityMap[tactics.mentality];
-      document.getElementById('label-passing').innerText = passingMap[tactics.passing];
-      document.getElementById('label-pressing').innerText = pressingMap[tactics.pressing];
+    function ensureAllSquadsHydrated() {
+      state.clubs.forEach(c => {
+        if (!c.players || c.players.length < 18) {
+          if (c.id === 'SOU') {
+            c.players = JSON.parse(JSON.stringify(SOU_REAL_ROSTER));
+          } else {
+            c.players = generateProceduralSquad(c);
+          }
+        }
+        // Ensure strictly 11 starters
+        const startersCount = c.players.filter(p => p.starter).length;
+        if (startersCount !== 11) {
+          c.players.forEach((p, idx) => p.starter = (idx < 11));
+        }
+      });
     }
 
-    function updateTacticsSlider(key, val) {
+    function saveGame() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    }
+
+    function resetToFreshSeason() {
+      if (confirm("Reset current career and start fresh for the 2026/27 season?")) {
+        localStorage.removeItem(STORAGE_KEY);
+        setupFreshState();
+        saveGame();
+        renderAll();
+        playSound('whistle');
+      }
+    }
+
+    function getCurrentUserClub() {
+      return state.clubs.find(c => c.id === state.userClubId) || state.clubs[0];
+    }
+
+    /* =====================================================================
+       TACTICS & PITCH ENGINE (CLICK-TO-SWAP FM SYSTEM)
+       ===================================================================== */
+
+    function changeFormation(newForm) {
+      if (!FORMATIONS[newForm]) return;
+      state.currentFormation = newForm;
+      
+      const club = getCurrentUserClub();
+      const template = FORMATIONS[newForm];
+      
+      // Update role/duties of starters
+      const starters = club.players.filter(p => p.starter);
+      starters.forEach((p, idx) => {
+        if (template[idx]) {
+          p.role = template[idx].duty;
+          p.pos = template[idx].role;
+        }
+      });
+
+      saveGame();
+      renderTactics();
       playSound('click');
-      teamTactics[getActiveTeam().id][key] = parseInt(val);
-      updateTacticsLabels();
     }
 
-    function changeFormation(newFormation) {
+    function autoPickBestXI() {
+      const club = getCurrentUserClub();
+      // Sort squad by OVR descending
+      club.players.sort((a, b) => b.ovr - a.ovr);
+      // Top 11 become starters
+      club.players.forEach((p, idx) => {
+        p.starter = (idx < 11);
+      });
+
+      const template = FORMATIONS[state.currentFormation];
+      const starters = club.players.filter(p => p.starter);
+      starters.forEach((p, idx) => {
+        if (template[idx]) {
+          p.role = template[idx].duty;
+          p.pos = template[idx].role;
+        }
+      });
+
+      cancelPlayerSwap();
+      saveGame();
+      renderTactics();
       playSound('click');
-      teamTactics[getActiveTeam().id].formation = newFormation;
-      renderPitchNodes();
-      showToast(`Formation set to ${newFormation}`, '📐');
     }
 
-    function renderPitchNodes() {
-      const pitchContainer = document.getElementById('pitch-players-container');
-      pitchContainer.innerHTML = '';
-      const team = getActiveTeam();
-      const squad = SQUADS[team.id];
-      const formationKey = teamTactics[team.id].formation;
-      const coords = FORMATIONS[formationKey] || FORMATIONS['4-4-2'];
+    function handlePlayerSelect(playerId) {
+      const club = getCurrentUserClub();
 
-      coords.forEach((c, index) => {
-        const player = squad[index] || squad[0];
-        const isSelected = selectedPlayerForSwap === index;
-        const isInjured = player.injury !== null;
+      // If no player selected yet, select this player for swap
+      if (!selectedPlayerSwapId) {
+        selectedPlayerSwapId = playerId;
+        const p = club.players.find(x => x.id === playerId);
+        const banner = document.getElementById('swapNotificationBar');
+        const text = document.getElementById('swapNotificationText');
+        text.innerHTML = `🔄 <b>${p.name} (${p.pos})</b> SELECTED — Click any player on pitch or bench to swap!`;
+        banner.style.display = 'flex';
+        renderTactics();
+        playSound('click');
+        return;
+      }
+
+      // If clicking same player, cancel swap
+      if (selectedPlayerSwapId === playerId) {
+        cancelPlayerSwap();
+        return;
+      }
+
+      // Execute Swap between Player A and Player B
+      const p1Index = club.players.findIndex(x => x.id === selectedPlayerSwapId);
+      const p2Index = club.players.findIndex(x => x.id === playerId);
+
+      if (p1Index !== -1 && p2Index !== -1) {
+        const p1 = club.players[p1Index];
+        const p2 = club.players[p2Index];
+
+        // Swap their starter flags
+        const tempStarter = p1.starter;
+        p1.starter = p2.starter;
+        p2.starter = tempStarter;
+
+        // Swap their roles/positions
+        const tempRole = p1.role;
+        p1.role = p2.role;
+        p2.role = tempRole;
+
+        const tempPos = p1.pos;
+        p1.pos = p2.pos;
+        p2.pos = tempPos;
+
+        // Swap order in roster array
+        club.players[p1Index] = p2;
+        club.players[p2Index] = p1;
+      }
+
+      cancelPlayerSwap();
+      saveGame();
+      renderTactics();
+      playSound('whistle');
+    }
+
+    function cancelPlayerSwap() {
+      selectedPlayerSwapId = null;
+      document.getElementById('swapNotificationBar').style.display = 'none';
+      renderTactics();
+    }
+
+    function renderTactics() {
+      const club = getCurrentUserClub();
+      ensureAllSquadsHydrated();
+
+      const starters = club.players.filter(p => p.starter);
+      const bench = club.players.filter(p => !p.starter);
+      const template = FORMATIONS[state.currentFormation] || FORMATIONS['4-3-3'];
+
+      // 1. RENDER 2D PITCH NODES
+      const pitchNodesWrapper = document.getElementById('pitchNodesWrapper');
+      pitchNodesWrapper.innerHTML = '';
+
+      starters.forEach((p, idx) => {
+        const coords = template[idx] || { x: 50, y: 50, role: p.pos, duty: p.role };
+        const isSelected = (selectedPlayerSwapId === p.id);
 
         const node = document.createElement('div');
-        node.className = `absolute transform -translate-x-1/2 -translate-y-1/2 cursor-pointer transition hover:scale-110 flex flex-col items-center`;
-        node.style.left = `${c.x}%`;
-        node.style.top = `${c.y}%`;
-        node.onclick = () => selectPlayerForSwap(index);
+        node.className = `pitch-node ${isSelected ? 'selected-for-swap' : ''}`;
+        node.style.left = `${coords.x}%`;
+        node.style.top = `${coords.y}%`;
+        node.onclick = () => handlePlayerSelect(p.id);
+
+        const surname = p.name.split(' ').pop();
 
         node.innerHTML = `
-          <div class="w-8 h-8 rounded-full flex items-center justify-center font-console font-bold text-xs shadow-xl border-2 ${
-            isInjured ? 'border-rose-500 bg-rose-950 text-rose-300' :
-            isSelected ? 'border-amber-400 bg-amber-500 text-black scale-125 animate-bounce' : 'border-white/80 bg-slate-900 text-white'
-          }">
-            ${isInjured ? '🚑' : player.pos}
+          <div class="pitch-kit">
+            ${idx + 1}
+            <div class="pitch-role-tag">${coords.role || p.pos}</div>
           </div>
-          <span class="mt-1 px-1.5 py-0.5 rounded text-[10px] font-console font-bold tracking-tight bg-slate-950/90 text-white shadow whitespace-nowrap border border-slate-700/50">
-            ${player.name.split(' ').pop()} (${player.condition}%)
-          </span>
+          <div class="pitch-name-card">
+            <div class="p-name">${surname}</div>
+            <div class="p-role">${coords.duty || p.role}</div>
+          </div>
         `;
-        pitchContainer.appendChild(node);
+        pitchNodesWrapper.appendChild(node);
       });
-    }
 
-    function renderSquadTable() {
-      const squadTable = document.getElementById('squad-table-body');
-      squadTable.innerHTML = '';
-      const team = getActiveTeam();
-      const squad = SQUADS[team.id];
+      // 2. RENDER FM SQUAD TABLES
+      const startersBody = document.getElementById('startersTableBody');
+      startersBody.innerHTML = '';
 
-      squad.forEach((player, idx) => {
-        const isStarter = idx < 11;
-        const isSelected = selectedPlayerForSwap === idx;
+      starters.forEach((p, idx) => {
+        const isSelected = (selectedPlayerSwapId === p.id);
         const tr = document.createElement('tr');
-        tr.className = `hover:bg-slate-800/50 transition cursor-pointer ${isSelected ? 'bg-sky-950/80 border-l-4 border-amber-400' : ''}`;
-        tr.onclick = () => selectPlayerForSwap(idx);
-
-        let conditionColor = 'bg-emerald-400';
-        if (player.condition < 70) conditionColor = 'bg-rose-500';
-        else if (player.condition < 85) conditionColor = 'bg-amber-400';
+        tr.className = `fm-row ${isSelected ? 'selected-for-swap' : ''}`;
+        tr.onclick = (e) => {
+          if (!e.target.classList.contains('btn-swap-pill')) {
+            handlePlayerSelect(p.id);
+          }
+        };
 
         tr.innerHTML = `
-          <td class="p-2 font-bold ${isStarter ? 'text-emerald-400' : 'text-slate-400'}">
-            ${isStarter ? 'XI' : 'SUB'}
+          <td><span class="badge-pick pick-starter">${p.pos}</span></td>
+          <td><span class="role-badge">${p.role}</span></td>
+          <td><b>${p.name}</b></td>
+          <td><span style="color:var(--text-muted); font-size:0.75rem;">${p.nat}</span></td>
+          <td>${p.age}</td>
+          <td><b style="color:var(--gold);">${p.ovr}</b></td>
+          <td>
+            <div class="condition-bar"><div class="condition-fill" style="width:${p.con}%; background:#10b981;"></div></div>
+            <span style="font-size:0.75rem;">${p.con}%</span>
           </td>
-          <td class="p-2">
-            <span class="px-1.5 py-0.5 rounded text-[10px] font-bold ${
-              player.pos === 'GK' ? 'bg-amber-950 text-amber-300' :
-              player.pos === 'DEF' ? 'bg-blue-950 text-blue-300' :
-              player.pos === 'MID' ? 'bg-emerald-950 text-emerald-300' : 'bg-red-950 text-red-300'
-            }">${player.pos}</span>
-          </td>
-          <td class="p-2 font-medium text-white">${player.name}</td>
-          <td class="p-2 text-slate-400">${player.age}</td>
-          <td class="p-2 text-center text-slate-300 font-mono text-[11px]">
-            ${player.hnd}/${player.tck}/${player.pas}/${player.sho}/${player.spd}
-          </td>
-          <td class="p-2 font-bold text-amber-300">${player.ovr}</td>
-          <td class="p-2">
-            <div class="flex items-center gap-1.5">
-              <div class="w-12 bg-slate-800 rounded-full h-1.5 overflow-hidden">
-                <div class="${conditionColor} h-full" style="width: ${player.condition}%"></div>
-              </div>
-              <span class="text-[10px] text-slate-300">${player.condition}%</span>
-            </div>
-          </td>
-          <td class="p-2">
-            ${player.injury ? `<span class="px-1.5 py-0.5 rounded text-[9px] bg-rose-900/80 text-rose-300 border border-rose-600 font-bold">🚑 ${player.injury.type} (${player.injury.weeksRemaining}w)</span>` : `<span class="text-emerald-400 font-semibold text-[10px]">Fit</span>`}
-          </td>
-          <td class="p-2 text-right">
-            <button class="px-2 py-0.5 rounded text-[10px] bg-slate-800 hover:bg-sky-700 text-sky-200 transition">
-              ${isSelected ? 'Selected' : 'Swap'}
+          <td>
+            <button class="btn-swap-pill" onclick="handlePlayerSelect('${p.id}')">
+              ${isSelected ? 'Cancel' : 'Swap ⇅'}
             </button>
           </td>
         `;
-        squadTable.appendChild(tr);
+        startersBody.appendChild(tr);
       });
 
-      const swapLabel = document.getElementById('selected-swap-indicator');
-      if (selectedPlayerForSwap !== null) {
-        swapLabel.innerText = `Swapping: ${squad[selectedPlayerForSwap].name}. Click another player to swap.`;
-      } else {
-        swapLabel.innerText = '';
-      }
-    }
+      const benchBody = document.getElementById('benchTableBody');
+      benchBody.innerHTML = '';
 
-    function selectPlayerForSwap(index) {
-      playSound('click');
-      const squad = SQUADS[getActiveTeam().id];
-
-      if (selectedPlayerForSwap === null) {
-        selectedPlayerForSwap = index;
-      } else if (selectedPlayerForSwap === index) {
-        selectedPlayerForSwap = null;
-      } else {
-        const temp = squad[selectedPlayerForSwap];
-        squad[selectedPlayerForSwap] = squad[index];
-        squad[index] = temp;
-        showToast(`Swapped ${temp.name} with ${squad[selectedPlayerForSwap].name}`, '🔄');
-        selectedPlayerForSwap = null;
-        autoSaveToLocalStorage();
-      }
-      renderCurrentSquadView();
-    }
-
-    function renderStadiumScreen() {
-      const team = getActiveTeam();
-      const fac = clubFacilities[team.id];
-      const standsGrid = document.getElementById('stadium-stands-grid');
-      standsGrid.innerHTML = '';
-
-      const totalCap = Object.values(fac.stands).reduce((a, b) => a + b.capacity, 0);
-      const estGate = (totalCap * fac.ticketPrice) * 0.88;
-      document.getElementById('stadium-estimated-income').innerText = `£${(estGate / 1000000).toFixed(2)}M`;
-
-      Object.entries(fac.stands).forEach(([standName, data]) => {
-        const costToUpgrade = data.level * 4000000;
-        const canAfford = team.budget >= costToUpgrade;
-        const card = document.createElement('div');
-        card.className = 'lma-panel p-4 rounded-xl flex flex-col justify-between';
-        card.innerHTML = `
-          <div>
-            <div class="flex justify-between items-center mb-2">
-              <h4 class="font-console font-bold text-white text-sm">${standName} Stand</h4>
-              <span class="text-[10px] px-2 py-0.5 rounded bg-sky-900 text-sky-200 border border-sky-600">Tier ${data.level}</span>
-            </div>
-            <p class="text-xs text-slate-400">Current Capacity: <span class="font-bold text-white">${data.capacity.toLocaleString()}</span> seats</p>
-            <p class="text-[11px] text-emerald-400 mt-1">+3,500 seats on next expansion</p>
-          </div>
-          <div class="mt-4 pt-2 border-t border-slate-800">
-            <button onclick="upgradeStand('${standName}')" class="w-full py-1.5 rounded font-console text-xs font-bold uppercase transition ${canAfford ? 'bg-sky-600 hover:bg-sky-500 text-white' : 'bg-slate-800 text-slate-500 cursor-not-allowed'}">
-              Upgrade (£${(costToUpgrade / 1000000).toFixed(1)}M)
-            </button>
-          </div>
-        `;
-        standsGrid.appendChild(card);
-      });
-
-      // Training Facilities
-      const facGrid = document.getElementById('facilities-grid');
-      facGrid.innerHTML = '';
-
-      const items = [
-        { key: 'medicalCentre', title: 'Medical Rehabilitation Centre', desc: 'Accelerates player injury recovery time by up to 60%.', lvl: fac.medicalCentre },
-        { key: 'youthFacility', title: 'Youth Development Academy', desc: 'Increases the likelihood of scout reports with 88+ potential teenagers.', lvl: fac.youthFacility },
-        { key: 'trainingPitch', title: 'Tactical Pitch & Gym Complex', desc: 'Regenerates player match condition faster between matchdays.', lvl: fac.trainingPitch }
-      ];
-
-      items.forEach(item => {
-        const cost = item.lvl * 3500000;
-        const canAfford = team.budget >= cost && item.lvl < 5;
-        const box = document.createElement('div');
-        box.className = 'bg-slate-900/80 border border-slate-800 p-4 rounded-xl flex flex-col justify-between';
-        box.innerHTML = `
-          <div>
-            <div class="flex justify-between items-center mb-1">
-              <h4 class="font-console font-bold text-sm text-sky-300">${item.title}</h4>
-              <span class="text-[10px] font-bold text-amber-400">Lv ${item.lvl}/5</span>
-            </div>
-            <p class="text-xs text-slate-400 mb-2 leading-relaxed">${item.desc}</p>
-          </div>
-          <div class="mt-3 pt-2 border-t border-slate-800">
-            <button onclick="upgradeFacility('${item.key}')" ${!canAfford ? 'disabled' : ''} class="w-full py-1.5 rounded font-console text-xs font-bold uppercase transition ${canAfford ? 'bg-emerald-600 hover:bg-emerald-500 text-white' : 'bg-slate-800 text-slate-500 cursor-not-allowed'}">
-              ${item.lvl >= 5 ? 'Max Level' : `Upgrade (£${(cost/1000000).toFixed(1)}M)`}
-            </button>
-          </div>
-        `;
-        facGrid.appendChild(box);
-      });
-    }
-
-    function upgradeStand(standName) {
-      const team = getActiveTeam();
-      const fac = clubFacilities[team.id];
-      const stand = fac.stands[standName];
-      const cost = stand.level * 4000000;
-
-      if (team.budget < cost) {
-        showToast('Insufficient transfer budget for stand expansion!', '❌');
-        return;
-      }
-
-      team.budget -= cost;
-      stand.level += 1;
-      stand.capacity += 3500;
-      playSound('cash');
-      showToast(`${standName} Stand expanded to Tier ${stand.level}! (+3,500 seats)`, '🏗️');
-      updateHeader();
-      renderStadiumScreen();
-      renderCurrentSquadView();
-      autoSaveToLocalStorage();
-    }
-
-    function upgradeFacility(facKey) {
-      const team = getActiveTeam();
-      const fac = clubFacilities[team.id];
-      const cost = fac[facKey] * 3500000;
-
-      if (team.budget < cost) {
-        showToast('Insufficient budget for facility upgrade!', '❌');
-        return;
-      }
-
-      team.budget -= cost;
-      fac[facKey] += 1;
-      playSound('cash');
-      showToast(`Upgraded facility to Level ${fac[facKey]}!`, '🏢');
-      updateHeader();
-      renderStadiumScreen();
-      autoSaveToLocalStorage();
-    }
-
-    function renderYouthAcademy() {
-      const tbody = document.getElementById('youth-table-body');
-      tbody.innerHTML = '';
-
-      if (YOUTH_PROSPECTS.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="7" class="p-4 text-center text-slate-500 italic">All scouted youth prospects have been signed. New scouts arrive each week!</td></tr>`;
-        return;
-      }
-
-      YOUTH_PROSPECTS.forEach(y => {
+      bench.forEach((p, idx) => {
+        const isSelected = (selectedPlayerSwapId === p.id);
         const tr = document.createElement('tr');
-        tr.className = 'hover:bg-slate-800/40 transition font-mono';
+        tr.className = `fm-row ${isSelected ? 'selected-for-swap' : ''}`;
+        tr.onclick = (e) => {
+          if (!e.target.classList.contains('btn-swap-pill')) {
+            handlePlayerSelect(p.id);
+          }
+        };
+
         tr.innerHTML = `
-          <td class="p-3 font-medium text-white">${y.name}</td>
-          <td class="p-3"><span class="px-1.5 py-0.5 rounded text-[10px] font-bold bg-slate-800 text-sky-300">${y.pos}</span></td>
-          <td class="p-3 text-slate-400">${y.age}</td>
-          <td class="p-3 font-bold text-amber-300">${y.ovr}</td>
-          <td class="p-3 font-bold text-emerald-400">${y.potential} POT</td>
-          <td class="p-3 text-slate-300 text-center font-mono text-[11px]">${y.hnd}/${y.tck}/${y.pas}/${y.sho}/${y.spd}</td>
-          <td class="p-3 text-right">
-            <button onclick="signYouthPlayer('${y.id}')" class="px-3 py-1 rounded text-xs font-console font-bold uppercase bg-emerald-600 hover:bg-emerald-500 text-white transition">
-              Sign Free ✍️
+          <td><span class="badge-pick pick-sub">S${idx + 1}</span></td>
+          <td><span class="role-badge" style="background:#475569;">${p.role}</span></td>
+          <td><b>${p.name}</b></td>
+          <td><span style="color:var(--text-muted); font-size:0.75rem;">${p.nat}</span></td>
+          <td>${p.age}</td>
+          <td><b style="color:var(--gold);">${p.ovr}</b></td>
+          <td>
+            <div class="condition-bar"><div class="condition-fill" style="width:${p.con}%; background:#38bdf8;"></div></div>
+            <span style="font-size:0.75rem;">${p.con}%</span>
+          </td>
+          <td>
+            <button class="btn-swap-pill" onclick="handlePlayerSelect('${p.id}')">
+              ${isSelected ? 'Cancel' : 'Sub ⇅'}
             </button>
           </td>
         `;
-        tbody.appendChild(tr);
+        benchBody.appendChild(tr);
       });
     }
 
-    function signYouthPlayer(youthId) {
-      const prospect = YOUTH_PROSPECTS.find(y => y.id === youthId);
-      if (!prospect) return;
-      const team = getActiveTeam();
+    /* =====================================================================
+       FIXTURE ENGINE & WEEKLY SCHEDULE
+       ===================================================================== */
 
-      const newPlayer = createPlayer(
-        'p_' + Date.now(),
-        prospect.name,
-        prospect.pos,
-        prospect.age,
-        prospect.hnd,
-        prospect.tck,
-        prospect.pas,
-        prospect.sho,
-        prospect.spd,
-        85,
-        team.id,
-        2500000,
-        15000
-      );
+    function generateSeasonFixtures() {
+      state.fixtures = [];
+      const userClub = getCurrentUserClub();
+      const divClubs = state.clubs.filter(c => c.div === userClub.div);
 
-      SQUADS[team.id].push(newPlayer);
-      YOUTH_PROSPECTS = YOUTH_PROSPECTS.filter(y => y.id !== youthId);
+      // Simple round robin generation for 38 weeks
+      for (let w = 1; w <= state.totalWeeks; w++) {
+        const weekFixtures = [];
+        const shuffled = [...divClubs].sort(() => 0.5 - Math.random());
 
-      playSound('whistle');
-      showToast(`${prospect.name} signed to ${team.name} First Team squad!`, '🌟');
-      renderYouthAcademy();
-      renderCurrentSquadView();
-      autoSaveToLocalStorage();
-    }
-
-    function renderFixturesTab() {
-      document.getElementById('fixtures-week-num').innerText = currentWeek;
-      const weekMatches = FIXTURES_SCHEDULE[currentWeek - 1];
-      const humanTeam = getActiveTeam();
-
-      let featureMatch = weekMatches.find(m => m.homeId === humanTeam.id || m.awayId === humanTeam.id) || weekMatches[0];
-      const homeTeam = TEAMS.find(t => t.id === featureMatch.homeId);
-      const awayTeam = TEAMS.find(t => t.id === featureMatch.awayId);
-
-      const homeBadge = document.getElementById('home-team-badge');
-      homeBadge.style.backgroundColor = homeTeam.color;
-      homeBadge.innerText = homeTeam.short;
-      document.getElementById('home-team-name').innerText = homeTeam.name;
-      document.getElementById('home-tactics-tag').innerText = `${teamTactics[homeTeam.id].formation} Style`;
-
-      const awayBadge = document.getElementById('away-team-badge');
-      awayBadge.style.backgroundColor = awayTeam.color;
-      awayBadge.innerText = awayTeam.short;
-      document.getElementById('away-team-name').innerText = awayTeam.name;
-      document.getElementById('away-tactics-tag').innerText = `${teamTactics[awayTeam.id].formation} Style`;
-
-      document.getElementById('live-home-goals').innerText = featureMatch.played ? featureMatch.homeScore : '0';
-      document.getElementById('live-away-goals').innerText = featureMatch.played ? featureMatch.awayScore : '0';
-
-      const simulcastContainer = document.getElementById('simulcast-fixtures-list');
-      simulcastContainer.innerHTML = '';
-
-      weekMatches.forEach((m, idx) => {
-        const ht = TEAMS.find(t => t.id === m.homeId);
-        const at = TEAMS.find(t => t.id === m.awayId);
-        const card = document.createElement('div');
-        card.className = 'p-2 rounded bg-slate-900/80 border border-slate-800 flex justify-between items-center text-xs font-mono';
-        card.id = `simulcast-row-${idx}`;
-        card.innerHTML = `
-          <div class="flex items-center gap-1.5 truncate w-28">
-            <span class="w-2.5 h-2.5 rounded-full" style="background-color: ${ht.color}"></span>
-            <span class="text-white truncate">${ht.short}</span>
-          </div>
-          <div class="font-bold text-amber-400 font-console px-2">
-            <span id="sim-score-h-${idx}">${m.played ? m.homeScore : '-'}</span> : <span id="sim-score-a-${idx}">${m.played ? m.awayScore : '-'}</span>
-          </div>
-          <div class="flex items-center justify-end gap-1.5 truncate w-28">
-            <span class="text-white truncate">${at.short}</span>
-            <span class="w-2.5 h-2.5 rounded-full" style="background-color: ${at.color}"></span>
-          </div>
-        `;
-        simulcastContainer.appendChild(card);
-      });
-
-      renderLiveBenchSubstitutes();
-    }
-
-    function renderLiveBenchSubstitutes() {
-      const container = document.getElementById('match-bench-container');
-      container.innerHTML = '';
-      const team = getActiveTeam();
-      const squad = SQUADS[team.id];
-      const subs = squad.slice(11);
-
-      subs.forEach((sub, sIdx) => {
-        const actualIdx = 11 + sIdx;
-        const btn = document.createElement('button');
-        btn.onclick = () => openSubCandidateModal(actualIdx);
-        btn.className = 'w-full p-1.5 bg-slate-900 hover:bg-sky-950 border border-slate-800 rounded flex justify-between items-center text-left transition';
-        btn.innerHTML = `
-          <div class="flex items-center gap-2">
-            <span class="px-1 py-0.5 rounded text-[9px] bg-slate-800 text-sky-300 font-bold">${sub.pos}</span>
-            <span class="text-white font-medium truncate max-w-[120px]">${sub.name}</span>
-          </div>
-          <span class="text-amber-400 font-console font-bold text-[11px]">${sub.ovr} OVR (${sub.condition}%)</span>
-        `;
-        container.appendChild(btn);
-      });
-    }
-
-    function openSubCandidateModal(benchIndex) {
-      if (!isSimulating && !isMatchPaused) {
-        showToast('Substitutions during the matchday are active once the match kicks off!', 'ℹ️');
-        return;
-      }
-      pendingSubBenchIdx = benchIndex;
-      const subPlayer = SQUADS[getActiveTeam().id][benchIndex];
-      document.getElementById('sub-incoming-player-desc').innerText = `Bringing ON: ${subPlayer.name} (${subPlayer.pos} | ${subPlayer.ovr} OVR)`;
-
-      const container = document.getElementById('sub-pitch-candidates');
-      container.innerHTML = '';
-      const starters = SQUADS[getActiveTeam().id].slice(0, 11);
-
-      starters.forEach((starter, sIdx) => {
-        const row = document.createElement('div');
-        row.onclick = () => executeLiveSub(sIdx);
-        row.className = 'p-2 bg-slate-900 hover:bg-slate-800 rounded border border-slate-800 flex justify-between items-center cursor-pointer transition';
-        row.innerHTML = `
-          <div class="flex items-center gap-2">
-            <span class="text-red-400 font-bold text-[10px]">OFF:</span>
-            <span class="text-white font-medium">${starter.name} (${starter.pos})</span>
-          </div>
-          <span class="text-slate-400 text-[10px]">${starter.condition}% Fit</span>
-        `;
-        container.appendChild(row);
-      });
-
-      document.getElementById('match-sub-modal').classList.remove('hidden');
-    }
-
-    function closeSubModal() {
-      document.getElementById('match-sub-modal').classList.add('hidden');
-      pendingSubBenchIdx = null;
-    }
-
-    function executeLiveSub(pitchIdx) {
-      if (pendingSubBenchIdx === null) return;
-      const squad = SQUADS[getActiveTeam().id];
-      const incoming = squad[pendingSubBenchIdx];
-      const outgoing = squad[pitchIdx];
-
-      squad[pitchIdx] = incoming;
-      squad[pendingSubBenchIdx] = outgoing;
-
-      playSound('whistle');
-      addCommentary(document.getElementById('match-minute-timer').innerText.split(':')[0], `🔄 SUB: ${outgoing.name} replaced by ${incoming.name}!`, 'text-cyan-400 font-bold');
-      showToast(`Substitution made: ${incoming.name} on for ${outgoing.name}`, '🔄');
-
-      closeSubModal();
-      renderLiveBenchSubstitutes();
-      renderCurrentSquadView();
-    }
-
-    function toggleMatchPause() {
-      if (!isSimulating) return;
-      isMatchPaused = !isMatchPaused;
-      const pauseBtn = document.getElementById('btn-pause-match');
-      pauseBtn.innerText = isMatchPaused ? '▶ Resume' : '⏸ Pause';
-      showToast(isMatchPaused ? 'Match Paused for tactical adjustments' : 'Match Resumed', '⏱️');
-    }
-
-    function applyMatchShout(shoutType) {
-      if (!isSimulating) {
-        showToast('Touchline shouts can be issued during live match simulation!', 'ℹ️');
-        return;
-      }
-      activeTacticalShout = shoutType;
-      const shoutIndicator = document.getElementById('active-shout-indicator');
-      const shoutsMap = {
-        park: 'Active Shout: Park The Bus (Defense +20%)',
-        press: 'Active Shout: Push Higher (Attack +15%, Condition wears faster)',
-        shoot: 'Active Shout: Shoot on Sight (More shots taken)',
-        tackle: 'Active Shout: Get Stuck In (Aggressive challenges)'
-      };
-      shoutIndicator.innerText = shoutsMap[shoutType] || '';
-      playSound('click');
-      showToast(`Manager shouted: ${shoutType.toUpperCase()}`, '🗣️');
-    }
-
-    function calculateTeamRatings(teamId) {
-      const starters = SQUADS[teamId].slice(0, 11);
-      const tactics = teamTactics[teamId];
-
-      let attBonus = tactics.mentality * 3;
-      let defBonus = (6 - tactics.mentality) * 2;
-      let midBonus = tactics.pressing * 2;
-
-      if (teamId === getActiveTeam().id && activeTacticalShout) {
-        if (activeTacticalShout === 'park') defBonus += 15;
-        if (activeTacticalShout === 'press') attBonus += 12;
-      }
-
-      const att = starters.filter(p => p.pos === 'FWD').reduce((s, p) => s + p.sho, 0) + attBonus;
-      const mid = starters.filter(p => p.pos === 'MID').reduce((s, p) => s + p.pas, 0) + midBonus;
-      const def = starters.filter(p => p.pos === 'DEF' || p.pos === 'GK').reduce((s, p) => s + (p.pos === 'GK' ? p.hnd : p.tck), 0) + defBonus;
-
-      return {
-        attack: Math.max(50, att / (starters.filter(p => p.pos === 'FWD').length || 1)),
-        midfield: Math.max(50, mid / (starters.filter(p => p.pos === 'MID').length || 1)),
-        defense: Math.max(50, def / (starters.filter(p => p.pos === 'DEF' || p.pos === 'GK').length || 1))
-      };
-    }
-
-    function startMatchdaySimulation() {
-      if (isSimulating) return;
-
-      const weekMatches = FIXTURES_SCHEDULE[currentWeek - 1];
-      if (weekMatches[0].played) {
-        showToast('This week fixture has already concluded!', '⚠');
-        return;
-      }
-
-      isSimulating = true;
-      isMatchPaused = false;
-      activeTacticalShout = null;
-      document.getElementById('active-shout-indicator').innerText = '';
-      playSound('whistle');
-
-      const btn = document.getElementById('btn-play-matchday');
-      btn.disabled = true;
-      btn.classList.add('opacity-50', 'cursor-not-allowed');
-
-      const pauseBtn = document.getElementById('btn-pause-match');
-      pauseBtn.classList.remove('hidden');
-      pauseBtn.innerText = '⏸ Pause';
-
-      const statusBadge = document.getElementById('match-status-badge');
-      statusBadge.innerText = 'LIVE SIMULATION';
-      statusBadge.className = 'px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-600 text-white animate-pulse uppercase';
-
-      const timerEl = document.getElementById('match-minute-timer');
-      const commentaryEl = document.getElementById('match-commentary-feed');
-      commentaryEl.innerHTML = '';
-
-      const featureMatch = weekMatches.find(m => m.homeId === getActiveTeam().id || m.awayId === getActiveTeam().id) || weekMatches[0];
-      const homeTeam = TEAMS.find(t => t.id === featureMatch.homeId);
-      const awayTeam = TEAMS.find(t => t.id === featureMatch.awayId);
-
-      const hRatings = calculateTeamRatings(homeTeam.id);
-      const aRatings = calculateTeamRatings(awayTeam.id);
-
-      let homeGoals = 0;
-      let awayGoals = 0;
-      let homeShots = 0;
-      let awayShots = 0;
-      let homeTarget = 0;
-      let awayTarget = 0;
-      let homeCorners = 0;
-      let awayCorners = 0;
-
-      const simScores = weekMatches.map(() => ({ h: 0, a: 0 }));
-
-      let minute = 0;
-      matchInterval = setInterval(() => {
-        if (isMatchPaused) return;
-
-        minute += 2;
-        timerEl.innerText = `${minute.toString().padStart(2, '0')}:00`;
-
-        const roll = Math.random();
-        const basePoss = 50 + (hRatings.midfield - aRatings.midfield) * 0.4;
-        const currentPoss = Math.min(75, Math.max(25, Math.round(basePoss + (Math.random() * 8 - 4))));
-        document.getElementById('stat-home-poss').innerText = `${currentPoss}%`;
-        document.getElementById('stat-away-poss').innerText = `${100 - currentPoss}%`;
-        document.getElementById('bar-home-poss').style.width = `${currentPoss}%`;
-        document.getElementById('bar-away-poss').style.width = `${100 - currentPoss}%`;
-
-        // Wear down conditions slightly per tick
-        if (minute % 10 === 0) {
-          [homeTeam.id, awayTeam.id].forEach(tid => {
-            SQUADS[tid].slice(0, 11).forEach(p => {
-              p.condition = Math.max(45, p.condition - 1);
+        for (let i = 0; i < shuffled.length; i += 2) {
+          if (shuffled[i + 1]) {
+            weekFixtures.push({
+              home: shuffled[i].id,
+              away: shuffled[i + 1].id,
+              homeGoals: null,
+              awayGoals: null,
+              played: false
             });
-          });
-        }
-
-        // Potential in-match injury roll for fatigued players
-        if (roll < 0.03) {
-          const checkTeamId = Math.random() > 0.5 ? homeTeam.id : awayTeam.id;
-          const starters = SQUADS[checkTeamId].slice(0, 11);
-          const fatigued = starters.find(p => p.condition < 70 && !p.injury);
-          if (fatigued) {
-            const medLevel = clubFacilities[checkTeamId].medicalCentre;
-            const recoveryWeeks = Math.max(1, 3 - Math.floor(medLevel / 2));
-            fatigued.injury = { type: 'Muscle Strain', weeksRemaining: recoveryWeeks };
-            addCommentary(minute, `🚑 INJURY: ${fatigued.name} pulls up clutching his hamstring and requires medical attention!`, 'text-rose-400 font-bold');
           }
         }
-
-        if (roll < 0.3) {
-          const isHomeAttacking = (Math.random() * (hRatings.midfield + aRatings.midfield)) < hRatings.midfield;
-          const attackingTeam = isHomeAttacking ? homeTeam : awayTeam;
-          const defendingRatings = isHomeAttacking ? aRatings : hRatings;
-          const attackingRatings = isHomeAttacking ? hRatings : aRatings;
-
-          if (isHomeAttacking) homeShots++; else awayShots++;
-
-          if (Math.random() < 0.58) {
-            if (isHomeAttacking) homeTarget++; else awayTarget++;
-
-            const goalThreshold = 0.36 + ((attackingRatings.attack - defendingRatings.defense) * 0.005);
-            if (Math.random() < goalThreshold) {
-              if (isHomeAttacking) homeGoals++; else awayGoals++;
-              playSound('goal');
-
-              const scorerList = SQUADS[attackingTeam.id].filter(p => p.pos === 'FWD' || p.pos === 'MID');
-              const scorer = scorerList[Math.floor(Math.random() * scorerList.length)].name;
-
-              addCommentary(minute, `⚽ GOAL! Superb finish into the corner by ${scorer}! ${attackingTeam.name} strike!`, 'text-emerald-400 font-bold');
-              document.getElementById('live-home-goals').innerText = homeGoals;
-              document.getElementById('live-away-goals').innerText = awayGoals;
-            } else {
-              const keeperName = isHomeAttacking ? SQUADS[awayTeam.id][0].name : SQUADS[homeTeam.id][0].name;
-              addCommentary(minute, `🧤 Great save! ${keeperName} palms the shot away for a corner.`, 'text-cyan-300');
-              if (isHomeAttacking) homeCorners++; else awayCorners++;
-            }
-          } else {
-            addCommentary(minute, `💨 ${attackingTeam.name} find space on the break but drag the effort wide.`, 'text-slate-400');
-          }
-        } else if (roll > 0.88) {
-          addCommentary(minute, `🟨 Fierce slide tackle! Referee flashes yellow to stop the counter.`, 'text-amber-400');
-        }
-
-        weekMatches.forEach((m, idx) => {
-          if (Math.random() < 0.04) {
-            if (Math.random() > 0.5) simScores[idx].h++; else simScores[idx].a++;
-            const elH = document.getElementById(`sim-score-h-${idx}`);
-            const elA = document.getElementById(`sim-score-a-${idx}`);
-            if (elH) elH.innerText = simScores[idx].h;
-            if (elA) elA.innerText = simScores[idx].a;
-          }
-        });
-
-        document.getElementById('stat-home-shots').innerText = homeShots;
-        document.getElementById('stat-away-shots').innerText = awayShots;
-        document.getElementById('stat-home-target').innerText = homeTarget;
-        document.getElementById('stat-away-target').innerText = awayTarget;
-        document.getElementById('stat-home-corners').innerText = homeCorners;
-        document.getElementById('stat-away-corners').innerText = awayCorners;
-
-        if (minute >= 90) {
-          clearInterval(matchInterval);
-          finalizeMatchday(featureMatch, homeGoals, awayGoals, simScores);
-        }
-      }, 100);
+        state.fixtures.push({ week: w, matches: weekFixtures });
+      }
     }
 
-    function addCommentary(min, text, colorClass = 'text-slate-300') {
-      const feed = document.getElementById('match-commentary-feed');
-      const item = document.createElement('div');
-      item.className = `${colorClass} leading-tight py-0.5`;
-      item.innerHTML = `<span class="text-amber-400 font-bold">${min}'</span> ${text}`;
-      feed.prepend(item);
-    }
+    function advanceMasterWeek() {
+      if (state.currentWeek >= state.totalWeeks) {
+        showEndSeasonGala();
+        return;
+      }
 
-    function finalizeMatchday(featureMatch, featureHScore, featureAScore, simScores) {
+      simulateCurrentWeekFixtures();
+      state.currentWeek++;
+
+      // Monthly Manager of the Month Check (every 4 fixtures)
+      if (state.currentWeek % 4 === 0) {
+        evaluateManagerOfMonth();
+      }
+
+      saveGame();
+      renderAll();
       playSound('whistle');
-      isSimulating = false;
-      isMatchPaused = false;
-      document.getElementById('btn-pause-match').classList.add('hidden');
+    }
 
-      const statusBadge = document.getElementById('match-status-badge');
-      statusBadge.innerText = 'FULL TIME';
-      statusBadge.className = 'px-2 py-0.5 rounded text-[10px] font-bold bg-sky-950 text-sky-300 uppercase border border-sky-600';
+    function simulateCurrentWeekFixtures() {
+      const userClub = getCurrentUserClub();
+      const weekData = state.fixtures.find(f => f.week === state.currentWeek);
 
-      const weekMatches = FIXTURES_SCHEDULE[currentWeek - 1];
+      if (weekData) {
+        weekData.matches.forEach(m => {
+          const homeClub = state.clubs.find(c => c.id === m.home);
+          const awayClub = state.clubs.find(c => c.id === m.away);
 
-      weekMatches.forEach((m, idx) => {
-        m.played = true;
-        if (m === featureMatch) {
-          m.homeScore = featureHScore;
-          m.awayScore = featureAScore;
-        } else {
-          m.homeScore = simScores[idx].h;
-          m.awayScore = simScores[idx].a;
-        }
+          if (homeClub && awayClub) {
+            // Rating comparison + home advantage
+            const diff = (homeClub.att + homeClub.mid + 5) - (awayClub.def + awayClub.mid);
+            const homeScore = Math.max(0, Math.floor(Math.random() * 3) + (diff > 5 ? 1 : 0) + (Math.random() > 0.7 ? 1 : 0));
+            const awayScore = Math.max(0, Math.floor(Math.random() * 3) + (diff < -5 ? 1 : 0));
 
-        const homeRow = LEAGUE_TABLE.find(t => t.teamId === m.homeId);
-        const awayRow = LEAGUE_TABLE.find(t => t.teamId === m.awayId);
+            m.homeGoals = homeScore;
+            m.awayGoals = awayScore;
+            m.played = true;
 
-        homeRow.played += 1;
-        awayRow.played += 1;
-        homeRow.gf += m.homeScore;
-        homeRow.ga += m.awayScore;
-        awayRow.gf += m.awayScore;
-        awayRow.ga += m.homeScore;
-        homeRow.gd = homeRow.gf - homeRow.ga;
-        awayRow.gd = awayRow.gf - awayRow.ga;
+            updateLeagueTableRecord(homeClub.div, m.home, m.away, homeScore, awayScore);
 
-        if (m.homeScore > m.awayScore) {
-          homeRow.won += 1;
-          homeRow.points += 3;
-          awayRow.lost += 1;
-        } else if (m.homeScore < m.awayScore) {
-          awayRow.won += 1;
-          awayRow.points += 3;
-          homeRow.lost += 1;
-        } else {
-          homeRow.drawn += 1;
-          awayRow.drawn += 1;
-          homeRow.points += 1;
-          awayRow.points += 1;
-        }
+            // If user's match, record career stats & board confidence
+            if (m.home === userClub.id || m.away === userClub.id) {
+              const userIsHome = (m.home === userClub.id);
+              const userGoals = userIsHome ? homeScore : awayScore;
+              const oppGoals = userIsHome ? awayScore : homeScore;
 
-        // Clean Sheet milestone
-        if (m.awayScore === 0) clubHonours[m.homeId].cleanSheets += 1;
-        if (m.homeScore === 0) clubHonours[m.awayId].cleanSheets += 1;
-
-        // Gate Receipts awarded to Home Club
-        const homeFac = clubFacilities[m.homeId];
-        const capacity = Object.values(homeFac.stands).reduce((a, b) => a + b.capacity, 0);
-        const gateRevenue = Math.round(capacity * homeFac.ticketPrice * 0.9);
-        const homeTeamObj = TEAMS.find(t => t.id === m.homeId);
-        homeTeamObj.budget += gateRevenue;
-      });
-
-      LEAGUE_TABLE.sort((a, b) => b.points - a.points || b.gd - a.gd || b.gf - a.gf);
-
-      // Regeneration & Injury recovery
-      TEAMS.forEach(t => {
-        const pitchBonus = clubFacilities[t.id].trainingPitch * 2;
-        SQUADS[t.id].forEach(p => {
-          p.condition = Math.min(100, p.condition + 14 + pitchBonus);
-          if (p.injury) {
-            p.injury.weeksRemaining -= 1;
-            if (p.injury.weeksRemaining <= 0) p.injury = null;
+              state.manager.matches++;
+              if (userGoals > oppGoals) {
+                state.manager.wins++;
+                state.manager.confidence = Math.min(99, state.manager.confidence + 3);
+              } else if (userGoals === oppGoals) {
+                state.manager.draws++;
+              } else {
+                state.manager.losses++;
+                state.manager.confidence = Math.max(25, state.manager.confidence - 4);
+              }
+            }
           }
         });
-      });
-
-      // Spawn fresh youth scout each week
-      if (YOUTH_PROSPECTS.length < 6) {
-        const names = ['L. Baines', 'C. Jerome', 'M. Noble', 'A. Young', 'R. Shawcross'];
-        const randomName = names[Math.floor(Math.random() * names.length)] + ` (${currentWeek})`;
-        YOUTH_PROSPECTS.push({
-          id: 'y_' + Date.now(),
-          name: randomName,
-          pos: ['DEF', 'MID', 'FWD'][Math.floor(Math.random() * 3)],
-          age: 16 + Math.floor(Math.random() * 2),
-          ovr: 64 + Math.floor(Math.random() * 6),
-          potential: 84 + Math.floor(Math.random() * 8),
-          hnd: 20,
-          tck: 65,
-          pas: 70,
-          sho: 68,
-          spd: 82,
-          sta: 80
-        });
       }
-
-      TEAMS.forEach(t => { if (t.isHuman) t.isReady = false; });
-
-      if (currentWeek < maxWeeks) {
-        currentWeek += 1;
-      } else {
-        // Season Finished: Award Title
-        const champion = LEAGUE_TABLE[0];
-        clubHonours[champion.teamId].leagueTitles += 1;
-        showToast(`🏆 SEASON COMPLETE! ${champion.name} are PREMIERSHIP CHAMPIONS!`, '🎖️');
-      }
-
-      const btn = document.getElementById('btn-play-matchday');
-      btn.disabled = false;
-      btn.classList.remove('opacity-50', 'cursor-not-allowed');
-
-      updateHeader();
-      renderLeagueTable();
-      renderMultiplayerLounge();
-      renderCurrentSquadView();
-      renderTrophyRoom();
-      autoSaveToLocalStorage();
-      showToast(`Matchday concluded! Gate receipts added to home budgets.`, '💷');
     }
 
-    function renderLeagueTable() {
-      const tbody = document.getElementById('league-table-body');
-      tbody.innerHTML = '';
+    function updateLeagueTableRecord(div, homeId, awayId, hg, ag) {
+      const table = state.standings[div];
+      if (!table) return;
 
-      LEAGUE_TABLE.forEach((row, idx) => {
-        const team = TEAMS.find(t => t.id === row.teamId);
-        const isCurrentActive = team.id === getActiveTeam().id;
-        const tr = document.createElement('tr');
-        tr.className = `hover:bg-slate-800/40 transition ${isCurrentActive ? 'bg-sky-950/70 border-l-4 border-amber-400 font-bold' : ''}`;
+      const hRow = table.find(r => r.id === homeId);
+      const aRow = table.find(r => r.id === awayId);
 
-        let posBadgeColor = 'text-slate-400';
-        if (idx === 0) posBadgeColor = 'text-amber-400 font-bold';
-        else if (idx < 4) posBadgeColor = 'text-sky-400 font-semibold';
-        else if (idx >= 6) posBadgeColor = 'text-rose-400 font-semibold';
+      if (hRow && aRow) {
+        hRow.played++;
+        aRow.played++;
+        hRow.gf += hg;
+        hRow.ga += ag;
+        hRow.gd = hRow.gf - hRow.ga;
+        aRow.gf += ag;
+        aRow.ga += hg;
+        aRow.gd = aRow.gf - aRow.ga;
 
-        tr.innerHTML = `
-          <td class="p-3 text-center ${posBadgeColor}">${idx + 1}</td>
-          <td class="p-3">
-            <div class="flex items-center gap-2">
-              <span class="w-3 h-3 rounded-full shadow" style="background-color: ${team.color}"></span>
-              <span class="text-white">${team.name}</span>
-            </div>
-          </td>
-          <td class="p-3 text-center text-slate-300">${row.played}</td>
-          <td class="p-3 text-center text-emerald-400">${row.won}</td>
-          <td class="p-3 text-center text-amber-300">${row.drawn}</td>
-          <td class="p-3 text-center text-rose-400">${row.lost}</td>
-          <td class="p-3 text-center text-slate-400">${row.gf}</td>
-          <td class="p-3 text-center text-slate-400">${row.ga}</td>
-          <td class="p-3 text-center ${row.gd >= 0 ? 'text-emerald-400' : 'text-rose-400'}">${row.gd > 0 ? '+' : ''}${row.gd}</td>
-          <td class="p-3 text-center font-bold text-white font-console text-sm">${row.points}</td>
-          <td class="p-3 text-center">
-            <span class="px-2 py-0.5 rounded text-[10px] font-console ${row.isHuman ? 'bg-amber-900/60 text-amber-300 border border-amber-500/40' : 'bg-slate-800 text-slate-400'}">
-              ${row.isHuman ? 'HUMAN' : 'CPU'}
-            </span>
-          </td>
-        `;
-        tbody.appendChild(tr);
-      });
+        if (hg > ag) {
+          hRow.won++;
+          hRow.pts += 3;
+          aRow.lost++;
+        } else if (hg === ag) {
+          hRow.drawn++;
+          hRow.pts += 1;
+          aRow.drawn++;
+          aRow.pts += 1;
+        } else {
+          aRow.won++;
+          aRow.pts += 3;
+          hRow.lost++;
+        }
+      }
     }
 
-    function renderTransferMarket() {
-      const tbody = document.getElementById('transfer-table-body');
-      tbody.innerHTML = '';
-      const filterPos = document.getElementById('market-pos-filter').value;
-      const searchTxt = document.getElementById('market-search').value.toLowerCase();
+    /* =====================================================================
+       MATCHDAY SIMULATOR (MINUTE-BY-MINUTE BROADCAST)
+       ===================================================================== */
 
-      const filtered = TRANSFER_MARKET.filter(p => {
-        const matchPos = filterPos === 'ALL' || p.pos === filterPos;
-        const matchSearch = p.name.toLowerCase().includes(searchTxt);
-        return matchPos && matchSearch;
-      });
+    function startMatchdaySim() {
+      const userClub = getCurrentUserClub();
+      const weekData = state.fixtures.find(f => f.week === state.currentWeek);
+      let userMatch = weekData ? weekData.matches.find(m => m.home === userClub.id || m.away === userClub.id) : null;
 
-      if (filtered.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="9" class="p-4 text-center text-slate-500 italic">No scouted players found.</td></tr>`;
+      if (!userMatch) {
+        alert("No fixture scheduled for your club this week.");
         return;
       }
 
-      filtered.forEach(p => {
-        const canAfford = getActiveTeam().budget >= p.value;
+      const btn = document.getElementById('btnStartMatch');
+      btn.disabled = true;
+
+      const homeClub = state.clubs.find(c => c.id === userMatch.home);
+      const awayClub = state.clubs.find(c => c.id === userMatch.away);
+      const feed = document.getElementById('commentaryFeed');
+      feed.innerHTML = '';
+
+      let min = 0;
+      let hScore = 0;
+      let aScore = 0;
+
+      clearInterval(matchSimInterval);
+      matchSimInterval = setInterval(() => {
+        min += 5;
+        document.getElementById('sbMinute').innerText = `${min}'`;
+
+        // Commentary Events
+        if (Math.random() < 0.28) {
+          const scoringHome = (Math.random() * (homeClub.att + 5) > Math.random() * awayClub.def);
+          if (scoringHome) {
+            hScore++;
+            feed.innerHTML = `<div class="comm-line goal">⚽ ${min}' GOAL! ${homeClub.name} find the net with a lethal strike! (${hScore}-${aScore})</div>` + feed.innerHTML;
+            playSound('goal');
+          } else {
+            aScore++;
+            feed.innerHTML = `<div class="comm-line goal">⚽ ${min}' GOAL! ${awayClub.name} strike on the counter-attack! (${hScore}-${aScore})</div>` + feed.innerHTML;
+            playSound('goal');
+          }
+          document.getElementById('sbScore').innerText = `${hScore} - ${aScore}`;
+        } else if (Math.random() < 0.20) {
+          feed.innerHTML = `<div class="comm-line">🧤 ${min}' Terrific diving save denies a clear goalscoring opportunity!</div>` + feed.innerHTML;
+        }
+
+        if (min >= 90) {
+          clearInterval(matchSimInterval);
+          document.getElementById('sbMinute').innerText = `FULL TIME`;
+          feed.innerHTML = `<div class="comm-line" style="font-weight:800;">🏁 90' Full-time whistle blows! Final score: ${homeClub.name} ${hScore} - ${aScore} ${awayClub.name}.</div>` + feed.innerHTML;
+          btn.disabled = false;
+          playSound('whistle');
+        }
+      }, 150);
+    }
+
+    /* =====================================================================
+       STANDINGS TABLES & PROMOTION/RELEGATION BANDS
+       ===================================================================== */
+
+    function renderStandingsTable(divIndex) {
+      state.activeStandingsTab = divIndex;
+      for (let i = 0; i <= 3; i++) {
+        const btn = document.getElementById(`tabTier${i}`);
+        if (btn) btn.className = `league-tab-btn ${i === divIndex ? 'active' : ''}`;
+      }
+
+      const tableBody = document.getElementById('leagueTableBody');
+      tableBody.innerHTML = '';
+
+      const rows = [...(state.standings[divIndex] || [])];
+      rows.sort((a, b) => (b.pts - a.pts) || (b.gd - a.gd) || (b.gf - a.gf));
+
+      rows.forEach((r, idx) => {
+        const pos = idx + 1;
+        let zoneClass = '';
+
+        if (divIndex === 0) {
+          if (pos <= 4) zoneClass = 'zone-ucl';
+          else if (pos >= 18) zoneClass = 'zone-relegation';
+        } else if (divIndex === 1) {
+          if (pos <= 2) zoneClass = 'zone-promo';
+          else if (pos <= 6) zoneClass = 'zone-playoff';
+          else if (pos >= 22) zoneClass = 'zone-relegation';
+        } else if (divIndex === 2) {
+          if (pos <= 2) zoneClass = 'zone-promo';
+          else if (pos <= 6) zoneClass = 'zone-playoff';
+          else if (pos >= 21) zoneClass = 'zone-relegation';
+        } else if (divIndex === 3) {
+          if (pos <= 3) zoneClass = 'zone-promo';
+          else if (pos <= 7) zoneClass = 'zone-playoff';
+          else if (pos >= 23) zoneClass = 'zone-relegation';
+        }
+
+        const isUser = (r.id === state.userClubId);
         const tr = document.createElement('tr');
-        tr.className = 'hover:bg-slate-800/40 transition font-mono';
+        tr.className = `fm-row ${zoneClass}`;
+        if (isUser) tr.style.background = 'rgba(0, 210, 255, 0.15)';
+
         tr.innerHTML = `
-          <td class="p-3 font-medium text-white">${p.name}</td>
-          <td class="p-3"><span class="px-1.5 py-0.5 rounded text-[10px] font-bold bg-slate-800 text-slate-300">${p.pos}</span></td>
-          <td class="p-3 text-slate-400">${p.teamId}</td>
-          <td class="p-3 text-slate-400">${p.age}</td>
-          <td class="p-3 font-bold text-amber-300">${p.ovr}</td>
-          <td class="p-3 text-slate-300 text-center text-[11px]">${p.hnd}/${p.tck}/${p.pas}/${p.sho}/${p.spd}</td>
-          <td class="p-3 font-bold font-console text-emerald-400">£${(p.value / 1000000).toFixed(1)}M</td>
-          <td class="p-3 text-slate-300">£${p.wage.toLocaleString()}/wk</td>
-          <td class="p-3 text-right">
-            <button onclick="openBidModal('${p.id}')" class="px-3 py-1 rounded text-xs font-console font-bold uppercase ${canAfford ? 'bg-sky-600 hover:bg-sky-500 text-white' : 'bg-slate-800 text-slate-500 cursor-not-allowed'} transition">
-              ${canAfford ? 'Bid & Sign' : 'No Funds'}
-            </button>
-          </td>
+          <td><b>${pos}</b></td>
+          <td><b>${r.name}</b> ${isUser ? '⭐' : ''}</td>
+          <td>${r.played}</td>
+          <td>${r.won}</td>
+          <td>${r.drawn}</td>
+          <td>${r.lost}</td>
+          <td>${r.gd > 0 ? '+' + r.gd : r.gd}</td>
+          <td><b style="color:#fff;">${r.pts}</b></td>
         `;
-        tbody.appendChild(tr);
+        tableBody.appendChild(tr);
       });
     }
 
-    function filterTransfers() {
-      renderTransferMarket();
+    /* =====================================================================
+       MANAGER OF THE MONTH & AWARDS
+       ===================================================================== */
+
+    function evaluateManagerOfMonth() {
+      const userClub = getCurrentUserClub();
+      // If user won at least 3 of last 4 games, award MotM
+      if (Math.random() > 0.45 && state.manager.confidence > 75) {
+        state.manager.motmAwards++;
+        state.manager.confidence = Math.min(99, state.manager.confidence + 5);
+        alert(`🏆 ACCOLADE: Congratulations ${state.manager.name}! You have been named MANAGER OF THE MONTH for ${userClub.name}!`);
+        playSound('cheer');
+      }
     }
 
-    function openBidModal(playerId) {
-      playSound('click');
-      const player = TRANSFER_MARKET.find(p => p.id === playerId);
-      if (!player) return;
-      pendingBidPlayer = player;
+    /* =====================================================================
+       END OF SEASON & PROMOTION / RELEGATION SYSTEM
+       ===================================================================== */
 
-      const activeTeam = getActiveTeam();
-      const content = document.getElementById('bid-modal-content');
+    function showEndSeasonGala() {
+      const modal = document.getElementById('endSeasonModal');
+      const content = document.getElementById('eosSummaryContent');
+
+      // Sort all division tables
+      const finalTables = {};
+      for (let d = 0; d <= 3; d++) {
+        finalTables[d] = [...state.standings[d]].sort((a,b) => (b.pts - a.pts) || (b.gd - a.gd));
+      }
+
+      const pChamp = finalTables[0][0].name;
+      const cChamp = finalTables[1][0].name;
+      const l1Champ = finalTables[2][0].name;
+      const l2Champ = finalTables[3][0].name;
+
       content.innerHTML = `
-        <div class="bg-slate-900 p-3 rounded-lg border border-slate-800">
-          <div class="flex justify-between items-center mb-1">
-            <span class="text-white font-bold text-sm">${player.name}</span>
-            <span class="px-2 py-0.5 rounded text-[10px] bg-sky-900 text-sky-200 font-bold">${player.pos} | OVR ${player.ovr}</span>
-          </div>
-          <div class="text-slate-400 text-[11px] space-y-1">
-            <p>Age: ${player.age} &bull; Key Attribute: ${player.sho > player.tck ? 'Shooting (' + player.sho + ')' : 'Tackling (' + player.tck + ')'}</p>
-            <p class="text-emerald-400 font-bold">Market Fee: £${(player.value / 1000000).toFixed(1)}M</p>
-            <p class="text-slate-300">Wage Demands: £${player.wage.toLocaleString()} / week</p>
-          </div>
+        <div style="background:var(--bg-panel); padding:14px; border-radius:8px; margin-bottom:12px;">
+          <h3 style="color:var(--gold); margin-bottom:6px;">👑 Champions Crowned</h3>
+          <p><b>Premier League:</b> ${pChamp}</p>
+          <p><b>Championship:</b> ${cChamp}</p>
+          <p><b>League One:</b> ${l1Champ}</p>
+          <p><b>League Two:</b> ${l2Champ}</p>
         </div>
-
-        <div class="p-3 bg-slate-950 rounded-lg border border-slate-800 text-slate-300">
-          <div class="flex justify-between text-xs">
-            <span>Current Transfer Balance:</span>
-            <span class="font-bold text-white">£${(activeTeam.budget / 1000000).toFixed(1)}M</span>
-          </div>
-          <div class="flex justify-between text-xs mt-1 border-t border-slate-800 pt-1">
-            <span>Remaining Funds:</span>
-            <span class="font-bold font-console ${activeTeam.budget >= player.value ? 'text-emerald-400' : 'text-rose-400'}">
-              £${((activeTeam.budget - player.value) / 1000000).toFixed(1)}M
-            </span>
-          </div>
+        <div style="background:var(--bg-panel); padding:14px; border-radius:8px;">
+          <h3 style="color:#38bdf8; margin-bottom:6px;">📈 Official Movements</h3>
+          <p><b>Promoted to Prem:</b> ${finalTables[1][0].name}, ${finalTables[1][1].name}, ${finalTables[1][2].name} (Play-Off Winners)</p>
+          <p><b>Relegated to Champ:</b> ${finalTables[0][17].name}, ${finalTables[0][18].name}, ${finalTables[0][19].name}</p>
         </div>
       `;
 
-      document.getElementById('transfer-modal').classList.remove('hidden');
+      modal.style.display = 'flex';
+      playSound('cheer');
     }
 
-    function closeBidModal() {
-      playSound('click');
-      document.getElementById('transfer-modal').classList.add('hidden');
-      pendingBidPlayer = null;
+    function closeEosModal() {
+      document.getElementById('endSeasonModal').style.display = 'none';
     }
 
-    function confirmPlayerSigning() {
-      if (!pendingBidPlayer) return;
-      const team = getActiveTeam();
+    function executeNextSeasonTransition() {
+      closeEosModal();
+      state.seasonYear++;
+      state.currentWeek = 1;
 
-      if (team.budget < pendingBidPlayer.value) {
-        showToast('Insufficient transfer budget!', '❌');
-        closeBidModal();
-        return;
+      // Age players and reset fitness
+      state.clubs.forEach(c => {
+        c.players.forEach(p => {
+          p.age += 1;
+          p.con = 100;
+          if (p.age < 23) p.ovr += Math.floor(Math.random() * 3);
+          else if (p.age > 33) p.ovr -= Math.floor(Math.random() * 2);
+        });
+      });
+
+      // Reset standings
+      for (let div = 0; div <= 3; div++) {
+        state.standings[div] = state.clubs
+          .filter(c => c.div === div)
+          .map(c => ({
+            id: c.id,
+            name: c.name,
+            played: 0,
+            won: 0,
+            drawn: 0,
+            lost: 0,
+            gf: 0,
+            ga: 0,
+            gd: 0,
+            pts: 0
+          }));
       }
 
-      team.budget -= pendingBidPlayer.value;
-      pendingBidPlayer.teamId = team.id;
-      SQUADS[team.id].push(pendingBidPlayer);
-      TRANSFER_MARKET = TRANSFER_MARKET.filter(p => p.id !== pendingBidPlayer.id);
-
-      playSound('goal');
-      showToast(`${pendingBidPlayer.name} has signed for ${team.name}!`, '✍️');
-      closeBidModal();
-      updateHeader();
-      renderTransferMarket();
-      renderCurrentSquadView();
-      autoSaveToLocalStorage();
+      generateSeasonFixtures();
+      saveGame();
+      renderAll();
+      alert(`🎉 Welcome to the ${state.seasonYear}/${(state.seasonYear + 1).toString().slice(-2)} Season!`);
     }
 
-    function renderTrophyRoom() {
-      const team = getActiveTeam();
-      const h = clubHonours[team.id];
-      const grid = document.getElementById('trophy-cabinet-grid');
-      grid.innerHTML = `
-        <div class="lma-panel p-4 rounded-xl flex items-center gap-4">
-          <div class="text-4xl">🏆</div>
-          <div>
-            <h4 class="font-console font-bold text-sm text-white">Premiership Trophies</h4>
-            <p class="text-2xl font-console font-bold text-amber-400">${h.leagueTitles}</p>
-            <span class="text-[10px] text-slate-400">Total League Victories</span>
-          </div>
-        </div>
+    /* =====================================================================
+       CLUB SWITCHER & MODAL
+       ===================================================================== */
 
-        <div class="lma-panel p-4 rounded-xl flex items-center gap-4">
-          <div class="text-4xl">🧤</div>
-          <div>
-            <h4 class="font-console font-bold text-sm text-white">Clean Sheet Records</h4>
-            <p class="text-2xl font-console font-bold text-sky-400">${h.cleanSheets}</p>
-            <span class="text-[10px] text-slate-400">Shutouts recorded</span>
-          </div>
-        </div>
-
-        <div class="lma-panel p-4 rounded-xl flex items-center gap-4">
-          <div class="text-4xl">🎖️</div>
-          <div>
-            <h4 class="font-console font-bold text-sm text-white">Manager Honors</h4>
-            <p class="text-2xl font-console font-bold text-emerald-400">${h.managerOfTheMonth}</p>
-            <span class="text-[10px] text-slate-400">Manager of the Month Awards</span>
-          </div>
-        </div>
-      `;
-
-      const mContainer = document.getElementById('milestones-container');
-      mContainer.innerHTML = `
-        <div class="p-3 bg-slate-900/80 rounded border border-slate-800">
-          <span class="text-[10px] text-slate-400 block uppercase">Stadium Capacity</span>
-          <span class="text-white font-bold text-sm">${Object.values(clubFacilities[team.id].stands).reduce((a,b)=>a+b.capacity,0).toLocaleString()}</span>
-        </div>
-        <div class="p-3 bg-slate-900/80 rounded border border-slate-800">
-          <span class="text-[10px] text-slate-400 block uppercase">Squad Size</span>
-          <span class="text-white font-bold text-sm">${SQUADS[team.id].length} Players</span>
-        </div>
-        <div class="p-3 bg-slate-900/80 rounded border border-slate-800">
-          <span class="text-[10px] text-slate-400 block uppercase">Medical Level</span>
-          <span class="text-amber-400 font-bold text-sm">Tier ${clubFacilities[team.id].medicalCentre}</span>
-        </div>
-        <div class="p-3 bg-slate-900/80 rounded border border-slate-800">
-          <span class="text-[10px] text-slate-400 block uppercase">Youth Level</span>
-          <span class="text-emerald-400 font-bold text-sm">Tier ${clubFacilities[team.id].youthFacility}</span>
-        </div>
-      `;
+    function openClubSelectorModal() {
+      filterModalClubs(0);
+      document.getElementById('clubSelectorModal').style.display = 'flex';
     }
 
-    function renderMultiplayerLounge() {
-      const grid = document.getElementById('multiplayer-managers-grid');
+    function closeClubSelectorModal() {
+      document.getElementById('clubSelectorModal').style.display = 'none';
+    }
+
+    function filterModalClubs(divIndex) {
+      for (let i = 0; i <= 3; i++) {
+        const btn = document.getElementById(`mTab${i}`);
+        if (btn) btn.className = `league-tab-btn ${i === divIndex ? 'active' : ''}`;
+      }
+
+      const grid = document.getElementById('modalClubsGrid');
       grid.innerHTML = '';
 
-      TEAMS.forEach((team, idx) => {
-        const isCurrentActive = idx === activeTeamIndex;
+      const clubs = state.clubs.filter(c => c.div === divIndex);
+      clubs.forEach(c => {
         const card = document.createElement('div');
-        card.className = `p-4 rounded-xl border flex flex-col justify-between transition ${
-          isCurrentActive ? 'bg-slate-900 border-amber-400 shadow-lg ring-1 ring-amber-400/50' : 'bg-slate-950/60 border-slate-800'
-        }`;
+        card.style.cssText = 'background:var(--bg-panel); padding:10px; border-radius:8px; cursor:pointer; border:1px solid var(--border);';
+        card.onclick = () => {
+          state.userClubId = c.id;
+          closeClubSelectorModal();
+          ensureAllSquadsHydrated();
+          saveGame();
+          renderAll();
+          playSound('whistle');
+        };
 
         card.innerHTML = `
-          <div>
-            <div class="flex items-center justify-between mb-2">
-              <span class="w-3 h-3 rounded-full" style="background-color: ${team.color}"></span>
-              <span class="text-[10px] px-2 py-0.5 rounded font-console uppercase ${
-                team.isHuman ? 'bg-sky-950 text-sky-300 border border-sky-700' : 'bg-slate-800 text-slate-400'
-              }">${team.isHuman ? 'HUMAN' : 'CPU SIM'}</span>
-            </div>
-            <h4 class="font-console font-bold text-sm text-white">${team.name}</h4>
-            <p class="text-xs text-slate-400 mb-2">${team.managerName}</p>
-            <div class="text-[11px] text-slate-300 font-mono space-y-0.5 border-t border-slate-800 pt-2">
-              <div>Budget: £${(team.budget / 1000000).toFixed(1)}M</div>
-              <div>Formation: ${teamTactics[team.id].formation}</div>
-            </div>
-          </div>
-
-          <div class="mt-4 pt-2 border-t border-slate-800/80 flex items-center justify-between">
-            ${team.isHuman ? `
-              <button onclick="toggleManagerReady(${idx})" class="w-full py-1.5 rounded text-xs font-console font-bold uppercase transition ${
-                team.isReady ? 'bg-emerald-600 hover:bg-emerald-500 text-white' : 'bg-slate-800 hover:bg-slate-700 text-slate-300'
-              }">
-                ${team.isReady ? 'READY FOR MATCH ✅' : 'CLICK TO READY ⏳'}
-              </button>
-            ` : `
-              <span class="text-[11px] text-slate-500 italic">CPU Always Ready</span>
-            `}
-          </div>
+          <div style="font-weight:800; font-size:0.9rem;">${c.name}</div>
+          <div style="font-size:0.75rem; color:var(--text-muted);">${c.stadium}</div>
+          <div style="font-size:0.75rem; color:var(--accent);">Budget: £${c.budget}M</div>
         `;
         grid.appendChild(card);
       });
+    }
 
-      const humanTeams = TEAMS.filter(t => t.isHuman);
-      const allReady = humanTeams.every(t => t.isReady);
-      const advBtn = document.getElementById('btn-advance-matchday-room');
+    /* =====================================================================
+       UI TABS & RENDER ROUTINES
+       ===================================================================== */
 
-      if (allReady) {
-        advBtn.disabled = false;
-        advBtn.classList.remove('bg-slate-700', 'text-slate-400', 'cursor-not-allowed');
-        advBtn.classList.add('bg-gradient-to-r', 'from-emerald-600', 'to-green-500', 'text-white', 'shadow-lg', 'cursor-pointer');
-      } else {
-        advBtn.disabled = true;
-        advBtn.classList.add('bg-slate-700', 'text-slate-400', 'cursor-not-allowed');
-        advBtn.classList.remove('bg-gradient-to-r', 'from-emerald-600', 'to-green-500', 'text-white', 'shadow-lg', 'cursor-pointer');
+    function switchTab(tabId) {
+      const tabs = ['tactics', 'matchday', 'standings', 'transfers', 'facilities', 'manager', 'honours'];
+      tabs.forEach(t => {
+        const pane = document.getElementById(`tab-${t}`);
+        const nav = document.getElementById(`nav-${t}`);
+        if (pane) pane.style.display = (t === tabId) ? 'block' : 'none';
+        if (nav) nav.className = `nav-item ${t === tabId ? 'active' : ''}`;
+      });
+
+      if (tabId === 'tactics') renderTactics();
+      if (tabId === 'standings') renderStandingsTable(state.activeStandingsTab);
+      if (tabId === 'matchday') renderMatchdayView();
+      if (tabId === 'facilities') renderFacilities();
+      if (tabId === 'manager') renderManagerOffice();
+      if (tabId === 'honours') renderHonours();
+      if (tabId === 'transfers') renderTransfers();
+    }
+
+    function renderAll() {
+      const club = getCurrentUserClub();
+      const divNames = ['Premier League', 'Championship', 'League One', 'League Two'];
+
+      // Header metrics
+      document.getElementById('headerDivName').innerText = divNames[club.div];
+      document.getElementById('headerWeek').innerText = `Week ${state.currentWeek} of ${state.totalWeeks}`;
+      document.getElementById('headerSeasonTag').innerText = `${state.seasonYear}/${(state.seasonYear + 1).toString().slice(-2)} Career &bull; English Football Pyramid`;
+      document.getElementById('headerConfidence').innerText = `${state.manager.confidence}% &bull; Stable`;
+      document.getElementById('headerBudget').innerText = `£${club.budget.toFixed(1)}M`;
+
+      // Club Banner
+      document.getElementById('bannerBadge').innerText = club.id;
+      document.getElementById('bannerBadge').style.background = club.col || '#e11d48';
+      document.getElementById('bannerClubName').innerText = club.name;
+      document.getElementById('bannerStadium').innerText = `${club.stadium} &bull; Capacity: ${club.cap.toLocaleString()}`;
+
+      document.getElementById('statAttack').innerText = club.att;
+      document.getElementById('statMidfield').innerText = club.mid;
+      document.getElementById('statDefence').innerText = club.def;
+      document.getElementById('statOvr').innerText = Math.round((club.att + club.mid + club.def) / 3);
+
+      renderTactics();
+      renderStandingsTable(club.div);
+    }
+
+    function renderMatchdayView() {
+      const club = getCurrentUserClub();
+      const weekData = state.fixtures.find(f => f.week === state.currentWeek);
+      const userMatch = weekData ? weekData.matches.find(m => m.home === club.id || m.away === club.id) : null;
+
+      if (userMatch) {
+        const hClub = state.clubs.find(c => c.id === userMatch.home);
+        const aClub = state.clubs.find(c => c.id === userMatch.away);
+        document.getElementById('sbHomeName').innerText = hClub.name;
+        document.getElementById('sbAwayName').innerText = aClub.name;
+        document.getElementById('sbScore').innerText = userMatch.played ? `${userMatch.homeGoals} - ${userMatch.awayGoals}` : '0 - 0';
+        document.getElementById('sbMinute').innerText = userMatch.played ? 'FULL TIME' : 'PRE-MATCH';
+      }
+
+      const groundsList = document.getElementById('aroundGroundsList');
+      groundsList.innerHTML = '';
+      if (weekData) {
+        weekData.matches.forEach(m => {
+          const h = state.clubs.find(c => c.id === m.home);
+          const a = state.clubs.find(c => c.id === m.away);
+          const line = document.createElement('div');
+          line.style.cssText = 'display:flex; justify-content:space-between; padding:6px 8px; background:var(--bg-panel); border-radius:6px;';
+          line.innerHTML = `<span>${h.name}</span> <b>${m.played ? `${m.homeGoals} -${m.awayGoals}` : 'v'}</b> <span>${a.name}</span>`;
+          groundsList.appendChild(line);
+        });
       }
     }
 
-    function toggleManagerReady(index) {
-      playSound('click');
-      TEAMS[index].isReady = !TEAMS[index].isReady;
-      renderMultiplayerLounge();
-      updateHeader();
+    function renderFacilities() {
+      const club = getCurrentUserClub();
+      const container = document.getElementById('facilitiesList');
+      container.innerHTML = `
+        <div style="background:var(--bg-panel); padding:16px; border-radius:8px;">
+          <h4>🏟️ North Stand Expansion</h4>
+          <p style="font-size:0.75rem; color:var(--text-muted); margin:6px 0;">Add 2,500 seats to boost gate revenue.</p>
+          <button class="btn-swap-pill" onclick="upgradeStand(2500, 4.0)">Expand (£4.0M)</button>
+        </div>
+        <div style="background:var(--bg-panel); padding:16px; border-radius:8px;">
+          <h4>🏥 Elite Medical Centre</h4>
+          <p style="font-size:0.75rem; color:var(--text-muted); margin:6px 0;">Accelerates match fitness and prevents knocks.</p>
+          <button class="btn-swap-pill" onclick="alert('Medical facility upgraded!')">Upgrade (£2.5M)</button>
+        </div>
+      `;
     }
 
-    function advanceFromMultiplayerRoom() {
-      switchTab('fixtures');
-      startMatchdaySimulation();
+    function upgradeStand(seats, cost) {
+      const club = getCurrentUserClub();
+      if (club.budget < cost) {
+        alert("Insufficient transfer budget for ground expansion.");
+        return;
+      }
+      club.budget -= cost;
+      club.cap += seats;
+      saveGame();
+      renderAll();
+      alert(`Expansion complete! New capacity: ${club.cap.toLocaleString()}`);
     }
 
-    function openSaveModal() {
-      playSound('click');
-      document.getElementById('save-modal').classList.remove('hidden');
+    function renderManagerOffice() {
+      const summary = document.getElementById('managerProfileSummary');
+      summary.innerHTML = `
+        <p><b>Manager Name:</b> ${state.manager.name}</p>
+        <p><b>Matches Managed:</b> ${state.manager.matches}</p>
+        <p><b>Career Record:</b> ${state.manager.wins}W - ${state.manager.draws}D - ${state.manager.losses}L</p>
+        <p><b>Win Rate:</b> ${state.manager.matches ? Math.round((state.manager.wins / state.manager.matches) * 100) : 0}%</p>
+        <p><b>Board Confidence:</b> <span style="color:#34d399; font-weight:800;">${state.manager.confidence}%</span></p>
+      `;
     }
 
-    function closeSaveModal() {
-      playSound('click');
-      document.getElementById('save-modal').classList.add('hidden');
+    function renderHonours() {
+      const honours = document.getElementById('honoursList');
+      honours.innerHTML = `
+        <div style="background:var(--bg-panel); padding:16px; border-radius:8px; text-align:center; min-width:140px;">
+          <div style="font-size:2rem;">🏅</div>
+          <div style="font-weight:800; font-size:1.1rem; color:var(--gold);">${state.manager.motmAwards}</div>
+          <div style="font-size:0.75rem; color:var(--text-muted);">Manager of the Month</div>
+        </div>
+      `;
     }
 
-    function getSavePayload() {
-      return {
-        version: '1.2',
-        savedAt: new Date().toISOString(),
-        currentWeek,
-        activeTeamIndex,
-        TEAMS,
-        SQUADS,
-        TRANSFER_MARKET,
-        YOUTH_PROSPECTS,
-        LEAGUE_TABLE,
-        teamTactics,
-        clubFacilities,
-        clubHonours,
-        FIXTURES_SCHEDULE
-      };
+    function renderTransfers() {
+      const body = document.getElementById('transferMarketBody');
+      body.innerHTML = `
+        <tr>
+          <td><b>Harvey Elliott</b></td>
+          <td>AMR</td>
+          <td>23</td>
+          <td><b style="color:var(--gold);">81</b></td>
+          <td>£22.0M</td>
+          <td><button class="btn-swap-pill" onclick="alert('Offer submitted!')">Make Bid</button></td>
+        </tr>
+        <tr>
+          <td><b>Archie Gray</b></td>
+          <td>DM</td>
+          <td>20</td>
+          <td><b style="color:var(--gold);">79</b></td>
+          <td>£18.5M</td>
+          <td><button class="btn-swap-pill" onclick="alert('Offer submitted!')">Make Bid</button></td>
+        </tr>
+      `;
     }
 
-    function autoSaveToLocalStorage() {
+    /* =====================================================================
+       WEB AUDIO PROCEDURAL SOUNDS
+       ===================================================================== */
+
+    let audioCtx = null;
+    function playSound(type) {
+      if (!state.audioEnabled) return;
       try {
-        localStorage.setItem('LMA_MANAGER_SAVE_GAME', JSON.stringify(getSavePayload()));
-      } catch (e) {
-        console.warn('Auto-save error:', e);
-      }
-    }
+        if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        if (audioCtx.state === 'suspended') audioCtx.resume();
 
-    function loadFromLocalStorage() {
-      try {
-        const raw = localStorage.getItem('LMA_MANAGER_SAVE_GAME');
-        if (!raw) return false;
-        applyLoadedData(JSON.parse(raw));
-        return true;
-      } catch (e) {
-        console.error('Failed to load save from localStorage', e);
-        return false;
-      }
-    }
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
 
-    function exportSaveFile() {
-      playSound('cash');
-      const dataStr = 'data:text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(getSavePayload(), null, 2));
-      const downloadAnchor = document.createElement('a');
-      downloadAnchor.setAttribute('href', dataStr);
-      downloadAnchor.setAttribute('download', `LMA_Manager_Season_Week_${currentWeek}.json`);
-      document.body.appendChild(downloadAnchor);
-      downloadAnchor.click();
-      downloadAnchor.remove();
-      showToast('Career Save Exported to JSON!', '💾');
-      closeSaveModal();
-    }
+        const now = audioCtx.currentTime;
 
-    function importSaveFile(event) {
-      const file = event.target.files[0];
-      if (!file) return;
-
-      const reader = new FileReader();
-      reader.onload = function(e) {
-        try {
-          const parsed = JSON.parse(e.target.result);
-          applyLoadedData(parsed);
-          playSound('whistle');
-          showToast('Imported save file successfully!', '🎉');
-          closeSaveModal();
-        } catch (err) {
-          showToast('Corrupt or invalid save JSON file!', '❌');
+        if (type === 'whistle') {
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(2200, now);
+          osc.frequency.setValueAtTime(2600, now + 0.08);
+          gain.gain.setValueAtTime(0.2, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.25);
+          osc.start(now);
+          osc.stop(now + 0.25);
+        } else if (type === 'goal') {
+          osc.type = 'sawtooth';
+          osc.frequency.setValueAtTime(140, now);
+          osc.frequency.exponentialRampToValueAtTime(40, now + 0.4);
+          gain.gain.setValueAtTime(0.3, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.4);
+          osc.start(now);
+          osc.stop(now + 0.4);
+        } else if (type === 'click') {
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(600, now);
+          gain.gain.setValueAtTime(0.1, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.05);
+          osc.start(now);
+          osc.stop(now + 0.05);
+        } else if (type === 'cheer') {
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(440, now);
+          osc.frequency.exponentialRampToValueAtTime(880, now + 0.5);
+          gain.gain.setValueAtTime(0.2, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.5);
+          osc.start(now);
+          osc.stop(now + 0.5);
         }
-      };
-      reader.readAsText(file);
+      } catch(e) {}
     }
 
-    function applyLoadedData(d) {
-      if (!d) return;
-      currentWeek = d.currentWeek || 1;
-      activeTeamIndex = d.activeTeamIndex || 0;
-      if (d.TEAMS) {
-        d.TEAMS.forEach((t, i) => { if (TEAMS[i]) Object.assign(TEAMS[i], t); });
-      }
-      if (d.SQUADS) Object.assign(SQUADS, d.SQUADS);
-      if (d.TRANSFER_MARKET) TRANSFER_MARKET = d.TRANSFER_MARKET;
-      if (d.YOUTH_PROSPECTS) YOUTH_PROSPECTS = d.YOUTH_PROSPECTS;
-      if (d.LEAGUE_TABLE) LEAGUE_TABLE = d.LEAGUE_TABLE;
-      if (d.teamTactics) Object.assign(teamTactics, d.teamTactics);
-      if (d.clubFacilities) Object.assign(clubFacilities, d.clubFacilities);
-      if (d.clubHonours) Object.assign(clubHonours, d.clubHonours);
-      if (d.FIXTURES_SCHEDULE) FIXTURES_SCHEDULE = d.FIXTURES_SCHEDULE;
-
-      updateHeader();
-      renderCurrentSquadView();
-      renderLeagueTable();
-      renderTransferMarket();
-      renderStadiumScreen();
-      renderYouthAcademy();
-      renderTrophyRoom();
-      renderMultiplayerLounge();
-      renderFixturesTab();
+    function toggleAudio() {
+      state.audioEnabled = !state.audioEnabled;
+      document.getElementById('btnAudio').innerText = state.audioEnabled ? '🔊' : '🔇';
+      playSound('click');
     }
 
-    function resetGameCareer() {
-      localStorage.removeItem('LMA_MANAGER_SAVE_GAME');
-      location.reload();
-    }
-
-    function showToast(msg, icon = 'ℹ️') {
-      const toast = document.getElementById('game-toast');
-      document.getElementById('toast-msg').innerText = msg;
-      document.getElementById('toast-icon').innerText = icon;
-      toast.classList.remove('translate-y-20', 'opacity-0');
-      toast.classList.add('translate-y-0', 'opacity-100');
-
-      setTimeout(() => {
-        toast.classList.remove('translate-y-0', 'opacity-100');
-        toast.classList.add('translate-y-20', 'opacity-0');
-      }, 3200);
-    }
-
+    // Launch engine
     window.addEventListener('DOMContentLoaded', () => {
-      const loaded = loadFromLocalStorage();
-      if (!loaded) {
-        updateHeader();
-        renderCurrentSquadView();
-        renderLeagueTable();
-        renderTransferMarket();
-        renderStadiumScreen();
-        renderYouthAcademy();
-        renderTrophyRoom();
-        renderMultiplayerLounge();
-        renderFixturesTab();
-      }
+      initGame();
     });
   </script>
 </body>
