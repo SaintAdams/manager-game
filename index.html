@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>LMA Club Manager 2007 Edition</title>
+  <title>LMA Club Manager 2007 RE - Career Edition</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -19,7 +19,6 @@
       --gold-glow: #fbbf24;
       --retro-green: #22c55e;
       --pitch-grass: #1b4332;
-      --pitch-stripes: #2d6a4f;
     }
 
     body {
@@ -37,21 +36,21 @@
 
     /* Metallic Panel Gradient */
     .lma-panel {
-      background: linear-gradient(180deg, rgba(30, 41, 59, 0.85) 0%, rgba(15, 23, 42, 0.95) 100%);
-      border: 1px solid rgba(56, 189, 248, 0.2);
-      box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+      background: linear-gradient(180deg, rgba(30, 41, 59, 0.9) 0%, rgba(15, 23, 42, 0.98) 100%);
+      border: 1px solid rgba(56, 189, 248, 0.22);
+      box-shadow: 0 4px 24px -2px rgba(0, 0, 0, 0.65), inset 0 1px 0 rgba(255, 255, 255, 0.08);
     }
 
     .lma-panel-header {
-      background: linear-gradient(90deg, #0369a1 0%, #075985 60%, #0f172a 100%);
+      background: linear-gradient(90deg, #0369a1 0%, #075985 55%, #0f172a 100%);
       border-bottom: 2px solid #38bdf8;
     }
 
     .tab-active {
       background: linear-gradient(180deg, #0284c7 0%, #0369a1 100%);
-      color: #ffffff;
+      color: #ffffff !important;
       border-bottom: 3px solid #fbbf24;
-      box-shadow: 0 -2px 10px rgba(56, 189, 248, 0.4);
+      box-shadow: 0 -2px 12px rgba(56, 189, 248, 0.45);
     }
 
     /* Football Pitch Graphic */
@@ -59,13 +58,13 @@
       background: repeating-linear-gradient(
         0deg,
         #1b4332,
-        #1b4332 32px,
-        #245a44 32px,
-        #245a44 64px
+        #1b4332 30px,
+        #245a44 30px,
+        #245a44 60px
       );
       position: relative;
       border: 2px solid rgba(255, 255, 255, 0.4);
-      box-shadow: inset 0 0 40px rgba(0,0,0,0.6);
+      box-shadow: inset 0 0 50px rgba(0,0,0,0.7);
     }
 
     .pitch-line-center {
@@ -82,8 +81,8 @@
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
-      width: 70px;
-      height: 70px;
+      width: 66px;
+      height: 66px;
       border: 2px solid rgba(255,255,255,0.4);
       border-radius: 50%;
     }
@@ -94,7 +93,7 @@
       left: 50%;
       transform: translateX(-50%);
       width: 140px;
-      height: 60px;
+      height: 55px;
       border: 2px solid rgba(255,255,255,0.4);
       border-top: none;
     }
@@ -105,12 +104,12 @@
       left: 50%;
       transform: translateX(-50%);
       width: 140px;
-      height: 60px;
+      height: 55px;
       border: 2px solid rgba(255,255,255,0.4);
       border-bottom: none;
     }
 
-    /* Custom Scrollbar for Commentary */
+    /* Custom Scrollbars */
     ::-webkit-scrollbar {
       width: 6px;
       height: 6px;
@@ -126,15 +125,13 @@
       background: #0284c7;
     }
 
-    /* Custom range input */
     input[type=range] {
       accent-color: #38bdf8;
     }
 
-    /* Pulsing turn light */
     @keyframes pulse-gold {
       0%, 100% { box-shadow: 0 0 10px #fbbf24; }
-      50% { box-shadow: 0 0 22px #f59e0b; }
+      50% { box-shadow: 0 0 20px #f59e0b; }
     }
     .turn-glow {
       animation: pulse-gold 2s infinite ease-in-out;
@@ -143,17 +140,18 @@
 </head>
 <body class="min-h-screen flex flex-col justify-between antialiased">
 
-  <header class="border-b border-sky-900/50 bg-slate-950/90 backdrop-blur-md sticky top-0 z-40 px-4 py-2 shadow-xl">
-    <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-4">
-      <!-- Game Branding -->
+  <header class="border-b border-sky-900/50 bg-slate-950/95 backdrop-blur-md sticky top-0 z-40 px-3 md:px-5 py-2 shadow-2xl">
+    <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-3">
+      
+      <!-- Brand & Season -->
       <div class="flex items-center gap-3">
-        <div class="w-10 h-10 rounded-lg bg-gradient-to-tr from-sky-600 to-amber-400 p-0.5 shadow-md flex items-center justify-center font-console font-bold text-xl text-black">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-sky-600 via-cyan-400 to-amber-400 p-0.5 shadow-lg flex items-center justify-center font-console font-bold text-xl text-black">
           LMA
         </div>
         <div>
           <div class="flex items-center gap-2">
-            <h1 class="text-xl font-console font-bold tracking-wider text-white">LMA CLUB MANAGER</h1>
-            <span class="text-xs bg-sky-900 text-sky-300 font-semibold px-2 py-0.5 rounded border border-sky-600">2007 RE</span>
+            <h1 class="text-base md:text-lg font-console font-bold tracking-wider text-white">LMA CLUB MANAGER</h1>
+            <span class="text-[10px] bg-sky-900/80 text-sky-300 font-semibold px-2 py-0.5 rounded border border-sky-600">2007 RE</span>
           </div>
           <p class="text-xs text-slate-400 flex items-center gap-2">
             <span>Season 2026/27</span> &bull; 
@@ -163,90 +161,100 @@
       </div>
 
       <!-- Turn & Active Manager Indicator -->
-      <div class="flex items-center gap-3 bg-slate-900/90 px-4 py-1.5 rounded-xl border border-slate-700/60 shadow-inner">
+      <div class="flex items-center gap-2 md:gap-3 bg-slate-900/90 px-3 py-1.5 rounded-xl border border-slate-700/60 shadow-inner">
         <div class="w-3 h-3 rounded-full bg-amber-400 turn-glow"></div>
         <div class="text-xs">
-          <span class="text-slate-400 block uppercase text-[10px] tracking-widest font-semibold">Active Turn</span>
-          <span id="header-manager-name" class="font-console font-bold text-sm text-sky-300">Manager 1 (Man Red)</span>
+          <span class="text-slate-400 block uppercase text-[9px] tracking-widest font-semibold">Active Turn</span>
+          <span id="header-manager-name" class="font-console font-bold text-xs md:text-sm text-sky-300">Manager Alex (MR)</span>
         </div>
-        <button id="btn-next-manager" onclick="switchManagerTurn()" class="ml-2 text-xs bg-sky-950 hover:bg-sky-800 text-sky-200 border border-sky-600/50 px-3 py-1 rounded font-console transition">
+        <button onclick="switchManagerTurn()" class="ml-1 text-[11px] bg-sky-950 hover:bg-sky-800 text-sky-200 border border-sky-600/50 px-2.5 py-1 rounded font-console transition">
           Pass Turn 🔁
         </button>
       </div>
 
-      <!-- Financial & Sound Widget -->
-      <div class="flex items-center gap-4">
+      <!-- Club Financials & System Controls -->
+      <div class="flex items-center gap-3 md:gap-4">
         <div class="text-right">
-          <span class="text-[10px] text-slate-400 uppercase tracking-widest block font-bold">Transfer Budget</span>
-          <span id="header-budget" class="font-console text-emerald-400 font-bold text-base md:text-lg">£45.0M</span>
+          <span class="text-[9px] text-slate-400 uppercase tracking-widest block font-bold">Transfer Budget</span>
+          <span id="header-budget" class="font-console text-emerald-400 font-bold text-sm md:text-base">£45.0M</span>
         </div>
-        <button id="btn-sound" onclick="toggleAudio()" class="p-2 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-lg border border-slate-700 text-sm transition" title="Toggle Audio FX">
+        <button id="btn-sound" onclick="toggleAudio()" class="p-2 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-lg border border-slate-700 text-xs transition" title="Sound FX">
           🔊
+        </button>
+        <button onclick="openSaveModal()" class="p-2 bg-slate-800 hover:bg-slate-700 text-amber-300 rounded-lg border border-slate-700 text-xs transition" title="Save / Load Game">
+          💾 Save/Load
         </button>
       </div>
     </div>
 
     <!-- Navigation Tabs -->
-    <div class="max-w-7xl mx-auto flex overflow-x-auto gap-1 mt-2 border-t border-slate-800/80 pt-1 text-sm font-console">
-      <button onclick="switchTab('tactics')" id="tab-btn-tactics" class="tab-btn tab-active px-4 py-2 rounded-t font-semibold flex items-center gap-2 transition">
+    <div class="max-w-7xl mx-auto flex overflow-x-auto gap-1 mt-2 border-t border-slate-800/80 pt-1 text-xs md:text-sm font-console">
+      <button onclick="switchTab('tactics')" id="tab-btn-tactics" class="tab-btn tab-active px-3 py-2 rounded-t font-semibold flex items-center gap-1.5 transition whitespace-nowrap">
         <span>📋</span> Squad & Pitch
       </button>
-      <button onclick="switchTab('fixtures')" id="tab-btn-fixtures" class="tab-btn px-4 py-2 rounded-t font-semibold text-slate-400 hover:text-white flex items-center gap-2 transition">
-        <span>⏱️</span> Fixtures & Matchday
+      <button onclick="switchTab('fixtures')" id="tab-btn-fixtures" class="tab-btn px-3 py-2 rounded-t font-semibold text-slate-400 hover:text-white flex items-center gap-1.5 transition whitespace-nowrap">
+        <span>⏱️</span> Matchday
       </button>
-      <button onclick="switchTab('transfers')" id="tab-btn-transfers" class="tab-btn px-4 py-2 rounded-t font-semibold text-slate-400 hover:text-white flex items-center gap-2 transition">
-        <span>💷</span> Transfer Market
+      <button onclick="switchTab('stadium')" id="tab-btn-stadium" class="tab-btn px-3 py-2 rounded-t font-semibold text-slate-400 hover:text-white flex items-center gap-1.5 transition whitespace-nowrap">
+        <span>🏟️</span> Stadium & Facilities
       </button>
-      <button onclick="switchTab('table')" id="tab-btn-table" class="tab-btn px-4 py-2 rounded-t font-semibold text-slate-400 hover:text-white flex items-center gap-2 transition">
-        <span>🏆</span> League Standings
+      <button onclick="switchTab('youth')" id="tab-btn-youth" class="tab-btn px-3 py-2 rounded-t font-semibold text-slate-400 hover:text-white flex items-center gap-1.5 transition whitespace-nowrap">
+        <span>🌱</span> Youth Academy
       </button>
-      <button onclick="switchTab('multiplayer')" id="tab-btn-multiplayer" class="tab-btn px-4 py-2 rounded-t font-semibold text-slate-400 hover:text-white flex items-center gap-2 transition">
-        <span>👥</span> Manager Room (<span id="tab-ready-counter">0/2</span> Ready)
+      <button onclick="switchTab('transfers')" id="tab-btn-transfers" class="tab-btn px-3 py-2 rounded-t font-semibold text-slate-400 hover:text-white flex items-center gap-1.5 transition whitespace-nowrap">
+        <span>💷</span> Transfers
+      </button>
+      <button onclick="switchTab('table')" id="tab-btn-table" class="tab-btn px-3 py-2 rounded-t font-semibold text-slate-400 hover:text-white flex items-center gap-1.5 transition whitespace-nowrap">
+        <span>🏆</span> Standings
+      </button>
+      <button onclick="switchTab('trophies')" id="tab-btn-trophies" class="tab-btn px-3 py-2 rounded-t font-semibold text-slate-400 hover:text-white flex items-center gap-1.5 transition whitespace-nowrap">
+        <span>🎖️</span> Trophy Cabinet
+      </button>
+      <button onclick="switchTab('multiplayer')" id="tab-btn-multiplayer" class="tab-btn px-3 py-2 rounded-t font-semibold text-slate-400 hover:text-white flex items-center gap-1.5 transition whitespace-nowrap">
+        <span>👥</span> Manager Room (<span id="tab-ready-counter">0/2</span>)
       </button>
     </div>
   </header>
 
-  <main class="max-w-7xl mx-auto w-full p-4 flex-1">
+  <main class="max-w-7xl mx-auto w-full p-3 md:p-4 flex-1">
 
     <!-- ================= TAB 1: SQUAD & TACTICS ================= -->
     <section id="tab-tactics" class="space-y-4">
-      <!-- Quick Club Overview Banner -->
       <div class="lma-panel p-4 rounded-xl flex flex-wrap items-center justify-between gap-4">
         <div class="flex items-center gap-3">
           <div id="club-badge" class="w-12 h-12 rounded-xl flex items-center justify-center font-console font-bold text-xl text-white shadow-lg">
             MR
           </div>
           <div>
-            <h2 id="club-display-name" class="text-xl font-bold font-console text-white">Manchester Red</h2>
-            <p id="club-stadium" class="text-xs text-slate-400">Old Trafford Park &bull; Capacity: 74,000</p>
+            <h2 id="club-display-name" class="text-lg md:text-xl font-bold font-console text-white">Manchester Red</h2>
+            <p id="club-stadium-sub" class="text-xs text-slate-400">Old Trafford Park &bull; Capacity: 74,000</p>
           </div>
         </div>
-        <div class="flex items-center gap-6 text-sm">
+        <div class="flex items-center gap-4 md:gap-6 text-sm">
           <div class="text-center">
-            <span class="text-xs text-slate-400 block font-semibold">ATTACK</span>
-            <span id="stat-att" class="text-amber-400 font-bold font-console text-lg">84</span>
+            <span class="text-[10px] text-slate-400 block font-semibold">ATTACK</span>
+            <span id="stat-att" class="text-amber-400 font-bold font-console text-base md:text-lg">84</span>
           </div>
           <div class="text-center">
-            <span class="text-xs text-slate-400 block font-semibold">MIDFIELD</span>
-            <span id="stat-mid" class="text-cyan-400 font-bold font-console text-lg">82</span>
+            <span class="text-[10px] text-slate-400 block font-semibold">MIDFIELD</span>
+            <span id="stat-mid" class="text-cyan-400 font-bold font-console text-base md:text-lg">82</span>
           </div>
           <div class="text-center">
-            <span class="text-xs text-slate-400 block font-semibold">DEFENCE</span>
-            <span id="stat-def" class="text-emerald-400 font-bold font-console text-lg">80</span>
+            <span class="text-[10px] text-slate-400 block font-semibold">DEFENCE</span>
+            <span id="stat-def" class="text-emerald-400 font-bold font-console text-base md:text-lg">80</span>
           </div>
           <div class="text-center">
-            <span class="text-xs text-slate-400 block font-semibold">OVERALL</span>
-            <span id="stat-ovr" class="text-white font-bold font-console text-lg">82</span>
+            <span class="text-[10px] text-slate-400 block font-semibold">OVERALL</span>
+            <span id="stat-ovr" class="text-white font-bold font-console text-base md:text-lg">82</span>
           </div>
         </div>
       </div>
 
-      <!-- Pitch and Tactical Settings Grid -->
       <div class="grid grid-cols-1 lg:grid-cols-12 gap-5">
-        <!-- Interactive Pitch View (Left) -->
+        <!-- Interactive Pitch View -->
         <div class="lg:col-span-5 lma-panel rounded-xl p-4 flex flex-col items-center">
           <div class="w-full flex justify-between items-center mb-3">
-            <h3 class="text-sm font-console font-bold tracking-wide text-sky-300">PITCH FORMATION</h3>
+            <h3 class="text-xs font-console font-bold tracking-wide text-sky-300">PITCH FORMATION</h3>
             <select id="formation-select" onchange="changeFormation(this.value)" class="bg-slate-900 border border-sky-600/40 text-xs rounded px-2 py-1 text-white focus:outline-none focus:border-sky-400 font-console">
               <option value="4-4-2">4 - 4 - 2 (Classic LMA)</option>
               <option value="4-3-3">4 - 3 - 3 (High Press)</option>
@@ -254,30 +262,25 @@
             </select>
           </div>
 
-          <div class="football-pitch w-full h-[410px] rounded-lg overflow-hidden relative shadow-2xl flex flex-col justify-between py-2">
+          <div class="football-pitch w-full h-[400px] rounded-lg overflow-hidden relative shadow-2xl flex flex-col justify-between py-2">
             <div class="pitch-line-center"></div>
             <div class="pitch-center-circle"></div>
             <div class="pitch-penalty-box-top"></div>
             <div class="pitch-penalty-box-bottom"></div>
-
-            <!-- Formation Player Nodes injected by JS -->
-            <div id="pitch-players-container" class="relative w-full h-full z-10">
-              <!-- Dynamically rendered icons -->
-            </div>
+            <div id="pitch-players-container" class="relative w-full h-full z-10"></div>
           </div>
           <p class="text-[11px] text-slate-400 mt-2 text-center italic">
-            Tip: Click any starter from the squad sheet to swap with a substitute.
+            Click any pitch node or roster player to swap starters with substitutes.
           </p>
         </div>
 
-        <!-- Squad List and Tactical Sliders (Right) -->
+        <!-- Squad List and Tactical Sliders -->
         <div class="lg:col-span-7 flex flex-col gap-4">
-          <!-- Tactics Sliders -->
           <div class="lma-panel p-4 rounded-xl space-y-3">
-            <h3 class="text-sm font-console font-bold text-sky-300 border-b border-slate-700/60 pb-1">
+            <h3 class="text-xs font-console font-bold text-sky-300 border-b border-slate-700/60 pb-1">
               TEAM INSTRUCTIONS
             </h3>
-            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs">
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
               <div>
                 <div class="flex justify-between font-semibold mb-1">
                   <span class="text-slate-300">Attacking Mentality</span>
@@ -304,30 +307,28 @@
             </div>
           </div>
 
-          <!-- Squad Roster Table -->
           <div class="lma-panel rounded-xl overflow-hidden flex-1 flex flex-col">
             <div class="lma-panel-header px-4 py-2 flex justify-between items-center">
-              <h3 class="font-console font-bold text-white text-xs tracking-wider">FIRST TEAM ROSTER</h3>
-              <span id="selected-swap-indicator" class="text-[11px] text-amber-300 font-semibold"></span>
+              <h3 class="font-console font-bold text-white text-xs tracking-wider">FIRST TEAM ROSTER & FITNESS</h3>
+              <span id="selected-swap-indicator" class="text-[11px] text-amber-300 font-semibold truncate max-w-xs"></span>
             </div>
             
             <div class="overflow-x-auto flex-1 max-h-[300px]">
               <table class="w-full text-left text-xs">
-                <thead class="bg-slate-900/80 text-slate-400 uppercase tracking-wider text-[10px] sticky top-0 border-b border-slate-700">
+                <thead class="bg-slate-900/90 text-slate-400 uppercase tracking-wider text-[10px] sticky top-0 border-b border-slate-700">
                   <tr>
                     <th class="p-2">Role</th>
                     <th class="p-2">Pos</th>
                     <th class="p-2">Player</th>
                     <th class="p-2">Age</th>
-                    <th class="p-2 text-center" title="Handling / Tackling / Passing / Shooting / Pace / Stamina">Stats (H/T/P/S/Sp/St)</th>
+                    <th class="p-2 text-center">H/T/P/S/Sp</th>
                     <th class="p-2">OVR</th>
-                    <th class="p-2">Fit</th>
-                    <th class="p-2">Action</th>
+                    <th class="p-2">Condition</th>
+                    <th class="p-2">Status</th>
+                    <th class="p-2 text-right">Action</th>
                   </tr>
                 </thead>
-                <tbody id="squad-table-body" class="divide-y divide-slate-800/60 font-mono">
-                  <!-- Squad dynamic list -->
-                </tbody>
+                <tbody id="squad-table-body" class="divide-y divide-slate-800/60 font-mono"></tbody>
               </table>
             </div>
           </div>
@@ -335,20 +336,20 @@
       </div>
     </section>
 
+    <!-- ================= TAB 2: FIXTURES & MATCHDAY ================= -->
     <section id="tab-fixtures" class="space-y-4 hidden">
       <div class="lma-panel rounded-xl p-4 flex flex-col md:flex-row items-center justify-between gap-4">
         <div>
-          <h2 class="text-lg font-console font-bold text-white">LEAGUE FIXTURE ROUND</h2>
-          <p class="text-xs text-slate-400">Week <span id="fixtures-week-num">1</span> of 14 &bull; All 4 matches kickoff simultaneously</p>
+          <h2 class="text-base md:text-lg font-console font-bold text-white">LEAGUE FIXTURE ROUND</h2>
+          <p class="text-xs text-slate-400">Week <span id="fixtures-week-num">1</span> of 14 &bull; Simultaneous matchday simulation</p>
         </div>
         <div class="flex items-center gap-3">
-          <button id="btn-play-matchday" onclick="startMatchdaySimulation()" class="bg-gradient-to-r from-emerald-600 to-green-500 hover:from-emerald-500 hover:to-green-400 text-white font-console font-bold px-6 py-2.5 rounded-lg shadow-lg shadow-green-900/40 text-sm tracking-wider flex items-center gap-2 transition active:scale-95">
+          <button id="btn-play-matchday" onclick="startMatchdaySimulation()" class="bg-gradient-to-r from-emerald-600 to-green-500 hover:from-emerald-500 hover:to-green-400 text-white font-console font-bold px-6 py-2.5 rounded-lg shadow-lg text-xs md:text-sm tracking-wider flex items-center gap-2 transition active:scale-95">
             <span>⚽</span> PLAY MATCHDAY
           </button>
         </div>
       </div>
 
-      <!-- Live Match Visualizer -->
       <div class="grid grid-cols-1 lg:grid-cols-12 gap-5">
         <!-- Feature Match Live Scorecard -->
         <div class="lg:col-span-8 flex flex-col gap-4">
@@ -358,6 +359,9 @@
               <div class="flex items-center gap-2">
                 <span id="match-status-badge" class="px-2 py-0.5 rounded text-[10px] font-bold bg-slate-800 text-slate-300 uppercase">Pre-Match</span>
                 <span id="match-minute-timer" class="font-console text-lg font-bold text-amber-400">00:00</span>
+                <button id="btn-pause-match" onclick="toggleMatchPause()" class="hidden text-xs bg-slate-800 border border-slate-600 hover:bg-slate-700 px-2 py-0.5 rounded font-console text-amber-300">
+                  ⏸ Pause
+                </button>
               </div>
             </div>
 
@@ -365,7 +369,7 @@
             <div class="grid grid-cols-7 items-center text-center py-4 bg-slate-950/70 rounded-xl border border-slate-800/80">
               <div class="col-span-3 flex flex-col items-center">
                 <div id="home-team-badge" class="w-12 h-12 rounded-lg flex items-center justify-center font-console font-bold text-lg text-white mb-2 shadow">HOM</div>
-                <h4 id="home-team-name" class="font-console font-bold text-white text-base truncate max-w-[160px]">Home Team</h4>
+                <h4 id="home-team-name" class="font-console font-bold text-white text-sm md:text-base truncate max-w-[160px]">Home Team</h4>
                 <span id="home-tactics-tag" class="text-[10px] text-slate-400">4-4-2 Balanced</span>
               </div>
 
@@ -379,13 +383,32 @@
 
               <div class="col-span-3 flex flex-col items-center">
                 <div id="away-team-badge" class="w-12 h-12 rounded-lg flex items-center justify-center font-console font-bold text-lg text-white mb-2 shadow">AWY</div>
-                <h4 id="away-team-name" class="font-console font-bold text-white text-base truncate max-w-[160px]">Away Team</h4>
+                <h4 id="away-team-name" class="font-console font-bold text-white text-sm md:text-base truncate max-w-[160px]">Away Team</h4>
                 <span id="away-tactics-tag" class="text-[10px] text-slate-400">4-3-3 Press</span>
               </div>
             </div>
 
+            <!-- In-Match Tactical Shouts Banner -->
+            <div id="in-match-shouts" class="mt-3 p-2 bg-slate-900/90 rounded-lg border border-sky-900/60 flex flex-wrap items-center justify-between gap-2">
+              <span class="text-[10px] uppercase font-console font-bold text-amber-400">Touchline Shouts:</span>
+              <div class="flex gap-1.5 flex-wrap">
+                <button onclick="applyMatchShout('park')" class="px-2 py-0.5 rounded text-[10px] bg-slate-800 hover:bg-slate-700 text-sky-200 border border-slate-700 font-console transition">
+                  🛡️ Park The Bus
+                </button>
+                <button onclick="applyMatchShout('press')" class="px-2 py-0.5 rounded text-[10px] bg-slate-800 hover:bg-slate-700 text-sky-200 border border-slate-700 font-console transition">
+                  ⚡ Push Higher
+                </button>
+                <button onclick="applyMatchShout('shoot')" class="px-2 py-0.5 rounded text-[10px] bg-slate-800 hover:bg-slate-700 text-sky-200 border border-slate-700 font-console transition">
+                  🎯 Shoot on Sight
+                </button>
+                <button onclick="applyMatchShout('tackle')" class="px-2 py-0.5 rounded text-[10px] bg-slate-800 hover:bg-slate-700 text-sky-200 border border-slate-700 font-console transition">
+                  💥 Get Stuck In
+                </button>
+              </div>
+            </div>
+
             <!-- Match Stats Bars -->
-            <div class="mt-4 space-y-2 text-xs">
+            <div class="mt-3 space-y-2 text-xs">
               <div>
                 <div class="flex justify-between text-[11px] text-slate-300 mb-1">
                   <span id="stat-home-poss">50%</span>
@@ -398,7 +421,7 @@
                 </div>
               </div>
 
-              <div class="flex justify-around pt-2 text-slate-300 text-center font-mono text-[11px]">
+              <div class="flex justify-around pt-1 text-slate-300 text-center font-mono text-[11px]">
                 <div><span id="stat-home-shots" class="font-bold text-white">0</span> Shots <span id="stat-away-shots" class="font-bold text-white">0</span></div>
                 <div><span id="stat-home-target" class="font-bold text-white">0</span> On Target <span id="stat-away-target" class="font-bold text-white">0</span></div>
                 <div><span id="stat-home-corners" class="font-bold text-white">0</span> Corners <span id="stat-away-corners" class="font-bold text-white">0</span></div>
@@ -406,47 +429,109 @@
             </div>
           </div>
 
-          <!-- Commentary Ticker Box -->
+          <!-- Commentary Feed -->
           <div class="lma-panel rounded-xl p-4 flex flex-col h-[230px]">
             <h3 class="text-xs font-console font-bold text-sky-300 mb-2 border-b border-slate-700 pb-1 flex items-center justify-between">
               <span>MATCH COMMENTARY LOG</span>
-              <span class="text-[10px] text-slate-400 font-normal">Real-time simulation engine</span>
+              <span id="active-shout-indicator" class="text-[10px] text-amber-300 font-semibold"></span>
             </h3>
             <div id="match-commentary-feed" class="flex-1 overflow-y-auto space-y-2 pr-1 font-mono text-xs">
-              <div class="text-slate-500 italic">Waiting for kickoff... press 'PLAY MATCHDAY' to simulate this week.</div>
+              <div class="text-slate-500 italic">Waiting for kickoff... press 'PLAY MATCHDAY' to simulate this round.</div>
             </div>
           </div>
         </div>
 
-        <!-- Simultaneous League Matches Carousel -->
+        <!-- Simultaneous Fixtures & Live Bench -->
         <div class="lg:col-span-4 flex flex-col gap-3">
           <div class="lma-panel rounded-xl p-3">
-            <h3 class="text-xs font-console font-bold text-sky-300 mb-3 border-b border-slate-700 pb-1">
-              AROUND THE GROUNDS (SIMULCAST)
+            <h3 class="text-xs font-console font-bold text-sky-300 mb-2 border-b border-slate-700 pb-1">
+              AROUND THE GROUNDS
             </h3>
-            <div id="simulcast-fixtures-list" class="space-y-2">
-              <!-- Dynamically populated matches -->
-            </div>
+            <div id="simulcast-fixtures-list" class="space-y-2"></div>
           </div>
 
-          <div class="lma-panel rounded-xl p-4 text-xs space-y-2 bg-slate-900/60">
-            <h4 class="font-console font-bold text-amber-400">LMA TACTIC TIP</h4>
-            <p class="text-slate-400 leading-relaxed">
-              Facing an aggressive 4-3-3? Switch to a 3-5-2 with direct passing to overwhelm their midfield and trigger counter attacks behind their high line!
-            </p>
+          <!-- Live Mid-Match Bench Substitutions -->
+          <div class="lma-panel rounded-xl p-3 flex-1 flex flex-col">
+            <h3 class="text-xs font-console font-bold text-amber-400 mb-2 border-b border-slate-700 pb-1 flex justify-between items-center">
+              <span>LIVE BENCH (SUBSTITUTES)</span>
+              <span class="text-[10px] text-slate-400 font-normal">Click to bring on</span>
+            </h3>
+            <div id="match-bench-container" class="space-y-1.5 overflow-y-auto max-h-[200px] font-mono text-xs">
+              <!-- Dynamically populated bench players -->
+            </div>
           </div>
         </div>
       </div>
     </section>
 
+    <!-- ================= TAB 3: STADIUM & FACILITIES ================= -->
+    <section id="tab-stadium" class="space-y-4 hidden">
+      <div class="lma-panel rounded-xl p-4 flex justify-between items-center flex-wrap gap-4">
+        <div>
+          <h2 class="text-base md:text-lg font-console font-bold text-white">STADIUM EXPANSION & CLUB FACILITIES</h2>
+          <p class="text-xs text-slate-400">Expand stadium stands to increase gate receipts; upgrade medical and youth centres.</p>
+        </div>
+        <div class="text-right">
+          <span class="text-xs text-slate-400 uppercase tracking-widest block font-bold">Estimated Gate per Home Game</span>
+          <span id="stadium-estimated-income" class="font-console text-emerald-400 font-bold text-sm md:text-base">£1.85M</span>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4" id="stadium-stands-grid">
+        <!-- Injected via JavaScript for stands (North, South, East, West) -->
+      </div>
+
+      <div class="lma-panel rounded-xl p-4">
+        <h3 class="font-console font-bold text-white text-sm border-b border-slate-700 pb-2 mb-4">
+          TRAINING & MEDICAL INFRASTRUCTURE
+        </h3>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4" id="facilities-grid">
+          <!-- Injected via JS (Medical Centre, Youth Facility, Training Pitch) -->
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= TAB 4: YOUTH ACADEMY ================= -->
+    <section id="tab-youth" class="space-y-4 hidden">
+      <div class="lma-panel rounded-xl p-4 flex justify-between items-center flex-wrap gap-4">
+        <div>
+          <h2 class="text-base md:text-lg font-console font-bold text-white">YOUTH SCOUTING & ACADEMY PROSPECTS</h2>
+          <p class="text-xs text-slate-400">Graduates scouted by your Youth Network. Sign promising teenagers on free contracts!</p>
+        </div>
+        <div class="text-right">
+          <span class="text-xs text-sky-300 font-console font-bold">New scouts arrive every week</span>
+        </div>
+      </div>
+
+      <div class="lma-panel rounded-xl overflow-hidden">
+        <div class="overflow-x-auto max-h-[450px]">
+          <table class="w-full text-left text-xs">
+            <thead class="bg-slate-900/90 text-slate-400 uppercase tracking-wider text-[10px] sticky top-0 border-b border-slate-700">
+              <tr>
+                <th class="p-3">Prospect</th>
+                <th class="p-3">Pos</th>
+                <th class="p-3">Age</th>
+                <th class="p-3">Current OVR</th>
+                <th class="p-3">Scouted Potential</th>
+                <th class="p-3">Stats (H/T/P/S/Sp)</th>
+                <th class="p-3 text-right">Action</th>
+              </tr>
+            </thead>
+            <tbody id="youth-table-body" class="divide-y divide-slate-800 font-mono"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= TAB 5: TRANSFER MARKET ================= -->
     <section id="tab-transfers" class="space-y-4 hidden">
       <div class="lma-panel rounded-xl p-4 flex flex-wrap items-center justify-between gap-4">
         <div>
-          <h2 class="text-lg font-console font-bold text-white">WORLD SCOUTING NETWORK</h2>
+          <h2 class="text-base md:text-lg font-console font-bold text-white">WORLD SCOUTING NETWORK</h2>
           <p class="text-xs text-slate-400">Bid on players, negotiate contracts, and strengthen your squad.</p>
         </div>
         <div class="flex items-center gap-2">
-          <input type="text" id="market-search" oninput="filterTransfers()" placeholder="Search player name..." class="bg-slate-900 border border-slate-700 text-xs rounded px-3 py-1.5 text-white focus:outline-none focus:border-sky-500">
+          <input type="text" id="market-search" oninput="filterTransfers()" placeholder="Search player..." class="bg-slate-900 border border-slate-700 text-xs rounded px-3 py-1.5 text-white focus:outline-none focus:border-sky-500">
           <select id="market-pos-filter" onchange="filterTransfers()" class="bg-slate-900 border border-slate-700 text-xs rounded px-2 py-1.5 text-white">
             <option value="ALL">All Positions</option>
             <option value="GK">Goalkeepers</option>
@@ -457,9 +542,8 @@
         </div>
       </div>
 
-      <!-- Transfer Market Table -->
       <div class="lma-panel rounded-xl overflow-hidden">
-        <div class="overflow-x-auto max-h-[500px]">
+        <div class="overflow-x-auto max-h-[480px]">
           <table class="w-full text-left text-xs">
             <thead class="bg-slate-900/90 text-slate-400 uppercase tracking-wider text-[10px] sticky top-0 border-b border-slate-700">
               <tr>
@@ -474,18 +558,17 @@
                 <th class="p-3 text-right">Action</th>
               </tr>
             </thead>
-            <tbody id="transfer-table-body" class="divide-y divide-slate-800 font-mono">
-              <!-- Dynamically populated from JS -->
-            </tbody>
+            <tbody id="transfer-table-body" class="divide-y divide-slate-800 font-mono"></tbody>
           </table>
         </div>
       </div>
     </section>
 
+    <!-- ================= TAB 6: STANDINGS ================= -->
     <section id="tab-table" class="space-y-4 hidden">
       <div class="lma-panel rounded-xl p-4 flex justify-between items-center">
         <div>
-          <h2 class="text-lg font-console font-bold text-white">PREMIERSHIP LEAGUE TABLE</h2>
+          <h2 class="text-base md:text-lg font-console font-bold text-white">PREMIERSHIP LEAGUE TABLE</h2>
           <p class="text-xs text-slate-400">Top 4 qualify for Europe &bull; Bottom 2 face relegation</p>
         </div>
         <div class="text-right">
@@ -508,32 +591,55 @@
                 <th class="p-3 text-center">GA</th>
                 <th class="p-3 text-center">GD</th>
                 <th class="p-3 text-center font-bold text-white">Pts</th>
-                <th class="p-3 text-center">Manager Type</th>
+                <th class="p-3 text-center">Type</th>
               </tr>
             </thead>
-            <tbody id="league-table-body" class="divide-y divide-slate-800 font-mono">
-              <!-- Populated by JS -->
-            </tbody>
+            <tbody id="league-table-body" class="divide-y divide-slate-800 font-mono"></tbody>
           </table>
         </div>
       </div>
     </section>
 
+    <!-- ================= TAB 7: TROPHY CABINET ================= -->
+    <section id="tab-trophies" class="space-y-4 hidden">
+      <div class="lma-panel rounded-xl p-4 flex justify-between items-center flex-wrap gap-4">
+        <div>
+          <h2 class="text-base md:text-lg font-console font-bold text-white">TROPHY CABINET & HONOURS</h2>
+          <p class="text-xs text-slate-400">Career silverware, clean sheets, and managerial records.</p>
+        </div>
+        <div class="text-right font-console text-amber-400 font-bold text-xs">
+          HALL OF FAME
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4" id="trophy-cabinet-grid">
+        <!-- Dynamic Trophies injected -->
+      </div>
+
+      <div class="lma-panel rounded-xl p-4">
+        <h3 class="font-console font-bold text-sky-300 text-xs uppercase mb-3 border-b border-slate-700 pb-1">
+          MANAGER MILESTONES & RECORDS
+        </h3>
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 text-center font-mono" id="milestones-container">
+          <!-- Dynamic records -->
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= TAB 8: MANAGER ROOM ================= -->
     <section id="tab-multiplayer" class="space-y-4 hidden">
       <div class="lma-panel rounded-xl p-5">
-        <h2 class="text-lg font-console font-bold text-white mb-1">LOCAL MULTIPLAYER / PASS & PLAY</h2>
+        <h2 class="text-base md:text-lg font-console font-bold text-white mb-1">LOCAL MULTIPLAYER / PASS & PLAY</h2>
         <p class="text-xs text-slate-400 mb-4">
-          Compete against your friends! Each manager takes their turn managing lineups, tactics, and transfer bids. When all human managers toggle <span class="text-emerald-400 font-bold">READY</span>, the next matchday unlocks.
+          Compete against your friends! Toggle <span class="text-emerald-400 font-bold">READY</span> once your lineup, tactics, and stadium decisions are set.
         </p>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4" id="multiplayer-managers-grid">
-          <!-- Populated dynamically -->
-        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4" id="multiplayer-managers-grid"></div>
 
         <div class="mt-6 p-4 bg-slate-950/80 rounded-xl border border-slate-800 flex flex-wrap items-center justify-between gap-4">
           <div>
-            <h4 class="text-sm font-console font-bold text-white">ALL MANAGERS READY STATUS</h4>
-            <p class="text-xs text-slate-400">All players must be ready before match simulation can begin.</p>
+            <h4 class="text-xs md:text-sm font-console font-bold text-white">ALL MANAGERS STATUS</h4>
+            <p class="text-xs text-slate-400">When all human managers are ready, match simulation advances.</p>
           </div>
           <button id="btn-advance-matchday-room" onclick="advanceFromMultiplayerRoom()" class="px-5 py-2 rounded-lg font-console text-xs font-bold uppercase tracking-wider bg-slate-700 text-slate-400 cursor-not-allowed transition" disabled>
             Advance to Matchday ⚽
@@ -543,20 +649,58 @@
     </section>
   </main>
 
-  <!-- Modal Dialog for Transfer Bidding -->
+  <!-- Transfer Modal -->
   <div id="transfer-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
     <div class="lma-panel rounded-2xl max-w-md w-full p-5 border border-sky-400/30 shadow-2xl space-y-4">
       <div class="flex justify-between items-center border-b border-slate-700 pb-2">
         <h3 class="font-console font-bold text-base text-white">NEGOTIATE CONTRACT</h3>
         <button onclick="closeBidModal()" class="text-slate-400 hover:text-white">&times;</button>
       </div>
-      <div id="bid-modal-content" class="text-xs space-y-3 font-mono">
-        <!-- Injected details -->
-      </div>
+      <div id="bid-modal-content" class="text-xs space-y-3 font-mono"></div>
       <div class="flex gap-2 justify-end pt-2">
         <button onclick="closeBidModal()" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 rounded text-slate-300 font-console text-xs">Cancel</button>
         <button onclick="confirmPlayerSigning()" class="px-4 py-1.5 bg-emerald-600 hover:bg-emerald-500 rounded text-white font-console text-xs font-bold">Confirm Transfer</button>
       </div>
+    </div>
+  </div>
+
+  <!-- Save / Load / Import Modal -->
+  <div id="save-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+    <div class="lma-panel rounded-2xl max-w-md w-full p-5 border border-amber-400/30 shadow-2xl space-y-4">
+      <div class="flex justify-between items-center border-b border-slate-700 pb-2">
+        <h3 class="font-console font-bold text-base text-white">CAREER SAVE MANAGEMENT</h3>
+        <button onclick="closeSaveModal()" class="text-slate-400 hover:text-white">&times;</button>
+      </div>
+      <div class="text-xs text-slate-300 space-y-3 font-mono">
+        <p>Your game automatically persists to browser <span class="text-amber-400 font-semibold">localStorage</span>. You can also export the save file to pass it to a friend playing on GitHub Pages!</p>
+        
+        <div class="flex flex-col gap-2 pt-2">
+          <button onclick="exportSaveFile()" class="w-full py-2 bg-sky-700 hover:bg-sky-600 text-white rounded font-console text-xs font-bold uppercase transition flex items-center justify-center gap-2">
+            <span>📥</span> Export Save File (JSON)
+          </button>
+          
+          <label class="w-full py-2 bg-emerald-700 hover:bg-emerald-600 text-white rounded font-console text-xs font-bold uppercase transition flex items-center justify-center gap-2 cursor-pointer">
+            <span>📤</span> Import Friend's Save File
+            <input type="file" id="import-save-input" accept=".json" onchange="importSaveFile(event)" class="hidden">
+          </label>
+
+          <button onclick="resetGameCareer()" class="w-full py-2 bg-rose-900/60 hover:bg-rose-800 text-rose-300 border border-rose-700/50 rounded font-console text-xs font-bold uppercase transition">
+            ⚠️ Reset New Season
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- In-Match Sub Selection Modal -->
+  <div id="match-sub-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+    <div class="lma-panel rounded-2xl max-w-md w-full p-5 border border-sky-400/40 shadow-2xl space-y-3">
+      <div class="flex justify-between items-center border-b border-slate-700 pb-2">
+        <h3 class="font-console font-bold text-sm text-white">SELECT PITCH PLAYER TO REPLACE</h3>
+        <button onclick="closeSubModal()" class="text-slate-400 hover:text-white">&times;</button>
+      </div>
+      <p id="sub-incoming-player-desc" class="text-xs text-emerald-400 font-mono"></p>
+      <div id="sub-pitch-candidates" class="space-y-1 max-h-[220px] overflow-y-auto font-mono text-xs"></div>
     </div>
   </div>
 
@@ -566,15 +710,11 @@
     <span id="toast-msg">Notification text</span>
   </div>
 
-  <!-- Footer -->
   <footer class="bg-slate-950/80 border-t border-slate-900 py-3 text-center text-[11px] text-slate-500 font-console">
-    LMA Club Manager &bull; Retro 2007 Simulation Engine &bull; Built for Local Hotseat Play
+    LMA Club Manager &bull; Retro 2007 Simulation Engine &bull; Ready for GitHub Pages
   </footer>
 
   <script>
-    /* =========================================================
-       AUDIO SYNTHESIZER (Web Audio API)
-       ========================================================= */
     let audioCtx = null;
     let soundEnabled = true;
 
@@ -601,22 +741,21 @@
           const osc = audioCtx.createOscillator();
           const gain = audioCtx.createGain();
           osc.type = 'triangle';
-          osc.frequency.setValueAtTime(400, now);
-          osc.frequency.exponentialRampToValueAtTime(800, now + 0.05);
-          gain.gain.setValueAtTime(0.15, now);
+          osc.frequency.setValueAtTime(450, now);
+          osc.frequency.exponentialRampToValueAtTime(850, now + 0.05);
+          gain.gain.setValueAtTime(0.12, now);
           gain.gain.linearRampToValueAtTime(0.01, now + 0.05);
           osc.connect(gain);
           gain.connect(audioCtx.destination);
           osc.start(now);
           osc.stop(now + 0.05);
         } else if (type === 'whistle') {
-          // Double short whistle
-          [0, 0.12].forEach(offset => {
+          [0, 0.11].forEach(offset => {
             const osc = audioCtx.createOscillator();
             const gain = audioCtx.createGain();
             osc.type = 'sine';
-            osc.frequency.setValueAtTime(2400, now + offset);
-            osc.frequency.exponentialRampToValueAtTime(2800, now + offset + 0.08);
+            osc.frequency.setValueAtTime(2500, now + offset);
+            osc.frequency.exponentialRampToValueAtTime(3000, now + offset + 0.08);
             gain.gain.setValueAtTime(0.2, now + offset);
             gain.gain.linearRampToValueAtTime(0.01, now + offset + 0.08);
             osc.connect(gain);
@@ -625,26 +764,37 @@
             osc.stop(now + offset + 0.08);
           });
         } else if (type === 'goal') {
-          // Crowd cheer synth noise burst
-          const bufferSize = audioCtx.sampleRate * 0.8;
+          const bufferSize = audioCtx.sampleRate * 0.9;
           const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
           const data = buffer.getChannelData(0);
           for (let i = 0; i < bufferSize; i++) {
-            data[i] = (Math.random() * 2 - 1) * 0.3;
+            data[i] = (Math.random() * 2 - 1) * 0.35;
           }
           const noise = audioCtx.createBufferSource();
           noise.buffer = buffer;
           const filter = audioCtx.createBiquadFilter();
-          filter.type = 'lowpass';
-          filter.frequency.setValueAtTime(600, now);
-          filter.frequency.linearRampToValueAtTime(1400, now + 0.3);
+          filter.type = 'bandpass';
+          filter.frequency.setValueAtTime(700, now);
+          filter.frequency.linearRampToValueAtTime(1500, now + 0.4);
           const gain = audioCtx.createGain();
           gain.gain.setValueAtTime(0.4, now);
-          gain.gain.exponentialRampToValueAtTime(0.01, now + 0.8);
+          gain.gain.exponentialRampToValueAtTime(0.01, now + 0.9);
           noise.connect(filter);
           filter.connect(gain);
           gain.connect(audioCtx.destination);
           noise.start(now);
+        } else if (type === 'cash') {
+          const osc = audioCtx.createOscillator();
+          const gain = audioCtx.createGain();
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(987, now);
+          osc.frequency.setValueAtTime(1318, now + 0.08);
+          gain.gain.setValueAtTime(0.15, now);
+          gain.gain.linearRampToValueAtTime(0.01, now + 0.2);
+          osc.connect(gain);
+          gain.connect(audioCtx.destination);
+          osc.start(now);
+          osc.stop(now + 0.2);
         }
       } catch (e) {
         console.warn('Audio play error:', e);
@@ -662,7 +812,6 @@
       { id: 'TH', name: 'North White', short: 'TH', color: '#0369a1', budget: 30000000, isHuman: false, managerName: 'AI Harry', isReady: true }
     ];
 
-    // Tactical formations node placement coordinates
     const FORMATIONS = {
       '4-4-2': [
         { role: 'GK', x: 50, y: 88 },
@@ -707,23 +856,56 @@
 
     let currentWeek = 1;
     const maxWeeks = 14;
-    let activeTeamIndex = 0; // human manager in control
+    let activeTeamIndex = 0;
     let selectedPlayerForSwap = null;
     let pendingBidPlayer = null;
     let isSimulating = false;
+    let isMatchPaused = false;
+    let matchInterval = null;
+    let activeTacticalShout = null;
+    let pendingSubBenchIdx = null;
 
     // Team Tactical Settings
     const teamTactics = {};
     TEAMS.forEach(team => {
       teamTactics[team.id] = {
         formation: '4-4-2',
-        mentality: 3, // 1: Defensive, 3: Balanced, 5: All-Out Attack
-        passing: 3,   // 1: Short, 3: Mixed, 5: Direct
-        pressing: 4   // 1: Stand off, 5: Heavy Press
+        mentality: 3,
+        passing: 3,
+        pressing: 4
       };
     });
 
-    // Sample player generation helper
+    // Stadium & Infrastructure Data
+    const clubFacilities = {};
+    TEAMS.forEach(t => {
+      clubFacilities[t.id] = {
+        stadiumName: `${t.name} Stadium`,
+        stands: {
+          North: { level: 3, capacity: 18000 },
+          South: { level: 3, capacity: 18000 },
+          East: { level: 3, capacity: 19000 },
+          West: { level: 3, capacity: 19000 }
+        },
+        ticketPrice: 35, // in £
+        medicalCentre: 2, // 1 to 5 (reduces injury lengths)
+        youthFacility: 2, // 1 to 5 (yields better prospects)
+        trainingPitch: 2  // 1 to 5 (boosts fitness recovery)
+      };
+    });
+
+    // Trophy Room & Milestones Tracking
+    const clubHonours = {};
+    TEAMS.forEach(t => {
+      clubHonours[t.id] = {
+        leagueTitles: t.id === 'MR' ? 1 : 0,
+        managerOfTheMonth: 0,
+        cleanSheets: 0,
+        recordWin: '-',
+        topGoalscorer: '-'
+      };
+    });
+
     function createPlayer(id, name, pos, age, hnd, tck, pas, sho, spd, sta, teamId, value, wage) {
       let ovr = 0;
       if (pos === 'GK') ovr = Math.round(hnd * 0.7 + pas * 0.15 + sta * 0.15);
@@ -733,11 +915,13 @@
 
       return {
         id, name, pos, age, hnd, tck, pas, sho, spd, sta,
-        ovr, teamId, value, wage, fitness: 95 + Math.floor(Math.random() * 6), morale: 'Good'
+        ovr, teamId, value, wage,
+        condition: 96 + Math.floor(Math.random() * 5),
+        morale: 'Good',
+        injury: null // e.g. { type: 'Hamstring Tear', weeksRemaining: 2 }
       };
     }
 
-    // Initialize Rosters
     const SQUADS = {
       'MR': [
         createPlayer('p1', 'E. Van Der Sar', 'GK', 36, 88, 30, 72, 20, 58, 80, 'MR', 5000000, 55000),
@@ -777,7 +961,6 @@
       ]
     };
 
-    // Generic squads for AI clubs
     ['MB', 'MW', 'WM', 'NC', 'AV', 'TH'].forEach(cid => {
       SQUADS[cid] = [
         createPlayer(cid+'1', cid+' Keeper', 'GK', 28, 81, 20, 65, 10, 55, 80, cid, 5000000, 40000),
@@ -791,7 +974,6 @@
         createPlayer(cid+'9', cid+' Winger R', 'MID', 24, 20, 50, 82, 76, 88, 82, cid, 8500000, 55000),
         createPlayer(cid+'10', cid+' Target Man', 'FWD', 27, 20, 45, 72, 84, 79, 85, cid, 12000000, 70000),
         createPlayer(cid+'11', cid+' Poacher', 'FWD', 23, 20, 35, 75, 85, 89, 82, cid, 13000000, 70000),
-        // Subs
         createPlayer(cid+'12', cid+' Sub GK', 'GK', 23, 73, 20, 58, 10, 50, 75, cid, 2000000, 20000),
         createPlayer(cid+'13', cid+' Sub DEF', 'DEF', 22, 20, 76, 64, 40, 76, 80, cid, 4000000, 30000),
         createPlayer(cid+'14', cid+' Sub MID', 'MID', 22, 20, 74, 76, 68, 77, 82, cid, 4500000, 30000),
@@ -811,7 +993,15 @@
       createPlayer('tm8', 'K. Benzema', 'FWD', 19, 20, 38, 77, 85, 84, 82, 'Free Agent', 15000000, 60000)
     ];
 
-    // League Standings Table
+    // Youth Academy Scouting Pool
+    let YOUTH_PROSPECTS = [
+      { id: 'y1', name: 'J. Wilshere', pos: 'MID', age: 16, ovr: 68, potential: 92, hnd: 20, tck: 60, pas: 78, sho: 70, spd: 82, sta: 80 },
+      { id: 'y2', name: 'A. Ramsey', pos: 'MID', age: 16, ovr: 66, potential: 88, hnd: 20, tck: 58, pas: 74, sho: 68, spd: 79, sta: 82 },
+      { id: 'y3', name: 'K. Walker', pos: 'DEF', age: 17, ovr: 67, potential: 87, hnd: 20, tck: 70, pas: 65, sho: 50, spd: 91, sta: 86 },
+      { id: 'y4', name: 'D. Welbeck', pos: 'FWD', age: 16, ovr: 65, potential: 85, hnd: 20, tck: 35, pas: 62, sho: 73, spd: 85, sta: 80 }
+    ];
+
+    // League Standings
     let LEAGUE_TABLE = TEAMS.map(team => ({
       teamId: team.id,
       name: team.name,
@@ -827,18 +1017,15 @@
     }));
 
     function generateLeagueSchedule() {
-      // 8 teams = 7 rounds single round-robin (doubled to 14 rounds)
       const rounds = [];
       const teamIDs = TEAMS.map(t => t.id);
 
       for (let w = 1; w <= maxWeeks; w++) {
         const matches = [];
-        // Deterministic pairings per week
         const offset = (w - 1) % (teamIDs.length - 1);
         const list = [...teamIDs];
         const fixed = list.shift();
         
-        // rotate
         for (let i = 0; i < offset; i++) {
           list.push(list.shift());
         }
@@ -852,8 +1039,7 @@
             awayId: away,
             homeScore: null,
             awayScore: null,
-            played: false,
-            events: []
+            played: false
           });
         }
         rounds.push(matches);
@@ -861,7 +1047,7 @@
       return rounds;
     }
 
-    const FIXTURES_SCHEDULE = generateLeagueSchedule();
+    let FIXTURES_SCHEDULE = generateLeagueSchedule();
 
     function getActiveTeam() {
       return TEAMS[activeTeamIndex];
@@ -880,7 +1066,6 @@
 
     function switchManagerTurn() {
       playSound('click');
-      // Advance to next human manager
       const humanIndices = TEAMS.map((t, idx) => t.isHuman ? idx : -1).filter(idx => idx !== -1);
       const currentPos = humanIndices.indexOf(activeTeamIndex);
       const nextPos = (currentPos + 1) % humanIndices.length;
@@ -889,8 +1074,10 @@
       selectedPlayerForSwap = null;
       renderCurrentSquadView();
       renderMultiplayerLounge();
+      renderStadiumScreen();
+      renderTrophyRoom();
       updateHeader();
-      showToast(`Switched turn to ${getActiveTeam().managerName} (${getActiveTeam().name})`, '🎮');
+      showToast(`Active Turn: ${getActiveTeam().managerName} (${getActiveTeam().name})`, '🎮');
     }
 
     function switchTab(tabId) {
@@ -899,18 +1086,26 @@
         btn.classList.remove('tab-active');
         btn.classList.add('text-slate-400');
       });
-      ['tactics', 'fixtures', 'transfers', 'table', 'multiplayer'].forEach(id => {
-        document.getElementById(`tab-${id}`).classList.add('hidden');
+      ['tactics', 'fixtures', 'stadium', 'youth', 'transfers', 'table', 'trophies', 'multiplayer'].forEach(id => {
+        const el = document.getElementById(`tab-${id}`);
+        if (el) el.classList.add('hidden');
       });
 
-      document.getElementById(`tab-${tabId}`).classList.remove('hidden');
+      const activeSection = document.getElementById(`tab-${tabId}`);
+      if (activeSection) activeSection.classList.remove('hidden');
+
       const activeBtn = document.getElementById(`tab-btn-${tabId}`);
-      activeBtn.classList.add('tab-active');
-      activeBtn.classList.remove('text-slate-400');
+      if (activeBtn) {
+        activeBtn.classList.add('tab-active');
+        activeBtn.classList.remove('text-slate-400');
+      }
 
       if (tabId === 'fixtures') renderFixturesTab();
+      if (tabId === 'stadium') renderStadiumScreen();
+      if (tabId === 'youth') renderYouthAcademy();
       if (tabId === 'transfers') renderTransferMarket();
       if (tabId === 'table') renderLeagueTable();
+      if (tabId === 'trophies') renderTrophyRoom();
       if (tabId === 'multiplayer') renderMultiplayerLounge();
     }
 
@@ -918,14 +1113,17 @@
       const team = getActiveTeam();
       const squad = SQUADS[team.id];
       const tactics = teamTactics[team.id];
+      const fac = clubFacilities[team.id];
 
-      // Club Banner
       const badge = document.getElementById('club-badge');
       badge.style.backgroundColor = team.color;
       badge.innerText = team.short;
       document.getElementById('club-display-name').innerText = team.name;
 
-      // Calculate sector ratings from starting 11
+      const totalCap = Object.values(fac.stands).reduce((a, b) => a + b.capacity, 0);
+      document.getElementById('club-stadium-sub').innerText = `${fac.stadiumName} &bull; Capacity: ${totalCap.toLocaleString()}`;
+
+      // Starters sector calculation
       const starters = squad.slice(0, 11);
       const attScore = Math.round(starters.filter(p => p.pos === 'FWD').reduce((a,b) => a + b.sho, 0) / (starters.filter(p => p.pos === 'FWD').length || 1));
       const midScore = Math.round(starters.filter(p => p.pos === 'MID').reduce((a,b) => a + b.pas, 0) / (starters.filter(p => p.pos === 'MID').length || 1));
@@ -937,19 +1135,13 @@
       document.getElementById('stat-def').innerText = defScore || 80;
       document.getElementById('stat-ovr').innerText = ovrScore || 80;
 
-      // Select formation
       document.getElementById('formation-select').value = tactics.formation;
-
-      // Render Tactical Sliders
       document.getElementById('slider-mentality').value = tactics.mentality;
       document.getElementById('slider-passing').value = tactics.passing;
       document.getElementById('slider-pressing').value = tactics.pressing;
       updateTacticsLabels();
 
-      // Render Pitch Player Nodes
       renderPitchNodes();
-
-      // Render Squad Table
       renderSquadTable();
     }
 
@@ -988,6 +1180,7 @@
       coords.forEach((c, index) => {
         const player = squad[index] || squad[0];
         const isSelected = selectedPlayerForSwap === index;
+        const isInjured = player.injury !== null;
 
         const node = document.createElement('div');
         node.className = `absolute transform -translate-x-1/2 -translate-y-1/2 cursor-pointer transition hover:scale-110 flex flex-col items-center`;
@@ -996,11 +1189,14 @@
         node.onclick = () => selectPlayerForSwap(index);
 
         node.innerHTML = `
-          <div class="w-8 h-8 rounded-full flex items-center justify-center font-console font-bold text-xs shadow-xl border-2 ${isSelected ? 'border-amber-400 bg-amber-500 text-black scale-125 animate-bounce' : 'border-white/80 bg-slate-900 text-white'}">
-            ${player.pos}
+          <div class="w-8 h-8 rounded-full flex items-center justify-center font-console font-bold text-xs shadow-xl border-2 ${
+            isInjured ? 'border-rose-500 bg-rose-950 text-rose-300' :
+            isSelected ? 'border-amber-400 bg-amber-500 text-black scale-125 animate-bounce' : 'border-white/80 bg-slate-900 text-white'
+          }">
+            ${isInjured ? '🚑' : player.pos}
           </div>
-          <span class="mt-1 px-1.5 py-0.5 rounded text-[10px] font-console font-bold tracking-tight bg-slate-950/80 text-white shadow whitespace-nowrap border border-slate-700/50">
-            ${player.name.split(' ').pop()} (${player.ovr})
+          <span class="mt-1 px-1.5 py-0.5 rounded text-[10px] font-console font-bold tracking-tight bg-slate-950/90 text-white shadow whitespace-nowrap border border-slate-700/50">
+            ${player.name.split(' ').pop()} (${player.condition}%)
           </span>
         `;
         pitchContainer.appendChild(node);
@@ -1020,6 +1216,10 @@
         tr.className = `hover:bg-slate-800/50 transition cursor-pointer ${isSelected ? 'bg-sky-950/80 border-l-4 border-amber-400' : ''}`;
         tr.onclick = () => selectPlayerForSwap(idx);
 
+        let conditionColor = 'bg-emerald-400';
+        if (player.condition < 70) conditionColor = 'bg-rose-500';
+        else if (player.condition < 85) conditionColor = 'bg-amber-400';
+
         tr.innerHTML = `
           <td class="p-2 font-bold ${isStarter ? 'text-emerald-400' : 'text-slate-400'}">
             ${isStarter ? 'XI' : 'SUB'}
@@ -1034,13 +1234,19 @@
           <td class="p-2 font-medium text-white">${player.name}</td>
           <td class="p-2 text-slate-400">${player.age}</td>
           <td class="p-2 text-center text-slate-300 font-mono text-[11px]">
-            ${player.hnd}/${player.tck}/${player.pas}/${player.sho}/${player.spd}/${player.sta}
+            ${player.hnd}/${player.tck}/${player.pas}/${player.sho}/${player.spd}
           </td>
           <td class="p-2 font-bold text-amber-300">${player.ovr}</td>
           <td class="p-2">
-            <div class="w-10 bg-slate-800 rounded-full h-1.5 overflow-hidden">
-              <div class="bg-emerald-400 h-full" style="width: ${player.fitness}%"></div>
+            <div class="flex items-center gap-1.5">
+              <div class="w-12 bg-slate-800 rounded-full h-1.5 overflow-hidden">
+                <div class="${conditionColor} h-full" style="width: ${player.condition}%"></div>
+              </div>
+              <span class="text-[10px] text-slate-300">${player.condition}%</span>
             </div>
+          </td>
+          <td class="p-2">
+            ${player.injury ? `<span class="px-1.5 py-0.5 rounded text-[9px] bg-rose-900/80 text-rose-300 border border-rose-600 font-bold">🚑 ${player.injury.type} (${player.injury.weeksRemaining}w)</span>` : `<span class="text-emerald-400 font-semibold text-[10px]">Fit</span>`}
           </td>
           <td class="p-2 text-right">
             <button class="px-2 py-0.5 rounded text-[10px] bg-slate-800 hover:bg-sky-700 text-sky-200 transition">
@@ -1068,14 +1274,181 @@
       } else if (selectedPlayerForSwap === index) {
         selectedPlayerForSwap = null;
       } else {
-        // Perform Swap
         const temp = squad[selectedPlayerForSwap];
         squad[selectedPlayerForSwap] = squad[index];
         squad[index] = temp;
         showToast(`Swapped ${temp.name} with ${squad[selectedPlayerForSwap].name}`, '🔄');
         selectedPlayerForSwap = null;
+        autoSaveToLocalStorage();
       }
       renderCurrentSquadView();
+    }
+
+    function renderStadiumScreen() {
+      const team = getActiveTeam();
+      const fac = clubFacilities[team.id];
+      const standsGrid = document.getElementById('stadium-stands-grid');
+      standsGrid.innerHTML = '';
+
+      const totalCap = Object.values(fac.stands).reduce((a, b) => a + b.capacity, 0);
+      const estGate = (totalCap * fac.ticketPrice) * 0.88;
+      document.getElementById('stadium-estimated-income').innerText = `£${(estGate / 1000000).toFixed(2)}M`;
+
+      Object.entries(fac.stands).forEach(([standName, data]) => {
+        const costToUpgrade = data.level * 4000000;
+        const canAfford = team.budget >= costToUpgrade;
+        const card = document.createElement('div');
+        card.className = 'lma-panel p-4 rounded-xl flex flex-col justify-between';
+        card.innerHTML = `
+          <div>
+            <div class="flex justify-between items-center mb-2">
+              <h4 class="font-console font-bold text-white text-sm">${standName} Stand</h4>
+              <span class="text-[10px] px-2 py-0.5 rounded bg-sky-900 text-sky-200 border border-sky-600">Tier ${data.level}</span>
+            </div>
+            <p class="text-xs text-slate-400">Current Capacity: <span class="font-bold text-white">${data.capacity.toLocaleString()}</span> seats</p>
+            <p class="text-[11px] text-emerald-400 mt-1">+3,500 seats on next expansion</p>
+          </div>
+          <div class="mt-4 pt-2 border-t border-slate-800">
+            <button onclick="upgradeStand('${standName}')" class="w-full py-1.5 rounded font-console text-xs font-bold uppercase transition ${canAfford ? 'bg-sky-600 hover:bg-sky-500 text-white' : 'bg-slate-800 text-slate-500 cursor-not-allowed'}">
+              Upgrade (£${(costToUpgrade / 1000000).toFixed(1)}M)
+            </button>
+          </div>
+        `;
+        standsGrid.appendChild(card);
+      });
+
+      // Training Facilities
+      const facGrid = document.getElementById('facilities-grid');
+      facGrid.innerHTML = '';
+
+      const items = [
+        { key: 'medicalCentre', title: 'Medical Rehabilitation Centre', desc: 'Accelerates player injury recovery time by up to 60%.', lvl: fac.medicalCentre },
+        { key: 'youthFacility', title: 'Youth Development Academy', desc: 'Increases the likelihood of scout reports with 88+ potential teenagers.', lvl: fac.youthFacility },
+        { key: 'trainingPitch', title: 'Tactical Pitch & Gym Complex', desc: 'Regenerates player match condition faster between matchdays.', lvl: fac.trainingPitch }
+      ];
+
+      items.forEach(item => {
+        const cost = item.lvl * 3500000;
+        const canAfford = team.budget >= cost && item.lvl < 5;
+        const box = document.createElement('div');
+        box.className = 'bg-slate-900/80 border border-slate-800 p-4 rounded-xl flex flex-col justify-between';
+        box.innerHTML = `
+          <div>
+            <div class="flex justify-between items-center mb-1">
+              <h4 class="font-console font-bold text-sm text-sky-300">${item.title}</h4>
+              <span class="text-[10px] font-bold text-amber-400">Lv ${item.lvl}/5</span>
+            </div>
+            <p class="text-xs text-slate-400 mb-2 leading-relaxed">${item.desc}</p>
+          </div>
+          <div class="mt-3 pt-2 border-t border-slate-800">
+            <button onclick="upgradeFacility('${item.key}')" ${!canAfford ? 'disabled' : ''} class="w-full py-1.5 rounded font-console text-xs font-bold uppercase transition ${canAfford ? 'bg-emerald-600 hover:bg-emerald-500 text-white' : 'bg-slate-800 text-slate-500 cursor-not-allowed'}">
+              ${item.lvl >= 5 ? 'Max Level' : `Upgrade (£${(cost/1000000).toFixed(1)}M)`}
+            </button>
+          </div>
+        `;
+        facGrid.appendChild(box);
+      });
+    }
+
+    function upgradeStand(standName) {
+      const team = getActiveTeam();
+      const fac = clubFacilities[team.id];
+      const stand = fac.stands[standName];
+      const cost = stand.level * 4000000;
+
+      if (team.budget < cost) {
+        showToast('Insufficient transfer budget for stand expansion!', '❌');
+        return;
+      }
+
+      team.budget -= cost;
+      stand.level += 1;
+      stand.capacity += 3500;
+      playSound('cash');
+      showToast(`${standName} Stand expanded to Tier ${stand.level}! (+3,500 seats)`, '🏗️');
+      updateHeader();
+      renderStadiumScreen();
+      renderCurrentSquadView();
+      autoSaveToLocalStorage();
+    }
+
+    function upgradeFacility(facKey) {
+      const team = getActiveTeam();
+      const fac = clubFacilities[team.id];
+      const cost = fac[facKey] * 3500000;
+
+      if (team.budget < cost) {
+        showToast('Insufficient budget for facility upgrade!', '❌');
+        return;
+      }
+
+      team.budget -= cost;
+      fac[facKey] += 1;
+      playSound('cash');
+      showToast(`Upgraded facility to Level ${fac[facKey]}!`, '🏢');
+      updateHeader();
+      renderStadiumScreen();
+      autoSaveToLocalStorage();
+    }
+
+    function renderYouthAcademy() {
+      const tbody = document.getElementById('youth-table-body');
+      tbody.innerHTML = '';
+
+      if (YOUTH_PROSPECTS.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="7" class="p-4 text-center text-slate-500 italic">All scouted youth prospects have been signed. New scouts arrive each week!</td></tr>`;
+        return;
+      }
+
+      YOUTH_PROSPECTS.forEach(y => {
+        const tr = document.createElement('tr');
+        tr.className = 'hover:bg-slate-800/40 transition font-mono';
+        tr.innerHTML = `
+          <td class="p-3 font-medium text-white">${y.name}</td>
+          <td class="p-3"><span class="px-1.5 py-0.5 rounded text-[10px] font-bold bg-slate-800 text-sky-300">${y.pos}</span></td>
+          <td class="p-3 text-slate-400">${y.age}</td>
+          <td class="p-3 font-bold text-amber-300">${y.ovr}</td>
+          <td class="p-3 font-bold text-emerald-400">${y.potential} POT</td>
+          <td class="p-3 text-slate-300 text-center font-mono text-[11px]">${y.hnd}/${y.tck}/${y.pas}/${y.sho}/${y.spd}</td>
+          <td class="p-3 text-right">
+            <button onclick="signYouthPlayer('${y.id}')" class="px-3 py-1 rounded text-xs font-console font-bold uppercase bg-emerald-600 hover:bg-emerald-500 text-white transition">
+              Sign Free ✍️
+            </button>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function signYouthPlayer(youthId) {
+      const prospect = YOUTH_PROSPECTS.find(y => y.id === youthId);
+      if (!prospect) return;
+      const team = getActiveTeam();
+
+      const newPlayer = createPlayer(
+        'p_' + Date.now(),
+        prospect.name,
+        prospect.pos,
+        prospect.age,
+        prospect.hnd,
+        prospect.tck,
+        prospect.pas,
+        prospect.sho,
+        prospect.spd,
+        85,
+        team.id,
+        2500000,
+        15000
+      );
+
+      SQUADS[team.id].push(newPlayer);
+      YOUTH_PROSPECTS = YOUTH_PROSPECTS.filter(y => y.id !== youthId);
+
+      playSound('whistle');
+      showToast(`${prospect.name} signed to ${team.name} First Team squad!`, '🌟');
+      renderYouthAcademy();
+      renderCurrentSquadView();
+      autoSaveToLocalStorage();
     }
 
     function renderFixturesTab() {
@@ -1083,13 +1456,10 @@
       const weekMatches = FIXTURES_SCHEDULE[currentWeek - 1];
       const humanTeam = getActiveTeam();
 
-      // Find feature match involving the active human team
       let featureMatch = weekMatches.find(m => m.homeId === humanTeam.id || m.awayId === humanTeam.id) || weekMatches[0];
-
       const homeTeam = TEAMS.find(t => t.id === featureMatch.homeId);
       const awayTeam = TEAMS.find(t => t.id === featureMatch.awayId);
 
-      // Setup Scorecard
       const homeBadge = document.getElementById('home-team-badge');
       homeBadge.style.backgroundColor = homeTeam.color;
       homeBadge.innerText = homeTeam.short;
@@ -1105,7 +1475,6 @@
       document.getElementById('live-home-goals').innerText = featureMatch.played ? featureMatch.homeScore : '0';
       document.getElementById('live-away-goals').innerText = featureMatch.played ? featureMatch.awayScore : '0';
 
-      // Setup Simulcast list
       const simulcastContainer = document.getElementById('simulcast-fixtures-list');
       simulcastContainer.innerHTML = '';
 
@@ -1116,29 +1485,142 @@
         card.className = 'p-2 rounded bg-slate-900/80 border border-slate-800 flex justify-between items-center text-xs font-mono';
         card.id = `simulcast-row-${idx}`;
         card.innerHTML = `
-          <div class="flex items-center gap-1.5 truncate w-32">
+          <div class="flex items-center gap-1.5 truncate w-28">
             <span class="w-2.5 h-2.5 rounded-full" style="background-color: ${ht.color}"></span>
             <span class="text-white truncate">${ht.short}</span>
           </div>
           <div class="font-bold text-amber-400 font-console px-2">
             <span id="sim-score-h-${idx}">${m.played ? m.homeScore : '-'}</span> : <span id="sim-score-a-${idx}">${m.played ? m.awayScore : '-'}</span>
           </div>
-          <div class="flex items-center justify-end gap-1.5 truncate w-32">
+          <div class="flex items-center justify-end gap-1.5 truncate w-28">
             <span class="text-white truncate">${at.short}</span>
             <span class="w-2.5 h-2.5 rounded-full" style="background-color: ${at.color}"></span>
           </div>
         `;
         simulcastContainer.appendChild(card);
       });
+
+      renderLiveBenchSubstitutes();
+    }
+
+    function renderLiveBenchSubstitutes() {
+      const container = document.getElementById('match-bench-container');
+      container.innerHTML = '';
+      const team = getActiveTeam();
+      const squad = SQUADS[team.id];
+      const subs = squad.slice(11);
+
+      subs.forEach((sub, sIdx) => {
+        const actualIdx = 11 + sIdx;
+        const btn = document.createElement('button');
+        btn.onclick = () => openSubCandidateModal(actualIdx);
+        btn.className = 'w-full p-1.5 bg-slate-900 hover:bg-sky-950 border border-slate-800 rounded flex justify-between items-center text-left transition';
+        btn.innerHTML = `
+          <div class="flex items-center gap-2">
+            <span class="px-1 py-0.5 rounded text-[9px] bg-slate-800 text-sky-300 font-bold">${sub.pos}</span>
+            <span class="text-white font-medium truncate max-w-[120px]">${sub.name}</span>
+          </div>
+          <span class="text-amber-400 font-console font-bold text-[11px]">${sub.ovr} OVR (${sub.condition}%)</span>
+        `;
+        container.appendChild(btn);
+      });
+    }
+
+    function openSubCandidateModal(benchIndex) {
+      if (!isSimulating && !isMatchPaused) {
+        showToast('Substitutions during the matchday are active once the match kicks off!', 'ℹ️');
+        return;
+      }
+      pendingSubBenchIdx = benchIndex;
+      const subPlayer = SQUADS[getActiveTeam().id][benchIndex];
+      document.getElementById('sub-incoming-player-desc').innerText = `Bringing ON: ${subPlayer.name} (${subPlayer.pos} | ${subPlayer.ovr} OVR)`;
+
+      const container = document.getElementById('sub-pitch-candidates');
+      container.innerHTML = '';
+      const starters = SQUADS[getActiveTeam().id].slice(0, 11);
+
+      starters.forEach((starter, sIdx) => {
+        const row = document.createElement('div');
+        row.onclick = () => executeLiveSub(sIdx);
+        row.className = 'p-2 bg-slate-900 hover:bg-slate-800 rounded border border-slate-800 flex justify-between items-center cursor-pointer transition';
+        row.innerHTML = `
+          <div class="flex items-center gap-2">
+            <span class="text-red-400 font-bold text-[10px]">OFF:</span>
+            <span class="text-white font-medium">${starter.name} (${starter.pos})</span>
+          </div>
+          <span class="text-slate-400 text-[10px]">${starter.condition}% Fit</span>
+        `;
+        container.appendChild(row);
+      });
+
+      document.getElementById('match-sub-modal').classList.remove('hidden');
+    }
+
+    function closeSubModal() {
+      document.getElementById('match-sub-modal').classList.add('hidden');
+      pendingSubBenchIdx = null;
+    }
+
+    function executeLiveSub(pitchIdx) {
+      if (pendingSubBenchIdx === null) return;
+      const squad = SQUADS[getActiveTeam().id];
+      const incoming = squad[pendingSubBenchIdx];
+      const outgoing = squad[pitchIdx];
+
+      squad[pitchIdx] = incoming;
+      squad[pendingSubBenchIdx] = outgoing;
+
+      playSound('whistle');
+      addCommentary(document.getElementById('match-minute-timer').innerText.split(':')[0], `🔄 SUB: ${outgoing.name} replaced by ${incoming.name}!`, 'text-cyan-400 font-bold');
+      showToast(`Substitution made: ${incoming.name} on for ${outgoing.name}`, '🔄');
+
+      closeSubModal();
+      renderLiveBenchSubstitutes();
+      renderCurrentSquadView();
+    }
+
+    function toggleMatchPause() {
+      if (!isSimulating) return;
+      isMatchPaused = !isMatchPaused;
+      const pauseBtn = document.getElementById('btn-pause-match');
+      pauseBtn.innerText = isMatchPaused ? '▶ Resume' : '⏸ Pause';
+      showToast(isMatchPaused ? 'Match Paused for tactical adjustments' : 'Match Resumed', '⏱️');
+    }
+
+    function applyMatchShout(shoutType) {
+      if (!isSimulating) {
+        showToast('Touchline shouts can be issued during live match simulation!', 'ℹ️');
+        return;
+      }
+      activeTacticalShout = shoutType;
+      const shoutIndicator = document.getElementById('active-shout-indicator');
+      const shoutsMap = {
+        park: 'Active Shout: Park The Bus (Defense +20%)',
+        press: 'Active Shout: Push Higher (Attack +15%, Condition wears faster)',
+        shoot: 'Active Shout: Shoot on Sight (More shots taken)',
+        tackle: 'Active Shout: Get Stuck In (Aggressive challenges)'
+      };
+      shoutIndicator.innerText = shoutsMap[shoutType] || '';
+      playSound('click');
+      showToast(`Manager shouted: ${shoutType.toUpperCase()}`, '🗣️');
     }
 
     function calculateTeamRatings(teamId) {
       const starters = SQUADS[teamId].slice(0, 11);
       const tactics = teamTactics[teamId];
 
-      const att = starters.filter(p => p.pos === 'FWD').reduce((s, p) => s + p.sho, 0) + (tactics.mentality * 3);
-      const mid = starters.filter(p => p.pos === 'MID').reduce((s, p) => s + p.pas, 0) + (tactics.pressing * 2);
-      const def = starters.filter(p => p.pos === 'DEF' || p.pos === 'GK').reduce((s, p) => s + (p.pos === 'GK' ? p.hnd : p.tck), 0);
+      let attBonus = tactics.mentality * 3;
+      let defBonus = (6 - tactics.mentality) * 2;
+      let midBonus = tactics.pressing * 2;
+
+      if (teamId === getActiveTeam().id && activeTacticalShout) {
+        if (activeTacticalShout === 'park') defBonus += 15;
+        if (activeTacticalShout === 'press') attBonus += 12;
+      }
+
+      const att = starters.filter(p => p.pos === 'FWD').reduce((s, p) => s + p.sho, 0) + attBonus;
+      const mid = starters.filter(p => p.pos === 'MID').reduce((s, p) => s + p.pas, 0) + midBonus;
+      const def = starters.filter(p => p.pos === 'DEF' || p.pos === 'GK').reduce((s, p) => s + (p.pos === 'GK' ? p.hnd : p.tck), 0) + defBonus;
 
       return {
         attack: Math.max(50, att / (starters.filter(p => p.pos === 'FWD').length || 1)),
@@ -1152,26 +1634,32 @@
 
       const weekMatches = FIXTURES_SCHEDULE[currentWeek - 1];
       if (weekMatches[0].played) {
-        showToast('This week fixture has already been completed!', '⚠️️');
+        showToast('This week fixture has already concluded!', '⚠');
         return;
       }
 
       isSimulating = true;
+      isMatchPaused = false;
+      activeTacticalShout = null;
+      document.getElementById('active-shout-indicator').innerText = '';
       playSound('whistle');
 
       const btn = document.getElementById('btn-play-matchday');
       btn.disabled = true;
       btn.classList.add('opacity-50', 'cursor-not-allowed');
 
+      const pauseBtn = document.getElementById('btn-pause-match');
+      pauseBtn.classList.remove('hidden');
+      pauseBtn.innerText = '⏸ Pause';
+
       const statusBadge = document.getElementById('match-status-badge');
-      statusBadge.innerText = 'LIVE IN PROGRESS';
+      statusBadge.innerText = 'LIVE SIMULATION';
       statusBadge.className = 'px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-600 text-white animate-pulse uppercase';
 
       const timerEl = document.getElementById('match-minute-timer');
       const commentaryEl = document.getElementById('match-commentary-feed');
       commentaryEl.innerHTML = '';
 
-      // Match state initialization
       const featureMatch = weekMatches.find(m => m.homeId === getActiveTeam().id || m.awayId === getActiveTeam().id) || weekMatches[0];
       const homeTeam = TEAMS.find(t => t.id === featureMatch.homeId);
       const awayTeam = TEAMS.find(t => t.id === featureMatch.awayId);
@@ -1188,18 +1676,16 @@
       let homeCorners = 0;
       let awayCorners = 0;
 
-      // Other matches live score tracking
       const simScores = weekMatches.map(() => ({ h: 0, a: 0 }));
 
       let minute = 0;
-      const matchInterval = setInterval(() => {
+      matchInterval = setInterval(() => {
+        if (isMatchPaused) return;
+
         minute += 2;
         timerEl.innerText = `${minute.toString().padStart(2, '0')}:00`;
 
-        // Calculate minute event
         const roll = Math.random();
-        
-        // Possession fluctuation
         const basePoss = 50 + (hRatings.midfield - aRatings.midfield) * 0.4;
         const currentPoss = Math.min(75, Math.max(25, Math.round(basePoss + (Math.random() * 8 - 4))));
         document.getElementById('stat-home-poss').innerText = `${currentPoss}%`;
@@ -1207,8 +1693,29 @@
         document.getElementById('bar-home-poss').style.width = `${currentPoss}%`;
         document.getElementById('bar-away-poss').style.width = `${100 - currentPoss}%`;
 
-        // Commentary Events Generation
-        if (roll < 0.28) {
+        // Wear down conditions slightly per tick
+        if (minute % 10 === 0) {
+          [homeTeam.id, awayTeam.id].forEach(tid => {
+            SQUADS[tid].slice(0, 11).forEach(p => {
+              p.condition = Math.max(45, p.condition - 1);
+            });
+          });
+        }
+
+        // Potential in-match injury roll for fatigued players
+        if (roll < 0.03) {
+          const checkTeamId = Math.random() > 0.5 ? homeTeam.id : awayTeam.id;
+          const starters = SQUADS[checkTeamId].slice(0, 11);
+          const fatigued = starters.find(p => p.condition < 70 && !p.injury);
+          if (fatigued) {
+            const medLevel = clubFacilities[checkTeamId].medicalCentre;
+            const recoveryWeeks = Math.max(1, 3 - Math.floor(medLevel / 2));
+            fatigued.injury = { type: 'Muscle Strain', weeksRemaining: recoveryWeeks };
+            addCommentary(minute, `🚑 INJURY: ${fatigued.name} pulls up clutching his hamstring and requires medical attention!`, 'text-rose-400 font-bold');
+          }
+        }
+
+        if (roll < 0.3) {
           const isHomeAttacking = (Math.random() * (hRatings.midfield + aRatings.midfield)) < hRatings.midfield;
           const attackingTeam = isHomeAttacking ? homeTeam : awayTeam;
           const defendingRatings = isHomeAttacking ? aRatings : hRatings;
@@ -1216,12 +1723,10 @@
 
           if (isHomeAttacking) homeShots++; else awayShots++;
 
-          // Shot on target check
-          if (Math.random() < 0.6) {
+          if (Math.random() < 0.58) {
             if (isHomeAttacking) homeTarget++; else awayTarget++;
 
-            // Goal evaluation check (Attack vs Def/GK)
-            const goalThreshold = 0.38 + ((attackingRatings.attack - defendingRatings.defense) * 0.005);
+            const goalThreshold = 0.36 + ((attackingRatings.attack - defendingRatings.defense) * 0.005);
             if (Math.random() < goalThreshold) {
               if (isHomeAttacking) homeGoals++; else awayGoals++;
               playSound('goal');
@@ -1229,22 +1734,21 @@
               const scorerList = SQUADS[attackingTeam.id].filter(p => p.pos === 'FWD' || p.pos === 'MID');
               const scorer = scorerList[Math.floor(Math.random() * scorerList.length)].name;
 
-              addCommentary(minute, `⚽ GOAL! Spectacular strike by ${scorer}! ${attackingTeam.name} take the net!`, 'text-emerald-400 font-bold');
+              addCommentary(minute, `⚽ GOAL! Superb finish into the corner by ${scorer}! ${attackingTeam.name} strike!`, 'text-emerald-400 font-bold');
               document.getElementById('live-home-goals').innerText = homeGoals;
               document.getElementById('live-away-goals').innerText = awayGoals;
             } else {
               const keeperName = isHomeAttacking ? SQUADS[awayTeam.id][0].name : SQUADS[homeTeam.id][0].name;
-              addCommentary(minute, `🧤 Great save! ${keeperName} tips the ball over the bar. Corner awarded.`, 'text-cyan-300');
+              addCommentary(minute, `🧤 Great save! ${keeperName} palms the shot away for a corner.`, 'text-cyan-300');
               if (isHomeAttacking) homeCorners++; else awayCorners++;
             }
           } else {
-            addCommentary(minute, `💨 ${attackingTeam.name} build a dangerous move down the flank but blaze the shot wide.`, 'text-slate-400');
+            addCommentary(minute, `💨 ${attackingTeam.name} find space on the break but drag the effort wide.`, 'text-slate-400');
           }
         } else if (roll > 0.88) {
-          addCommentary(minute, `🟨 Heavy challenge in midfield! Referee issues a booking and awards a free kick.`, 'text-amber-400');
+          addCommentary(minute, `🟨 Fierce slide tackle! Referee flashes yellow to stop the counter.`, 'text-amber-400');
         }
 
-        // Simulcast other league matches progression
         weekMatches.forEach((m, idx) => {
           if (Math.random() < 0.04) {
             if (Math.random() > 0.5) simScores[idx].h++; else simScores[idx].a++;
@@ -1255,7 +1759,6 @@
           }
         });
 
-        // Update visual shots
         document.getElementById('stat-home-shots').innerText = homeShots;
         document.getElementById('stat-away-shots').innerText = awayShots;
         document.getElementById('stat-home-target').innerText = homeTarget;
@@ -1263,7 +1766,6 @@
         document.getElementById('stat-home-corners').innerText = homeCorners;
         document.getElementById('stat-away-corners').innerText = awayCorners;
 
-        // End of Match
         if (minute >= 90) {
           clearInterval(matchInterval);
           finalizeMatchday(featureMatch, homeGoals, awayGoals, simScores);
@@ -1282,6 +1784,8 @@
     function finalizeMatchday(featureMatch, featureHScore, featureAScore, simScores) {
       playSound('whistle');
       isSimulating = false;
+      isMatchPaused = false;
+      document.getElementById('btn-pause-match').classList.add('hidden');
 
       const statusBadge = document.getElementById('match-status-badge');
       statusBadge.innerText = 'FULL TIME';
@@ -1289,7 +1793,6 @@
 
       const weekMatches = FIXTURES_SCHEDULE[currentWeek - 1];
 
-      // Commit scores to schedule
       weekMatches.forEach((m, idx) => {
         m.played = true;
         if (m === featureMatch) {
@@ -1300,7 +1803,6 @@
           m.awayScore = simScores[idx].a;
         }
 
-        // Apply to League Table
         const homeRow = LEAGUE_TABLE.find(t => t.teamId === m.homeId);
         const awayRow = LEAGUE_TABLE.find(t => t.teamId === m.awayId);
 
@@ -1327,17 +1829,62 @@
           homeRow.points += 1;
           awayRow.points += 1;
         }
+
+        // Clean Sheet milestone
+        if (m.awayScore === 0) clubHonours[m.homeId].cleanSheets += 1;
+        if (m.homeScore === 0) clubHonours[m.awayId].cleanSheets += 1;
+
+        // Gate Receipts awarded to Home Club
+        const homeFac = clubFacilities[m.homeId];
+        const capacity = Object.values(homeFac.stands).reduce((a, b) => a + b.capacity, 0);
+        const gateRevenue = Math.round(capacity * homeFac.ticketPrice * 0.9);
+        const homeTeamObj = TEAMS.find(t => t.id === m.homeId);
+        homeTeamObj.budget += gateRevenue;
       });
 
-      // Sort League Standings (Pts -> GD -> GF)
       LEAGUE_TABLE.sort((a, b) => b.points - a.points || b.gd - a.gd || b.gf - a.gf);
 
-      // Reset human manager ready flags for next week
+      // Regeneration & Injury recovery
+      TEAMS.forEach(t => {
+        const pitchBonus = clubFacilities[t.id].trainingPitch * 2;
+        SQUADS[t.id].forEach(p => {
+          p.condition = Math.min(100, p.condition + 14 + pitchBonus);
+          if (p.injury) {
+            p.injury.weeksRemaining -= 1;
+            if (p.injury.weeksRemaining <= 0) p.injury = null;
+          }
+        });
+      });
+
+      // Spawn fresh youth scout each week
+      if (YOUTH_PROSPECTS.length < 6) {
+        const names = ['L. Baines', 'C. Jerome', 'M. Noble', 'A. Young', 'R. Shawcross'];
+        const randomName = names[Math.floor(Math.random() * names.length)] + ` (${currentWeek})`;
+        YOUTH_PROSPECTS.push({
+          id: 'y_' + Date.now(),
+          name: randomName,
+          pos: ['DEF', 'MID', 'FWD'][Math.floor(Math.random() * 3)],
+          age: 16 + Math.floor(Math.random() * 2),
+          ovr: 64 + Math.floor(Math.random() * 6),
+          potential: 84 + Math.floor(Math.random() * 8),
+          hnd: 20,
+          tck: 65,
+          pas: 70,
+          sho: 68,
+          spd: 82,
+          sta: 80
+        });
+      }
+
       TEAMS.forEach(t => { if (t.isHuman) t.isReady = false; });
 
-      // Advance week or season finish
       if (currentWeek < maxWeeks) {
         currentWeek += 1;
+      } else {
+        // Season Finished: Award Title
+        const champion = LEAGUE_TABLE[0];
+        clubHonours[champion.teamId].leagueTitles += 1;
+        showToast(`🏆 SEASON COMPLETE! ${champion.name} are PREMIERSHIP CHAMPIONS!`, '🎖️');
       }
 
       const btn = document.getElementById('btn-play-matchday');
@@ -1347,7 +1894,10 @@
       updateHeader();
       renderLeagueTable();
       renderMultiplayerLounge();
-      showToast(`Matchday completed! League standings updated.`, '🏆');
+      renderCurrentSquadView();
+      renderTrophyRoom();
+      autoSaveToLocalStorage();
+      showToast(`Matchday concluded! Gate receipts added to home budgets.`, '💷');
     }
 
     function renderLeagueTable() {
@@ -1404,21 +1954,21 @@
       });
 
       if (filtered.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="9" class="p-4 text-center text-slate-500 italic">No scouted players match current filter.</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="9" class="p-4 text-center text-slate-500 italic">No scouted players found.</td></tr>`;
         return;
       }
 
       filtered.forEach(p => {
         const canAfford = getActiveTeam().budget >= p.value;
         const tr = document.createElement('tr');
-        tr.className = 'hover:bg-slate-800/40 transition';
+        tr.className = 'hover:bg-slate-800/40 transition font-mono';
         tr.innerHTML = `
           <td class="p-3 font-medium text-white">${p.name}</td>
           <td class="p-3"><span class="px-1.5 py-0.5 rounded text-[10px] font-bold bg-slate-800 text-slate-300">${p.pos}</span></td>
           <td class="p-3 text-slate-400">${p.teamId}</td>
           <td class="p-3 text-slate-400">${p.age}</td>
           <td class="p-3 font-bold text-amber-300">${p.ovr}</td>
-          <td class="p-3 text-slate-300 text-center font-mono text-[11px]">${p.hnd}/${p.tck}/${p.pas}/${p.sho}/${p.spd}</td>
+          <td class="p-3 text-slate-300 text-center text-[11px]">${p.hnd}/${p.tck}/${p.pas}/${p.sho}/${p.spd}</td>
           <td class="p-3 font-bold font-console text-emerald-400">£${(p.value / 1000000).toFixed(1)}M</td>
           <td class="p-3 text-slate-300">£${p.wage.toLocaleString()}/wk</td>
           <td class="p-3 text-right">
@@ -1450,19 +2000,19 @@
             <span class="px-2 py-0.5 rounded text-[10px] bg-sky-900 text-sky-200 font-bold">${player.pos} | OVR ${player.ovr}</span>
           </div>
           <div class="text-slate-400 text-[11px] space-y-1">
-            <p>Age: ${player.age} &bull; Pace: ${player.spd} &bull; Key Skill: ${player.sho > player.tck ? 'Shooting' : 'Tackling'}</p>
-            <p class="text-emerald-400 font-bold">Transfer Fee: £${(player.value / 1000000).toFixed(1)}M</p>
-            <p class="text-slate-300">Wage Demand: £${player.wage.toLocaleString()} / week</p>
+            <p>Age: ${player.age} &bull; Key Attribute: ${player.sho > player.tck ? 'Shooting (' + player.sho + ')' : 'Tackling (' + player.tck + ')'}</p>
+            <p class="text-emerald-400 font-bold">Market Fee: £${(player.value / 1000000).toFixed(1)}M</p>
+            <p class="text-slate-300">Wage Demands: £${player.wage.toLocaleString()} / week</p>
           </div>
         </div>
 
         <div class="p-3 bg-slate-950 rounded-lg border border-slate-800 text-slate-300">
           <div class="flex justify-between text-xs">
-            <span>${activeTeam.name} Current Balance:</span>
+            <span>Current Transfer Balance:</span>
             <span class="font-bold text-white">£${(activeTeam.budget / 1000000).toFixed(1)}M</span>
           </div>
           <div class="flex justify-between text-xs mt-1 border-t border-slate-800 pt-1">
-            <span>Remaining After Transfer:</span>
+            <span>Remaining Funds:</span>
             <span class="font-bold font-console ${activeTeam.budget >= player.value ? 'text-emerald-400' : 'text-rose-400'}">
               £${((activeTeam.budget - player.value) / 1000000).toFixed(1)}M
             </span>
@@ -1484,25 +2034,77 @@
       const team = getActiveTeam();
 
       if (team.budget < pendingBidPlayer.value) {
-        showToast('Insufficient funds in transfer budget!', '❌');
+        showToast('Insufficient transfer budget!', '❌');
         closeBidModal();
         return;
       }
 
-      // Execute signing
       team.budget -= pendingBidPlayer.value;
       pendingBidPlayer.teamId = team.id;
       SQUADS[team.id].push(pendingBidPlayer);
-
-      // Remove from market pool
       TRANSFER_MARKET = TRANSFER_MARKET.filter(p => p.id !== pendingBidPlayer.id);
 
       playSound('goal');
-      showToast(`Transfer Complete! ${pendingBidPlayer.name} has joined ${team.name}!`, '✍️');
+      showToast(`${pendingBidPlayer.name} has signed for ${team.name}!`, '✍️');
       closeBidModal();
       updateHeader();
       renderTransferMarket();
       renderCurrentSquadView();
+      autoSaveToLocalStorage();
+    }
+
+    function renderTrophyRoom() {
+      const team = getActiveTeam();
+      const h = clubHonours[team.id];
+      const grid = document.getElementById('trophy-cabinet-grid');
+      grid.innerHTML = `
+        <div class="lma-panel p-4 rounded-xl flex items-center gap-4">
+          <div class="text-4xl">🏆</div>
+          <div>
+            <h4 class="font-console font-bold text-sm text-white">Premiership Trophies</h4>
+            <p class="text-2xl font-console font-bold text-amber-400">${h.leagueTitles}</p>
+            <span class="text-[10px] text-slate-400">Total League Victories</span>
+          </div>
+        </div>
+
+        <div class="lma-panel p-4 rounded-xl flex items-center gap-4">
+          <div class="text-4xl">🧤</div>
+          <div>
+            <h4 class="font-console font-bold text-sm text-white">Clean Sheet Records</h4>
+            <p class="text-2xl font-console font-bold text-sky-400">${h.cleanSheets}</p>
+            <span class="text-[10px] text-slate-400">Shutouts recorded</span>
+          </div>
+        </div>
+
+        <div class="lma-panel p-4 rounded-xl flex items-center gap-4">
+          <div class="text-4xl">🎖️</div>
+          <div>
+            <h4 class="font-console font-bold text-sm text-white">Manager Honors</h4>
+            <p class="text-2xl font-console font-bold text-emerald-400">${h.managerOfTheMonth}</p>
+            <span class="text-[10px] text-slate-400">Manager of the Month Awards</span>
+          </div>
+        </div>
+      `;
+
+      const mContainer = document.getElementById('milestones-container');
+      mContainer.innerHTML = `
+        <div class="p-3 bg-slate-900/80 rounded border border-slate-800">
+          <span class="text-[10px] text-slate-400 block uppercase">Stadium Capacity</span>
+          <span class="text-white font-bold text-sm">${Object.values(clubFacilities[team.id].stands).reduce((a,b)=>a+b.capacity,0).toLocaleString()}</span>
+        </div>
+        <div class="p-3 bg-slate-900/80 rounded border border-slate-800">
+          <span class="text-[10px] text-slate-400 block uppercase">Squad Size</span>
+          <span class="text-white font-bold text-sm">${SQUADS[team.id].length} Players</span>
+        </div>
+        <div class="p-3 bg-slate-900/80 rounded border border-slate-800">
+          <span class="text-[10px] text-slate-400 block uppercase">Medical Level</span>
+          <span class="text-amber-400 font-bold text-sm">Tier ${clubFacilities[team.id].medicalCentre}</span>
+        </div>
+        <div class="p-3 bg-slate-900/80 rounded border border-slate-800">
+          <span class="text-[10px] text-slate-400 block uppercase">Youth Level</span>
+          <span class="text-emerald-400 font-bold text-sm">Tier ${clubFacilities[team.id].youthFacility}</span>
+        </div>
+      `;
     }
 
     function renderMultiplayerLounge() {
@@ -1528,7 +2130,6 @@
             <p class="text-xs text-slate-400 mb-2">${team.managerName}</p>
             <div class="text-[11px] text-slate-300 font-mono space-y-0.5 border-t border-slate-800 pt-2">
               <div>Budget: £${(team.budget / 1000000).toFixed(1)}M</div>
-              <div>Squad Size: ${SQUADS[team.id].length} Players</div>
               <div>Formation: ${teamTactics[team.id].formation}</div>
             </div>
           </div>
@@ -1548,7 +2149,6 @@
         grid.appendChild(card);
       });
 
-      // Update Advance button state
       const humanTeams = TEAMS.filter(t => t.isHuman);
       const allReady = humanTeams.every(t => t.isReady);
       const advBtn = document.getElementById('btn-advance-matchday-room');
@@ -1576,6 +2176,118 @@
       startMatchdaySimulation();
     }
 
+    function openSaveModal() {
+      playSound('click');
+      document.getElementById('save-modal').classList.remove('hidden');
+    }
+
+    function closeSaveModal() {
+      playSound('click');
+      document.getElementById('save-modal').classList.add('hidden');
+    }
+
+    function getSavePayload() {
+      return {
+        version: '1.2',
+        savedAt: new Date().toISOString(),
+        currentWeek,
+        activeTeamIndex,
+        TEAMS,
+        SQUADS,
+        TRANSFER_MARKET,
+        YOUTH_PROSPECTS,
+        LEAGUE_TABLE,
+        teamTactics,
+        clubFacilities,
+        clubHonours,
+        FIXTURES_SCHEDULE
+      };
+    }
+
+    function autoSaveToLocalStorage() {
+      try {
+        localStorage.setItem('LMA_MANAGER_SAVE_GAME', JSON.stringify(getSavePayload()));
+      } catch (e) {
+        console.warn('Auto-save error:', e);
+      }
+    }
+
+    function loadFromLocalStorage() {
+      try {
+        const raw = localStorage.getItem('LMA_MANAGER_SAVE_GAME');
+        if (!raw) return false;
+        applyLoadedData(JSON.parse(raw));
+        return true;
+      } catch (e) {
+        console.error('Failed to load save from localStorage', e);
+        return false;
+      }
+    }
+
+    function exportSaveFile() {
+      playSound('cash');
+      const dataStr = 'data:text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(getSavePayload(), null, 2));
+      const downloadAnchor = document.createElement('a');
+      downloadAnchor.setAttribute('href', dataStr);
+      downloadAnchor.setAttribute('download', `LMA_Manager_Season_Week_${currentWeek}.json`);
+      document.body.appendChild(downloadAnchor);
+      downloadAnchor.click();
+      downloadAnchor.remove();
+      showToast('Career Save Exported to JSON!', '💾');
+      closeSaveModal();
+    }
+
+    function importSaveFile(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        try {
+          const parsed = JSON.parse(e.target.result);
+          applyLoadedData(parsed);
+          playSound('whistle');
+          showToast('Imported save file successfully!', '🎉');
+          closeSaveModal();
+        } catch (err) {
+          showToast('Corrupt or invalid save JSON file!', '❌');
+        }
+      };
+      reader.readAsText(file);
+    }
+
+    function applyLoadedData(d) {
+      if (!d) return;
+      currentWeek = d.currentWeek || 1;
+      activeTeamIndex = d.activeTeamIndex || 0;
+      if (d.TEAMS) {
+        d.TEAMS.forEach((t, i) => { if (TEAMS[i]) Object.assign(TEAMS[i], t); });
+      }
+      if (d.SQUADS) Object.assign(SQUADS, d.SQUADS);
+      if (d.TRANSFER_MARKET) TRANSFER_MARKET = d.TRANSFER_MARKET;
+      if (d.YOUTH_PROSPECTS) YOUTH_PROSPECTS = d.YOUTH_PROSPECTS;
+      if (d.LEAGUE_TABLE) LEAGUE_TABLE = d.LEAGUE_TABLE;
+      if (d.teamTactics) Object.assign(teamTactics, d.teamTactics);
+      if (d.clubFacilities) Object.assign(clubFacilities, d.clubFacilities);
+      if (d.clubHonours) Object.assign(clubHonours, d.clubHonours);
+      if (d.FIXTURES_SCHEDULE) FIXTURES_SCHEDULE = d.FIXTURES_SCHEDULE;
+
+      updateHeader();
+      renderCurrentSquadView();
+      renderLeagueTable();
+      renderTransferMarket();
+      renderStadiumScreen();
+      renderYouthAcademy();
+      renderTrophyRoom();
+      renderMultiplayerLounge();
+      renderFixturesTab();
+    }
+
+    function resetGameCareer() {
+      localStorage.removeItem('LMA_MANAGER_SAVE_GAME');
+      location.reload();
+    }
+
     function showToast(msg, icon = 'ℹ️') {
       const toast = document.getElementById('game-toast');
       document.getElementById('toast-msg').innerText = msg;
@@ -1586,16 +2298,22 @@
       setTimeout(() => {
         toast.classList.remove('translate-y-0', 'opacity-100');
         toast.classList.add('translate-y-20', 'opacity-0');
-      }, 3000);
+      }, 3200);
     }
 
     window.addEventListener('DOMContentLoaded', () => {
-      updateHeader();
-      renderCurrentSquadView();
-      renderLeagueTable();
-      renderTransferMarket();
-      renderMultiplayerLounge();
-      renderFixturesTab();
+      const loaded = loadFromLocalStorage();
+      if (!loaded) {
+        updateHeader();
+        renderCurrentSquadView();
+        renderLeagueTable();
+        renderTransferMarket();
+        renderStadiumScreen();
+        renderYouthAcademy();
+        renderTrophyRoom();
+        renderMultiplayerLounge();
+        renderFixturesTab();
+      }
     });
   </script>
 </body>
