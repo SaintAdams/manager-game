@@ -12,7 +12,6 @@
       --bg-panel-hover: #1e283d;
       --border: #243048;
       --accent: #00d2ff;
-      --accent-rgb: 0, 210, 255;
       --fm-green: #10b981;
       --fm-amber: #f59e0b;
       --fm-red: #ef4444;
@@ -27,7 +26,6 @@
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; user-select: none; }
     body { background-color: var(--bg-dark); color: var(--text-main); min-height: 100vh; display: flex; flex-direction: column; overflow-x: hidden; }
 
-    /* TOP HEADER */
     header {
       background: linear-gradient(180deg, #151d2d 0%, #0d131f 100%);
       border-bottom: 2px solid var(--border);
@@ -50,7 +48,7 @@
       border-radius: 6px;
       letter-spacing: 1px;
     }
-    .brand-titles h1 { font-size: 1.15rem; font-weight: 800; letter-spacing: 0.5px; color: #fff; }
+    .brand-titles h1 { font-size: 1.15rem; font-weight: 800; color: #fff; }
     .brand-titles p { font-size: 0.75rem; color: var(--text-muted); font-weight: 600; }
 
     .header-metrics { display: flex; align-items: center; gap: 14px; }
@@ -85,10 +83,8 @@
     .btn-advance-master:hover { transform: translateY(-1px); box-shadow: 0 0 25px rgba(245, 158, 11, 0.7); }
     .btn-icon { background: var(--bg-panel); border: 1px solid var(--border); color: #fff; padding: 8px 12px; border-radius: 6px; cursor: pointer; }
 
-    /* LAYOUT WRAPPER */
     .app-container { display: flex; flex: 1; min-height: calc(100vh - 120px); }
 
-    /* SIDEBAR */
     nav.sidebar {
       width: 240px;
       background: #0d121c;
@@ -98,7 +94,7 @@
       flex-direction: column;
       gap: 6px;
     }
-    .nav-label { font-size: 0.68rem; font-weight: 800; color: #475569; text-transform: uppercase; padding: 8px 12px 4px; letter-spacing: 0.5px; }
+    .nav-label { font-size: 0.68rem; font-weight: 800; color: #475569; text-transform: uppercase; padding: 8px 12px 4px; }
     .nav-item {
       display: flex;
       align-items: center;
@@ -119,7 +115,6 @@
     }
     .nav-item span.icon { font-size: 1.1rem; }
 
-    /* MAIN VIEW */
     main.viewport { flex: 1; padding: 20px; overflow-y: auto; background: var(--bg-dark); }
 
     .club-banner {
@@ -145,10 +140,8 @@
     .strip-stat .val { font-size: 1.25rem; font-weight: 900; color: #fff; }
     .strip-stat .lbl { font-size: 0.65rem; color: var(--text-muted); text-transform: uppercase; font-weight: 700; }
 
-    /* FOOTBALL MANAGER TACTICS LAYOUT */
     .tactics-container { display: grid; grid-template-columns: 460px 1fr; gap: 20px; }
 
-    /* PITCH CONTAINER */
     .pitch-card {
       background: var(--bg-card);
       border: 1px solid var(--border);
@@ -188,7 +181,6 @@
       gap: 6px;
     }
 
-    /* 2D PITCH GRAPHIC */
     .football-pitch {
       width: 100%;
       height: 520px;
@@ -228,7 +220,6 @@
       border: 2px solid var(--pitch-line); border-bottom: none; transform: translateX(-50%);
     }
 
-    /* PITCH PLAYER TOKENS (FM STYLE) */
     .pitch-node {
       position: absolute;
       transform: translate(-50%, -50%);
@@ -289,7 +280,6 @@
     .pitch-name-card .p-name { font-size: 0.72rem; font-weight: 800; color: #fff; }
     .pitch-name-card .p-role { font-size: 0.6rem; font-weight: 700; color: #38bdf8; }
 
-    /* SWAP BANNER */
     .swap-status-bar {
       background: linear-gradient(90deg, #b45309 0%, #d97706 100%);
       color: #fff;
@@ -309,7 +299,6 @@
       padding: 3px 8px; border-radius: 4px; cursor: pointer; font-size: 0.75rem; font-weight: 700;
     }
 
-    /* FM SQUAD TABLE */
     .squad-roster-card {
       background: var(--bg-card);
       border: 1px solid var(--border);
@@ -377,7 +366,6 @@
     .condition-bar { width: 44px; height: 6px; background: #334155; border-radius: 3px; overflow: hidden; display: inline-block; vertical-align: middle; margin-right: 6px; }
     .condition-fill { height: 100%; border-radius: 3px; }
 
-    /* MATCHDAY SCREEN */
     .matchday-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 20px; }
     .broadcast-card {
       background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; padding: 20px;
@@ -404,9 +392,7 @@
     }
     .comm-line { font-size: 0.82rem; padding: 6px 10px; border-radius: 6px; background: var(--bg-panel); border-left: 3px solid var(--accent); }
     .comm-line.goal { border-left-color: #10b981; background: rgba(16, 185, 129, 0.15); font-weight: 800; color: #34d399; }
-    .comm-line.card { border-left-color: #f59e0b; color: #fbbf24; }
 
-    /* LEAGUE TABLES */
     .standings-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; padding: 16px; }
     .league-tabs { display: flex; gap: 10px; margin-bottom: 14px; }
     .league-tab-btn {
@@ -420,7 +406,6 @@
     .zone-playoff { border-left: 4px solid #06b6d4 !important; }
     .zone-relegation { border-left: 4px solid #ef4444 !important; }
 
-    /* MODAL */
     .modal-backdrop {
       position: fixed; inset: 0; background: rgba(0,0,0,0.85);
       display: flex; align-items: center; justify-content: center; z-index: 1000;
@@ -434,7 +419,6 @@
     .modal-header h2 { font-size: 1.3rem; font-weight: 900; }
     .modal-close { background: none; border: none; color: #fff; font-size: 1.4rem; cursor: pointer; }
 
-    /* FOOTER */
     footer {
       background: #080c14;
       border-top: 1px solid var(--border);
@@ -449,13 +433,12 @@
 </head>
 <body>
 
-  <!-- HEADER -->
   <header>
     <div class="brand-group">
       <div class="brand-logo">FLM</div>
       <div class="brand-titles">
         <h1>FOOTBALL LEAGUE MANAGER</h1>
-        <p id="headerSeasonTag">2026/27 Career &bull; English Football Pyramid</p>
+        <p id="headerSeasonTag">2026/27 Career • English Football Pyramid</p>
       </div>
     </div>
 
@@ -470,7 +453,7 @@
       </div>
       <div class="metric-pill">
         <span class="label">Board Approval</span>
-        <span class="val" id="headerConfidence" style="color: #34d399;">82% &bull; Stable</span>
+        <span class="val" id="headerConfidence" style="color: #34d399;">82% • Stable</span>
       </div>
       <div class="metric-pill">
         <span class="label">Transfer Budget</span>
@@ -486,10 +469,7 @@
     </div>
   </header>
 
-  <!-- CONTAINER -->
   <div class="app-container">
-    
-    <!-- SIDEBAR -->
     <nav class="sidebar">
       <div class="nav-label">Squad Management</div>
       <div class="nav-item active" onclick="switchTab('tactics')" id="nav-tactics">
@@ -522,16 +502,13 @@
       </div>
     </nav>
 
-    <!-- MAIN VIEWPORT -->
     <main class="viewport" id="mainViewport">
-      
-      <!-- CLUB HERO BANNER -->
       <div class="club-banner" id="clubBanner">
         <div class="club-info-badge">
           <div class="club-badge-box" id="bannerBadge">SOU</div>
           <div class="club-text">
             <h2 id="bannerClubName">Southampton</h2>
-            <p id="bannerStadium">St Mary's Stadium &bull; Capacity: 32,384</p>
+            <p id="bannerStadium">St Mary's Stadium • Capacity: 32,384</p>
           </div>
         </div>
         <div class="team-stats-strip">
@@ -554,18 +531,13 @@
         </div>
       </div>
 
-      <!-- TACTICS TAB -->
       <div id="tab-tactics" class="tab-pane">
-        
-        <!-- SWAP NOTIFICATION BANNER -->
         <div id="swapNotificationBar" class="swap-status-bar" style="display: none;">
           <span id="swapNotificationText">🔄 SELECT PLAYER TO SWAP</span>
           <button onclick="cancelPlayerSwap()">Cancel Selection</button>
         </div>
 
         <div class="tactics-container">
-          
-          <!-- LEFT: FM 2D PITCH -->
           <div class="pitch-card">
             <div class="tactics-toolbar">
               <select class="tactics-select" id="formationSelect" onchange="changeFormation(this.value)">
@@ -581,7 +553,6 @@
               </button>
             </div>
 
-            <!-- THE PITCH -->
             <div class="football-pitch" id="pitchSurface">
               <div class="pitch-line-half"></div>
               <div class="pitch-circle-center"></div>
@@ -591,7 +562,6 @@
               <div class="penalty-box-bottom"></div>
               <div class="six-yard-bottom"></div>
 
-              <!-- PITCH NODES INJECTED VIA JS -->
               <div id="pitchNodesWrapper"></div>
             </div>
             
@@ -600,7 +570,6 @@
             </p>
           </div>
 
-          <!-- RIGHT: FM SQUAD SELECTION TABLE -->
           <div class="squad-roster-card">
             <div class="section-title-strip">
               <h3>Starting Eleven</h3>
@@ -644,18 +613,16 @@
               <tbody id="benchTableBody"></tbody>
             </table>
           </div>
-
         </div>
       </div>
 
-      <!-- MATCHDAY TAB -->
       <div id="tab-matchday" class="tab-pane" style="display: none;">
         <div class="matchday-grid">
           <div class="broadcast-card">
             <div class="scoreboard-box">
               <div class="sb-team">
                 <h2 id="sbHomeName">Southampton</h2>
-                <p id="sbHomeRole">HOME &bull; 4-3-3</p>
+                <p id="sbHomeRole">HOME</p>
               </div>
               <div>
                 <div class="sb-score" id="sbScore">0 - 0</div>
@@ -663,7 +630,7 @@
               </div>
               <div class="sb-team">
                 <h2 id="sbAwayName">Opponent</h2>
-                <p id="sbAwayRole">AWAY &bull; 4-4-2</p>
+                <p id="sbAwayRole">AWAY</p>
               </div>
             </div>
 
@@ -686,7 +653,6 @@
         </div>
       </div>
 
-      <!-- STANDINGS TAB -->
       <div id="tab-standings" class="tab-pane" style="display: none;">
         <div class="standings-card">
           <div class="league-tabs">
@@ -714,7 +680,6 @@
         </div>
       </div>
 
-      <!-- TRANSFERS TAB -->
       <div id="tab-transfers" class="tab-pane" style="display: none;">
         <div class="standings-card">
           <h3 style="margin-bottom: 12px;">Transfer & Free Agent Scouting Market</h3>
@@ -734,7 +699,6 @@
         </div>
       </div>
 
-      <!-- FACILITIES TAB -->
       <div id="tab-facilities" class="tab-pane" style="display: none;">
         <div class="standings-card">
           <h3 style="margin-bottom: 12px;">Stadium Expansion & Medical Facilities</h3>
@@ -742,7 +706,6 @@
         </div>
       </div>
 
-      <!-- MANAGER OFFICE TAB -->
       <div id="tab-manager" class="tab-pane" style="display: none;">
         <div class="standings-card">
           <h3 style="margin-bottom: 12px;">Manager Dossier & Board Objectives</h3>
@@ -750,22 +713,19 @@
         </div>
       </div>
 
-      <!-- HONOURS TAB -->
       <div id="tab-honours" class="tab-pane" style="display: none;">
         <div class="standings-card">
           <h3 style="margin-bottom: 12px;">Manager Trophy Room & Monthly Accolades</h3>
           <div id="honoursList" style="display: flex; gap: 16px; flex-wrap: wrap;"></div>
         </div>
       </div>
-
     </main>
   </div>
 
-  <!-- END OF SEASON REVIEW MODAL -->
   <div id="endSeasonModal" class="modal-backdrop" style="display: none;">
     <div class="modal-window">
       <div class="modal-header">
-        <h2 id="eosTitle">🏆 End of Season Gala</h2>
+        <h2 id="eosTitle">🏆 End of Season Review</h2>
         <button class="modal-close" onclick="closeEosModal()">✕</button>
       </div>
       <div id="eosSummaryContent" style="font-size: 0.85rem; line-height: 1.6; margin-bottom: 20px;"></div>
@@ -775,7 +735,6 @@
     </div>
   </div>
 
-  <!-- CLUB SELECTOR MODAL -->
   <div id="clubSelectorModal" class="modal-backdrop" style="display: none;">
     <div class="modal-window" style="width: 800px;">
       <div class="modal-header">
@@ -792,254 +751,239 @@
     </div>
   </div>
 
-  <!-- FOOTER -->
   <footer>
     Created by Jason Adams &amp; Jonathan Brewer - Football League Manager
   </footer>
 
   <script>
-    /* =====================================================================
-       FOOTBALL LEAGUE MANAGER 2026/27 - CORE ENGINE
-       ===================================================================== */
+    const STORAGE_KEY = 'FLM_CAREER_V2026_STABLE';
 
-    const STORAGE_KEY = 'FLM_CAREER_V2026_FINAL';
-
-    // Formation Coordinate Templates for 2D Pitch (FM Style)
     const FORMATIONS = {
       '4-3-3': [
-        { role: 'GK', duty: 'SK-De', x: 50, y: 88 },
-        { role: 'DR', duty: 'WB-At', x: 86, y: 70 },
-        { role: 'DCR', duty: 'BPD-De', x: 62, y: 73 },
-        { role: 'DCL', duty: 'CD-De', x: 38, y: 73 },
-        { role: 'DL', duty: 'WB-Su', x: 14, y: 70 },
-        { role: 'DM', duty: 'DLP-De', x: 50, y: 55 },
-        { role: 'MCR', duty: 'MEZ-At', x: 68, y: 44 },
-        { role: 'MCL', duty: 'BBM-Su', x: 32, y: 44 },
-        { role: 'AMR', duty: 'IF-At', x: 84, y: 25 },
-        { role: 'AML', duty: 'IW-At', x: 16, y: 25 },
-        { role: 'STC', duty: 'AF-At', x: 50, y: 15 }
+        { role: 'GK', duty: 'SK-De', x: 50, y: 88, posType: 'GK' },
+        { role: 'DR', duty: 'WB-At', x: 86, y: 70, posType: 'DEF' },
+        { role: 'DCR', duty: 'BPD-De', x: 62, y: 73, posType: 'DEF' },
+        { role: 'DCL', duty: 'CD-De', x: 38, y: 73, posType: 'DEF' },
+        { role: 'DL', duty: 'WB-Su', x: 14, y: 70, posType: 'DEF' },
+        { role: 'DM', duty: 'DLP-De', x: 50, y: 55, posType: 'MID' },
+        { role: 'MCR', duty: 'MEZ-At', x: 68, y: 44, posType: 'MID' },
+        { role: 'MCL', duty: 'BBM-Su', x: 32, y: 44, posType: 'MID' },
+        { role: 'AMR', duty: 'IF-At', x: 84, y: 25, posType: 'FWD' },
+        { role: 'AML', duty: 'IW-At', x: 16, y: 25, posType: 'FWD' },
+        { role: 'STC', duty: 'AF-At', x: 50, y: 15, posType: 'FWD' }
       ],
       '4-2-3-1': [
-        { role: 'GK', duty: 'SK-De', x: 50, y: 88 },
-        { role: 'DR', duty: 'FB-At', x: 86, y: 70 },
-        { role: 'DCR', duty: 'BPD-De', x: 62, y: 73 },
-        { role: 'DCL', duty: 'CD-De', x: 38, y: 73 },
-        { role: 'DL', duty: 'FB-Su', x: 14, y: 70 },
-        { role: 'MCR', duty: 'BBM-Su', x: 64, y: 53 },
-        { role: 'MCL', duty: 'DLP-De', x: 36, y: 53 },
-        { role: 'AMR', duty: 'W-At', x: 84, y: 32 },
-        { role: 'AMC', duty: 'AP-Su', x: 50, y: 32 },
-        { role: 'AML', duty: 'IF-At', x: 16, y: 32 },
-        { role: 'STC', duty: 'PF-At', x: 50, y: 14 }
+        { role: 'GK', duty: 'SK-De', x: 50, y: 88, posType: 'GK' },
+        { role: 'DR', duty: 'FB-At', x: 86, y: 70, posType: 'DEF' },
+        { role: 'DCR', duty: 'BPD-De', x: 62, y: 73, posType: 'DEF' },
+        { role: 'DCL', duty: 'CD-De', x: 38, y: 73, posType: 'DEF' },
+        { role: 'DL', duty: 'FB-Su', x: 14, y: 70, posType: 'DEF' },
+        { role: 'MCR', duty: 'BBM-Su', x: 64, y: 53, posType: 'MID' },
+        { role: 'MCL', duty: 'DLP-De', x: 36, y: 53, posType: 'MID' },
+        { role: 'AMR', duty: 'W-At', x: 84, y: 32, posType: 'FWD' },
+        { role: 'AMC', duty: 'AP-Su', x: 50, y: 32, posType: 'MID' },
+        { role: 'AML', duty: 'IF-At', x: 16, y: 32, posType: 'FWD' },
+        { role: 'STC', duty: 'PF-At', x: 50, y: 14, posType: 'FWD' }
       ],
       '4-4-2': [
-        { role: 'GK', duty: 'GK-De', x: 50, y: 88 },
-        { role: 'DR', duty: 'FB-Su', x: 86, y: 70 },
-        { role: 'DCR', duty: 'CD-De', x: 62, y: 73 },
-        { role: 'DCL', duty: 'CD-De', x: 38, y: 73 },
-        { role: 'DL', duty: 'FB-Su', x: 14, y: 70 },
-        { role: 'MR', duty: 'W-Su', x: 86, y: 46 },
-        { role: 'MCR', duty: 'CM-At', x: 62, y: 48 },
-        { role: 'MCL', duty: 'BBM-Su', x: 38, y: 48 },
-        { role: 'ML', duty: 'W-At', x: 14, y: 46 },
-        { role: 'STR', duty: 'AF-At', x: 60, y: 18 },
-        { role: 'STL', duty: 'TF-Su', x: 40, y: 18 }
+        { role: 'GK', duty: 'GK-De', x: 50, y: 88, posType: 'GK' },
+        { role: 'DR', duty: 'FB-Su', x: 86, y: 70, posType: 'DEF' },
+        { role: 'DCR', duty: 'CD-De', x: 62, y: 73, posType: 'DEF' },
+        { role: 'DCL', duty: 'CD-De', x: 38, y: 73, posType: 'DEF' },
+        { role: 'DL', duty: 'FB-Su', x: 14, y: 70, posType: 'DEF' },
+        { role: 'MR', duty: 'W-Su', x: 86, y: 46, posType: 'MID' },
+        { role: 'MCR', duty: 'CM-At', x: 62, y: 48, posType: 'MID' },
+        { role: 'MCL', duty: 'BBM-Su', x: 38, y: 48, posType: 'MID' },
+        { role: 'ML', duty: 'W-At', x: 14, y: 46, posType: 'MID' },
+        { role: 'STR', duty: 'AF-At', x: 60, y: 18, posType: 'FWD' },
+        { role: 'STL', duty: 'TF-Su', x: 40, y: 18, posType: 'FWD' }
       ],
       '5-3-2': [
-        { role: 'GK', duty: 'SK-De', x: 50, y: 88 },
-        { role: 'WBR', duty: 'CWB-At', x: 88, y: 58 },
-        { role: 'DCR', duty: 'BPD-De', x: 68, y: 73 },
-        { role: 'DC', duty: 'CD-Co', x: 50, y: 75 },
-        { role: 'DCL', duty: 'BPD-De', x: 32, y: 73 },
-        { role: 'WBL', duty: 'CWB-At', x: 12, y: 58 },
-        { role: 'MCR', duty: 'MEZ-Su', x: 66, y: 42 },
-        { role: 'MC', duty: 'DLP-De', x: 50, y: 45 },
-        { role: 'MCL', duty: 'BBM-Su', x: 34, y: 42 },
-        { role: 'STR', duty: 'AF-At', x: 60, y: 16 },
-        { role: 'STL', duty: 'PF-At', x: 40, y: 16 }
+        { role: 'GK', duty: 'SK-De', x: 50, y: 88, posType: 'GK' },
+        { role: 'WBR', duty: 'CWB-At', x: 88, y: 58, posType: 'DEF' },
+        { role: 'DCR', duty: 'BPD-De', x: 68, y: 73, posType: 'DEF' },
+        { role: 'DC', duty: 'CD-Co', x: 50, y: 75, posType: 'DEF' },
+        { role: 'DCL', duty: 'BPD-De', x: 32, y: 73, posType: 'DEF' },
+        { role: 'WBL', duty: 'CWB-At', x: 12, y: 58, posType: 'DEF' },
+        { role: 'MCR', duty: 'MEZ-Su', x: 66, y: 42, posType: 'MID' },
+        { role: 'MC', duty: 'DLP-De', x: 50, y: 45, posType: 'MID' },
+        { role: 'MCL', duty: 'BBM-Su', x: 34, y: 42, posType: 'MID' },
+        { role: 'STR', duty: 'AF-At', x: 60, y: 16, posType: 'FWD' },
+        { role: 'STL', duty: 'PF-At', x: 40, y: 16, posType: 'FWD' }
       ],
       '3-5-2': [
-        { role: 'GK', duty: 'SK-De', x: 50, y: 88 },
-        { role: 'DCR', duty: 'WCB-Su', x: 70, y: 73 },
-        { role: 'DC', duty: 'CD-De', x: 50, y: 75 },
-        { role: 'DCL', duty: 'WCB-Su', x: 30, y: 73 },
-        { role: 'MR', duty: 'DW-Su', x: 88, y: 46 },
-        { role: 'MCR', duty: 'CM-At', x: 64, y: 44 },
-        { role: 'MC', duty: 'BBM-Su', x: 50, y: 48 },
-        { role: 'MCL', duty: 'DLP-De', x: 36, y: 44 },
-        { role: 'ML', duty: 'DW-Su', x: 12, y: 46 },
-        { role: 'STR', duty: 'AF-At', x: 60, y: 18 },
-        { role: 'STL', duty: 'DLF-Su', x: 40, y: 18 }
+        { role: 'GK', duty: 'SK-De', x: 50, y: 88, posType: 'GK' },
+        { role: 'DCR', duty: 'WCB-Su', x: 70, y: 73, posType: 'DEF' },
+        { role: 'DC', duty: 'CD-De', x: 50, y: 75, posType: 'DEF' },
+        { role: 'DCL', duty: 'WCB-Su', x: 30, y: 73, posType: 'DEF' },
+        { role: 'MR', duty: 'DW-Su', x: 88, y: 46, posType: 'MID' },
+        { role: 'MCR', duty: 'CM-At', x: 64, y: 44, posType: 'MID' },
+        { role: 'MC', duty: 'BBM-Su', x: 50, y: 48, posType: 'MID' },
+        { role: 'MCL', duty: 'DLP-De', x: 36, y: 44, posType: 'MID' },
+        { role: 'ML', duty: 'DW-Su', x: 12, y: 46, posType: 'MID' },
+        { role: 'STR', duty: 'AF-At', x: 60, y: 18, posType: 'FWD' },
+        { role: 'STL', duty: 'DLF-Su', x: 40, y: 18, posType: 'FWD' }
       ]
     };
 
-    // Full 92 English Clubs Catalog
     const CLUBS_DATABASE = [
-      // PREMIER LEAGUE (20)
-      { id: 'ARS', name: 'Arsenal', div: 0, budget: 65, stadium: 'Emirates Stadium', cap: 60704, att: 89, mid: 88, def: 88, col: '#ef4444' },
-      { id: 'AVL', name: 'Aston Villa', div: 0, budget: 35, stadium: 'Villa Park', cap: 42682, att: 83, mid: 82, def: 81, col: '#9333ea' },
-      { id: 'BOU', name: 'Bournemouth', div: 0, budget: 18, stadium: 'Vitality Stadium', cap: 11307, att: 77, mid: 76, def: 75, col: '#dc2626' },
-      { id: 'BRE', name: 'Brentford', div: 0, budget: 20, stadium: 'Gtech Community Stadium', cap: 17250, att: 78, mid: 77, def: 76, col: '#e11d48' },
-      { id: 'BHA', name: 'Brighton & Hove Albion', div: 0, budget: 30, stadium: 'Amex Stadium', cap: 31800, att: 81, mid: 81, def: 79, col: '#0284c7' },
-      { id: 'CHE', name: 'Chelsea', div: 0, budget: 75, stadium: 'Stamford Bridge', cap: 40341, att: 84, mid: 83, def: 82, col: '#2563eb' },
-      { id: 'CRY', name: 'Crystal Palace', div: 0, budget: 22, stadium: 'Selhurst Park', cap: 25486, att: 78, mid: 77, def: 78, col: '#1d4ed8' },
-      { id: 'EVE', name: 'Everton', div: 0, budget: 15, stadium: 'Hill Dickinson Stadium', cap: 52888, att: 76, mid: 76, def: 77, col: '#1e40af' },
-      { id: 'FUL', name: 'Fulham', div: 0, budget: 22, stadium: 'Craven Cottage', cap: 25700, att: 78, mid: 78, def: 77, col: '#ffffff' },
-      { id: 'IPS', name: 'Ipswich Town', div: 0, budget: 15, stadium: 'Portman Road', cap: 30014, att: 74, mid: 74, def: 73, col: '#1d4ed8' },
-      { id: 'LEI', name: 'Leicester City', div: 0, budget: 20, stadium: 'King Power Stadium', cap: 32262, att: 76, mid: 76, def: 75, col: '#2563eb' },
-      { id: 'LIV', name: 'Liverpool', div: 0, budget: 70, stadium: 'Anfield', cap: 61276, att: 88, mid: 86, def: 87, col: '#dc2626' },
-      { id: 'MCI', name: 'Manchester City', div: 0, budget: 95, stadium: 'Etihad Stadium', cap: 53400, att: 90, mid: 90, def: 89, col: '#38bdf8' },
-      { id: 'MUN', name: 'Manchester United', div: 0, budget: 60, stadium: 'Old Trafford', cap: 74310, att: 83, mid: 82, def: 81, col: '#b91c1c' },
-      { id: 'NEW', name: 'Newcastle United', div: 0, budget: 50, stadium: "St James' Park", cap: 52305, att: 84, mid: 83, def: 82, col: '#334155' },
-      { id: 'NFO', name: 'Nottingham Forest', div: 0, budget: 25, stadium: 'City Ground', cap: 30445, att: 79, mid: 78, def: 78, col: '#dc2626' },
-      { id: 'SOU', name: 'Southampton', div: 0, budget: 24, stadium: "St Mary's Stadium", cap: 32384, att: 77, mid: 76, def: 75, col: '#e11d48' },
-      { id: 'TOT', name: 'Tottenham Hotspur', div: 0, budget: 55, stadium: 'Tottenham Hotspur Stadium', cap: 62850, att: 85, mid: 83, def: 82, col: '#ffffff' },
-      { id: 'WHU', name: 'West Ham United', div: 0, budget: 35, stadium: 'London Stadium', cap: 62500, att: 81, mid: 80, def: 79, col: '#831843' },
-      { id: 'WOL', name: 'Wolverhampton Wanderers', div: 0, budget: 22, stadium: 'Molineux', cap: 31750, att: 78, mid: 77, def: 77, col: '#d97706' },
+      { id: 'ARS', name: 'Arsenal', div: 0, budget: 65, stadium: 'Emirates Stadium', cap: 60704, col: '#ef4444' },
+      { id: 'AVL', name: 'Aston Villa', div: 0, budget: 35, stadium: 'Villa Park', cap: 42682, col: '#9333ea' },
+      { id: 'BOU', name: 'Bournemouth', div: 0, budget: 18, stadium: 'Vitality Stadium', cap: 11307, col: '#dc2626' },
+      { id: 'BRE', name: 'Brentford', div: 0, budget: 20, stadium: 'Gtech Community Stadium', cap: 17250, col: '#e11d48' },
+      { id: 'BHA', name: 'Brighton & Hove Albion', div: 0, budget: 30, stadium: 'Amex Stadium', cap: 31800, col: '#0284c7' },
+      { id: 'CHE', name: 'Chelsea', div: 0, budget: 75, stadium: 'Stamford Bridge', cap: 40341, col: '#2563eb' },
+      { id: 'CRY', name: 'Crystal Palace', div: 0, budget: 22, stadium: 'Selhurst Park', cap: 25486, col: '#1d4ed8' },
+      { id: 'EVE', name: 'Everton', div: 0, budget: 15, stadium: 'Hill Dickinson Stadium', cap: 52888, col: '#1e40af' },
+      { id: 'FUL', name: 'Fulham', div: 0, budget: 22, stadium: 'Craven Cottage', cap: 25700, col: '#ffffff' },
+      { id: 'IPS', name: 'Ipswich Town', div: 0, budget: 15, stadium: 'Portman Road', cap: 30014, col: '#1d4ed8' },
+      { id: 'LEI', name: 'Leicester City', div: 0, budget: 20, stadium: 'King Power Stadium', cap: 32262, col: '#2563eb' },
+      { id: 'LIV', name: 'Liverpool', div: 0, budget: 70, stadium: 'Anfield', cap: 61276, col: '#dc2626' },
+      { id: 'MCI', name: 'Manchester City', div: 0, budget: 95, stadium: 'Etihad Stadium', cap: 53400, col: '#38bdf8' },
+      { id: 'MUN', name: 'Manchester United', div: 0, budget: 60, stadium: 'Old Trafford', cap: 74310, col: '#b91c1c' },
+      { id: 'NEW', name: 'Newcastle United', div: 0, budget: 50, stadium: "St James' Park", cap: 52305, col: '#334155' },
+      { id: 'NFO', name: 'Nottingham Forest', div: 0, budget: 25, stadium: 'City Ground', cap: 30445, col: '#dc2626' },
+      { id: 'SOU', name: 'Southampton', div: 0, budget: 24, stadium: "St Mary's Stadium", cap: 32384, col: '#e11d48' },
+      { id: 'TOT', name: 'Tottenham Hotspur', div: 0, budget: 55, stadium: 'Tottenham Hotspur Stadium', cap: 62850, col: '#ffffff' },
+      { id: 'WHU', name: 'West Ham United', div: 0, budget: 35, stadium: 'London Stadium', cap: 62500, col: '#831843' },
+      { id: 'WOL', name: 'Wolverhampton Wanderers', div: 0, budget: 22, stadium: 'Molineux', cap: 31750, col: '#d97706' },
 
-      // CHAMPIONSHIP (24)
-      { id: 'BLA', name: 'Blackburn Rovers', div: 1, budget: 7, stadium: 'Ewood Park', cap: 31367, att: 71, mid: 70, def: 70, col: '#2563eb' },
-      { id: 'BRC', name: 'Bristol City', div: 1, budget: 8, stadium: 'Ashton Gate', cap: 27000, att: 70, mid: 71, def: 70, col: '#dc2626' },
-      { id: 'BUR', name: 'Burnley', div: 1, budget: 18, stadium: 'Turf Moor', cap: 21944, att: 76, mid: 75, def: 75, col: '#831843' },
-      { id: 'CAR', name: 'Cardiff City', div: 1, budget: 8, stadium: 'Cardiff City Stadium', cap: 33280, att: 69, mid: 70, def: 69, col: '#1d4ed8' },
-      { id: 'COV', name: 'Coventry City', div: 1, budget: 10, stadium: 'Coventry Building Society Arena', cap: 32609, att: 73, mid: 72, def: 71, col: '#38bdf8' },
-      { id: 'DER', name: 'Derby County', div: 1, budget: 7, stadium: 'Pride Park', cap: 33597, att: 69, mid: 69, def: 69, col: '#ffffff' },
-      { id: 'HUL', name: 'Hull City', div: 1, budget: 8, stadium: 'MKM Stadium', cap: 25586, att: 71, mid: 71, def: 70, col: '#f59e0b' },
-      { id: 'LEE', name: 'Leeds United', div: 1, budget: 22, stadium: 'Elland Road', cap: 37608, att: 78, mid: 77, def: 76, col: '#ffffff' },
-      { id: 'LUT', name: 'Luton Town', div: 1, budget: 14, stadium: 'Kenilworth Road', cap: 12000, att: 74, mid: 73, def: 73, col: '#ea580c' },
-      { id: 'MID', name: 'Middlesbrough', div: 1, budget: 12, stadium: 'Riverside Stadium', cap: 34742, att: 74, mid: 73, def: 72, col: '#dc2626' },
-      { id: 'MIL', name: 'Millwall', div: 1, budget: 6, stadium: 'The Den', cap: 20146, att: 70, mid: 70, def: 71, col: '#1e3a8a' },
-      { id: 'NOR', name: 'Norwich City', div: 1, budget: 11, stadium: 'Carrow Road', cap: 27244, att: 73, mid: 72, def: 72, col: '#eab308' },
-      { id: 'OXF', name: 'Oxford United', div: 1, budget: 5, stadium: 'Kassam Stadium', cap: 12500, att: 68, mid: 68, def: 67, col: '#facc15' },
-      { id: 'PLY', name: 'Plymouth Argyle', div: 1, budget: 6, stadium: 'Home Park', cap: 17900, att: 69, mid: 68, def: 68, col: '#065f46' },
-      { id: 'POR', name: 'Portsmouth', div: 1, budget: 7, stadium: 'Fratton Park', cap: 20895, att: 69, mid: 69, def: 69, col: '#1d4ed8' },
-      { id: 'PNE', name: 'Preston North End', div: 1, budget: 6, stadium: 'Deepdale', cap: 23408, att: 70, mid: 69, def: 70, col: '#ffffff' },
-      { id: 'QPR', name: 'Queens Park Rangers', div: 1, budget: 7, stadium: 'Loftus Road', cap: 18439, att: 70, mid: 70, def: 69, col: '#1e40af' },
-      { id: 'SHU', name: 'Sheffield United', div: 1, budget: 16, stadium: 'Bramall Lane', cap: 32050, att: 75, mid: 74, def: 74, col: '#dc2626' },
-      { id: 'SHW', name: 'Sheffield Wednesday', div: 1, budget: 8, stadium: 'Hillsborough', cap: 39732, att: 72, mid: 71, def: 71, col: '#2563eb' },
-      { id: 'STO', name: 'Stoke City', div: 1, budget: 8, stadium: 'bet365 Stadium', cap: 30089, att: 71, mid: 70, def: 70, col: '#dc2626' },
-      { id: 'SUN', name: 'Sunderland', div: 1, budget: 14, stadium: 'Stadium of Light', cap: 49000, att: 75, mid: 74, def: 73, col: '#dc2626' },
-      { id: 'SWA', name: 'Swansea City', div: 1, budget: 8, stadium: '.com Stadium', cap: 21088, att: 71, mid: 71, def: 70, col: '#ffffff' },
-      { id: 'WAT', name: 'Watford', div: 1, budget: 9, stadium: 'Vicarage Road', cap: 22200, att: 72, mid: 71, def: 71, col: '#eab308' },
-      { id: 'WBA', name: 'West Bromwich Albion', div: 1, budget: 11, stadium: 'The Hawthorns', cap: 26850, att: 74, mid: 73, def: 73, col: '#1e3a8a' },
+      { id: 'BLA', name: 'Blackburn Rovers', div: 1, budget: 7, stadium: 'Ewood Park', cap: 31367, col: '#2563eb' },
+      { id: 'BRC', name: 'Bristol City', div: 1, budget: 8, stadium: 'Ashton Gate', cap: 27000, col: '#dc2626' },
+      { id: 'BUR', name: 'Burnley', div: 1, budget: 18, stadium: 'Turf Moor', cap: 21944, col: '#831843' },
+      { id: 'CAR', name: 'Cardiff City', div: 1, budget: 8, stadium: 'Cardiff City Stadium', cap: 33280, col: '#1d4ed8' },
+      { id: 'COV', name: 'Coventry City', div: 1, budget: 10, stadium: 'Coventry Arena', cap: 32609, col: '#38bdf8' },
+      { id: 'DER', name: 'Derby County', div: 1, budget: 7, stadium: 'Pride Park', cap: 33597, col: '#ffffff' },
+      { id: 'HUL', name: 'Hull City', div: 1, budget: 8, stadium: 'MKM Stadium', cap: 25586, col: '#f59e0b' },
+      { id: 'LEE', name: 'Leeds United', div: 1, budget: 22, stadium: 'Elland Road', cap: 37608, col: '#ffffff' },
+      { id: 'LUT', name: 'Luton Town', div: 1, budget: 14, stadium: 'Kenilworth Road', cap: 12000, col: '#ea580c' },
+      { id: 'MID', name: 'Middlesbrough', div: 1, budget: 12, stadium: 'Riverside Stadium', cap: 34742, col: '#dc2626' },
+      { id: 'MIL', name: 'Millwall', div: 1, budget: 6, stadium: 'The Den', cap: 20146, col: '#1e3a8a' },
+      { id: 'NOR', name: 'Norwich City', div: 1, budget: 11, stadium: 'Carrow Road', cap: 27244, col: '#eab308' },
+      { id: 'OXF', name: 'Oxford United', div: 1, budget: 5, stadium: 'Kassam Stadium', cap: 12500, col: '#facc15' },
+      { id: 'PLY', name: 'Plymouth Argyle', div: 1, budget: 6, stadium: 'Home Park', cap: 17900, col: '#065f46' },
+      { id: 'POR', name: 'Portsmouth', div: 1, budget: 7, stadium: 'Fratton Park', cap: 20895, col: '#1d4ed8' },
+      { id: 'PNE', name: 'Preston North End', div: 1, budget: 6, stadium: 'Deepdale', cap: 23408, col: '#ffffff' },
+      { id: 'QPR', name: 'Queens Park Rangers', div: 1, budget: 7, stadium: 'Loftus Road', cap: 18439, col: '#1e40af' },
+      { id: 'SHU', name: 'Sheffield United', div: 1, budget: 16, stadium: 'Bramall Lane', cap: 32050, col: '#dc2626' },
+      { id: 'SHW', name: 'Sheffield Wednesday', div: 1, budget: 8, stadium: 'Hillsborough', cap: 39732, col: '#2563eb' },
+      { id: 'STO', name: 'Stoke City', div: 1, budget: 8, stadium: 'bet365 Stadium', cap: 30089, col: '#dc2626' },
+      { id: 'SUN', name: 'Sunderland', div: 1, budget: 14, stadium: 'Stadium of Light', cap: 49000, col: '#dc2626' },
+      { id: 'SWA', name: 'Swansea City', div: 1, budget: 8, stadium: '.com Stadium', cap: 21088, col: '#ffffff' },
+      { id: 'WAT', name: 'Watford', div: 1, budget: 9, stadium: 'Vicarage Road', cap: 22200, col: '#eab308' },
+      { id: 'WBA', name: 'West Bromwich Albion', div: 1, budget: 11, stadium: 'The Hawthorns', cap: 26850, col: '#1e3a8a' },
 
-      // LEAGUE ONE (24)
-      { id: 'BAR', name: 'Barnsley', div: 2, budget: 3.5, stadium: 'Oakwell', cap: 23287, att: 66, mid: 65, def: 65, col: '#dc2626' },
-      { id: 'BIR', name: 'Birmingham City', div: 2, budget: 8.0, stadium: "St Andrew's", cap: 29409, att: 73, mid: 72, def: 71, col: '#1d4ed8' },
-      { id: 'BKP', name: 'Blackpool', div: 2, budget: 3.0, stadium: 'Bloomfield Road', cap: 16616, att: 66, mid: 65, def: 64, col: '#ea580c' },
-      { id: 'BOL', name: 'Bolton Wanderers', div: 2, budget: 4.0, stadium: 'Toughsheet Stadium', cap: 28723, att: 68, mid: 67, def: 66, col: '#1e3a8a' },
-      { id: 'BRR', name: 'Bristol Rovers', div: 2, budget: 2.5, stadium: 'Memorial Stadium', cap: 12011, att: 64, mid: 63, def: 63, col: '#2563eb' },
-      { id: 'BUR1', name: 'Burton Albion', div: 2, budget: 2.0, stadium: 'Pirelli Stadium', cap: 6912, att: 62, mid: 62, def: 62, col: '#facc15' },
-      { id: 'CAM', name: 'Cambridge United', div: 2, budget: 2.0, stadium: 'Abbey Stadium', cap: 7937, att: 62, mid: 61, def: 62, col: '#f59e0b' },
-      { id: 'CHA', name: 'Charlton Athletic', div: 2, budget: 3.5, stadium: 'The Valley', cap: 27111, att: 67, mid: 66, def: 65, col: '#dc2626' },
-      { id: 'CRA', name: 'Crawley Town', div: 2, budget: 1.8, stadium: 'Broadfield Stadium', cap: 6134, att: 61, mid: 60, def: 60, col: '#dc2626' },
-      { id: 'EXE', name: 'Exeter City', div: 2, budget: 2.0, stadium: 'St James Park', cap: 8720, att: 63, mid: 62, def: 62, col: '#dc2626' },
-      { id: 'HUD', name: 'Huddersfield Town', div: 2, budget: 4.5, stadium: 'John Smith Stadium', cap: 24121, att: 68, mid: 67, def: 67, col: '#38bdf8' },
-      { id: 'LEY', name: 'Leyton Orient', div: 2, budget: 2.5, stadium: 'Brisbane Road', cap: 9271, att: 64, mid: 63, def: 63, col: '#dc2626' },
-      { id: 'LIN', name: 'Lincoln City', div: 2, budget: 2.8, stadium: 'LNER Stadium', cap: 10669, att: 65, mid: 65, def: 65, col: '#dc2626' },
-      { id: 'MAN', name: 'Mansfield Town', div: 2, budget: 2.2, stadium: 'Field Mill', cap: 9186, att: 63, mid: 63, def: 62, col: '#eab308' },
-      { id: 'NOR1', name: 'Northampton Town', div: 2, budget: 2.0, stadium: 'Sixfields Stadium', cap: 7798, att: 62, mid: 62, def: 62, col: '#831843' },
-      { id: 'PET', name: 'Peterborough United', div: 2, budget: 3.5, stadium: 'London Road', cap: 15314, att: 67, mid: 66, def: 64, col: '#2563eb' },
-      { id: 'REA', name: 'Reading', div: 2, budget: 3.0, stadium: 'Select Car Leasing Stadium', cap: 24161, att: 66, mid: 65, def: 64, col: '#1e40af' },
-      { id: 'ROT', name: 'Rotherham United', div: 2, budget: 3.5, stadium: 'New York Stadium', cap: 12021, att: 67, mid: 66, def: 66, col: '#dc2626' },
-      { id: 'SHR', name: 'Shrewsbury Town', div: 2, budget: 2.0, stadium: 'New Meadow', cap: 9875, att: 62, mid: 61, def: 61, col: '#1d4ed8' },
-      { id: 'STE', name: 'Stevenage', div: 2, budget: 2.2, stadium: 'Broadhall Way', cap: 7800, att: 63, mid: 63, def: 63, col: '#dc2626' },
-      { id: 'STK', name: 'Stockport County', div: 2, budget: 3.0, stadium: 'Edgeley Park', cap: 10852, att: 66, mid: 65, def: 64, col: '#2563eb' },
-      { id: 'WIG', name: 'Wigan Athletic', div: 2, budget: 3.2, stadium: 'Brick Community Stadium', cap: 25138, att: 65, mid: 65, def: 64, col: '#1d4ed8' },
-      { id: 'WRX', name: 'Wrexham', div: 2, budget: 5.5, stadium: 'Racecourse Ground', cap: 12600, att: 69, mid: 68, def: 67, col: '#dc2626' },
-      { id: 'WYC', name: 'Wycombe Wanderers', div: 2, budget: 2.5, stadium: 'Adams Park', cap: 10137, att: 65, mid: 64, def: 64, col: '#38bdf8' },
+      { id: 'BAR', name: 'Barnsley', div: 2, budget: 3.5, stadium: 'Oakwell', cap: 23287, col: '#dc2626' },
+      { id: 'BIR', name: 'Birmingham City', div: 2, budget: 8.0, stadium: "St Andrew's", cap: 29409, col: '#1d4ed8' },
+      { id: 'BKP', name: 'Blackpool', div: 2, budget: 3.0, stadium: 'Bloomfield Road', cap: 16616, col: '#ea580c' },
+      { id: 'BOL', name: 'Bolton Wanderers', div: 2, budget: 4.0, stadium: 'Toughsheet Stadium', cap: 28723, col: '#1e3a8a' },
+      { id: 'BRR', name: 'Bristol Rovers', div: 2, budget: 2.5, stadium: 'Memorial Stadium', cap: 12011, col: '#2563eb' },
+      { id: 'BUR1', name: 'Burton Albion', div: 2, budget: 2.0, stadium: 'Pirelli Stadium', cap: 6912, col: '#facc15' },
+      { id: 'CAM', name: 'Cambridge United', div: 2, budget: 2.0, stadium: 'Abbey Stadium', cap: 7937, col: '#f59e0b' },
+      { id: 'CHA', name: 'Charlton Athletic', div: 2, budget: 3.5, stadium: 'The Valley', cap: 27111, col: '#dc2626' },
+      { id: 'CRA', name: 'Crawley Town', div: 2, budget: 1.8, stadium: 'Broadfield Stadium', cap: 6134, col: '#dc2626' },
+      { id: 'EXE', name: 'Exeter City', div: 2, budget: 2.0, stadium: 'St James Park', cap: 8720, col: '#dc2626' },
+      { id: 'HUD', name: 'Huddersfield Town', div: 2, budget: 4.5, stadium: 'John Smith Stadium', cap: 24121, col: '#38bdf8' },
+      { id: 'LEY', name: 'Leyton Orient', div: 2, budget: 2.5, stadium: 'Brisbane Road', cap: 9271, col: '#dc2626' },
+      { id: 'LIN', name: 'Lincoln City', div: 2, budget: 2.8, stadium: 'LNER Stadium', cap: 10669, col: '#dc2626' },
+      { id: 'MAN', name: 'Mansfield Town', div: 2, budget: 2.2, stadium: 'Field Mill', cap: 9186, col: '#eab308' },
+      { id: 'NOR1', name: 'Northampton Town', div: 2, budget: 2.0, stadium: 'Sixfields Stadium', cap: 7798, col: '#831843' },
+      { id: 'PET', name: 'Peterborough United', div: 2, budget: 3.5, stadium: 'London Road', cap: 15314, col: '#2563eb' },
+      { id: 'REA', name: 'Reading', div: 2, budget: 3.0, stadium: 'SCL Stadium', cap: 24161, col: '#1e40af' },
+      { id: 'ROT', name: 'Rotherham United', div: 2, budget: 3.5, stadium: 'New York Stadium', cap: 12021, col: '#dc2626' },
+      { id: 'SHR', name: 'Shrewsbury Town', div: 2, budget: 2.0, stadium: 'New Meadow', cap: 9875, col: '#1d4ed8' },
+      { id: 'STE', name: 'Stevenage', div: 2, budget: 2.2, stadium: 'Broadhall Way', cap: 7800, col: '#dc2626' },
+      { id: 'STK', name: 'Stockport County', div: 2, budget: 3.0, stadium: 'Edgeley Park', cap: 10852, col: '#2563eb' },
+      { id: 'WIG', name: 'Wigan Athletic', div: 2, budget: 3.2, stadium: 'Brick Community Stadium', cap: 25138, col: '#1d4ed8' },
+      { id: 'WRX', name: 'Wrexham', div: 2, budget: 5.5, stadium: 'Racecourse Ground', cap: 12600, col: '#dc2626' },
+      { id: 'WYC', name: 'Wycombe Wanderers', div: 2, budget: 2.5, stadium: 'Adams Park', cap: 10137, col: '#38bdf8' },
 
-      // LEAGUE TWO (24)
-      { id: 'ACC', name: 'Accrington Stanley', div: 3, budget: 1.2, stadium: 'Wham Stadium', cap: 5450, att: 59, mid: 59, def: 58, col: '#dc2626' },
-      { id: 'WIM', name: 'AFC Wimbledon', div: 3, budget: 1.5, stadium: 'Plough Lane', cap: 9215, att: 61, mid: 60, def: 60, col: '#1d4ed8' },
-      { id: 'BAR1', name: 'Barrow', div: 3, budget: 1.2, stadium: 'Holker Street', cap: 5045, att: 59, mid: 59, def: 58, col: '#2563eb' },
-      { id: 'BRA', name: 'Bradford City', div: 3, budget: 2.2, stadium: 'Valley Parade', cap: 25136, att: 64, mid: 63, def: 63, col: '#831843' },
-      { id: 'BRO', name: 'Bromley', div: 3, budget: 1.0, stadium: 'Hayes Lane', cap: 5110, att: 57, mid: 57, def: 57, col: '#ffffff' },
-      { id: 'CAR1', name: 'Carlisle United', div: 3, budget: 1.5, stadium: 'Brunton Park', cap: 17949, att: 60, mid: 60, def: 59, col: '#1e40af' },
-      { id: 'CHE1', name: 'Cheltenham Town', div: 3, budget: 1.3, stadium: 'Whaddon Road', cap: 7066, att: 59, mid: 59, def: 58, col: '#dc2626' },
-      { id: 'CHF', name: 'Chesterfield', div: 3, budget: 2.0, stadium: 'SMH Group Stadium', cap: 10504, att: 63, mid: 62, def: 61, col: '#1d4ed8' },
-      { id: 'COL', name: 'Colchester United', div: 3, budget: 1.4, stadium: 'Colchester Stadium', cap: 10105, att: 59, mid: 59, def: 59, col: '#2563eb' },
-      { id: 'CRE', name: 'Crewe Alexandra', div: 3, budget: 1.4, stadium: 'Gresty Road', cap: 10153, att: 60, mid: 60, def: 59, col: '#dc2626' },
-      { id: 'DON', name: 'Doncaster Rovers', div: 3, budget: 1.8, stadium: 'Eco-Power Stadium', cap: 15231, att: 62, mid: 61, def: 60, col: '#dc2626' },
-      { id: 'FLE', name: 'Fleetwood Town', div: 3, budget: 1.4, stadium: 'Highbury Stadium', cap: 5472, att: 60, mid: 59, def: 59, col: '#dc2626' },
-      { id: 'GIL', name: 'Gillingham', div: 3, budget: 1.7, stadium: 'Priestfield Stadium', cap: 11582, att: 61, mid: 61, def: 60, col: '#1d4ed8' },
-      { id: 'GRI', name: 'Grimsby Town', div: 3, budget: 1.3, stadium: 'Blundell Park', cap: 9052, att: 59, mid: 59, def: 58, col: '#334155' },
-      { id: 'HAR', name: 'Harrogate Town', div: 3, budget: 1.0, stadium: 'Wetherby Road', cap: 5000, att: 58, mid: 58, def: 57, col: '#eab308' },
-      { id: 'MKD', name: 'MK Dons', div: 3, budget: 2.2, stadium: 'Stadium MK', cap: 30500, att: 63, mid: 62, def: 61, col: '#ffffff' },
-      { id: 'MOR', name: 'Morecambe', div: 3, budget: 1.0, stadium: 'Mazuma Stadium', cap: 6476, att: 57, mid: 57, def: 56, col: '#dc2626' },
-      { id: 'NEW1', name: 'Newport County', div: 3, budget: 1.1, stadium: 'Rodney Parade', cap: 7850, att: 58, mid: 58, def: 57, col: '#f59e0b' },
-      { id: 'NOT', name: 'Notts County', div: 3, budget: 2.0, stadium: 'Meadow Lane', cap: 19841, att: 64, mid: 62, def: 61, col: '#334155' },
-      { id: 'POV', name: 'Port Vale', div: 3, budget: 1.8, stadium: 'Vale Park', cap: 15695, att: 62, mid: 61, def: 61, col: '#ffffff' },
-      { id: 'SAL', name: 'Salford City', div: 3, budget: 1.6, stadium: 'Moor Lane', cap: 5108, att: 60, mid: 60, def: 59, col: '#dc2626' },
-      { id: 'SWI', name: 'Swindon Town', div: 3, budget: 1.5, stadium: 'County Ground', cap: 15728, att: 60, mid: 60, def: 59, col: '#dc2626' },
-      { id: 'TRA', name: 'Tranmere Rovers', div: 3, budget: 1.4, stadium: 'Prenton Park', cap: 16587, att: 59, mid: 59, def: 59, col: '#ffffff' },
-      { id: 'WAL', name: 'Walsall', div: 3, budget: 1.6, stadium: 'Bescot Stadium', cap: 11300, att: 61, mid: 61, def: 60, col: '#dc2626' }
+      { id: 'ACC', name: 'Accrington Stanley', div: 3, budget: 1.2, stadium: 'Wham Stadium', cap: 5450, col: '#dc2626' },
+      { id: 'WIM', name: 'AFC Wimbledon', div: 3, budget: 1.5, stadium: 'Plough Lane', cap: 9215, col: '#1d4ed8' },
+      { id: 'BAR1', name: 'Barrow', div: 3, budget: 1.2, stadium: 'Holker Street', cap: 5045, col: '#2563eb' },
+      { id: 'BRA', name: 'Bradford City', div: 3, budget: 2.2, stadium: 'Valley Parade', cap: 25136, col: '#831843' },
+      { id: 'BRO', name: 'Bromley', div: 3, budget: 1.0, stadium: 'Hayes Lane', cap: 5110, col: '#ffffff' },
+      { id: 'CAR1', name: 'Carlisle United', div: 3, budget: 1.5, stadium: 'Brunton Park', cap: 17949, col: '#1e40af' },
+      { id: 'CHE1', name: 'Cheltenham Town', div: 3, budget: 1.3, stadium: 'Whaddon Road', cap: 7066, col: '#dc2626' },
+      { id: 'CHF', name: 'Chesterfield', div: 3, budget: 2.0, stadium: 'SMH Stadium', cap: 10504, col: '#1d4ed8' },
+      { id: 'COL', name: 'Colchester United', div: 3, budget: 1.4, stadium: 'Colchester Stadium', cap: 10105, col: '#2563eb' },
+      { id: 'CRE', name: 'Crewe Alexandra', div: 3, budget: 1.4, stadium: 'Gresty Road', cap: 10153, col: '#dc2626' },
+      { id: 'DON', name: 'Doncaster Rovers', div: 3, budget: 1.8, stadium: 'Eco-Power Stadium', cap: 15231, col: '#dc2626' },
+      { id: 'FLE', name: 'Fleetwood Town', div: 3, budget: 1.4, stadium: 'Highbury Stadium', cap: 5472, col: '#dc2626' },
+      { id: 'GIL', name: 'Gillingham', div: 3, budget: 1.7, stadium: 'Priestfield Stadium', cap: 11582, col: '#1d4ed8' },
+      { id: 'GRI', name: 'Grimsby Town', div: 3, budget: 1.3, stadium: 'Blundell Park', cap: 9052, col: '#334155' },
+      { id: 'HAR', name: 'Harrogate Town', div: 3, budget: 1.0, stadium: 'Wetherby Road', cap: 5000, col: '#eab308' },
+      { id: 'MKD', name: 'MK Dons', div: 3, budget: 2.2, stadium: 'Stadium MK', cap: 30500, col: '#ffffff' },
+      { id: 'MOR', name: 'Morecambe', div: 3, budget: 1.0, stadium: 'Mazuma Stadium', cap: 6476, col: '#dc2626' },
+      { id: 'NEW1', name: 'Newport County', div: 3, budget: 1.1, stadium: 'Rodney Parade', cap: 7850, col: '#f59e0b' },
+      { id: 'NOT', name: 'Notts County', div: 3, budget: 2.0, stadium: 'Meadow Lane', cap: 19841, col: '#334155' },
+      { id: 'POV', name: 'Port Vale', div: 3, budget: 1.8, stadium: 'Vale Park', cap: 15695, col: '#ffffff' },
+      { id: 'SAL', name: 'Salford City', div: 3, budget: 1.6, stadium: 'Moor Lane', cap: 5108, col: '#dc2626' },
+      { id: 'SWI', name: 'Swindon Town', div: 3, budget: 1.5, stadium: 'County Ground', cap: 15728, col: '#dc2626' },
+      { id: 'TRA', name: 'Tranmere Rovers', div: 3, budget: 1.4, stadium: 'Prenton Park', cap: 16587, col: '#ffffff' },
+      { id: 'WAL', name: 'Walsall', div: 3, budget: 1.6, stadium: 'Bescot Stadium', cap: 11300, col: '#dc2626' }
     ];
 
-    // Real Southampton 2026/27 Roster Preset
     const SOU_REAL_ROSTER = [
-      { id: 'sou_1', name: 'Aaron Ramsdale', pos: 'GK', nat: 'ENG', age: 28, ovr: 81, con: 98, role: 'SK-De', starter: true },
-      { id: 'sou_2', name: 'Kyle Walker-Peters', pos: 'DR', nat: 'ENG', age: 29, ovr: 79, con: 96, role: 'WB-At', starter: true },
-      { id: 'sou_3', name: 'Taylor Harwood-Bellis', pos: 'DCR', nat: 'ENG', age: 24, ovr: 78, con: 97, role: 'BPD-De', starter: true },
-      { id: 'sou_4', name: 'Jan Bednarek', pos: 'DCL', nat: 'POL', age: 30, ovr: 77, con: 95, role: 'CD-De', starter: true },
-      { id: 'sou_5', name: 'Yukinari Sugawara', pos: 'DL', nat: 'JPN', age: 26, ovr: 77, con: 96, role: 'WB-Su', starter: true },
-      { id: 'sou_6', name: 'Flynn Downes', pos: 'DM', nat: 'ENG', age: 27, ovr: 77, con: 98, role: 'DLP-De', starter: true },
-      { id: 'sou_7', name: 'Mateus Fernandes', pos: 'MCR', nat: 'POR', age: 22, ovr: 78, con: 96, role: 'MEZ-At', starter: true },
-      { id: 'sou_8', name: 'Will Smallbone', pos: 'MCL', nat: 'IRL', age: 26, ovr: 75, con: 94, role: 'BBM-Su', starter: true },
-      { id: 'sou_9', name: 'Tyler Dibling', pos: 'AMR', nat: 'ENG', age: 20, ovr: 78, con: 97, role: 'IF-At', starter: true },
-      { id: 'sou_10', name: 'Ryan Fraser', pos: 'AML', nat: 'SCO', age: 32, ovr: 75, con: 93, role: 'IW-At', starter: true },
-      { id: 'sou_11', name: 'Cameron Archer', pos: 'STC', nat: 'ENG', age: 24, ovr: 77, con: 96, role: 'AF-At', starter: true },
-      // Bench
-      { id: 'sou_12', name: 'Alex McCarthy', pos: 'GK', nat: 'ENG', age: 36, ovr: 73, con: 100, role: 'GK-De', starter: false },
-      { id: 'sou_13', name: 'Jack Stephens', pos: 'DC', nat: 'ENG', age: 32, ovr: 74, con: 100, role: 'CD-De', starter: false },
-      { id: 'sou_14', name: 'Adam Armstrong', pos: 'ST', nat: 'ENG', age: 29, ovr: 76, con: 98, role: 'AF-At', starter: false },
-      { id: 'sou_15', name: 'Kamaldeen Sulemana', pos: 'AML', nat: 'GHA', age: 24, ovr: 76, con: 98, role: 'W-At', starter: false },
-      { id: 'sou_16', name: 'Paul Onuachu', pos: 'ST', nat: 'NGA', age: 32, ovr: 75, con: 95, role: 'TF-Su', starter: false },
-      { id: 'sou_17', name: 'Adam Lallana', pos: 'MC', nat: 'ENG', age: 38, ovr: 74, con: 90, role: 'AP-Su', starter: false },
-      { id: 'sou_18', name: 'Joe Lumley', pos: 'GK', nat: 'ENG', age: 31, ovr: 71, con: 100, role: 'GK-De', starter: false }
+      { id: 'sou_1', name: 'Aaron Ramsdale', naturalPos: 'GK', nat: 'ENG', age: 28, ovr: 81, con: 98, role: 'SK-De', starter: true },
+      { id: 'sou_2', name: 'Kyle Walker-Peters', naturalPos: 'DEF', nat: 'ENG', age: 29, ovr: 79, con: 96, role: 'WB-At', starter: true },
+      { id: 'sou_3', name: 'Taylor Harwood-Bellis', naturalPos: 'DEF', nat: 'ENG', age: 24, ovr: 78, con: 97, role: 'BPD-De', starter: true },
+      { id: 'sou_4', name: 'Jan Bednarek', naturalPos: 'DEF', nat: 'POL', age: 30, ovr: 77, con: 95, role: 'CD-De', starter: true },
+      { id: 'sou_5', name: 'Yukinari Sugawara', naturalPos: 'DEF', nat: 'JPN', age: 26, ovr: 77, con: 96, role: 'WB-Su', starter: true },
+      { id: 'sou_6', name: 'Flynn Downes', naturalPos: 'MID', nat: 'ENG', age: 27, ovr: 77, con: 98, role: 'DLP-De', starter: true },
+      { id: 'sou_7', name: 'Mateus Fernandes', naturalPos: 'MID', nat: 'POR', age: 22, ovr: 78, con: 96, role: 'MEZ-At', starter: true },
+      { id: 'sou_8', name: 'Will Smallbone', naturalPos: 'MID', nat: 'IRL', age: 26, ovr: 75, con: 94, role: 'BBM-Su', starter: true },
+      { id: 'sou_9', name: 'Tyler Dibling', naturalPos: 'FWD', nat: 'ENG', age: 20, ovr: 78, con: 97, role: 'IF-At', starter: true },
+      { id: 'sou_10', name: 'Ryan Fraser', naturalPos: 'FWD', nat: 'SCO', age: 32, ovr: 75, con: 93, role: 'IW-At', starter: true },
+      { id: 'sou_11', name: 'Cameron Archer', naturalPos: 'FWD', nat: 'ENG', age: 24, ovr: 77, con: 96, role: 'AF-At', starter: true },
+      { id: 'sou_12', name: 'Alex McCarthy', naturalPos: 'GK', nat: 'ENG', age: 36, ovr: 73, con: 100, role: 'GK-De', starter: false },
+      { id: 'sou_13', name: 'Jack Stephens', naturalPos: 'DEF', nat: 'ENG', age: 32, ovr: 74, con: 100, role: 'CD-De', starter: false },
+      { id: 'sou_14', name: 'Adam Armstrong', naturalPos: 'FWD', nat: 'ENG', age: 29, ovr: 76, con: 98, role: 'AF-At', starter: false },
+      { id: 'sou_15', name: 'Kamaldeen Sulemana', naturalPos: 'FWD', nat: 'GHA', age: 24, ovr: 76, con: 98, role: 'W-At', starter: false },
+      { id: 'sou_16', name: 'Paul Onuachu', naturalPos: 'FWD', nat: 'NGA', age: 32, ovr: 75, con: 95, role: 'TF-Su', starter: false },
+      { id: 'sou_17', name: 'Adam Lallana', naturalPos: 'MID', nat: 'ENG', age: 38, ovr: 74, con: 90, role: 'AP-Su', starter: false },
+      { id: 'sou_18', name: 'Joe Lumley', naturalPos: 'GK', nat: 'ENG', age: 31, ovr: 71, con: 100, role: 'GK-De', starter: false }
     ];
 
-    // Procedural Name Pools for Realistic Squad Hydration
-    const SURNAMES = ['Smith', 'Johnson', 'Williams', 'Brown', 'Jones', 'Miller', 'Davis', 'Wilson', 'Anderson', 'Taylor', 'Thomas', 'Moore', 'Jackson', 'Martin', 'Lee', 'Perez', 'Thompson', 'White', 'Harris', 'Sanchez', 'Clark', 'Ramirez', 'Lewis', 'Robinson', 'Walker', 'Young', 'Allen', 'King', 'Wright', 'Scott', 'Torres', 'Nguyen', 'Hill', 'Flores', 'Green', 'Adams', 'Nelson', 'Baker', 'Hall', 'Rivera', 'Campbell', 'Mitchell', 'Carter', 'Roberts', 'Gomez', 'Phillips', 'Evans', 'Turner', 'Diaz', 'Parker', 'Cruz', 'Edwards', 'Collins', 'Reyes', 'Stewart', 'Morris', 'Morales', 'Murphy', 'Cook', 'Rogers', 'Gutierrez', 'Ortiz', 'Morgan', 'Cooper', 'Peterson', 'Bailey', 'Reed', 'Kelly', 'Howard', 'Ramos', 'Kim', 'Cox', 'Ward', 'Richardson', 'Watson', 'Brooks', 'Chavez', 'Wood', 'James', 'Bennett', 'Gray', 'Mendoza', 'Ruiz', 'Hughes', 'Price', 'Alvarez', 'Castillo', 'Sanders', 'Patel', 'Myers', 'Long', 'Ross', 'Foster', 'Jimenez', 'Powell', 'Jenkins', 'Perry', 'Russell', 'Sullivan', 'Bell', 'Coleman'];
-    const FIRSTNAMES = ['Jack', 'Oliver', 'Harry', 'George', 'Noah', 'Charlie', 'Jacob', 'Alfie', 'Freddie', 'Oscar', 'Leo', 'Logan', 'Archie', 'Theo', 'Thomas', 'James', 'Joshua', 'William', 'Henry', 'Lucas', 'Ethan', 'Mason', 'Harrison', 'Isaac', 'Finley', 'Teddy', 'Alexander', 'Daniel', 'Arthur', 'Edward'];
+    const SURNAMES = ['Smith', 'Johnson', 'Williams', 'Brown', 'Jones', 'Miller', 'Davis', 'Wilson', 'Anderson', 'Taylor', 'Thomas', 'Moore', 'Jackson', 'Martin', 'Lee', 'White', 'Harris', 'Clark', 'Lewis', 'Robinson', 'Walker', 'Young', 'Allen', 'King', 'Wright', 'Scott', 'Torres', 'Hill', 'Green', 'Adams', 'Baker', 'Hall', 'Campbell', 'Mitchell', 'Carter', 'Roberts', 'Phillips', 'Evans', 'Turner', 'Parker', 'Collins', 'Edwards', 'Stewart', 'Morris', 'Murphy', 'Cook', 'Rogers', 'Morgan', 'Peterson', 'Cooper', 'Reed', 'Bailey', 'Bell', 'Kelly', 'Howard', 'Ward', 'Cox', 'Richardson', 'Watson', 'Brooks', 'Wood', 'James', 'Bennett', 'Gray', 'Hughes', 'Price', 'Sanders', 'Patel', 'Myers', 'Long', 'Ross', 'Foster', 'Powell', 'Jenkins', 'Perry', 'Russell', 'Sullivan'];
+    const FIRSTNAMES = ['Jack', 'Oliver', 'Harry', 'George', 'Noah', 'Charlie', 'Jacob', 'Alfie', 'Freddie', 'Oscar', 'Leo', 'Logan', 'Archie', 'Theo', 'Thomas', 'James', 'Joshua', 'William', 'Henry', 'Lucas', 'Ethan', 'Mason', 'Harrison', 'Isaac', 'Finley', 'Alexander', 'Daniel', 'Arthur', 'Edward'];
     const NATIONS = ['ENG', 'ENG', 'ENG', 'SCO', 'WAL', 'IRL', 'NIR', 'FRA', 'ESP', 'GER', 'NED', 'POR', 'BRA', 'ARG'];
 
     function generateProceduralSquad(club) {
-      const baseRating = Math.round((club.att + club.mid + club.def) / 3);
-      const rolesPattern = [
-        { pos: 'GK', role: 'SK-De', starter: true },
-        { pos: 'DR', role: 'WB-At', starter: true },
-        { pos: 'DCR', role: 'BPD-De', starter: true },
-        { pos: 'DCL', role: 'CD-De', starter: true },
-        { pos: 'DL', role: 'WB-Su', starter: true },
-        { pos: 'DM', role: 'DLP-De', starter: true },
-        { pos: 'MCR', role: 'MEZ-At', starter: true },
-        { pos: 'MCL', role: 'BBM-Su', starter: true },
-        { pos: 'AMR', role: 'IF-At', starter: true },
-        { pos: 'AML', role: 'IW-At', starter: true },
-        { pos: 'STC', role: 'AF-At', starter: true },
-        // Subs
-        { pos: 'GK', role: 'GK-De', starter: false },
-        { pos: 'DC', role: 'CD-De', starter: false },
-        { pos: 'FB', role: 'FB-Su', starter: false },
-        { pos: 'MC', role: 'CM-At', starter: false },
-        { pos: 'W', role: 'W-At', starter: false },
-        { pos: 'ST', role: 'AF-At', starter: false },
-        { pos: 'AMC', role: 'AP-Su', starter: false }
+      const tierBaseRating = [78, 71, 65, 60][club.div] || 65;
+      const squadLayout = [
+        { naturalPos: 'GK', role: 'SK-De', starter: true },
+        { naturalPos: 'DEF', role: 'WB-At', starter: true },
+        { naturalPos: 'DEF', role: 'BPD-De', starter: true },
+        { naturalPos: 'DEF', role: 'CD-De', starter: true },
+        { naturalPos: 'DEF', role: 'WB-Su', starter: true },
+        { naturalPos: 'MID', role: 'DLP-De', starter: true },
+        { naturalPos: 'MID', role: 'MEZ-At', starter: true },
+        { naturalPos: 'MID', role: 'BBM-Su', starter: true },
+        { naturalPos: 'FWD', role: 'IF-At', starter: true },
+        { naturalPos: 'FWD', role: 'IW-At', starter: true },
+        { naturalPos: 'FWD', role: 'AF-At', starter: true },
+        { naturalPos: 'GK', role: 'GK-De', starter: false },
+        { naturalPos: 'DEF', role: 'CD-De', starter: false },
+        { naturalPos: 'DEF', role: 'FB-Su', starter: false },
+        { naturalPos: 'MID', role: 'CM-At', starter: false },
+        { naturalPos: 'MID', role: 'W-At', starter: false },
+        { naturalPos: 'FWD', role: 'AF-At', starter: false },
+        { naturalPos: 'FWD', role: 'AP-Su', starter: false }
       ];
 
-      return rolesPattern.map((p, idx) => {
+      return squadLayout.map((p, idx) => {
         const fn = FIRSTNAMES[Math.floor(Math.random() * FIRSTNAMES.length)];
         const sn = SURNAMES[Math.floor(Math.random() * SURNAMES.length)];
         const nat = NATIONS[Math.floor(Math.random() * NATIONS.length)];
         const age = 19 + Math.floor(Math.random() * 15);
         const ratingVariance = (idx < 11) ? (Math.floor(Math.random() * 5) - 2) : (Math.floor(Math.random() * 6) - 4);
-        const ovr = Math.max(52, Math.min(94, baseRating + ratingVariance));
+        const ovr = Math.max(52, Math.min(92, tierBaseRating + ratingVariance));
 
         return {
           id: `${club.id.toLowerCase()}_${idx + 1}`,
           name: `${fn} ${sn}`,
-          pos: p.pos,
+          naturalPos: p.naturalPos,
           nat: nat,
           age: age,
           ovr: ovr,
@@ -1050,7 +994,6 @@
       });
     }
 
-    // GAME STATE
     let state = {
       seasonYear: 2026,
       currentWeek: 1,
@@ -1068,18 +1011,13 @@
         wins: 0,
         draws: 0,
         losses: 0,
-        motmAwards: 0,
-        trophies: []
+        motmAwards: 0
       },
       fixtures: []
     };
 
     let selectedPlayerSwapId = null;
     let matchSimInterval = null;
-
-    /* =====================================================================
-       INITIALIZATION & SAVE LOGIC
-       ===================================================================== */
 
     function initGame() {
       const saved = localStorage.getItem(STORAGE_KEY);
@@ -1093,7 +1031,6 @@
         setupFreshState();
       }
 
-      // Safeguard: Ensure every single club has a valid, non-empty 18-player squad
       ensureAllSquadsHydrated();
       saveGame();
       renderAll();
@@ -1101,6 +1038,7 @@
 
     function setupFreshState() {
       state.clubs = JSON.parse(JSON.stringify(CLUBS_DATABASE));
+      state.currentWeek = 1;
       state.standings = {};
 
       for (let div = 0; div <= 3; div++) {
@@ -1128,19 +1066,17 @@
         }
       });
 
-      generateSeasonFixtures();
+      generateAllDivisionsFixtures();
     }
 
     function ensureAllSquadsHydrated() {
       state.clubs.forEach(c => {
         if (!c.players || c.players.length < 18) {
-          if (c.id === 'SOU') {
-            c.players = JSON.parse(JSON.stringify(SOU_REAL_ROSTER));
-          } else {
-            c.players = generateProceduralSquad(c);
-          }
+          c.players = (c.id === 'SOU') ? JSON.parse(JSON.stringify(SOU_REAL_ROSTER)) : generateProceduralSquad(c);
         }
-        // Ensure strictly 11 starters
+        c.players.forEach(p => {
+          if (!p.naturalPos) p.naturalPos = p.pos || 'MID';
+        });
         const startersCount = c.players.filter(p => p.starter).length;
         if (startersCount !== 11) {
           c.players.forEach((p, idx) => p.starter = (idx < 11));
@@ -1166,78 +1102,133 @@
       return state.clubs.find(c => c.id === state.userClubId) || state.clubs[0];
     }
 
-    /* =====================================================================
-       TACTICS & PITCH ENGINE (CLICK-TO-SWAP FM SYSTEM)
-       ===================================================================== */
+    function computeClubAttributes(club) {
+      const starters = club.players.filter(p => p.starter);
+      if (starters.length === 0) return { att: 70, mid: 70, def: 70, ovr: 70 };
+
+      const defs = starters.filter(p => p.naturalPos === 'DEF' || p.naturalPos === 'GK');
+      const mids = starters.filter(p => p.naturalPos === 'MID');
+      const fwds = starters.filter(p => p.naturalPos === 'FWD');
+
+      const avg = (arr, fallback) => arr.length ? Math.round(arr.reduce((s, x) => s + (x.ovr * (x.con / 100)), 0) / arr.length) : fallback;
+
+      const baseDef = avg(defs, 70);
+      const baseMid = avg(mids, 70);
+      const baseAtt = avg(fwds, 70);
+      const overall = Math.round((baseDef + baseMid + baseAtt) / 3);
+
+      return { att: baseAtt, mid: baseMid, def: baseDef, ovr: overall };
+    }
+
+    function generateAllDivisionsFixtures() {
+      state.fixtures = [];
+
+      for (let w = 1; w <= state.totalWeeks; w++) {
+        const weekMatches = [];
+
+        for (let div = 0; div <= 3; div++) {
+          const divClubs = state.clubs.filter(c => c.div === div);
+          const shuffled = [...divClubs].sort(() => 0.5 - Math.random());
+
+          for (let i = 0; i < shuffled.length; i += 2) {
+            if (shuffled[i + 1]) {
+              weekMatches.push({
+                div: div,
+                home: shuffled[i].id,
+                away: shuffled[i + 1].id,
+                homeGoals: null,
+                awayGoals: null,
+                played: false
+              });
+            }
+          }
+        }
+
+        state.fixtures.push({ week: w, matches: weekMatches });
+      }
+    }
 
     function changeFormation(newForm) {
       if (!FORMATIONS[newForm]) return;
       state.currentFormation = newForm;
-      
       const club = getCurrentUserClub();
       const template = FORMATIONS[newForm];
-      
-      // Update role/duties of starters
       const starters = club.players.filter(p => p.starter);
+
       starters.forEach((p, idx) => {
         if (template[idx]) {
           p.role = template[idx].duty;
-          p.pos = template[idx].role;
         }
       });
 
       saveGame();
       renderTactics();
+      updateBannerStats();
       playSound('click');
     }
 
     function autoPickBestXI() {
       const club = getCurrentUserClub();
-      // Sort squad by OVR descending
-      club.players.sort((a, b) => b.ovr - a.ovr);
-      // Top 11 become starters
-      club.players.forEach((p, idx) => {
-        p.starter = (idx < 11);
+      const template = FORMATIONS[state.currentFormation] || FORMATIONS['4-3-3'];
+      
+      club.players.forEach(p => p.starter = false);
+      const pool = [...club.players].sort((a, b) => b.ovr - a.ovr);
+      const picked = [];
+
+      // Pick best GK
+      const gkIndex = pool.findIndex(p => p.naturalPos === 'GK');
+      if (gkIndex !== -1) {
+        picked.push(pool.splice(gkIndex, 1)[0]);
+      } else {
+        picked.push(pool.shift());
+      }
+
+      // Pick outfield players according to template
+      for (let i = 1; i < 11; i++) {
+        const needed = template[i] ? template[i].posType : 'MID';
+        const matchIdx = pool.findIndex(p => p.naturalPos === needed);
+        if (matchIdx !== -1) {
+          picked.push(pool.splice(matchIdx, 1)[0]);
+        } else {
+          picked.push(pool.shift());
+        }
+      }
+
+      picked.forEach((p, idx) => {
+        p.starter = true;
+        if (template[idx]) p.role = template[idx].duty;
       });
 
-      const template = FORMATIONS[state.currentFormation];
-      const starters = club.players.filter(p => p.starter);
-      starters.forEach((p, idx) => {
-        if (template[idx]) {
-          p.role = template[idx].duty;
-          p.pos = template[idx].role;
-        }
-      });
+      const remainingBench = [...picked, ...pool];
+      club.players = remainingBench;
 
       cancelPlayerSwap();
       saveGame();
       renderTactics();
-      playSound('click');
+      updateBannerStats();
+      playSound('whistle');
     }
 
     function handlePlayerSelect(playerId) {
       const club = getCurrentUserClub();
 
-      // If no player selected yet, select this player for swap
       if (!selectedPlayerSwapId) {
         selectedPlayerSwapId = playerId;
         const p = club.players.find(x => x.id === playerId);
         const banner = document.getElementById('swapNotificationBar');
         const text = document.getElementById('swapNotificationText');
-        text.innerHTML = `🔄 <b>${p.name} (${p.pos})</b> SELECTED — Click any player on pitch or bench to swap!`;
+        text.innerHTML = `🔄 <b>${p.name} (${p.naturalPos})</b> SELECTED — Click another player to swap!`;
         banner.style.display = 'flex';
         renderTactics();
         playSound('click');
         return;
       }
 
-      // If clicking same player, cancel swap
       if (selectedPlayerSwapId === playerId) {
         cancelPlayerSwap();
         return;
       }
 
-      // Execute Swap between Player A and Player B
       const p1Index = club.players.findIndex(x => x.id === selectedPlayerSwapId);
       const p2Index = club.players.findIndex(x => x.id === playerId);
 
@@ -1245,21 +1236,14 @@
         const p1 = club.players[p1Index];
         const p2 = club.players[p2Index];
 
-        // Swap their starter flags
         const tempStarter = p1.starter;
         p1.starter = p2.starter;
         p2.starter = tempStarter;
 
-        // Swap their roles/positions
         const tempRole = p1.role;
         p1.role = p2.role;
         p2.role = tempRole;
 
-        const tempPos = p1.pos;
-        p1.pos = p2.pos;
-        p2.pos = tempPos;
-
-        // Swap order in roster array
         club.players[p1Index] = p2;
         club.players[p2Index] = p1;
       }
@@ -1267,6 +1251,7 @@
       cancelPlayerSwap();
       saveGame();
       renderTactics();
+      updateBannerStats();
       playSound('whistle');
     }
 
@@ -1284,12 +1269,11 @@
       const bench = club.players.filter(p => !p.starter);
       const template = FORMATIONS[state.currentFormation] || FORMATIONS['4-3-3'];
 
-      // 1. RENDER 2D PITCH NODES
       const pitchNodesWrapper = document.getElementById('pitchNodesWrapper');
       pitchNodesWrapper.innerHTML = '';
 
       starters.forEach((p, idx) => {
-        const coords = template[idx] || { x: 50, y: 50, role: p.pos, duty: p.role };
+        const coords = template[idx] || { x: 50, y: 50, role: p.naturalPos, duty: p.role };
         const isSelected = (selectedPlayerSwapId === p.id);
 
         const node = document.createElement('div');
@@ -1303,7 +1287,7 @@
         node.innerHTML = `
           <div class="pitch-kit">
             ${idx + 1}
-            <div class="pitch-role-tag">${coords.role || p.pos}</div>
+            <div class="pitch-role-tag">${coords.role || p.naturalPos}</div>
           </div>
           <div class="pitch-name-card">
             <div class="p-name">${surname}</div>
@@ -1313,24 +1297,24 @@
         pitchNodesWrapper.appendChild(node);
       });
 
-      // 2. RENDER FM SQUAD TABLES
       const startersBody = document.getElementById('startersTableBody');
       startersBody.innerHTML = '';
 
       starters.forEach((p, idx) => {
         const isSelected = (selectedPlayerSwapId === p.id);
+        const templateEntry = template[idx];
+        const assignedPos = templateEntry ? templateEntry.role : p.naturalPos;
+
         const tr = document.createElement('tr');
         tr.className = `fm-row ${isSelected ? 'selected-for-swap' : ''}`;
         tr.onclick = (e) => {
-          if (!e.target.classList.contains('btn-swap-pill')) {
-            handlePlayerSelect(p.id);
-          }
+          if (!e.target.classList.contains('btn-swap-pill')) handlePlayerSelect(p.id);
         };
 
         tr.innerHTML = `
-          <td><span class="badge-pick pick-starter">${p.pos}</span></td>
+          <td><span class="badge-pick pick-starter">${assignedPos}</span></td>
           <td><span class="role-badge">${p.role}</span></td>
-          <td><b>${p.name}</b></td>
+          <td><b>${p.name}</b> <span style="font-size:0.7rem; color:var(--text-muted);">(${p.naturalPos})</span></td>
           <td><span style="color:var(--text-muted); font-size:0.75rem;">${p.nat}</span></td>
           <td>${p.age}</td>
           <td><b style="color:var(--gold);">${p.ovr}</b></td>
@@ -1355,15 +1339,13 @@
         const tr = document.createElement('tr');
         tr.className = `fm-row ${isSelected ? 'selected-for-swap' : ''}`;
         tr.onclick = (e) => {
-          if (!e.target.classList.contains('btn-swap-pill')) {
-            handlePlayerSelect(p.id);
-          }
+          if (!e.target.classList.contains('btn-swap-pill')) handlePlayerSelect(p.id);
         };
 
         tr.innerHTML = `
           <td><span class="badge-pick pick-sub">S${idx + 1}</span></td>
           <td><span class="role-badge" style="background:#475569;">${p.role}</span></td>
-          <td><b>${p.name}</b></td>
+          <td><b>${p.name}</b> <span style="font-size:0.7rem; color:var(--text-muted);">(${p.naturalPos})</span></td>
           <td><span style="color:var(--text-muted); font-size:0.75rem;">${p.nat}</span></td>
           <td>${p.age}</td>
           <td><b style="color:var(--gold);">${p.ovr}</b></td>
@@ -1381,35 +1363,6 @@
       });
     }
 
-    /* =====================================================================
-       FIXTURE ENGINE & WEEKLY SCHEDULE
-       ===================================================================== */
-
-    function generateSeasonFixtures() {
-      state.fixtures = [];
-      const userClub = getCurrentUserClub();
-      const divClubs = state.clubs.filter(c => c.div === userClub.div);
-
-      // Simple round robin generation for 38 weeks
-      for (let w = 1; w <= state.totalWeeks; w++) {
-        const weekFixtures = [];
-        const shuffled = [...divClubs].sort(() => 0.5 - Math.random());
-
-        for (let i = 0; i < shuffled.length; i += 2) {
-          if (shuffled[i + 1]) {
-            weekFixtures.push({
-              home: shuffled[i].id,
-              away: shuffled[i + 1].id,
-              homeGoals: null,
-              awayGoals: null,
-              played: false
-            });
-          }
-        }
-        state.fixtures.push({ week: w, matches: weekFixtures });
-      }
-    }
-
     function advanceMasterWeek() {
       if (state.currentWeek >= state.totalWeeks) {
         showEndSeasonGala();
@@ -1419,7 +1372,6 @@
       simulateCurrentWeekFixtures();
       state.currentWeek++;
 
-      // Monthly Manager of the Month Check (every 4 fixtures)
       if (state.currentWeek % 4 === 0) {
         evaluateManagerOfMonth();
       }
@@ -1432,43 +1384,48 @@
     function simulateCurrentWeekFixtures() {
       const userClub = getCurrentUserClub();
       const weekData = state.fixtures.find(f => f.week === state.currentWeek);
+      if (!weekData) return;
 
-      if (weekData) {
-        weekData.matches.forEach(m => {
-          const homeClub = state.clubs.find(c => c.id === m.home);
-          const awayClub = state.clubs.find(c => c.id === m.away);
+      weekData.matches.forEach(m => {
+        if (m.played) return; // If already resolved in live broadcast, don't overwrite
 
-          if (homeClub && awayClub) {
-            // Rating comparison + home advantage
-            const diff = (homeClub.att + homeClub.mid + 5) - (awayClub.def + awayClub.mid);
-            const homeScore = Math.max(0, Math.floor(Math.random() * 3) + (diff > 5 ? 1 : 0) + (Math.random() > 0.7 ? 1 : 0));
-            const awayScore = Math.max(0, Math.floor(Math.random() * 3) + (diff < -5 ? 1 : 0));
+        const homeClub = state.clubs.find(c => c.id === m.home);
+        const awayClub = state.clubs.find(c => c.id === m.away);
 
-            m.homeGoals = homeScore;
-            m.awayGoals = awayScore;
-            m.played = true;
+        if (homeClub && awayClub) {
+          const homeStats = computeClubAttributes(homeClub);
+          const awayStats = computeClubAttributes(awayClub);
 
-            updateLeagueTableRecord(homeClub.div, m.home, m.away, homeScore, awayScore);
+          const diff = (homeStats.att + homeStats.mid + 4) - (awayStats.def + awayStats.mid);
+          const homeScore = Math.max(0, Math.floor(Math.random() * 3) + (diff > 4 ? 1 : 0));
+          const awayScore = Math.max(0, Math.floor(Math.random() * 3) + (diff < -4 ? 1 : 0));
 
-            // If user's match, record career stats & board confidence
-            if (m.home === userClub.id || m.away === userClub.id) {
-              const userIsHome = (m.home === userClub.id);
-              const userGoals = userIsHome ? homeScore : awayScore;
-              const oppGoals = userIsHome ? awayScore : homeScore;
+          m.homeGoals = homeScore;
+          m.awayGoals = awayScore;
+          m.played = true;
 
-              state.manager.matches++;
-              if (userGoals > oppGoals) {
-                state.manager.wins++;
-                state.manager.confidence = Math.min(99, state.manager.confidence + 3);
-              } else if (userGoals === oppGoals) {
-                state.manager.draws++;
-              } else {
-                state.manager.losses++;
-                state.manager.confidence = Math.max(25, state.manager.confidence - 4);
-              }
-            }
+          updateLeagueTableRecord(m.div, m.home, m.away, homeScore, awayScore);
+
+          if (m.home === userClub.id || m.away === userClub.id) {
+            recordUserMatchResult(m.home === userClub.id, homeScore, awayScore);
           }
-        });
+        }
+      });
+    }
+
+    function recordUserMatchResult(isHome, hg, ag) {
+      const userGoals = isHome ? hg : ag;
+      const oppGoals = isHome ? ag : hg;
+
+      state.manager.matches++;
+      if (userGoals > oppGoals) {
+        state.manager.wins++;
+        state.manager.confidence = Math.min(99, state.manager.confidence + 3);
+      } else if (userGoals === oppGoals) {
+        state.manager.draws++;
+      } else {
+        state.manager.losses++;
+        state.manager.confidence = Math.max(25, state.manager.confidence - 4);
       }
     }
 
@@ -1506,17 +1463,18 @@
       }
     }
 
-    /* =====================================================================
-       MATCHDAY SIMULATOR (MINUTE-BY-MINUTE BROADCAST)
-       ===================================================================== */
-
     function startMatchdaySim() {
       const userClub = getCurrentUserClub();
       const weekData = state.fixtures.find(f => f.week === state.currentWeek);
-      let userMatch = weekData ? weekData.matches.find(m => m.home === userClub.id || m.away === userClub.id) : null;
+      const userMatch = weekData ? weekData.matches.find(m => m.home === userClub.id || m.away === userClub.id) : null;
 
       if (!userMatch) {
         alert("No fixture scheduled for your club this week.");
+        return;
+      }
+
+      if (userMatch.played) {
+        alert("This week's match has already been completed.");
         return;
       }
 
@@ -1525,6 +1483,9 @@
 
       const homeClub = state.clubs.find(c => c.id === userMatch.home);
       const awayClub = state.clubs.find(c => c.id === userMatch.away);
+      const homeStats = computeClubAttributes(homeClub);
+      const awayStats = computeClubAttributes(awayClub);
+
       const feed = document.getElementById('commentaryFeed');
       feed.innerHTML = '';
 
@@ -1537,21 +1498,18 @@
         min += 5;
         document.getElementById('sbMinute').innerText = `${min}'`;
 
-        // Commentary Events
         if (Math.random() < 0.28) {
-          const scoringHome = (Math.random() * (homeClub.att + 5) > Math.random() * awayClub.def);
+          const scoringHome = (Math.random() * (homeStats.att + 4) > Math.random() * awayStats.def);
           if (scoringHome) {
             hScore++;
-            feed.innerHTML = `<div class="comm-line goal">⚽ ${min}' GOAL! ${homeClub.name} find the net with a lethal strike! (${hScore}-${aScore})</div>` + feed.innerHTML;
+            feed.innerHTML = `<div class="comm-line goal">⚽ ${min}' GOAL! ${homeClub.name} find the net! (${hScore}-${aScore})</div>` + feed.innerHTML;
             playSound('goal');
           } else {
             aScore++;
-            feed.innerHTML = `<div class="comm-line goal">⚽ ${min}' GOAL! ${awayClub.name} strike on the counter-attack! (${hScore}-${aScore})</div>` + feed.innerHTML;
+            feed.innerHTML = `<div class="comm-line goal">⚽ ${min}' GOAL! ${awayClub.name} score on the break! (${hScore}-${aScore})</div>` + feed.innerHTML;
             playSound('goal');
           }
           document.getElementById('sbScore').innerText = `${hScore} - ${aScore}`;
-        } else if (Math.random() < 0.20) {
-          feed.innerHTML = `<div class="comm-line">🧤 ${min}' Terrific diving save denies a clear goalscoring opportunity!</div>` + feed.innerHTML;
         }
 
         if (min >= 90) {
@@ -1559,14 +1517,20 @@
           document.getElementById('sbMinute').innerText = `FULL TIME`;
           feed.innerHTML = `<div class="comm-line" style="font-weight:800;">🏁 90' Full-time whistle blows! Final score: ${homeClub.name} ${hScore} - ${aScore} ${awayClub.name}.</div>` + feed.innerHTML;
           btn.disabled = false;
+
+          userMatch.homeGoals = hScore;
+          userMatch.awayGoals = aScore;
+          userMatch.played = true;
+
+          updateLeagueTableRecord(userMatch.div, userMatch.home, userMatch.away, hScore, aScore);
+          recordUserMatchResult(userMatch.home === userClub.id, hScore, aScore);
+
+          saveGame();
+          renderStandingsTable(userClub.div);
           playSound('whistle');
         }
-      }, 150);
+      }, 140);
     }
-
-    /* =====================================================================
-       STANDINGS TABLES & PROMOTION/RELEGATION BANDS
-       ===================================================================== */
 
     function renderStandingsTable(divIndex) {
       state.activeStandingsTab = divIndex;
@@ -1621,52 +1585,37 @@
       });
     }
 
-    /* =====================================================================
-       MANAGER OF THE MONTH & AWARDS
-       ===================================================================== */
-
     function evaluateManagerOfMonth() {
       const userClub = getCurrentUserClub();
-      // If user won at least 3 of last 4 games, award MotM
       if (Math.random() > 0.45 && state.manager.confidence > 75) {
         state.manager.motmAwards++;
         state.manager.confidence = Math.min(99, state.manager.confidence + 5);
-        alert(`🏆 ACCOLADE: Congratulations ${state.manager.name}! You have been named MANAGER OF THE MONTH for ${userClub.name}!`);
+        alert(`🏆 ACCOLADE: Congratulations ${state.manager.name}! You have won MANAGER OF THE MONTH for ${userClub.name}!`);
         playSound('cheer');
       }
     }
-
-    /* =====================================================================
-       END OF SEASON & PROMOTION / RELEGATION SYSTEM
-       ===================================================================== */
 
     function showEndSeasonGala() {
       const modal = document.getElementById('endSeasonModal');
       const content = document.getElementById('eosSummaryContent');
 
-      // Sort all division tables
-      const finalTables = {};
+      const sorted = {};
       for (let d = 0; d <= 3; d++) {
-        finalTables[d] = [...state.standings[d]].sort((a,b) => (b.pts - a.pts) || (b.gd - a.gd));
+        sorted[d] = [...state.standings[d]].sort((a,b) => (b.pts - a.pts) || (b.gd - a.gd));
       }
-
-      const pChamp = finalTables[0][0].name;
-      const cChamp = finalTables[1][0].name;
-      const l1Champ = finalTables[2][0].name;
-      const l2Champ = finalTables[3][0].name;
 
       content.innerHTML = `
         <div style="background:var(--bg-panel); padding:14px; border-radius:8px; margin-bottom:12px;">
-          <h3 style="color:var(--gold); margin-bottom:6px;">👑 Champions Crowned</h3>
-          <p><b>Premier League:</b> ${pChamp}</p>
-          <p><b>Championship:</b> ${cChamp}</p>
-          <p><b>League One:</b> ${l1Champ}</p>
-          <p><b>League Two:</b> ${l2Champ}</p>
+          <h3 style="color:var(--gold); margin-bottom:6px;">👑 Champions</h3>
+          <p><b>Premier League:</b> ${sorted[0][0].name}</p>
+          <p><b>Championship:</b> ${sorted[1][0].name}</p>
+          <p><b>League One:</b> ${sorted[2][0].name}</p>
+          <p><b>League Two:</b> ${sorted[3][0].name}</p>
         </div>
         <div style="background:var(--bg-panel); padding:14px; border-radius:8px;">
-          <h3 style="color:#38bdf8; margin-bottom:6px;">📈 Official Movements</h3>
-          <p><b>Promoted to Prem:</b> ${finalTables[1][0].name}, ${finalTables[1][1].name}, ${finalTables[1][2].name} (Play-Off Winners)</p>
-          <p><b>Relegated to Champ:</b> ${finalTables[0][17].name}, ${finalTables[0][18].name}, ${finalTables[0][19].name}</p>
+          <h3 style="color:#38bdf8; margin-bottom:6px;">📈 Promotion & Relegation</h3>
+          <p><b>Promoted to Prem:</b> ${sorted[1][0].name}, ${sorted[1][1].name}, ${sorted[1][2].name}</p>
+          <p><b>Relegated to Champ:</b> ${sorted[0][17].name}, ${sorted[0][18].name}, ${sorted[0][19].name}</p>
         </div>
       `;
 
@@ -1680,10 +1629,28 @@
 
     function executeNextSeasonTransition() {
       closeEosModal();
+
+      const sorted = {};
+      for (let d = 0; d <= 3; d++) {
+        sorted[d] = [...state.standings[d]].sort((a,b) => (b.pts - a.pts) || (b.gd - a.gd));
+      }
+
+      // Execute actual promotions and relegations
+      const premRelegated = [sorted[0][17].id, sorted[0][18].id, sorted[0][19].id];
+      const champPromoted = [sorted[1][0].id, sorted[1][1].id, sorted[1][2].id];
+
+      premRelegated.forEach(id => {
+        const c = state.clubs.find(x => x.id === id);
+        if (c) c.div = 1;
+      });
+      champPromoted.forEach(id => {
+        const c = state.clubs.find(x => x.id === id);
+        if (c) c.div = 0;
+      });
+
       state.seasonYear++;
       state.currentWeek = 1;
 
-      // Age players and reset fitness
       state.clubs.forEach(c => {
         c.players.forEach(p => {
           p.age += 1;
@@ -1693,7 +1660,6 @@
         });
       });
 
-      // Reset standings
       for (let div = 0; div <= 3; div++) {
         state.standings[div] = state.clubs
           .filter(c => c.div === div)
@@ -1711,15 +1677,11 @@
           }));
       }
 
-      generateSeasonFixtures();
+      generateAllDivisionsFixtures();
       saveGame();
       renderAll();
       alert(`🎉 Welcome to the ${state.seasonYear}/${(state.seasonYear + 1).toString().slice(-2)} Season!`);
     }
-
-    /* =====================================================================
-       CLUB SWITCHER & MODAL
-       ===================================================================== */
 
     function openClubSelectorModal() {
       filterModalClubs(0);
@@ -1761,10 +1723,6 @@
       });
     }
 
-    /* =====================================================================
-       UI TABS & RENDER ROUTINES
-       ===================================================================== */
-
     function switchTab(tabId) {
       const tabs = ['tactics', 'matchday', 'standings', 'transfers', 'facilities', 'manager', 'honours'];
       tabs.forEach(t => {
@@ -1783,28 +1741,31 @@
       if (tabId === 'transfers') renderTransfers();
     }
 
+    function updateBannerStats() {
+      const club = getCurrentUserClub();
+      const stats = computeClubAttributes(club);
+      document.getElementById('statAttack').innerText = stats.att;
+      document.getElementById('statMidfield').innerText = stats.mid;
+      document.getElementById('statDefence').innerText = stats.def;
+      document.getElementById('statOvr').innerText = stats.ovr;
+    }
+
     function renderAll() {
       const club = getCurrentUserClub();
       const divNames = ['Premier League', 'Championship', 'League One', 'League Two'];
 
-      // Header metrics
       document.getElementById('headerDivName').innerText = divNames[club.div];
       document.getElementById('headerWeek').innerText = `Week ${state.currentWeek} of ${state.totalWeeks}`;
-      document.getElementById('headerSeasonTag').innerText = `${state.seasonYear}/${(state.seasonYear + 1).toString().slice(-2)} Career &bull; English Football Pyramid`;
-      document.getElementById('headerConfidence').innerText = `${state.manager.confidence}% &bull; Stable`;
+      document.getElementById('headerSeasonTag').innerText = `${state.seasonYear}/${(state.seasonYear + 1).toString().slice(-2)} Career • English Football Pyramid`;
+      document.getElementById('headerConfidence').innerText = `${state.manager.confidence}% • Stable`;
       document.getElementById('headerBudget').innerText = `£${club.budget.toFixed(1)}M`;
 
-      // Club Banner
       document.getElementById('bannerBadge').innerText = club.id;
       document.getElementById('bannerBadge').style.background = club.col || '#e11d48';
       document.getElementById('bannerClubName').innerText = club.name;
-      document.getElementById('bannerStadium').innerText = `${club.stadium} &bull; Capacity: ${club.cap.toLocaleString()}`;
+      document.getElementById('bannerStadium').innerText = `${club.stadium} • Capacity: ${club.cap.toLocaleString()}`;
 
-      document.getElementById('statAttack').innerText = club.att;
-      document.getElementById('statMidfield').innerText = club.mid;
-      document.getElementById('statDefence').innerText = club.def;
-      document.getElementById('statOvr').innerText = Math.round((club.att + club.mid + club.def) / 3);
-
+      updateBannerStats();
       renderTactics();
       renderStandingsTable(club.div);
     }
@@ -1826,7 +1787,8 @@
       const groundsList = document.getElementById('aroundGroundsList');
       groundsList.innerHTML = '';
       if (weekData) {
-        weekData.matches.forEach(m => {
+        const divMatches = weekData.matches.filter(m => m.div === club.div);
+        divMatches.forEach(m => {
           const h = state.clubs.find(c => c.id === m.home);
           const a = state.clubs.find(c => c.id === m.away);
           const line = document.createElement('div');
@@ -1848,7 +1810,7 @@
         </div>
         <div style="background:var(--bg-panel); padding:16px; border-radius:8px;">
           <h4>🏥 Elite Medical Centre</h4>
-          <p style="font-size:0.75rem; color:var(--text-muted); margin:6px 0;">Accelerates match fitness and prevents knocks.</p>
+          <p style="font-size:0.75rem; color:var(--text-muted); margin:6px 0;">Accelerates match fitness recovery.</p>
           <button class="btn-swap-pill" onclick="alert('Medical facility upgraded!')">Upgrade (£2.5M)</button>
         </div>
       `;
@@ -1894,7 +1856,7 @@
       body.innerHTML = `
         <tr>
           <td><b>Harvey Elliott</b></td>
-          <td>AMR</td>
+          <td>FWD</td>
           <td>23</td>
           <td><b style="color:var(--gold);">81</b></td>
           <td>£22.0M</td>
@@ -1902,7 +1864,7 @@
         </tr>
         <tr>
           <td><b>Archie Gray</b></td>
-          <td>DM</td>
+          <td>MID</td>
           <td>20</td>
           <td><b style="color:var(--gold);">79</b></td>
           <td>£18.5M</td>
@@ -1910,10 +1872,6 @@
         </tr>
       `;
     }
-
-    /* =====================================================================
-       WEB AUDIO PROCEDURAL SOUNDS
-       ===================================================================== */
 
     let audioCtx = null;
     function playSound(type) {
@@ -1970,7 +1928,6 @@
       playSound('click');
     }
 
-    // Launch engine
     window.addEventListener('DOMContentLoaded', () => {
       initGame();
     });
