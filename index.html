@@ -2,14 +2,16 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Football League Manager - 2026/27 Career Edition</title>
-  <!-- PWA & Mobile Tablet Settings -->
+
+  <!-- PWA & Mobile Settings -->
   <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#0a0e17">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="FLM">
+
   <style>
     :root {
       --bg-dark: #0a0e17;
@@ -35,7 +37,7 @@
     header {
       background: linear-gradient(180deg, #151d2d 0%, #0d131f 100%);
       border-bottom: 2px solid var(--border);
-      padding: 10px 20px;
+      padding: 10px 16px;
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -44,71 +46,71 @@
       z-index: 100;
       box-shadow: 0 4px 20px rgba(0,0,0,0.5);
     }
-    .brand-group { display: flex; align-items: center; gap: 12px; }
+    .brand-group { display: flex; align-items: center; gap: 10px; }
     .brand-logo {
       background: linear-gradient(135deg, var(--accent) 0%, #0072ff 100%);
       color: #000;
       font-weight: 900;
-      font-size: 1.1rem;
-      padding: 6px 12px;
+      font-size: 1.05rem;
+      padding: 5px 10px;
       border-radius: 6px;
       letter-spacing: 1px;
     }
-    .brand-titles h1 { font-size: 1.15rem; font-weight: 800; color: #fff; }
-    .brand-titles p { font-size: 0.75rem; color: var(--text-muted); font-weight: 600; }
+    .brand-titles h1 { font-size: 1.05rem; font-weight: 800; color: #fff; }
+    .brand-titles p { font-size: 0.72rem; color: var(--text-muted); font-weight: 600; }
 
-    .header-metrics { display: flex; align-items: center; gap: 14px; }
+    .header-metrics { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
     .metric-pill {
       background: var(--bg-panel);
       border: 1px solid var(--border);
-      padding: 6px 12px;
+      padding: 5px 10px;
       border-radius: 8px;
-      font-size: 0.8rem;
+      font-size: 0.75rem;
       display: flex;
       flex-direction: column;
       align-items: flex-start;
     }
-    .metric-pill span.label { font-size: 0.65rem; color: var(--text-muted); text-transform: uppercase; font-weight: 700; }
+    .metric-pill span.label { font-size: 0.62rem; color: var(--text-muted); text-transform: uppercase; font-weight: 700; }
     .metric-pill span.val { font-weight: 800; color: #fff; }
 
     .btn-advance-master {
       background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
       color: #000;
       font-weight: 900;
-      font-size: 0.95rem;
-      padding: 10px 20px;
+      font-size: 0.9rem;
+      padding: 9px 16px;
       border-radius: 8px;
       border: none;
       cursor: pointer;
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 6px;
       box-shadow: 0 0 15px rgba(245, 158, 11, 0.4);
       transition: all 0.2s;
     }
-    .btn-advance-master:hover { transform: translateY(-1px); box-shadow: 0 0 25px rgba(245, 158, 11, 0.7); }
-    .btn-icon { background: var(--bg-panel); border: 1px solid var(--border); color: #fff; padding: 8px 12px; border-radius: 6px; cursor: pointer; }
+    .btn-advance-master:active { transform: scale(0.97); }
+    .btn-icon { background: var(--bg-panel); border: 1px solid var(--border); color: #fff; padding: 7px 11px; border-radius: 6px; cursor: pointer; }
 
     .app-container { display: flex; flex: 1; min-height: calc(100vh - 120px); }
 
     nav.sidebar {
-      width: 240px;
+      width: 230px;
       background: #0d121c;
       border-right: 1px solid var(--border);
-      padding: 16px 10px;
+      padding: 14px 10px;
       display: flex;
       flex-direction: column;
-      gap: 6px;
+      gap: 5px;
     }
-    .nav-label { font-size: 0.68rem; font-weight: 800; color: #475569; text-transform: uppercase; padding: 8px 12px 4px; }
+    .nav-label { font-size: 0.65rem; font-weight: 800; color: #475569; text-transform: uppercase; padding: 6px 10px 2px; }
     .nav-item {
       display: flex;
       align-items: center;
-      gap: 12px;
-      padding: 11px 14px;
+      gap: 10px;
+      padding: 10px 12px;
       color: #94a3b8;
       border-radius: 8px;
-      font-size: 0.88rem;
+      font-size: 0.85rem;
       font-weight: 700;
       cursor: pointer;
       transition: all 0.15s;
@@ -119,110 +121,110 @@
       color: var(--accent);
       border-left: 3px solid var(--accent);
     }
-    .nav-item span.icon { font-size: 1.1rem; }
+    .nav-item span.icon { font-size: 1.05rem; }
 
-    main.viewport { flex: 1; padding: 20px; overflow-y: auto; background: var(--bg-dark); }
+    main.viewport { flex: 1; padding: 16px; overflow-y: auto; background: var(--bg-dark); }
 
     .club-banner {
       background: linear-gradient(90deg, #162032 0%, #111724 100%);
       border: 1px solid var(--border);
       border-radius: 12px;
-      padding: 14px 20px;
+      padding: 12px 16px;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 20px;
+      margin-bottom: 16px;
     }
-    .club-info-badge { display: flex; align-items: center; gap: 16px; }
+    .club-info-badge { display: flex; align-items: center; gap: 14px; }
     .club-badge-box {
-      width: 48px; height: 48px; border-radius: 10px; background: #e11d48;
-      display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 1.1rem; color: #fff;
+      width: 44px; height: 44px; border-radius: 10px; background: #e11d48;
+      display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 1rem; color: #fff;
     }
-    .club-text h2 { font-size: 1.3rem; font-weight: 800; }
-    .club-text p { font-size: 0.8rem; color: var(--text-muted); }
+    .club-text h2 { font-size: 1.2rem; font-weight: 800; }
+    .club-text p { font-size: 0.78rem; color: var(--text-muted); }
 
-    .team-stats-strip { display: flex; gap: 20px; }
+    .team-stats-strip { display: flex; gap: 14px; }
     .strip-stat { text-align: center; }
-    .strip-stat .val { font-size: 1.25rem; font-weight: 900; color: #fff; }
-    .strip-stat .lbl { font-size: 0.65rem; color: var(--text-muted); text-transform: uppercase; font-weight: 700; }
+    .strip-stat .val { font-size: 1.15rem; font-weight: 900; color: #fff; }
+    .strip-stat .lbl { font-size: 0.62rem; color: var(--text-muted); text-transform: uppercase; font-weight: 700; }
 
-    .tactics-container { display: grid; grid-template-columns: 460px 1fr; gap: 20px; }
+    .tactics-container { display: grid; grid-template-columns: 460px 1fr; gap: 16px; }
 
     .pitch-card {
       background: var(--bg-card);
       border: 1px solid var(--border);
       border-radius: 12px;
-      padding: 14px;
+      padding: 12px;
       display: flex;
       flex-direction: column;
-      gap: 12px;
+      gap: 10px;
     }
     .tactics-toolbar {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      gap: 10px;
+      gap: 8px;
     }
     .tactics-select {
       background: var(--bg-panel);
       color: #fff;
       border: 1px solid var(--border);
-      padding: 8px 12px;
+      padding: 7px 10px;
       border-radius: 6px;
       font-weight: 700;
-      font-size: 0.85rem;
+      font-size: 0.8rem;
       outline: none;
     }
     .btn-auto-pick {
       background: linear-gradient(135deg, #059669 0%, #047857 100%);
       color: #fff;
       border: none;
-      padding: 8px 14px;
+      padding: 7px 12px;
       border-radius: 6px;
       font-weight: 800;
-      font-size: 0.8rem;
+      font-size: 0.78rem;
       cursor: pointer;
       display: flex;
       align-items: center;
-      gap: 6px;
+      gap: 5px;
     }
 
     .football-pitch {
       width: 100%;
-      height: 520px;
+      height: 480px;
       background: repeating-linear-gradient(
         0deg,
         var(--pitch-grass-1),
-        var(--pitch-grass-1) 52px,
-        var(--pitch-grass-2) 52px,
-        var(--pitch-grass-2) 104px
+        var(--pitch-grass-1) 48px,
+        var(--pitch-grass-2) 48px,
+        var(--pitch-grass-2) 96px
       );
       border: 2px solid rgba(255, 255, 255, 0.7);
       border-radius: 8px;
       position: relative;
       overflow: hidden;
-      box-shadow: inset 0 0 40px rgba(0,0,0,0.6);
+      box-shadow: inset 0 0 30px rgba(0,0,0,0.6);
     }
     .pitch-line-half { position: absolute; top: 50%; left: 0; right: 0; height: 2px; background: var(--pitch-line); transform: translateY(-50%); }
     .pitch-circle-center {
-      position: absolute; top: 50%; left: 50%; width: 110px; height: 110px;
+      position: absolute; top: 50%; left: 50%; width: 90px; height: 90px;
       border: 2px solid var(--pitch-line); border-radius: 50%; transform: translate(-50%, -50%);
     }
     .pitch-spot-center { position: absolute; top: 50%; left: 50%; width: 6px; height: 6px; background: #fff; border-radius: 50%; transform: translate(-50%, -50%); }
     .penalty-box-top {
-      position: absolute; top: 0; left: 50%; width: 210px; height: 85px;
+      position: absolute; top: 0; left: 50%; width: 180px; height: 75px;
       border: 2px solid var(--pitch-line); border-top: none; transform: translateX(-50%);
     }
     .six-yard-top {
-      position: absolute; top: 0; left: 50%; width: 100px; height: 35px;
+      position: absolute; top: 0; left: 50%; width: 90px; height: 30px;
       border: 2px solid var(--pitch-line); border-top: none; transform: translateX(-50%);
     }
     .penalty-box-bottom {
-      position: absolute; bottom: 0; left: 50%; width: 210px; height: 85px;
+      position: absolute; bottom: 0; left: 50%; width: 180px; height: 75px;
       border: 2px solid var(--pitch-line); border-bottom: none; transform: translateX(-50%);
     }
     .six-yard-bottom {
-      position: absolute; bottom: 0; left: 50%; width: 100px; height: 35px;
+      position: absolute; bottom: 0; left: 50%; width: 90px; height: 30px;
       border: 2px solid var(--pitch-line); border-bottom: none; transform: translateX(-50%);
     }
 
@@ -235,17 +237,17 @@
       cursor: pointer;
       z-index: 10;
       transition: transform 0.15s ease;
-      width: 72px;
+      width: 66px;
     }
-    .pitch-node:hover { transform: translate(-50%, -50%) scale(1.12); z-index: 20; }
+    .pitch-node:active { transform: translate(-50%, -50%) scale(1.1); }
     .pitch-node.selected-for-swap {
-      transform: translate(-50%, -50%) scale(1.18);
+      transform: translate(-50%, -50%) scale(1.15);
       z-index: 30;
-      filter: drop-shadow(0 0 10px #f59e0b);
+      filter: drop-shadow(0 0 8px #f59e0b);
     }
     .pitch-kit {
-      width: 38px;
-      height: 38px;
+      width: 34px;
+      height: 34px;
       background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
       border: 2px solid #fff;
       border-radius: 50%;
@@ -253,9 +255,9 @@
       align-items: center;
       justify-content: center;
       font-weight: 900;
-      font-size: 0.9rem;
+      font-size: 0.85rem;
       color: #fff;
-      box-shadow: 0 3px 8px rgba(0,0,0,0.6);
+      box-shadow: 0 3px 6px rgba(0,0,0,0.6);
       position: relative;
     }
     .pitch-node.selected-for-swap .pitch-kit { border-color: #f59e0b; background: #d97706; }
@@ -264,34 +266,34 @@
       bottom: -6px;
       background: #0284c7;
       color: #fff;
-      font-size: 0.6rem;
+      font-size: 0.58rem;
       font-weight: 800;
-      padding: 1px 4px;
-      border-radius: 4px;
+      padding: 1px 3px;
+      border-radius: 3px;
       line-height: 1;
       text-transform: uppercase;
     }
     .pitch-name-card {
-      margin-top: 5px;
+      margin-top: 4px;
       background: rgba(15, 23, 42, 0.9);
       border: 1px solid rgba(255, 255, 255, 0.2);
       border-radius: 4px;
-      padding: 2px 6px;
+      padding: 2px 4px;
       text-align: center;
       width: 100%;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
     }
-    .pitch-name-card .p-name { font-size: 0.72rem; font-weight: 800; color: #fff; }
-    .pitch-name-card .p-role { font-size: 0.6rem; font-weight: 700; color: #38bdf8; }
+    .pitch-name-card .p-name { font-size: 0.68rem; font-weight: 800; color: #fff; }
+    .pitch-name-card .p-role { font-size: 0.58rem; font-weight: 700; color: #38bdf8; }
 
     .swap-status-bar {
       background: linear-gradient(90deg, #b45309 0%, #d97706 100%);
       color: #fff;
-      padding: 8px 14px;
+      padding: 8px 12px;
       border-radius: 8px;
-      font-size: 0.82rem;
+      font-size: 0.78rem;
       font-weight: 800;
       display: flex;
       justify-content: space-between;
@@ -302,59 +304,62 @@
     @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.85; } }
     .swap-status-bar button {
       background: rgba(0,0,0,0.3); border: 1px solid #fff; color: #fff;
-      padding: 3px 8px; border-radius: 4px; cursor: pointer; font-size: 0.75rem; font-weight: 700;
+      padding: 3px 8px; border-radius: 4px; cursor: pointer; font-size: 0.72rem; font-weight: 700;
     }
 
     .squad-roster-card {
       background: var(--bg-card);
       border: 1px solid var(--border);
       border-radius: 12px;
-      padding: 16px;
+      padding: 14px;
       display: flex;
       flex-direction: column;
-      gap: 14px;
+      gap: 12px;
       overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
     }
     .section-title-strip {
       display: flex;
       justify-content: space-between;
       align-items: center;
       border-bottom: 1px solid var(--border);
-      padding-bottom: 8px;
+      padding-bottom: 6px;
     }
-    .section-title-strip h3 { font-size: 0.95rem; font-weight: 800; text-transform: uppercase; color: var(--text-main); }
-    .section-title-strip span.count { font-size: 0.75rem; color: var(--text-muted); font-weight: 700; }
+    .section-title-strip h3 { font-size: 0.9rem; font-weight: 800; text-transform: uppercase; color: var(--text-main); }
+    .section-title-strip span.count { font-size: 0.72rem; color: var(--text-muted); font-weight: 700; }
 
-    table.fm-table { width: 100%; border-collapse: collapse; font-size: 0.8rem; text-align: left; }
+    table.fm-table { width: 100%; border-collapse: collapse; font-size: 0.78rem; text-align: left; }
     table.fm-table th {
       background: var(--bg-panel);
       color: var(--text-muted);
-      font-size: 0.68rem;
+      font-size: 0.65rem;
       font-weight: 800;
       text-transform: uppercase;
-      padding: 8px 10px;
+      padding: 7px 8px;
       border-bottom: 2px solid var(--border);
+      white-space: nowrap;
     }
     table.fm-table td {
-      padding: 8px 10px;
+      padding: 7px 8px;
       border-bottom: 1px solid rgba(255, 255, 255, 0.05);
       vertical-align: middle;
       font-weight: 600;
+      white-space: nowrap;
     }
     table.fm-table tr.fm-row { cursor: pointer; transition: background 0.15s; }
     table.fm-table tr.fm-row:hover { background: var(--bg-panel-hover); }
     table.fm-table tr.fm-row.selected-for-swap { background: rgba(245, 158, 11, 0.2) !important; outline: 1px solid #f59e0b; }
 
     .badge-pick {
-      display: inline-block; padding: 2px 6px; border-radius: 4px;
-      font-size: 0.68rem; font-weight: 800; text-align: center;
+      display: inline-block; padding: 2px 5px; border-radius: 4px;
+      font-size: 0.65rem; font-weight: 800; text-align: center;
     }
     .pick-starter { background: rgba(16, 185, 129, 0.2); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.4); }
     .pick-sub { background: rgba(245, 158, 11, 0.2); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.4); }
 
     .role-badge {
-      background: #0369a1; color: #fff; font-size: 0.65rem; font-weight: 800;
-      padding: 2px 6px; border-radius: 4px;
+      background: #0369a1; color: #fff; font-size: 0.62rem; font-weight: 800;
+      padding: 2px 5px; border-radius: 4px;
     }
 
     .btn-swap-pill {
@@ -363,58 +368,59 @@
       border: 1px solid var(--border);
       padding: 4px 8px;
       border-radius: 4px;
-      font-size: 0.72rem;
+      font-size: 0.7rem;
       font-weight: 700;
       cursor: pointer;
     }
-    .btn-swap-pill:hover { background: var(--accent); color: #000; }
+    .btn-swap-pill:active { background: var(--accent); color: #000; }
     .btn-sell-pill {
       background: rgba(239, 68, 68, 0.2);
       color: #f87171;
       border: 1px solid rgba(239, 68, 68, 0.4);
       padding: 4px 8px;
       border-radius: 4px;
-      font-size: 0.72rem;
+      font-size: 0.7rem;
       font-weight: 700;
       cursor: pointer;
     }
-    .btn-sell-pill:hover { background: #ef4444; color: #fff; }
+    .btn-sell-pill:active { background: #ef4444; color: #fff; }
 
-    .condition-bar { width: 44px; height: 6px; background: #334155; border-radius: 3px; overflow: hidden; display: inline-block; vertical-align: middle; margin-right: 6px; }
+    .condition-bar { width: 38px; height: 5px; background: #334155; border-radius: 3px; overflow: hidden; display: inline-block; vertical-align: middle; margin-right: 4px; }
     .condition-fill { height: 100%; border-radius: 3px; }
 
-    .matchday-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 20px; }
+    .matchday-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 16px; }
     .broadcast-card {
-      background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; padding: 20px;
-      display: flex; flex-direction: column; gap: 16px;
+      background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; padding: 16px;
+      display: flex; flex-direction: column; gap: 14px;
     }
     .scoreboard-box {
       background: linear-gradient(180deg, #151d2c 0%, #0c121d 100%);
       border: 2px solid var(--border);
       border-radius: 12px;
-      padding: 20px;
+      padding: 16px;
       display: flex;
       justify-content: space-around;
       align-items: center;
       text-align: center;
     }
-    .sb-team h2 { font-size: 1.4rem; font-weight: 900; }
-    .sb-team p { font-size: 0.8rem; color: var(--text-muted); }
-    .sb-score { font-size: 3rem; font-weight: 900; color: #fff; letter-spacing: 4px; }
-    .sb-minute { background: var(--bg-panel); padding: 4px 10px; border-radius: 6px; font-weight: 800; font-size: 0.85rem; color: var(--accent); }
+    .sb-team h2 { font-size: 1.2rem; font-weight: 900; }
+    .sb-team p { font-size: 0.75rem; color: var(--text-muted); }
+    .sb-score { font-size: 2.5rem; font-weight: 900; color: #fff; letter-spacing: 3px; }
+    .sb-minute { background: var(--bg-panel); padding: 4px 8px; border-radius: 6px; font-weight: 800; font-size: 0.8rem; color: var(--accent); }
 
     .commentary-box {
-      background: #090d14; border: 1px solid var(--border); border-radius: 8px; height: 260px;
-      overflow-y: auto; padding: 12px; display: flex; flex-direction: column; gap: 8px;
+      background: #090d14; border: 1px solid var(--border); border-radius: 8px; height: 230px;
+      overflow-y: auto; padding: 10px; display: flex; flex-direction: column; gap: 6px;
+      -webkit-overflow-scrolling: touch;
     }
-    .comm-line { font-size: 0.82rem; padding: 6px 10px; border-radius: 6px; background: var(--bg-panel); border-left: 3px solid var(--accent); }
+    .comm-line { font-size: 0.78rem; padding: 5px 8px; border-radius: 6px; background: var(--bg-panel); border-left: 3px solid var(--accent); }
     .comm-line.goal { border-left-color: #10b981; background: rgba(16, 185, 129, 0.15); font-weight: 800; color: #34d399; }
 
-    .standings-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; padding: 16px; }
-    .league-tabs { display: flex; gap: 10px; margin-bottom: 14px; }
+    .standings-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; padding: 14px; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+    .league-tabs { display: flex; gap: 8px; margin-bottom: 12px; overflow-x: auto; padding-bottom: 4px; }
     .league-tab-btn {
       background: var(--bg-panel); color: var(--text-muted); border: 1px solid var(--border);
-      padding: 8px 16px; border-radius: 8px; font-weight: 800; font-size: 0.82rem; cursor: pointer;
+      padding: 6px 12px; border-radius: 8px; font-weight: 800; font-size: 0.75rem; cursor: pointer; white-space: nowrap;
     }
     .league-tab-btn.active { background: var(--accent); color: #000; border-color: var(--accent); }
 
@@ -423,75 +429,167 @@
     .zone-playoff { border-left: 4px solid #06b6d4 !important; }
     .zone-relegation { border-left: 4px solid #ef4444 !important; }
 
-    /* NEWS FEED STYLES */
-    .news-grid { display: flex; flex-direction: column; gap: 14px; }
+    .news-grid { display: flex; flex-direction: column; gap: 12px; }
     .news-card {
       background: var(--bg-panel);
       border: 1px solid var(--border);
       border-radius: 10px;
-      padding: 16px 20px;
+      padding: 14px 16px;
       display: flex;
       flex-direction: column;
-      gap: 6px;
-      position: relative;
+      gap: 5px;
     }
     .news-card.breaking {
       border-left: 4px solid #f59e0b;
       background: linear-gradient(90deg, rgba(245, 158, 11, 0.08) 0%, var(--bg-panel) 100%);
     }
-    .news-tag {
-      font-size: 0.68rem;
-      font-weight: 800;
-      color: var(--accent);
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-    }
-    .news-headline { font-size: 1.05rem; font-weight: 800; color: #fff; }
-    .news- { font-size: 0.85rem; color: #cbd5e1; line-height: 1.5; }
-    .news-time { font-size: 0.72rem; color: var(--text-muted); font-weight: 600; }
+    .news-tag { font-size: 0.65rem; font-weight: 800; color: var(--accent); text-transform: uppercase; }
+    .news-headline { font-size: 0.95rem; font-weight: 800; color: #fff; }
+    .news-body { font-size: 0.8rem; color: #cbd5e1; line-height: 1.4; }
+    .news-time { font-size: 0.68rem; color: var(--text-muted); font-weight: 600; }
 
+    /* MODAL BASE */
     .modal-backdrop {
-      position: fixed; inset: 0; background: rgba(0,0,0,0.85);
+      position: fixed; inset: 0; background: rgba(0,0,0,0.88);
       display: flex; align-items: center; justify-content: center; z-index: 1000;
+      padding: 12px;
     }
     .modal-window {
       background: var(--bg-card); border: 2px solid var(--border); border-radius: 16px;
-      width: 650px; max-width: 95vw; max-height: 90vh; overflow-y: auto; padding: 24px;
+      width: 600px; max-width: 100%; max-height: 85vh; overflow-y: auto; padding: 20px;
       box-shadow: 0 10px 40px rgba(0,0,0,0.8);
+      -webkit-overflow-scrolling: touch;
     }
-    .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
-    .modal-header h2 { font-size: 1.3rem; font-weight: 900; }
-    .modal-close { background: none; border: none; color: #fff; font-size: 1.4rem; cursor: pointer; }
+    .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
+    .modal-header h2 { font-size: 1.2rem; font-weight: 900; }
+    .modal-close { background: none; border: none; color: #fff; font-size: 1.3rem; cursor: pointer; }
+
+    /* WIZARD INPUTS */
+    .wizard-input-box {
+      background: var(--bg-panel);
+      border: 1px solid var(--border);
+      color: #fff;
+      font-size: 0.9rem;
+      padding: 10px 14px;
+      border-radius: 8px;
+      width: 100%;
+      outline: none;
+      font-weight: 700;
+      margin-top: 4px;
+      margin-bottom: 14px;
+    }
+    .wizard-input-box:focus { border-color: var(--accent); }
+
+    .club-select-card {
+      background: var(--bg-panel);
+      border: 2px solid var(--border);
+      padding: 10px 12px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .club-select-card:hover { border-color: var(--text-muted); }
+    .club-select-card.selected { border-color: var(--accent); background: rgba(0, 210, 255, 0.12); }
 
     footer {
       background: #080c14;
       border-top: 1px solid var(--border);
-      padding: 12px 20px;
+      padding: 10px 16px;
       text-align: center;
-      font-size: 0.8rem;
+      font-size: 0.75rem;
       font-weight: 700;
       color: #64748b;
-      letter-spacing: 0.5px;
+    }
+
+    @media (max-width: 860px) {
+      header {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 8px;
+        padding: 8px 12px;
+      }
+      .brand-group { justify-content: space-between; width: 100%; }
+      .header-metrics {
+        width: 100%;
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 6px;
+      }
+      .metric-pill { min-width: 0; padding: 4px 6px; }
+      .metric-pill span.label { font-size: 0.58rem; }
+      .metric-pill span.val { font-size: 0.72rem; }
+      .btn-advance-master {
+        grid-column: span 4;
+        width: 100%;
+        justify-content: center;
+        padding: 10px;
+        font-size: 0.92rem;
+      }
+
+      .app-container { flex-direction: column; }
+      nav.sidebar {
+        width: 100%;
+        border-right: none;
+        border-bottom: 1px solid var(--border);
+        flex-direction: row;
+        overflow-x: auto;
+        white-space: nowrap;
+        padding: 8px 10px;
+        gap: 6px;
+        scrollbar-width: none;
+        -webkit-overflow-scrolling: touch;
+      }
+      nav.sidebar::-webkit-scrollbar { display: none; }
+      .nav-label { display: none; }
+      .nav-item {
+        padding: 8px 14px;
+        font-size: 0.8rem;
+        border-radius: 20px;
+        background: var(--bg-panel);
+        border-left: none !important;
+      }
+      .nav-item.active { background: var(--accent); color: #000; }
+
+      main.viewport { padding: 12px; }
+      .club-banner { flex-direction: column; align-items: stretch; gap: 12px; }
+      .team-stats-strip {
+        justify-content: space-between;
+        background: var(--bg-panel);
+        padding: 8px 12px;
+        border-radius: 8px;
+      }
+
+      .tactics-container { grid-template-columns: 1fr; }
+      .football-pitch { height: 420px; }
+      .pitch-node { width: 58px; }
+      .pitch-kit { width: 30px; height: 30px; font-size: 0.8rem; }
+      .pitch-role-tag { font-size: 0.52rem; }
+      .pitch-name-card .p-name { font-size: 0.62rem; }
+      .pitch-name-card .p-role { font-size: 0.52rem; }
+
+      .matchday-grid { grid-template-columns: 1fr; }
+      .scoreboard-box { padding: 12px 8px; }
+      .sb-team h2 { font-size: 1rem; }
+      .sb-score { font-size: 2rem; }
+
+      #modalClubsGrid, #wizardClubsGrid { grid-template-columns: 1fr !important; }
     }
   </style>
 </head>
-  <script>
-    if ('serviceWorker' in navigator) {
-      window.addEventListener('load', () => {
-        navigator.serviceWorker.register('./sw.js')
-          .then(reg => console.log('PWA Service Worker active:', reg.scope))
-          .catch(err => console.log('Service Worker registration error:', err));
-      });
-    }
-  </script>
 <body>
 
   <header>
     <div class="brand-group">
-      <div class="brand-logo">FLM</div>
-      <div class="brand-titles">
-        <h1>FOOTBALL LEAGUE MANAGER</h1>
-        <p id="headerSeasonTag">2026/27 Career • English Football Pyramid</p>
+      <div style="display: flex; align-items: center; gap: 10px;">
+        <div class="brand-logo">FLM</div>
+        <div class="brand-titles">
+          <h1>FOOTBALL LEAGUE MANAGER</h1>
+          <p id="headerSeasonTag">2026/27 Career • English Football Pyramid</p>
+        </div>
+      </div>
+      <div style="display: flex; gap: 6px;">
+        <button class="btn-icon" onclick="toggleAudio()" id="btnAudio" title="Toggle Sound">🔊</button>
+        <button class="btn-icon" onclick="promptNewCareer()" title="Start New Career">🆕</button>
       </div>
     </div>
 
@@ -502,23 +600,20 @@
       </div>
       <div class="metric-pill">
         <span class="label">Calendar</span>
-        <span class="val" id="headerWeek">Week 1 of 38</span>
+        <span class="val" id="headerWeek">Wk 1 / 38</span>
       </div>
       <div class="metric-pill">
-        <span class="label">Board Approval</span>
-        <span class="val" id="headerConfidence" style="color: #34d399;">82% • Stable</span>
+        <span class="label">Approval</span>
+        <span class="val" id="headerConfidence" style="color: #34d399;">82%</span>
       </div>
       <div class="metric-pill">
-        <span class="label">Transfer Budget</span>
+        <span class="label">Budget</span>
         <span class="val" id="headerBudget">£24.5M</span>
       </div>
       
       <button class="btn-advance-master" id="btnAdvanceMaster" onclick="advanceMasterWeek()">
         <span>⏩</span> ADVANCE WEEK
       </button>
-
-      <button class="btn-icon" onclick="toggleAudio()" id="btnAudio" title="Toggle Sound">🔊</button>
-      <button class="btn-icon" onclick="resetToFreshSeason()" title="Reset / New Game">🔄</button>
     </div>
   </header>
 
@@ -526,37 +621,37 @@
     <nav class="sidebar">
       <div class="nav-label">Squad Management</div>
       <div class="nav-item active" onclick="switchTab('tactics')" id="nav-tactics">
-        <span class="icon">👕</span> Tactics & Squad
+        <span class="icon">👕</span> Tactics
       </div>
       <div class="nav-item" onclick="switchTab('matchday')" id="nav-matchday">
-        <span class="icon">⏱️</span> Matchday Live
+        <span class="icon">⏱️</span> Matchday
       </div>
 
       <div class="nav-label">Media & Market</div>
       <div class="nav-item" onclick="switchTab('news')" id="nav-news">
-        <span class="icon">📰</span> League News
+        <span class="icon">📰</span> News
       </div>
       <div class="nav-item" onclick="switchTab('transfers')" id="nav-transfers">
-        <span class="icon">🔄</span> Scouting & Market
+        <span class="icon">🔄</span> Market
       </div>
 
       <div class="nav-label">Club Operations</div>
       <div class="nav-item" onclick="switchTab('standings')" id="nav-standings">
-        <span class="icon">🏆</span> League Tables
+        <span class="icon">🏆</span> Tables
       </div>
       <div class="nav-item" onclick="switchTab('facilities')" id="nav-facilities">
-        <span class="icon">🏟️</span> Ground & Facilities
+        <span class="icon">🏟️</span> Ground
       </div>
 
       <div class="nav-label">Management Office</div>
       <div class="nav-item" onclick="switchTab('manager')" id="nav-manager">
-        <span class="icon">📋</span> Board & Career
+        <span class="icon">📋</span> Office
       </div>
       <div class="nav-item" onclick="switchTab('honours')" id="nav-honours">
-        <span class="icon">🎖️</span> Honours & Awards
+        <span class="icon">🎖️</span> Honours
       </div>
       <div class="nav-item" onclick="openClubSelectorModal()" id="nav-switch">
-        <span class="icon">🔀</span> Switch Club
+        <span class="icon">🔀</span> Club
       </div>
     </nav>
 
@@ -584,27 +679,26 @@
           </div>
           <div class="strip-stat">
             <div class="val" id="statOvr">77</div>
-            <div class="lbl">Team Rating</div>
+            <div class="lbl">Rating</div>
           </div>
         </div>
       </div>
 
-      <!-- TACTICS & SQUAD TAB -->
       <div id="tab-tactics" class="tab-pane">
         <div id="swapNotificationBar" class="swap-status-bar" style="display: none;">
           <span id="swapNotificationText">🔄 SELECT PLAYER TO SWAP</span>
-          <button onclick="cancelPlayerSwap()">Cancel Selection</button>
+          <button onclick="cancelPlayerSwap()">Cancel</button>
         </div>
 
         <div class="tactics-container">
           <div class="pitch-card">
             <div class="tactics-toolbar">
               <select class="tactics-select" id="formationSelect" onchange="changeFormation(this.value)">
-                <option value="4-3-3">4 - 3 - 3 (Gegenpress)</option>
-                <option value="4-2-3-1">4 - 2 - 3 - 1 (Wide Attacking)</option>
-                <option value="4-4-2">4 - 4 - 2 (Flat Balance)</option>
-                <option value="5-3-2">5 - 3 - 2 (Wing-Backs)</option>
-                <option value="3-5-2">3 - 5 - 2 (Direct Counter)</option>
+                <option value="4-3-3">4-3-3 (Gegenpress)</option>
+                <option value="4-2-3-1">4-2-3-1 (Wide)</option>
+                <option value="4-4-2">4-4-2 (Flat)</option>
+                <option value="5-3-2">5-3-2 (Wing-Backs)</option>
+                <option value="3-5-2">3-5-2 (Counter)</option>
               </select>
 
               <button class="btn-auto-pick" onclick="autoPickBestXI()">
@@ -625,7 +719,7 @@
             </div>
             
             <p style="font-size: 0.72rem; color: var(--text-muted); text-align: center;">
-              💡 <b>Click any player on the pitch or roster</b> to swap their positions and tactical roles.
+              💡 <b>Tap any player on the pitch or table</b> to swap positions.
             </p>
           </div>
 
@@ -638,14 +732,13 @@
             <table class="fm-table" id="startersTable">
               <thead>
                 <tr>
-                  <th style="width: 48px;">PK</th>
-                  <th style="width: 75px;">Role</th>
+                  <th style="width: 44px;">PK</th>
+                  <th style="width: 70px;">Role</th>
                   <th>Player Name</th>
-                  <th style="width: 45px;">Nat</th>
                   <th style="width: 40px;">Age</th>
-                  <th style="width: 45px;">OVR</th>
-                  <th style="width: 80px;">Con</th>
-                  <th style="width: 90px;">Action</th>
+                  <th style="width: 40px;">OVR</th>
+                  <th style="width: 75px;">Con</th>
+                  <th style="width: 80px;">Action</th>
                 </tr>
               </thead>
               <tbody id="startersTableBody"></tbody>
@@ -653,20 +746,19 @@
 
             <div class="section-title-strip" style="margin-top: 10px;">
               <h3>Substitutes Bench</h3>
-              <span class="count">Available Reserves</span>
+              <span class="count">Reserves</span>
             </div>
 
             <table class="fm-table" id="benchTable">
               <thead>
                 <tr>
-                  <th style="width: 48px;">PK</th>
-                  <th style="width: 75px;">Role</th>
+                  <th style="width: 44px;">PK</th>
+                  <th style="width: 70px;">Role</th>
                   <th>Player Name</th>
-                  <th style="width: 45px;">Nat</th>
                   <th style="width: 40px;">Age</th>
-                  <th style="width: 45px;">OVR</th>
-                  <th style="width: 80px;">Con</th>
-                  <th style="width: 90px;">Action</th>
+                  <th style="width: 40px;">OVR</th>
+                  <th style="width: 75px;">Con</th>
+                  <th style="width: 80px;">Action</th>
                 </tr>
               </thead>
               <tbody id="benchTableBody"></tbody>
@@ -675,7 +767,6 @@
         </div>
       </div>
 
-      <!-- MATCHDAY TAB -->
       <div id="tab-matchday" class="tab-pane" style="display: none;">
         <div class="matchday-grid">
           <div class="broadcast-card">
@@ -694,45 +785,41 @@
               </div>
             </div>
 
-            <div style="display: flex; gap: 10px;">
-              <button class="btn-advance-master" style="flex: 1;" onclick="startMatchdaySim()" id="btnStartMatch">
-                ▶️ SIMULATE 90 MINUTES
-              </button>
-            </div>
+            <button class="btn-advance-master" style="width: 100%; justify-content: center;" onclick="startMatchdaySim()" id="btnStartMatch">
+              ▶️️ SIMULATE 90 MINUTES
+            </button>
 
             <h4 style="font-size: 0.85rem; text-transform: uppercase; color: var(--text-muted);">Match Commentary</h4>
             <div class="commentary-box" id="commentaryFeed">
-              <div class="comm-line">Teams have completed their warmups and are emerging from the tunnel.</div>
+              <div class="comm-line">Teams have completed warmups and are emerging onto the pitch.</div>
             </div>
           </div>
 
           <div class="standings-card">
-            <h3 style="font-size: 0.95rem; font-weight: 800; margin-bottom: 12px;">Around The Grounds</h3>
-            <div id="aroundGroundsList" style="display: flex; flex-direction: column; gap: 8px; font-size: 0.8rem;"></div>
+            <h3 style="font-size: 0.92rem; font-weight: 800; margin-bottom: 10px;">Around The Grounds</h3>
+            <div id="aroundGroundsList" style="display: flex; flex-direction: column; gap: 8px; font-size: 0.78rem;"></div>
           </div>
         </div>
       </div>
 
-      <!-- NEWS HUB TAB -->
       <div id="tab-news" class="tab-pane" style="display: none;">
         <div class="standings-card">
-          <div class="section-title-strip" style="margin-bottom: 16px;">
+          <div class="section-title-strip" style="margin-bottom: 14px;">
             <h3>🗞️ League Press &amp; Media Hub</h3>
-            <span class="count">Live Wire Updates</span>
+            <span class="count">Live Wire</span>
           </div>
           <div class="news-grid" id="newsFeedList"></div>
         </div>
       </div>
 
-      <!-- WORKING TRANSFER MARKET TAB -->
       <div id="tab-transfers" class="tab-pane" style="display: none;">
         <div class="standings-card">
-          <div class="section-title-strip" style="margin-bottom: 14px;">
-            <h3>🛒 Domestic &amp; European Transfer Market</h3>
+          <div class="section-title-strip" style="margin-bottom: 12px;">
+            <h3>🛒 Transfer Market</h3>
             <span class="count" id="marketBudgetDisplay">Available: £24.5M</span>
           </div>
           
-          <div style="display: flex; gap: 10px; margin-bottom: 12px;">
+          <div style="display: flex; gap: 10px; margin-bottom: 10px;">
             <select class="tactics-select" id="filterMarketPos" onchange="renderTransfers()">
               <option value="ALL">All Positions</option>
               <option value="GK">Goalkeepers (GK)</option>
@@ -746,31 +833,30 @@
             <thead>
               <tr>
                 <th>Target Player</th>
-                <th>Position</th>
-                <th>Nat</th>
+                <th>Pos</th>
                 <th>Age</th>
                 <th>OVR</th>
-                <th>Asking Price</th>
+                <th>Price</th>
                 <th>Club</th>
-                <th style="width: 100px;">Action</th>
+                <th style="width: 90px;">Action</th>
               </tr>
             </thead>
             <tbody id="transferMarketBody"></tbody>
           </table>
 
-          <div class="section-title-strip" style="margin-top: 24px; margin-bottom: 14px;">
-            <h3>💼 Sell Squad Players (Raise Capital)</h3>
-            <span class="count">Cash In Reserves</span>
+          <div class="section-title-strip" style="margin-top: 20px; margin-bottom: 12px;">
+            <h3>💼 Sell Squad Players</h3>
+            <span class="count">Raise Funds</span>
           </div>
           <table class="fm-table">
             <thead>
               <tr>
                 <th>Squad Player</th>
-                <th>Natural Pos</th>
+                <th>Pos</th>
                 <th>Age</th>
                 <th>Rating</th>
-                <th>Est. Market Value</th>
-                <th style="width: 110px;">Action</th>
+                <th>Value</th>
+                <th style="width: 90px;">Action</th>
               </tr>
             </thead>
             <tbody id="squadSellListBody"></tbody>
@@ -778,7 +864,6 @@
         </div>
       </div>
 
-      <!-- STANDINGS TAB -->
       <div id="tab-standings" class="tab-pane" style="display: none;">
         <div class="standings-card">
           <div class="league-tabs">
@@ -791,14 +876,14 @@
           <table class="fm-table" id="leagueTableElem">
             <thead>
               <tr>
-                <th style="width: 40px;">Pos</th>
+                <th style="width: 35px;">Pos</th>
                 <th>Club</th>
-                <th style="width: 45px;">P</th>
-                <th style="width: 45px;">W</th>
-                <th style="width: 45px;">D</th>
-                <th style="width: 45px;">L</th>
-                <th style="width: 50px;">GD</th>
-                <th style="width: 55px;">PTS</th>
+                <th style="width: 35px;">P</th>
+                <th style="width: 35px;">W</th>
+                <th style="width: 35px;">D</th>
+                <th style="width: 35px;">L</th>
+                <th style="width: 40px;">GD</th>
+                <th style="width: 45px;">PTS</th>
               </tr>
             </thead>
             <tbody id="leagueTableBody"></tbody>
@@ -806,58 +891,87 @@
         </div>
       </div>
 
-      <!-- FACILITIES TAB -->
       <div id="tab-facilities" class="tab-pane" style="display: none;">
         <div class="standings-card">
-          <h3 style="margin-bottom: 12px;">Stadium Expansion &amp; Medical Facilities</h3>
-          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 14px;" id="facilitiesList"></div>
+          <h3 style="margin-bottom: 12px;">Ground Expansion &amp; Medical Facilities</h3>
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px;" id="facilitiesList"></div>
         </div>
       </div>
 
-      <!-- MANAGER OFFICE TAB -->
       <div id="tab-manager" class="tab-pane" style="display: none;">
         <div class="standings-card">
-          <h3 style="margin-bottom: 12px;">Manager Dossier &amp; Board Objectives</h3>
-          <div id="managerProfileSummary" style="font-size: 0.88rem; line-height: 1.6;"></div>
+          <h3 style="margin-bottom: 12px;">Manager Dossier &amp; Record</h3>
+          <div id="managerProfileSummary" style="font-size: 0.85rem; line-height: 1.6;"></div>
         </div>
       </div>
 
-      <!-- HONOURS TAB -->
       <div id="tab-honours" class="tab-pane" style="display: none;">
         <div class="standings-card">
-          <h3 style="margin-bottom: 12px;">Manager Trophy Room &amp; Monthly Accolades</h3>
-          <div id="honoursList" style="display: flex; gap: 16px; flex-wrap: wrap;"></div>
+          <h3 style="margin-bottom: 12px;">Trophy Room &amp; Accolades</h3>
+          <div id="honoursList" style="display: flex; gap: 12px; flex-wrap: wrap;"></div>
         </div>
       </div>
     </main>
   </div>
 
+  <!-- CAREER SETUP WIZARD MODAL (FIRST TIME ONBOARDING) -->
+  <div id="careerSetupModal" class="modal-backdrop" style="display: none; z-index: 2000;">
+    <div class="modal-window" style="width: 650px;">
+      <div class="modal-header">
+        <h2>⚽ Create Your Managerial Career</h2>
+      </div>
+
+      <p style="font-size: 0.82rem; color: var(--text-muted); margin-bottom: 14px;">
+        Welcome to Football League Manager. Configure your profile and select your starting club.
+      </p>
+
+      <label style="font-size: 0.75rem; text-transform: uppercase; font-weight: 800; color: var(--text-muted);">Manager Full Name</label>
+      <input type="text" class="wizard-input-box" id="wizardNameInput" placeholder="Enter your full name..." value="Manager">
+
+      <label style="font-size: 0.75rem; text-transform: uppercase; font-weight: 800; color: var(--text-muted);">Select Your Club</label>
+      <div class="league-tabs" style="margin-top: 6px;">
+        <button class="league-tab-btn active" onclick="filterWizardClubs(0)" id="wTab0">Premier League (20)</button>
+        <button class="league-tab-btn" onclick="filterWizardClubs(1)" id="wTab1">Championship (24)</button>
+        <button class="league-tab-btn" onclick="filterWizardClubs(2)" id="wTab2">League One (24)</button>
+        <button class="league-tab-btn" onclick="filterWizardClubs(3)" id="wTab3">League Two (24)</button>
+      </div>
+
+      <div id="wizardClubsGrid" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; max-height: 250px; overflow-y: auto; margin-bottom: 18px;"></div>
+
+      <button class="btn-advance-master" style="width: 100%; justify-content: center; padding: 12px;" onclick="confirmNewCareerSetup()">
+        🚀 BEGIN MANAGERIAL CAREER
+      </button>
+    </div>
+  </div>
+
+  <!-- END OF SEASON MODAL -->
   <div id="endSeasonModal" class="modal-backdrop" style="display: none;">
     <div class="modal-window">
       <div class="modal-header">
         <h2 id="eosTitle">🏆 End of Season Review</h2>
         <button class="modal-close" onclick="closeEosModal()">✕</button>
       </div>
-      <div id="eosSummaryContent" style="font-size: 0.85rem; line-height: 1.6; margin-bottom: 20px;"></div>
+      <div id="eosSummaryContent" style="font-size: 0.82rem; line-height: 1.5; margin-bottom: 16px;"></div>
       <button class="btn-advance-master" style="width: 100%; justify-content: center;" onclick="executeNextSeasonTransition()">
         🎉 COMMENCE NEXT SEASON
       </button>
     </div>
   </div>
 
+  <!-- CLUB SELECTOR MODAL -->
   <div id="clubSelectorModal" class="modal-backdrop" style="display: none;">
-    <div class="modal-window" style="width: 800px;">
+    <div class="modal-window">
       <div class="modal-header">
         <h2>Choose Your Club</h2>
         <button class="modal-close" onclick="closeClubSelectorModal()">✕</button>
       </div>
-      <div style="display: flex; gap: 8px; margin-bottom: 14px;">
-        <button class="league-tab-btn active" onclick="filterModalClubs(0)" id="mTab0">Premier League (20)</button>
-        <button class="league-tab-btn" onclick="filterModalClubs(1)" id="mTab1">Championship (24)</button>
-        <button class="league-tab-btn" onclick="filterModalClubs(2)" id="mTab2">League One (24)</button>
-        <button class="league-tab-btn" onclick="filterModalClubs(3)" id="mTab3">League Two (24)</button>
+      <div class="league-tabs">
+        <button class="league-tab-btn active" onclick="filterModalClubs(0)" id="mTab0">Premier League</button>
+        <button class="league-tab-btn" onclick="filterModalClubs(1)" id="mTab1">Championship</button>
+        <button class="league-tab-btn" onclick="filterModalClubs(2)" id="mTab2">League One</button>
+        <button class="league-tab-btn" onclick="filterModalClubs(3)" id="mTab3">League Two</button>
       </div>
-      <div id="modalClubsGrid" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; max-height: 400px; overflow-y: auto;"></div>
+      <div id="modalClubsGrid" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; max-height: 380px; overflow-y: auto;"></div>
     </div>
   </div>
 
@@ -866,7 +980,7 @@
   </footer>
 
   <script>
-    const STORAGE_KEY = 'FLM_CAREER_V2026_ROUNDROBIN';
+    const STORAGE_KEY = 'FLM_CAREER_V2026_MOBILE_V2';
 
     const FORMATIONS = {
       '4-3-3': [
@@ -940,8 +1054,8 @@
       { id: 'ARS', name: 'Arsenal', div: 0, budget: 65, stadium: 'Emirates Stadium', cap: 60704, col: '#ef4444' },
       { id: 'AVL', name: 'Aston Villa', div: 0, budget: 35, stadium: 'Villa Park', cap: 42682, col: '#9333ea' },
       { id: 'BOU', name: 'Bournemouth', div: 0, budget: 18, stadium: 'Vitality Stadium', cap: 11307, col: '#dc2626' },
-      { id: 'BRE', name: 'Brentford', div: 0, budget: 20, stadium: 'Gtech Community Stadium', cap: 17250, col: '#e11d48' },
-      { id: 'BHA', name: 'Brighton & Hove Albion', div: 0, budget: 30, stadium: 'Amex Stadium', cap: 31800, col: '#0284c7' },
+      { id: 'BRE', name: 'Brentford', div: 0, budget: 20, stadium: 'Gtech Stadium', cap: 17250, col: '#e11d48' },
+      { id: 'BHA', name: 'Brighton', div: 0, budget: 30, stadium: 'Amex Stadium', cap: 31800, col: '#0284c7' },
       { id: 'CHE', name: 'Chelsea', div: 0, budget: 75, stadium: 'Stamford Bridge', cap: 40341, col: '#2563eb' },
       { id: 'CRY', name: 'Crystal Palace', div: 0, budget: 22, stadium: 'Selhurst Park', cap: 25486, col: '#1d4ed8' },
       { id: 'EVE', name: 'Everton', div: 0, budget: 15, stadium: 'Hill Dickinson Stadium', cap: 52888, col: '#1e40af' },
@@ -952,16 +1066,16 @@
       { id: 'MCI', name: 'Manchester City', div: 0, budget: 95, stadium: 'Etihad Stadium', cap: 53400, col: '#38bdf8' },
       { id: 'MUN', name: 'Manchester United', div: 0, budget: 60, stadium: 'Old Trafford', cap: 74310, col: '#b91c1c' },
       { id: 'NEW', name: 'Newcastle United', div: 0, budget: 50, stadium: "St James' Park", cap: 52305, col: '#334155' },
-      { id: 'NFO', name: 'Nottingham Forest', div: 0, budget: 25, stadium: 'City Ground', cap: 30445, col: '#dc2626' },
+      { id: 'NFO', name: 'Nottm Forest', div: 0, budget: 25, stadium: 'City Ground', cap: 30445, col: '#dc2626' },
       { id: 'SOU', name: 'Southampton', div: 0, budget: 24, stadium: "St Mary's Stadium", cap: 32384, col: '#e11d48' },
-      { id: 'TOT', name: 'Tottenham Hotspur', div: 0, budget: 55, stadium: 'Tottenham Hotspur Stadium', cap: 62850, col: '#ffffff' },
+      { id: 'TOT', name: 'Tottenham Hotspur', div: 0, budget: 55, stadium: 'Tottenham Stadium', cap: 62850, col: '#ffffff' },
       { id: 'WHU', name: 'West Ham United', div: 0, budget: 35, stadium: 'London Stadium', cap: 62500, col: '#831843' },
-      { id: 'WOL', name: 'Wolverhampton Wanderers', div: 0, budget: 22, stadium: 'Molineux', cap: 31750, col: '#d97706' },
+      { id: 'WOL', name: 'Wolves', div: 0, budget: 22, stadium: 'Molineux', cap: 31750, col: '#d97706' },
 
-      { id: 'BLA', name: 'Blackburn Rovers', div: 1, budget: 7, stadium: 'Ewood Park', cap: 31367, col: '#2563eb' },
+      { id: 'BLA', name: 'Blackburn', div: 1, budget: 7, stadium: 'Ewood Park', cap: 31367, col: '#2563eb' },
       { id: 'BRC', name: 'Bristol City', div: 1, budget: 8, stadium: 'Ashton Gate', cap: 27000, col: '#dc2626' },
       { id: 'BUR', name: 'Burnley', div: 1, budget: 18, stadium: 'Turf Moor', cap: 21944, col: '#831843' },
-      { id: 'CAR', name: 'Cardiff City', div: 1, budget: 8, stadium: 'Cardiff City Stadium', cap: 33280, col: '#1d4ed8' },
+      { id: 'CAR', name: 'Cardiff City', div: 1, budget: 8, stadium: 'Cardiff Stadium', cap: 33280, col: '#1d4ed8' },
       { id: 'COV', name: 'Coventry City', div: 1, budget: 10, stadium: 'Coventry Arena', cap: 32609, col: '#38bdf8' },
       { id: 'DER', name: 'Derby County', div: 1, budget: 7, stadium: 'Pride Park', cap: 33597, col: '#ffffff' },
       { id: 'HUL', name: 'Hull City', div: 1, budget: 8, stadium: 'MKM Stadium', cap: 25586, col: '#f59e0b' },
@@ -974,51 +1088,51 @@
       { id: 'PLY', name: 'Plymouth Argyle', div: 1, budget: 6, stadium: 'Home Park', cap: 17900, col: '#065f46' },
       { id: 'POR', name: 'Portsmouth', div: 1, budget: 7, stadium: 'Fratton Park', cap: 20895, col: '#1d4ed8' },
       { id: 'PNE', name: 'Preston North End', div: 1, budget: 6, stadium: 'Deepdale', cap: 23408, col: '#ffffff' },
-      { id: 'QPR', name: 'Queens Park Rangers', div: 1, budget: 7, stadium: 'Loftus Road', cap: 18439, col: '#1e40af' },
+      { id: 'QPR', name: 'QPR', div: 1, budget: 7, stadium: 'Loftus Road', cap: 18439, col: '#1e40af' },
       { id: 'SHU', name: 'Sheffield United', div: 1, budget: 16, stadium: 'Bramall Lane', cap: 32050, col: '#dc2626' },
       { id: 'SHW', name: 'Sheffield Wednesday', div: 1, budget: 8, stadium: 'Hillsborough', cap: 39732, col: '#2563eb' },
       { id: 'STO', name: 'Stoke City', div: 1, budget: 8, stadium: 'bet365 Stadium', cap: 30089, col: '#dc2626' },
       { id: 'SUN', name: 'Sunderland', div: 1, budget: 14, stadium: 'Stadium of Light', cap: 49000, col: '#dc2626' },
       { id: 'SWA', name: 'Swansea City', div: 1, budget: 8, stadium: '.com Stadium', cap: 21088, col: '#ffffff' },
       { id: 'WAT', name: 'Watford', div: 1, budget: 9, stadium: 'Vicarage Road', cap: 22200, col: '#eab308' },
-      { id: 'WBA', name: 'West Bromwich Albion', div: 1, budget: 11, stadium: 'The Hawthorns', cap: 26850, col: '#1e3a8a' },
+      { id: 'WBA', name: 'West Brom', div: 1, budget: 11, stadium: 'The Hawthorns', cap: 26850, col: '#1e3a8a' },
 
       { id: 'BAR', name: 'Barnsley', div: 2, budget: 3.5, stadium: 'Oakwell', cap: 23287, col: '#dc2626' },
       { id: 'BIR', name: 'Birmingham City', div: 2, budget: 8.0, stadium: "St Andrew's", cap: 29409, col: '#1d4ed8' },
       { id: 'BKP', name: 'Blackpool', div: 2, budget: 3.0, stadium: 'Bloomfield Road', cap: 16616, col: '#ea580c' },
-      { id: 'BOL', name: 'Bolton Wanderers', div: 2, budget: 4.0, stadium: 'Toughsheet Stadium', cap: 28723, col: '#1e3a8a' },
+      { id: 'BOL', name: 'Bolton', div: 2, budget: 4.0, stadium: 'Toughsheet Stadium', cap: 28723, col: '#1e3a8a' },
       { id: 'BRR', name: 'Bristol Rovers', div: 2, budget: 2.5, stadium: 'Memorial Stadium', cap: 12011, col: '#2563eb' },
       { id: 'BUR1', name: 'Burton Albion', div: 2, budget: 2.0, stadium: 'Pirelli Stadium', cap: 6912, col: '#facc15' },
       { id: 'CAM', name: 'Cambridge United', div: 2, budget: 2.0, stadium: 'Abbey Stadium', cap: 7937, col: '#f59e0b' },
-      { id: 'CHA', name: 'Charlton Athletic', div: 2, budget: 3.5, stadium: 'The Valley', cap: 27111, col: '#dc2626' },
+      { id: 'CHA', name: 'Charlton', div: 2, budget: 3.5, stadium: 'The Valley', cap: 27111, col: '#dc2626' },
       { id: 'CRA', name: 'Crawley Town', div: 2, budget: 1.8, stadium: 'Broadfield Stadium', cap: 6134, col: '#dc2626' },
       { id: 'EXE', name: 'Exeter City', div: 2, budget: 2.0, stadium: 'St James Park', cap: 8720, col: '#dc2626' },
-      { id: 'HUD', name: 'Huddersfield Town', div: 2, budget: 4.5, stadium: 'John Smith Stadium', cap: 24121, col: '#38bdf8' },
+      { id: 'HUD', name: 'Huddersfield', div: 2, budget: 4.5, stadium: 'John Smith Stadium', cap: 24121, col: '#38bdf8' },
       { id: 'LEY', name: 'Leyton Orient', div: 2, budget: 2.5, stadium: 'Brisbane Road', cap: 9271, col: '#dc2626' },
       { id: 'LIN', name: 'Lincoln City', div: 2, budget: 2.8, stadium: 'LNER Stadium', cap: 10669, col: '#dc2626' },
       { id: 'MAN', name: 'Mansfield Town', div: 2, budget: 2.2, stadium: 'Field Mill', cap: 9186, col: '#eab308' },
-      { id: 'NOR1', name: 'Northampton Town', div: 2, budget: 2.0, stadium: 'Sixfields Stadium', cap: 7798, col: '#831843' },
-      { id: 'PET', name: 'Peterborough United', div: 2, budget: 3.5, stadium: 'London Road', cap: 15314, col: '#2563eb' },
+      { id: 'NOR1', name: 'Northampton', div: 2, budget: 2.0, stadium: 'Sixfields Stadium', cap: 7798, col: '#831843' },
+      { id: 'PET', name: 'Peterborough', div: 2, budget: 3.5, stadium: 'London Road', cap: 15314, col: '#2563eb' },
       { id: 'REA', name: 'Reading', div: 2, budget: 3.0, stadium: 'SCL Stadium', cap: 24161, col: '#1e40af' },
-      { id: 'ROT', name: 'Rotherham United', div: 2, budget: 3.5, stadium: 'New York Stadium', cap: 12021, col: '#dc2626' },
-      { id: 'SHR', name: 'Shrewsbury Town', div: 2, budget: 2.0, stadium: 'New Meadow', cap: 9875, col: '#1d4ed8' },
+      { id: 'ROT', name: 'Rotherham', div: 2, budget: 3.5, stadium: 'New York Stadium', cap: 12021, col: '#dc2626' },
+      { id: 'SHR', name: 'Shrewsbury', div: 2, budget: 2.0, stadium: 'New Meadow', cap: 9875, col: '#1d4ed8' },
       { id: 'STE', name: 'Stevenage', div: 2, budget: 2.2, stadium: 'Broadhall Way', cap: 7800, col: '#dc2626' },
-      { id: 'STK', name: 'Stockport County', div: 2, budget: 3.0, stadium: 'Edgeley Park', cap: 10852, col: '#2563eb' },
-      { id: 'WIG', name: 'Wigan Athletic', div: 2, budget: 3.2, stadium: 'Brick Community Stadium', cap: 25138, col: '#1d4ed8' },
+      { id: 'STK', name: 'Stockport', div: 2, budget: 3.0, stadium: 'Edgeley Park', cap: 10852, col: '#2563eb' },
+      { id: 'WIG', name: 'Wigan Athletic', div: 2, budget: 3.2, stadium: 'Brick Stadium', cap: 25138, col: '#1d4ed8' },
       { id: 'WRX', name: 'Wrexham', div: 2, budget: 5.5, stadium: 'Racecourse Ground', cap: 12600, col: '#dc2626' },
-      { id: 'WYC', name: 'Wycombe Wanderers', div: 2, budget: 2.5, stadium: 'Adams Park', cap: 10137, col: '#38bdf8' },
+      { id: 'WYC', name: 'Wycombe', div: 2, budget: 2.5, stadium: 'Adams Park', cap: 10137, col: '#38bdf8' },
 
-      { id: 'ACC', name: 'Accrington Stanley', div: 3, budget: 1.2, stadium: 'Wham Stadium', cap: 5450, col: '#dc2626' },
+      { id: 'ACC', name: 'Accrington', div: 3, budget: 1.2, stadium: 'Wham Stadium', cap: 5450, col: '#dc2626' },
       { id: 'WIM', name: 'AFC Wimbledon', div: 3, budget: 1.5, stadium: 'Plough Lane', cap: 9215, col: '#1d4ed8' },
       { id: 'BAR1', name: 'Barrow', div: 3, budget: 1.2, stadium: 'Holker Street', cap: 5045, col: '#2563eb' },
       { id: 'BRA', name: 'Bradford City', div: 3, budget: 2.2, stadium: 'Valley Parade', cap: 25136, col: '#831843' },
       { id: 'BRO', name: 'Bromley', div: 3, budget: 1.0, stadium: 'Hayes Lane', cap: 5110, col: '#ffffff' },
       { id: 'CAR1', name: 'Carlisle United', div: 3, budget: 1.5, stadium: 'Brunton Park', cap: 17949, col: '#1e40af' },
-      { id: 'CHE1', name: 'Cheltenham Town', div: 3, budget: 1.3, stadium: 'Whaddon Road', cap: 7066, col: '#dc2626' },
+      { id: 'CHE1', name: 'Cheltenham', div: 3, budget: 1.3, stadium: 'Whaddon Road', cap: 7066, col: '#dc2626' },
       { id: 'CHF', name: 'Chesterfield', div: 3, budget: 2.0, stadium: 'SMH Stadium', cap: 10504, col: '#1d4ed8' },
-      { id: 'COL', name: 'Colchester United', div: 3, budget: 1.4, stadium: 'Colchester Stadium', cap: 10105, col: '#2563eb' },
+      { id: 'COL', name: 'Colchester', div: 3, budget: 1.4, stadium: 'Colchester Stadium', cap: 10105, col: '#2563eb' },
       { id: 'CRE', name: 'Crewe Alexandra', div: 3, budget: 1.4, stadium: 'Gresty Road', cap: 10153, col: '#dc2626' },
-      { id: 'DON', name: 'Doncaster Rovers', div: 3, budget: 1.8, stadium: 'Eco-Power Stadium', cap: 15231, col: '#dc2626' },
+      { id: 'DON', name: 'Doncaster', div: 3, budget: 1.8, stadium: 'Eco-Power Stadium', cap: 15231, col: '#dc2626' },
       { id: 'FLE', name: 'Fleetwood Town', div: 3, budget: 1.4, stadium: 'Highbury Stadium', cap: 5472, col: '#dc2626' },
       { id: 'GIL', name: 'Gillingham', div: 3, budget: 1.7, stadium: 'Priestfield Stadium', cap: 11582, col: '#1d4ed8' },
       { id: 'GRI', name: 'Grimsby Town', div: 3, budget: 1.3, stadium: 'Blundell Park', cap: 9052, col: '#334155' },
@@ -1124,59 +1238,100 @@
       });
     }
 
-    let state = {
-      seasonYear: 2026,
-      currentWeek: 1,
-      totalWeeks: 38,
-      userClubId: 'SOU',
-      currentFormation: '4-3-3',
-      audioEnabled: true,
-      activeStandingsTab: 0,
-      clubs: [],
-      marketPlayers: [],
-      standings: {},
-      newsFeed: [],
-      manager: {
-        name: 'Jason Adams',
-        confidence: 82,
-        matches: 0,
-        wins: 0,
-        draws: 0,
-        losses: 0,
-        motmAwards: 0
-      },
-      fixtures: []
-    };
-
+    let state = null;
     let selectedPlayerSwapId = null;
     let matchSimInterval = null;
+    let wizardChosenClubId = 'ARS';
 
     function initGame() {
       const saved = localStorage.getItem(STORAGE_KEY);
       if (saved) {
         try {
           state = JSON.parse(saved);
+          ensureAllSquadsHydrated();
+          if (!state.newsFeed || state.newsFeed.length === 0) generateInitialNews();
+          renderAll();
         } catch(e) {
-          setupFreshState();
+          openCareerSetupWizard();
         }
       } else {
-        setupFreshState();
+        openCareerSetupWizard();
       }
-
-      ensureAllSquadsHydrated();
-      if (!state.newsFeed || state.newsFeed.length === 0) {
-        generateInitialNews();
-      }
-      saveGame();
-      renderAll();
     }
 
-    function setupFreshState() {
-      state.clubs = JSON.parse(JSON.stringify(CLUBS_DATABASE));
-      state.marketPlayers = JSON.parse(JSON.stringify(TRANSFER_SCOUT_POOL));
-      state.currentWeek = 1;
-      state.standings = {};
-      state.newsFeed = [];
+    function openCareerSetupWizard() {
+      wizardChosenClubId = 'ARS';
+      filterWizardClubs(0);
+      document.getElementById('careerSetupModal').style.display = 'flex';
+    }
+
+    function filterWizardClubs(divIndex) {
+      for (let i = 0; i <= 3; i++) {
+        const btn = document.getElementById(`wTab${i}`);
+        if (btn) btn.className = `league-tab-btn ${i === divIndex ? 'active' : ''}`;
+      }
+
+      const grid = document.getElementById('wizardClubsGrid');
+      grid.innerHTML = '';
+
+      const clubs = CLUBS_DATABASE.filter(c => c.div === divIndex);
+      clubs.forEach(c => {
+        const card = document.createElement('div');
+        card.className = `club-select-card ${c.id === wizardChosenClubId ? 'selected' : ''}`;
+        card.onclick = () => {
+          wizardChosenClubId = c.id;
+          filterWizardClubs(divIndex);
+        };
+
+        card.innerHTML = `
+          <div style="font-weight:800; font-size:0.85rem;">${c.name}</div>
+          <div style="font-size:0.7rem; color:var(--text-muted);">${c.stadium}</div>
+          <div style="font-size:0.72rem; color:var(--accent);">Budget: £${c.budget}M</div>
+        `;
+        grid.appendChild(card);
+      });
+    }
+
+    function confirmNewCareerSetup() {
+      const inputName = document.getElementById('wizardNameInput').value.trim() || 'Manager';
+      setupFreshState(inputName, wizardChosenClubId);
+      document.getElementById('careerSetupModal').style.display = 'none';
+      saveGame();
+      renderAll();
+      playSound('whistle');
+    }
+
+    function promptNewCareer() {
+      if (confirm("Start a completely new career? Any unsaved progress will be reset.")) {
+        localStorage.removeItem(STORAGE_KEY);
+        openCareerSetupWizard();
+      }
+    }
+
+    function setupFreshState(managerName = 'Manager', clubId = 'ARS') {
+      state = {
+        seasonYear: 2026,
+        currentWeek: 1,
+        totalWeeks: 38,
+        userClubId: clubId,
+        currentFormation: '4-3-3',
+        audioEnabled: true,
+        activeStandingsTab: 0,
+        clubs: JSON.parse(JSON.stringify(CLUBS_DATABASE)),
+        marketPlayers: JSON.parse(JSON.stringify(TRANSFER_SCOUT_POOL)),
+        standings: {},
+        newsFeed: [],
+        manager: {
+          name: managerName,
+          confidence: 82,
+          matches: 0,
+          wins: 0,
+          draws: 0,
+          losses: 0,
+          motmAwards: 0
+        },
+        fixtures: []
+      };
 
       for (let div = 0; div <= 3; div++) {
         state.standings[div] = state.clubs
@@ -1208,6 +1363,7 @@
     }
 
     function ensureAllSquadsHydrated() {
+      if (!state) return;
       state.clubs.forEach(c => {
         if (!c.players || c.players.length < 18) {
           c.players = (c.id === 'SOU') ? JSON.parse(JSON.stringify(SOU_REAL_ROSTER)) : generateProceduralSquad(c);
@@ -1227,17 +1383,8 @@
     }
 
     function saveGame() {
+      if (!state) return;
       localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
-    }
-
-    function resetToFreshSeason() {
-      if (confirm("Reset current career and start fresh for the 2026/27 season?")) {
-        localStorage.removeItem(STORAGE_KEY);
-        setupFreshState();
-        saveGame();
-        renderAll();
-        playSound('whistle');
-      }
     }
 
     function getCurrentUserClub() {
@@ -1262,20 +1409,14 @@
       return { att: baseAtt, mid: baseMid, def: baseDef, ovr: overall };
     }
 
-    /* =====================================================================
-       MATHEMATICAL ROUND-ROBIN TOURNAMENT ALGORITHM (NO DUPLICATES)
-       ===================================================================== */
     function generateTrueRoundRobinFixtures() {
       state.fixtures = [];
-
-      // Generate round robin schedule for each division
       const divSchedules = {};
       for (let div = 0; div <= 3; div++) {
         const teamIds = state.clubs.filter(c => c.div === div).map(c => c.id);
         divSchedules[div] = buildRoundRobinSchedule(teamIds);
       }
 
-      // Combine into 38 synchronized fixture weeks
       for (let w = 1; w <= state.totalWeeks; w++) {
         const weekIndex = w - 1;
         const weekMatches = [];
@@ -1295,7 +1436,6 @@
             });
           }
         }
-
         state.fixtures.push({ week: w, matches: weekMatches });
       }
     }
@@ -1305,13 +1445,11 @@
       const teams = [...teamsList];
       const rounds = [];
 
-      // First leg (n - 1 rounds): Every team plays every other team once
       for (let r = 0; r < n - 1; r++) {
         const roundPairings = [];
         for (let i = 0; i < n / 2; i++) {
           const home = teams[i];
           const away = teams[n - 1 - i];
-          // Alternate home and away to maintain balance
           if (i === 0 && r % 2 === 1) {
             roundPairings.push({ home: away, away: home });
           } else {
@@ -1319,20 +1457,14 @@
           }
         }
         rounds.push(roundPairings);
-        // Circle rotation: keep teams[0] pinned, rotate remaining
         const last = teams.pop();
         teams.splice(1, 0, last);
       }
 
-      // Second leg: Reverse fixtures (swapped home & away)
       const secondLeg = rounds.map(r => r.map(m => ({ home: m.away, away: m.home })));
-      const fullCalendar = [...rounds, ...secondLeg];
-      return fullCalendar.slice(0, 38);
+      return [...rounds, ...secondLeg].slice(0, 38);
     }
 
-    /* =====================================================================
-       TACTICS ENGINE
-       ===================================================================== */
     function changeFormation(newForm) {
       if (!FORMATIONS[newForm]) return;
       state.currentFormation = newForm;
@@ -1341,9 +1473,7 @@
       const starters = club.players.filter(p => p.starter);
 
       starters.forEach((p, idx) => {
-        if (template[idx]) {
-          p.role = template[idx].duty;
-        }
+        if (template[idx]) p.role = template[idx].duty;
       });
 
       saveGame();
@@ -1360,23 +1490,15 @@
       const pool = [...club.players].sort((a, b) => b.ovr - a.ovr);
       const picked = [];
 
-      // Always pick natural GK for position 1
       const gkIndex = pool.findIndex(p => p.naturalPos === 'GK');
-      if (gkIndex !== -1) {
-        picked.push(pool.splice(gkIndex, 1)[0]);
-      } else {
-        picked.push(pool.shift());
-      }
+      if (gkIndex !== -1) picked.push(pool.splice(gkIndex, 1)[0]);
+      else picked.push(pool.shift());
 
-      // Pick best outfield players matching tactical formation slots
       for (let i = 1; i < 11; i++) {
         const needed = template[i] ? template[i].posType : 'MID';
         const matchIdx = pool.findIndex(p => p.naturalPos === needed);
-        if (matchIdx !== -1) {
-          picked.push(pool.splice(matchIdx, 1)[0]);
-        } else {
-          picked.push(pool.shift());
-        }
+        if (matchIdx !== -1) picked.push(pool.splice(matchIdx, 1)[0]);
+        else picked.push(pool.shift());
       }
 
       picked.forEach((p, idx) => {
@@ -1401,7 +1523,7 @@
         const p = club.players.find(x => x.id === playerId);
         const banner = document.getElementById('swapNotificationBar');
         const text = document.getElementById('swapNotificationText');
-        text.innerHTML = `🔄 <b>${p.name} (${p.naturalPos})</b> SELECTED — Click another player to swap!`;
+        text.innerHTML = `🔄 <b>${p.name} (${p.naturalPos})</b> SELECTED — Tap another player to swap!`;
         banner.style.display = 'flex';
         renderTactics();
         playSound('click');
@@ -1498,13 +1620,12 @@
         tr.innerHTML = `
           <td><span class="badge-pick pick-starter">${assignedPos}</span></td>
           <td><span class="role-badge">${p.role}</span></td>
-          <td><b>${p.name}</b> <span style="font-size:0.7rem; color:var(--text-muted);">(${p.naturalPos})</span></td>
-          <td><span style="color:var(--text-muted); font-size:0.75rem;">${p.nat}</span></td>
+          <td><b>${p.name}</b> <span style="font-size:0.68rem; color:var(--text-muted);">(${p.naturalPos})</span></td>
           <td>${p.age}</td>
           <td><b style="color:var(--gold);">${p.ovr}</b></td>
           <td>
             <div class="condition-bar"><div class="condition-fill" style="width:${p.con}%; background:#10b981;"></div></div>
-            <span style="font-size:0.75rem;">${p.con}%</span>
+            <span style="font-size:0.72rem;">${p.con}%</span>
           </td>
           <td>
             <button class="btn-swap-pill" onclick="handlePlayerSelect('${p.id}')">
@@ -1529,13 +1650,12 @@
         tr.innerHTML = `
           <td><span class="badge-pick pick-sub">S${idx + 1}</span></td>
           <td><span class="role-badge" style="background:#475569;">${p.role}</span></td>
-          <td><b>${p.name}</b> <span style="font-size:0.7rem; color:var(--text-muted);">(${p.naturalPos})</span></td>
-          <td><span style="color:var(--text-muted); font-size:0.75rem;">${p.nat}</span></td>
+          <td><b>${p.name}</b> <span style="font-size:0.68rem; color:var(--text-muted);">(${p.naturalPos})</span></td>
           <td>${p.age}</td>
           <td><b style="color:var(--gold);">${p.ovr}</b></td>
           <td>
             <div class="condition-bar"><div class="condition-fill" style="width:${p.con}%; background:#38bdf8;"></div></div>
-            <span style="font-size:0.75rem;">${p.con}%</span>
+            <span style="font-size:0.72rem;">${p.con}%</span>
           </td>
           <td>
             <button class="btn-swap-pill" onclick="handlePlayerSelect('${p.id}')">
@@ -1547,23 +1667,20 @@
       });
     }
 
-    /* =====================================================================
-       NEWS ENGINE (LEAGUE PRESS & BREAKING BULLETINS)
-       ===================================================================== */
     function generateInitialNews() {
       state.newsFeed = [
         {
           tag: 'Season Kick-Off',
           breaking: true,
           headline: `New Season Underway: 92 Clubs Battle For Glory`,
-          body: `The 2026/27 campaign officially begins across the Premier League, Championship, League One, and League Two. Managers face mounting pressure as boardrooms set high expectations.`,
+          body: `The 2026/27 campaign officially begins across the English Football Pyramid. Managers face pressure as boards demand results.`,
           time: 'Week 1'
         },
         {
-          tag: 'Tactical Briefing',
+          tag: 'Tactics Briefing',
           breaking: false,
-          headline: `${state.manager.name} Unveils Tactics at ${getCurrentUserClub().name}`,
-          body: `Supporters look forward to seeing how the gaffer sets up. Tactical discipline and squad depth will be key over a grueling 38-game schedule.`,
+          headline: `${state.manager.name} Outlines Vision at ${getCurrentUserClub().name}`,
+          body: `Supporters look forward to seeing how the gaffer sets up. Tactical discipline and squad depth will be vital over 38 matches.`,
           time: 'Week 1'
         }
       ];
@@ -1599,14 +1716,10 @@
       });
     }
 
-    /* =====================================================================
-       TWO-WAY WORKING TRANSFER MARKET (BUY & SELL)
-       ===================================================================== */
     function renderTransfers() {
       const club = getCurrentUserClub();
       document.getElementById('marketBudgetDisplay').innerText = `Available: £${club.budget.toFixed(1)}M`;
 
-      // 1. RENDER BUY TARGETS
       const filterPos = document.getElementById('filterMarketPos').value;
       const tbody = document.getElementById('transferMarketBody');
       tbody.innerHTML = '';
@@ -1620,21 +1733,19 @@
         tr.innerHTML = `
           <td><b>${p.name}</b></td>
           <td><span class="role-badge">${p.naturalPos}</span></td>
-          <td>${p.nat}</td>
           <td>${p.age}</td>
           <td><b style="color:var(--gold);">${p.ovr}</b></td>
           <td><b>£${p.price.toFixed(1)}M</b></td>
           <td>${p.club}</td>
           <td>
-            <button class="btn-swap-pill" style="${canAfford ? 'background:#059669; color:#fff;' : 'opacity:0.4; cursor:not-allowed;'}" onclick="buyMarketPlayer('${p.id}')">
-              ${canAfford ? 'Sign (£' + p.price.toFixed(1) + 'M)' : 'No Funds'}
+            <button class="btn-swap-pill" style="${canAfford ? 'background:#059669; color:#fff;' : 'opacity:0.4;'}" onclick="buyMarketPlayer('${p.id}')">
+              ${canAfford ? 'Sign' : 'No Funds'}
             </button>
           </td>
         `;
         tbody.appendChild(tr);
       });
 
-      // 2. RENDER SQUAD FOR SALE
       const sellBody = document.getElementById('squadSellListBody');
       sellBody.innerHTML = '';
 
@@ -1642,14 +1753,14 @@
         const tr = document.createElement('tr');
         tr.className = 'fm-row';
         tr.innerHTML = `
-          <td><b>${p.name}</b> ${p.starter ? '<span style="font-size:0.7rem; color:#10b981;">[Starter]</span>' : ''}</td>
+          <td><b>${p.name}</b> ${p.starter ? '<span style="font-size:0.65rem; color:#10b981;">[XI]</span>' : ''}</td>
           <td><span class="role-badge" style="background:#475569;">${p.naturalPos}</span></td>
           <td>${p.age}</td>
           <td><b style="color:var(--gold);">${p.ovr}</b></td>
           <td><b style="color:#34d399;">£${p.val.toFixed(1)}M</b></td>
           <td>
             <button class="btn-sell-pill" onclick="sellSquadPlayer('${p.id}')">
-              Sell (£${p.val.toFixed(1)}M)
+              Sell
             </button>
           </td>
         `;
@@ -1665,15 +1776,15 @@
       const player = state.marketPlayers[pIdx];
 
       if (club.budget < player.price) {
-        alert("Insufficient transfer budget to complete this signing.");
+        alert("Insufficient transfer budget.");
         return;
       }
 
-      if (confirm(`Confirm signing of ${player.name} from ${player.club} for £${player.price.toFixed(1)}M?`)) {
+      if (confirm(`Sign ${player.name} from ${player.club} for £${player.price.toFixed(1)}M?`)) {
         club.budget -= player.price;
         state.marketPlayers.splice(pIdx, 1);
 
-        const newSquadMember = {
+        const newPlayer = {
           id: `trans_${Date.now()}_${Math.floor(Math.random() * 999)}`,
           name: player.name,
           naturalPos: player.naturalPos,
@@ -1686,12 +1797,12 @@
           val: player.price
         };
 
-        club.players.push(newSquadMember);
+        club.players.push(newPlayer);
 
         addNewsStory(
           'Transfer Done Deal',
           `DONE DEAL: ${club.name} Confirm £${player.price.toFixed(1)}M Swoop for ${player.name}!`,
-          `${club.name} have officially announced the capture of ${player.name} from ${player.club}. The manager hailed the marquee acquisition as a statement of intent.`,
+          `${club.name} have announced the capture of ${player.name} from ${player.club}.`,
           true
         );
 
@@ -1699,14 +1810,13 @@
         renderAll();
         renderTransfers();
         playSound('cheer');
-        alert(`Success! ${player.name} has signed for ${club.name}!`);
       }
     }
 
     function sellSquadPlayer(playerId) {
       const club = getCurrentUserClub();
       if (club.players.length <= 13) {
-        alert("Squad size too small! You cannot sell any more players without signing replacements first.");
+        alert("Squad size too small! Sign replacements first.");
         return;
       }
 
@@ -1718,7 +1828,6 @@
         club.budget += player.val;
         club.players.splice(pIdx, 1);
 
-        // Ensure we maintain at least 11 starters
         const startersCount = club.players.filter(p => p.starter).length;
         if (startersCount < 11) {
           const nextInLine = club.players.find(p => !p.starter);
@@ -1727,8 +1836,8 @@
 
         addNewsStory(
           'Player Departure',
-          `DEPARTURE: ${player.name} Departs ${club.name} in £${player.val.toFixed(1)}M Deal`,
-          `${club.name} have sanctioned the departure of ${player.name} for an agreed £${player.val.toFixed(1)}M. The funds will be reinvested into the first-team transfer budget.`,
+          `DEPARTURE: ${player.name} Leaves ${club.name} in £${player.val.toFixed(1)}M Deal`,
+          `${club.name} have sanctioned the departure of ${player.name} for £${player.val.toFixed(1)}M.`,
           false
         );
 
@@ -1736,14 +1845,11 @@
         renderAll();
         renderTransfers();
         playSound('whistle');
-        alert(`Sold! £${player.val.toFixed(1)}M added to your transfer budget.`);
       }
     }
 
-    /* =====================================================================
-       ADVANCE WEEK & FIXTURE ENGINE
-       ===================================================================== */
     function advanceMasterWeek() {
+      if (!state) return;
       if (state.currentWeek >= state.totalWeeks) {
         showEndSeasonGala();
         return;
@@ -1753,9 +1859,7 @@
       generateWeeklyNewsStory();
       state.currentWeek++;
 
-      if (state.currentWeek % 4 === 0) {
-        evaluateManagerOfMonth();
-      }
+      if (state.currentWeek % 4 === 0) evaluateManagerOfMonth();
 
       saveGame();
       renderAll();
@@ -1810,21 +1914,21 @@
           addNewsStory(
             'Match Reaction',
             `Victory: ${userClub.name} Triumph Over ${oppClub.name} (${myScore}-${oppScore})`,
-            `${userClub.name} delivered a masterclass performance to pick up 3 crucial league points. The manager was full of praise for the squad's tactical execution.`,
+            `${userClub.name} delivered a confident display to secure 3 crucial points.`,
             false
           );
         } else if (myScore < oppScore) {
           addNewsStory(
             'Defeat Reaction',
             `Setback: ${userClub.name} Fall to ${oppClub.name} (${myScore}-${oppScore})`,
-            `Questions were raised after ${userClub.name} slipped to defeat. The gaffer insisted there will be no panic in the dressing room.`,
+            `Questions were raised after ${userClub.name} slipped to defeat against ${oppClub.name}.`,
             false
           );
         } else {
           addNewsStory(
             'Match Reaction',
-            `Stalemate: Points Shared in ${userClub.name} vs ${oppClub.name} Clash (${myScore}-${oppScore})`,
-            `Neither side could find a decisive winner in an entertaining contest that leaves both teams reflecting on missed chances.`,
+            `Points Shared: ${userClub.name} Draw Against ${oppClub.name} (${myScore}-${oppScore})`,
+            `Neither side could find a decisive late winner in a tight contest.`,
             false
           );
         }
@@ -1892,7 +1996,7 @@
       }
 
       if (userMatch.played) {
-        alert("This week's match has already been completed.");
+        alert("Match already played this week.");
         return;
       }
 
@@ -1920,11 +2024,11 @@
           const scoringHome = (Math.random() * (homeStats.att + 4) > Math.random() * awayStats.def);
           if (scoringHome) {
             hScore++;
-            feed.innerHTML = `<div class="comm-line goal">⚽ ${min}' GOAL! ${homeClub.name} find the net! (${hScore}-${aScore})</div>` + feed.innerHTML;
+            feed.innerHTML = `<div class="comm-line goal">⚽ ${min}' GOAL! ${homeClub.name} score! (${hScore}-${aScore})</div>` + feed.innerHTML;
             playSound('goal');
           } else {
             aScore++;
-            feed.innerHTML = `<div class="comm-line goal">⚽ ${min}' GOAL! ${awayClub.name} score on the break! (${hScore}-${aScore})</div>` + feed.innerHTML;
+            feed.innerHTML = `<div class="comm-line goal">⚽ ${min}' GOAL! ${awayClub.name} hit on the break! (${hScore}-${aScore})</div>` + feed.innerHTML;
             playSound('goal');
           }
           document.getElementById('sbScore').innerText = `${hScore} - ${aScore}`;
@@ -1933,7 +2037,7 @@
         if (min >= 90) {
           clearInterval(matchSimInterval);
           document.getElementById('sbMinute').innerText = `FULL TIME`;
-          feed.innerHTML = `<div class="comm-line" style="font-weight:800;">🏁 90' Full-time whistle blows! Final score: ${homeClub.name} ${hScore} - ${aScore} ${awayClub.name}.</div>` + feed.innerHTML;
+          feed.innerHTML = `<div class="comm-line" style="font-weight:800;">🏁 90' Full-time whistle blows! Final: ${homeClub.name} ${hScore} - ${aScore} ${awayClub.name}.</div>` + feed.innerHTML;
           btn.disabled = false;
 
           userMatch.homeGoals = hScore;
@@ -2011,10 +2115,10 @@
         addNewsStory(
           'Award Winner',
           `OFFICIAL: ${state.manager.name} Named Manager of the Month!`,
-          `Following an exceptional run of form with ${userClub.name}, ${state.manager.name} has collected the prestigious Manager of the Month trophy.`,
+          `Following a fine run with ${userClub.name}, ${state.manager.name} has picked up the award.`,
           true
         );
-        alert(`🏆 ACCOLADE: Congratulations ${state.manager.name}! You have won MANAGER OF THE MONTH for ${userClub.name}!`);
+        alert(`🏆 ACCOLADE: Congratulations ${state.manager.name}! You won MANAGER OF THE MONTH for ${userClub.name}!`);
         playSound('cheer');
       }
     }
@@ -2029,15 +2133,15 @@
       }
 
       content.innerHTML = `
-        <div style="background:var(--bg-panel); padding:14px; border-radius:8px; margin-bottom:12px;">
-          <h3 style="color:var(--gold); margin-bottom:6px;">👑 Champions Crowned</h3>
+        <div style="background:var(--bg-panel); padding:12px; border-radius:8px; margin-bottom:10px;">
+          <h3 style="color:var(--gold); margin-bottom:4px;">👑 Champions</h3>
           <p><b>Premier League:</b> ${sorted[0][0].name}</p>
           <p><b>Championship:</b> ${sorted[1][0].name}</p>
           <p><b>League One:</b> ${sorted[2][0].name}</p>
           <p><b>League Two:</b> ${sorted[3][0].name}</p>
         </div>
-        <div style="background:var(--bg-panel); padding:14px; border-radius:8px;">
-          <h3 style="color:#38bdf8; margin-bottom:6px;">📈 Promotion &amp; Relegation</h3>
+        <div style="background:var(--bg-panel); padding:12px; border-radius:8px;">
+          <h3 style="color:#38bdf8; margin-bottom:4px;">📈 Movement</h3>
           <p><b>Promoted to Prem:</b> ${sorted[1][0].name}, ${sorted[1][1].name}, ${sorted[1][2].name}</p>
           <p><b>Relegated to Champ:</b> ${sorted[0][17].name}, ${sorted[0][18].name}, ${sorted[0][19].name}</p>
         </div>
@@ -2128,7 +2232,7 @@
       const clubs = state.clubs.filter(c => c.div === divIndex);
       clubs.forEach(c => {
         const card = document.createElement('div');
-        card.style.cssText = 'background:var(--bg-panel); padding:10px; border-radius:8px; cursor:pointer; border:1px solid var(--border);';
+        card.style.cssText = 'background:var(--bg-panel); padding:8px 10px; border-radius:8px; cursor:pointer; border:1px solid var(--border);';
         card.onclick = () => {
           state.userClubId = c.id;
           closeClubSelectorModal();
@@ -2139,9 +2243,9 @@
         };
 
         card.innerHTML = `
-          <div style="font-weight:800; font-size:0.9rem;">${c.name}</div>
-          <div style="font-size:0.75rem; color:var(--text-muted);">${c.stadium}</div>
-          <div style="font-size:0.75rem; color:var(--accent);">Budget: £${c.budget}M</div>
+          <div style="font-weight:800; font-size:0.85rem;">${c.name}</div>
+          <div style="font-size:0.72rem; color:var(--text-muted);">${c.stadium}</div>
+          <div style="font-size:0.72rem; color:var(--accent);">Budget: £${c.budget}M</div>
         `;
         grid.appendChild(card);
       });
@@ -2180,9 +2284,9 @@
       const divNames = ['Premier League', 'Championship', 'League One', 'League Two'];
 
       document.getElementById('headerDivName').innerText = divNames[club.div];
-      document.getElementById('headerWeek').innerText = `Week ${state.currentWeek} of ${state.totalWeeks}`;
-      document.getElementById('headerSeasonTag').innerText = `${state.seasonYear}/${(state.seasonYear + 1).toString().slice(-2)} Career • English Football Pyramid`;
-      document.getElementById('headerConfidence').innerText = `${state.manager.confidence}% • Stable`;
+      document.getElementById('headerWeek').innerText = `Wk ${state.currentWeek} / ${state.totalWeeks}`;
+      document.getElementById('headerSeasonTag').innerText = `${state.seasonYear}/${(state.seasonYear + 1).toString().slice(-2)} Career • English Pyramid`;
+      document.getElementById('headerConfidence').innerText = `${state.manager.confidence}%`;
       document.getElementById('headerBudget').innerText = `£${club.budget.toFixed(1)}M`;
 
       document.getElementById('bannerBadge').innerText = club.id;
@@ -2217,8 +2321,8 @@
           const h = state.clubs.find(c => c.id === m.home);
           const a = state.clubs.find(c => c.id === m.away);
           const line = document.createElement('div');
-          line.style.cssText = 'display:flex; justify-content:space-between; padding:6px 8px; background:var(--bg-panel); border-radius:6px;';
-          line.innerHTML = `<span>${h.name}</span> <b>${m.played ? `${m.homeGoals} -${m.awayGoals}` : 'v'}</b> <span>${a.name}</span>`;
+          line.style.cssText = 'display:flex; justify-content:space-between; padding:5px 8px; background:var(--bg-panel); border-radius:6px;';
+          line.innerHTML = `<span>${h.name}</span> <b>${m.played ? `${m.homeGoals}-${m.awayGoals}` : 'v'}</b> <span>${a.name}</span>`;
           groundsList.appendChild(line);
         });
       }
@@ -2228,14 +2332,14 @@
       const club = getCurrentUserClub();
       const container = document.getElementById('facilitiesList');
       container.innerHTML = `
-        <div style="background:var(--bg-panel); padding:16px; border-radius:8px;">
+        <div style="background:var(--bg-panel); padding:14px; border-radius:8px;">
           <h4>🏟️ North Stand Expansion</h4>
-          <p style="font-size:0.75rem; color:var(--text-muted); margin:6px 0;">Add 2,500 seats to boost gate revenue.</p>
+          <p style="font-size:0.72rem; color:var(--text-muted); margin:4px 0;">Add 2,500 seats to boost revenue.</p>
           <button class="btn-swap-pill" onclick="upgradeStand(2500, 4.0)">Expand (£4.0M)</button>
         </div>
-        <div style="background:var(--bg-panel); padding:16px; border-radius:8px;">
+        <div style="background:var(--bg-panel); padding:14px; border-radius:8px;">
           <h4>🏥 Elite Medical Centre</h4>
-          <p style="font-size:0.75rem; color:var(--text-muted); margin:6px 0;">Accelerates match fitness recovery.</p>
+          <p style="font-size:0.72rem; color:var(--text-muted); margin:4px 0;">Accelerates match fitness recovery.</p>
           <button class="btn-swap-pill" onclick="alert('Medical facility upgraded!')">Upgrade (£2.5M)</button>
         </div>
       `;
@@ -2244,7 +2348,7 @@
     function upgradeStand(seats, cost) {
       const club = getCurrentUserClub();
       if (club.budget < cost) {
-        alert("Insufficient transfer budget for ground expansion.");
+        alert("Insufficient transfer budget.");
         return;
       }
       club.budget -= cost;
@@ -2257,9 +2361,9 @@
     function renderManagerOffice() {
       const summary = document.getElementById('managerProfileSummary');
       summary.innerHTML = `
-        <p><b>Manager Name:</b> ${state.manager.name}</p>
+        <p><b>Manager:</b> ${state.manager.name}</p>
         <p><b>Matches Managed:</b> ${state.manager.matches}</p>
-        <p><b>Career Record:</b> ${state.manager.wins}W - ${state.manager.draws}D - ${state.manager.losses}L</p>
+        <p><b>Record:</b> ${state.manager.wins}W - ${state.manager.draws}D - ${state.manager.losses}L</p>
         <p><b>Win Rate:</b> ${state.manager.matches ? Math.round((state.manager.wins / state.manager.matches) * 100) : 0}%</p>
         <p><b>Board Confidence:</b> <span style="color:#34d399; font-weight:800;">${state.manager.confidence}%</span></p>
       `;
@@ -2268,17 +2372,17 @@
     function renderHonours() {
       const honours = document.getElementById('honoursList');
       honours.innerHTML = `
-        <div style="background:var(--bg-panel); padding:16px; border-radius:8px; text-align:center; min-width:140px;">
-          <div style="font-size:2rem;">🏅</div>
-          <div style="font-weight:800; font-size:1.1rem; color:var(--gold);">${state.manager.motmAwards}</div>
-          <div style="font-size:0.75rem; color:var(--text-muted);">Manager of the Month</div>
+        <div style="background:var(--bg-panel); padding:14px; border-radius:8px; text-align:center; min-width:120px;">
+          <div style="font-size:1.8rem;">🏅</div>
+          <div style="font-weight:800; font-size:1rem; color:var(--gold);">${state.manager.motmAwards}</div>
+          <div style="font-size:0.72rem; color:var(--text-muted);">Manager of the Month</div>
         </div>
       `;
     }
 
     let audioCtx = null;
     function playSound(type) {
-      if (!state.audioEnabled) return;
+      if (!state || !state.audioEnabled) return;
       try {
         if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
         if (audioCtx.state === 'suspended') audioCtx.resume();
@@ -2326,6 +2430,7 @@
     }
 
     function toggleAudio() {
+      if (!state) return;
       state.audioEnabled = !state.audioEnabled;
       document.getElementById('btnAudio').innerText = state.audioEnabled ? '🔊' : '🔇';
       playSound('click');
@@ -2333,6 +2438,9 @@
 
     window.addEventListener('DOMContentLoaded', () => {
       initGame();
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('./sw.js').catch(() => {});
+      }
     });
   </script>
 </body>
