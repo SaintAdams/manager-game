@@ -1,0 +1,10 @@
+{
+  "name": "Football League Manager",
+  "short_name": "FLM",
+  "description": "Football League Manager - 2026/27 Career Edition",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#0a0e17",
+  "theme_color": "#0a0e17",
+  "orientation": "any"
+}
