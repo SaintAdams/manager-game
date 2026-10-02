@@ -362,6 +362,17 @@
       cursor: pointer;
     }
     .btn-swap-pill:hover { background: var(--accent); color: #000; }
+    .btn-sell-pill {
+      background: rgba(239, 68, 68, 0.2);
+      color: #f87171;
+      border: 1px solid rgba(239, 68, 68, 0.4);
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 0.72rem;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .btn-sell-pill:hover { background: #ef4444; color: #fff; }
 
     .condition-bar { width: 44px; height: 6px; background: #334155; border-radius: 3px; overflow: hidden; display: inline-block; vertical-align: middle; margin-right: 6px; }
     .condition-fill { height: 100%; border-radius: 3px; }
@@ -405,6 +416,33 @@
     .zone-promo { border-left: 4px solid #10b981 !important; }
     .zone-playoff { border-left: 4px solid #06b6d4 !important; }
     .zone-relegation { border-left: 4px solid #ef4444 !important; }
+
+    /* NEWS FEED STYLES */
+    .news-grid { display: flex; flex-direction: column; gap: 14px; }
+    .news-card {
+      background: var(--bg-panel);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 16px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      position: relative;
+    }
+    .news-card.breaking {
+      border-left: 4px solid #f59e0b;
+      background: linear-gradient(90deg, rgba(245, 158, 11, 0.08) 0%, var(--bg-panel) 100%);
+    }
+    .news-tag {
+      font-size: 0.68rem;
+      font-weight: 800;
+      color: var(--accent);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .news-headline { font-size: 1.05rem; font-weight: 800; color: #fff; }
+    .news-body { font-size: 0.85rem; color: #cbd5e1; line-height: 1.5; }
+    .news-time { font-size: 0.72rem; color: var(--text-muted); font-weight: 600; }
 
     .modal-backdrop {
       position: fixed; inset: 0; background: rgba(0,0,0,0.85);
@@ -479,12 +517,17 @@
         <span class="icon">⏱️</span> Matchday Live
       </div>
 
-      <div class="nav-label">Club Operations</div>
-      <div class="nav-item" onclick="switchTab('standings')" id="nav-standings">
-        <span class="icon">🏆</span> League Tables
+      <div class="nav-label">Media & Market</div>
+      <div class="nav-item" onclick="switchTab('news')" id="nav-news">
+        <span class="icon">📰</span> League News
       </div>
       <div class="nav-item" onclick="switchTab('transfers')" id="nav-transfers">
         <span class="icon">🔄</span> Scouting & Market
+      </div>
+
+      <div class="nav-label">Club Operations</div>
+      <div class="nav-item" onclick="switchTab('standings')" id="nav-standings">
+        <span class="icon">🏆</span> League Tables
       </div>
       <div class="nav-item" onclick="switchTab('facilities')" id="nav-facilities">
         <span class="icon">🏟️</span> Ground & Facilities
@@ -531,6 +574,7 @@
         </div>
       </div>
 
+      <!-- TACTICS & SQUAD TAB -->
       <div id="tab-tactics" class="tab-pane">
         <div id="swapNotificationBar" class="swap-status-bar" style="display: none;">
           <span id="swapNotificationText">🔄 SELECT PLAYER TO SWAP</span>
@@ -594,7 +638,7 @@
 
             <div class="section-title-strip" style="margin-top: 10px;">
               <h3>Substitutes Bench</h3>
-              <span class="count">7 Available</span>
+              <span class="count">Available Reserves</span>
             </div>
 
             <table class="fm-table" id="benchTable">
@@ -616,6 +660,7 @@
         </div>
       </div>
 
+      <!-- MATCHDAY TAB -->
       <div id="tab-matchday" class="tab-pane" style="display: none;">
         <div class="matchday-grid">
           <div class="broadcast-card">
@@ -653,6 +698,72 @@
         </div>
       </div>
 
+      <!-- NEWS HUB TAB -->
+      <div id="tab-news" class="tab-pane" style="display: none;">
+        <div class="standings-card">
+          <div class="section-title-strip" style="margin-bottom: 16px;">
+            <h3>🗞️ League Press &amp; Media Hub</h3>
+            <span class="count">Live Wire Updates</span>
+          </div>
+          <div class="news-grid" id="newsFeedList"></div>
+        </div>
+      </div>
+
+      <!-- WORKING TRANSFER MARKET TAB -->
+      <div id="tab-transfers" class="tab-pane" style="display: none;">
+        <div class="standings-card">
+          <div class="section-title-strip" style="margin-bottom: 14px;">
+            <h3>🛒 Domestic &amp; European Transfer Market</h3>
+            <span class="count" id="marketBudgetDisplay">Available: £24.5M</span>
+          </div>
+          
+          <div style="display: flex; gap: 10px; margin-bottom: 12px;">
+            <select class="tactics-select" id="filterMarketPos" onchange="renderTransfers()">
+              <option value="ALL">All Positions</option>
+              <option value="GK">Goalkeepers (GK)</option>
+              <option value="DEF">Defenders (DEF)</option>
+              <option value="MID">Midfielders (MID)</option>
+              <option value="FWD">Forwards (FWD)</option>
+            </select>
+          </div>
+
+          <table class="fm-table">
+            <thead>
+              <tr>
+                <th>Target Player</th>
+                <th>Position</th>
+                <th>Nat</th>
+                <th>Age</th>
+                <th>OVR</th>
+                <th>Asking Price</th>
+                <th>Club</th>
+                <th style="width: 100px;">Action</th>
+              </tr>
+            </thead>
+            <tbody id="transferMarketBody"></tbody>
+          </table>
+
+          <div class="section-title-strip" style="margin-top: 24px; margin-bottom: 14px;">
+            <h3>💼 Sell Squad Players (Raise Capital)</h3>
+            <span class="count">Cash In Reserves</span>
+          </div>
+          <table class="fm-table">
+            <thead>
+              <tr>
+                <th>Squad Player</th>
+                <th>Natural Pos</th>
+                <th>Age</th>
+                <th>Rating</th>
+                <th>Est. Market Value</th>
+                <th style="width: 110px;">Action</th>
+              </tr>
+            </thead>
+            <tbody id="squadSellListBody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- STANDINGS TAB -->
       <div id="tab-standings" class="tab-pane" style="display: none;">
         <div class="standings-card">
           <div class="league-tabs">
@@ -680,42 +791,26 @@
         </div>
       </div>
 
-      <div id="tab-transfers" class="tab-pane" style="display: none;">
-        <div class="standings-card">
-          <h3 style="margin-bottom: 12px;">Transfer & Free Agent Scouting Market</h3>
-          <table class="fm-table">
-            <thead>
-              <tr>
-                <th>Target Player</th>
-                <th>Position</th>
-                <th>Age</th>
-                <th>Rating</th>
-                <th>Asking Price</th>
-                <th>Action</th>
-              </tr>
-            </thead>
-            <tbody id="transferMarketBody"></tbody>
-          </table>
-        </div>
-      </div>
-
+      <!-- FACILITIES TAB -->
       <div id="tab-facilities" class="tab-pane" style="display: none;">
         <div class="standings-card">
-          <h3 style="margin-bottom: 12px;">Stadium Expansion & Medical Facilities</h3>
+          <h3 style="margin-bottom: 12px;">Stadium Expansion &amp; Medical Facilities</h3>
           <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 14px;" id="facilitiesList"></div>
         </div>
       </div>
 
+      <!-- MANAGER OFFICE TAB -->
       <div id="tab-manager" class="tab-pane" style="display: none;">
         <div class="standings-card">
-          <h3 style="margin-bottom: 12px;">Manager Dossier & Board Objectives</h3>
+          <h3 style="margin-bottom: 12px;">Manager Dossier &amp; Board Objectives</h3>
           <div id="managerProfileSummary" style="font-size: 0.88rem; line-height: 1.6;"></div>
         </div>
       </div>
 
+      <!-- HONOURS TAB -->
       <div id="tab-honours" class="tab-pane" style="display: none;">
         <div class="standings-card">
-          <h3 style="margin-bottom: 12px;">Manager Trophy Room & Monthly Accolades</h3>
+          <h3 style="margin-bottom: 12px;">Manager Trophy Room &amp; Monthly Accolades</h3>
           <div id="honoursList" style="display: flex; gap: 16px; flex-wrap: wrap;"></div>
         </div>
       </div>
@@ -756,7 +851,7 @@
   </footer>
 
   <script>
-    const STORAGE_KEY = 'FLM_CAREER_V2026_STABLE';
+    const STORAGE_KEY = 'FLM_CAREER_V2026_ROUNDROBIN';
 
     const FORMATIONS = {
       '4-3-3': [
@@ -925,24 +1020,42 @@
     ];
 
     const SOU_REAL_ROSTER = [
-      { id: 'sou_1', name: 'Aaron Ramsdale', naturalPos: 'GK', nat: 'ENG', age: 28, ovr: 81, con: 98, role: 'SK-De', starter: true },
-      { id: 'sou_2', name: 'Kyle Walker-Peters', naturalPos: 'DEF', nat: 'ENG', age: 29, ovr: 79, con: 96, role: 'WB-At', starter: true },
-      { id: 'sou_3', name: 'Taylor Harwood-Bellis', naturalPos: 'DEF', nat: 'ENG', age: 24, ovr: 78, con: 97, role: 'BPD-De', starter: true },
-      { id: 'sou_4', name: 'Jan Bednarek', naturalPos: 'DEF', nat: 'POL', age: 30, ovr: 77, con: 95, role: 'CD-De', starter: true },
-      { id: 'sou_5', name: 'Yukinari Sugawara', naturalPos: 'DEF', nat: 'JPN', age: 26, ovr: 77, con: 96, role: 'WB-Su', starter: true },
-      { id: 'sou_6', name: 'Flynn Downes', naturalPos: 'MID', nat: 'ENG', age: 27, ovr: 77, con: 98, role: 'DLP-De', starter: true },
-      { id: 'sou_7', name: 'Mateus Fernandes', naturalPos: 'MID', nat: 'POR', age: 22, ovr: 78, con: 96, role: 'MEZ-At', starter: true },
-      { id: 'sou_8', name: 'Will Smallbone', naturalPos: 'MID', nat: 'IRL', age: 26, ovr: 75, con: 94, role: 'BBM-Su', starter: true },
-      { id: 'sou_9', name: 'Tyler Dibling', naturalPos: 'FWD', nat: 'ENG', age: 20, ovr: 78, con: 97, role: 'IF-At', starter: true },
-      { id: 'sou_10', name: 'Ryan Fraser', naturalPos: 'FWD', nat: 'SCO', age: 32, ovr: 75, con: 93, role: 'IW-At', starter: true },
-      { id: 'sou_11', name: 'Cameron Archer', naturalPos: 'FWD', nat: 'ENG', age: 24, ovr: 77, con: 96, role: 'AF-At', starter: true },
-      { id: 'sou_12', name: 'Alex McCarthy', naturalPos: 'GK', nat: 'ENG', age: 36, ovr: 73, con: 100, role: 'GK-De', starter: false },
-      { id: 'sou_13', name: 'Jack Stephens', naturalPos: 'DEF', nat: 'ENG', age: 32, ovr: 74, con: 100, role: 'CD-De', starter: false },
-      { id: 'sou_14', name: 'Adam Armstrong', naturalPos: 'FWD', nat: 'ENG', age: 29, ovr: 76, con: 98, role: 'AF-At', starter: false },
-      { id: 'sou_15', name: 'Kamaldeen Sulemana', naturalPos: 'FWD', nat: 'GHA', age: 24, ovr: 76, con: 98, role: 'W-At', starter: false },
-      { id: 'sou_16', name: 'Paul Onuachu', naturalPos: 'FWD', nat: 'NGA', age: 32, ovr: 75, con: 95, role: 'TF-Su', starter: false },
-      { id: 'sou_17', name: 'Adam Lallana', naturalPos: 'MID', nat: 'ENG', age: 38, ovr: 74, con: 90, role: 'AP-Su', starter: false },
-      { id: 'sou_18', name: 'Joe Lumley', naturalPos: 'GK', nat: 'ENG', age: 31, ovr: 71, con: 100, role: 'GK-De', starter: false }
+      { id: 'sou_1', name: 'Aaron Ramsdale', naturalPos: 'GK', nat: 'ENG', age: 28, ovr: 81, con: 98, role: 'SK-De', starter: true, val: 24.0 },
+      { id: 'sou_2', name: 'Kyle Walker-Peters', naturalPos: 'DEF', nat: 'ENG', age: 29, ovr: 79, con: 96, role: 'WB-At', starter: true, val: 18.0 },
+      { id: 'sou_3', name: 'Taylor Harwood-Bellis', naturalPos: 'DEF', nat: 'ENG', age: 24, ovr: 78, con: 97, role: 'BPD-De', starter: true, val: 20.0 },
+      { id: 'sou_4', name: 'Jan Bednarek', naturalPos: 'DEF', nat: 'POL', age: 30, ovr: 77, con: 95, role: 'CD-De', starter: true, val: 10.0 },
+      { id: 'sou_5', name: 'Yukinari Sugawara', naturalPos: 'DEF', nat: 'JPN', age: 26, ovr: 77, con: 96, role: 'WB-Su', starter: true, val: 14.0 },
+      { id: 'sou_6', name: 'Flynn Downes', naturalPos: 'MID', nat: 'ENG', age: 27, ovr: 77, con: 98, role: 'DLP-De', starter: true, val: 15.0 },
+      { id: 'sou_7', name: 'Mateus Fernandes', naturalPos: 'MID', nat: 'POR', age: 22, ovr: 78, con: 96, role: 'MEZ-At', starter: true, val: 19.0 },
+      { id: 'sou_8', name: 'Will Smallbone', naturalPos: 'MID', nat: 'IRL', age: 26, ovr: 75, con: 94, role: 'BBM-Su', starter: true, val: 9.0 },
+      { id: 'sou_9', name: 'Tyler Dibling', naturalPos: 'FWD', nat: 'ENG', age: 20, ovr: 78, con: 97, role: 'IF-At', starter: true, val: 22.0 },
+      { id: 'sou_10', name: 'Ryan Fraser', naturalPos: 'FWD', nat: 'SCO', age: 32, ovr: 75, con: 93, role: 'IW-At', starter: true, val: 6.0 },
+      { id: 'sou_11', name: 'Cameron Archer', naturalPos: 'FWD', nat: 'ENG', age: 24, ovr: 77, con: 96, role: 'AF-At', starter: true, val: 16.0 },
+      { id: 'sou_12', name: 'Alex McCarthy', naturalPos: 'GK', nat: 'ENG', age: 36, ovr: 73, con: 100, role: 'GK-De', starter: false, val: 2.0 },
+      { id: 'sou_13', name: 'Jack Stephens', naturalPos: 'DEF', nat: 'ENG', age: 32, ovr: 74, con: 100, role: 'CD-De', starter: false, val: 4.0 },
+      { id: 'sou_14', name: 'Adam Armstrong', naturalPos: 'FWD', nat: 'ENG', age: 29, ovr: 76, con: 98, role: 'AF-At', starter: false, val: 12.0 },
+      { id: 'sou_15', name: 'Kamaldeen Sulemana', naturalPos: 'FWD', nat: 'GHA', age: 24, ovr: 76, con: 98, role: 'W-At', starter: false, val: 15.0 },
+      { id: 'sou_16', name: 'Paul Onuachu', naturalPos: 'FWD', nat: 'NGA', age: 32, ovr: 75, con: 95, role: 'TF-Su', starter: false, val: 7.0 },
+      { id: 'sou_17', name: 'Adam Lallana', naturalPos: 'MID', nat: 'ENG', age: 38, ovr: 74, con: 90, role: 'AP-Su', starter: false, val: 1.5 },
+      { id: 'sou_18', name: 'Joe Lumley', naturalPos: 'GK', nat: 'ENG', age: 31, ovr: 71, con: 100, role: 'GK-De', starter: false, val: 1.0 }
+    ];
+
+    const TRANSFER_SCOUT_POOL = [
+      { id: 'mkt_1', name: 'Marc Guéhi', naturalPos: 'DEF', nat: 'ENG', age: 26, ovr: 83, price: 42.0, club: 'Crystal Palace' },
+      { id: 'mkt_2', name: 'Ivan Toney', naturalPos: 'FWD', nat: 'ENG', age: 30, ovr: 83, price: 38.0, club: 'Al-Ahli' },
+      { id: 'mkt_3', name: 'Eberechi Eze', naturalPos: 'MID', nat: 'ENG', age: 28, ovr: 82, price: 45.0, club: 'Crystal Palace' },
+      { id: 'mkt_4', name: 'Angel Gomes', naturalPos: 'MID', nat: 'ENG', age: 26, ovr: 81, price: 28.0, club: 'Lille' },
+      { id: 'mkt_5', name: 'Jarrad Branthwaite', naturalPos: 'DEF', nat: 'ENG', age: 24, ovr: 82, price: 48.0, club: 'Everton' },
+      { id: 'mkt_6', name: 'Rico Lewis', naturalPos: 'DEF', nat: 'ENG', age: 21, ovr: 80, price: 34.0, club: 'Man City' },
+      { id: 'mkt_7', name: 'Liam Delap', naturalPos: 'FWD', nat: 'ENG', age: 23, ovr: 79, price: 24.0, club: 'Ipswich Town' },
+      { id: 'mkt_8', name: 'Conor Gallagher', naturalPos: 'MID', nat: 'ENG', age: 26, ovr: 82, price: 36.0, club: 'Atlético Madrid' },
+      { id: 'mkt_9', name: 'James Trafford', naturalPos: 'GK', nat: 'ENG', age: 23, ovr: 78, price: 18.0, club: 'Burnley' },
+      { id: 'mkt_10', name: 'Morgan Gibbs-White', naturalPos: 'MID', nat: 'ENG', age: 26, ovr: 82, price: 44.0, club: 'Nottm Forest' },
+      { id: 'mkt_11', name: 'Milos Kerkez', naturalPos: 'DEF', nat: 'HUN', age: 22, ovr: 80, price: 26.0, club: 'Bournemouth' },
+      { id: 'mkt_12', name: 'Omari Hutchinson', naturalPos: 'FWD', nat: 'JAM', age: 22, ovr: 78, price: 21.0, club: 'Ipswich Town' },
+      { id: 'mkt_13', name: 'Mads Hermansen', naturalPos: 'GK', nat: 'DEN', age: 26, ovr: 79, price: 16.0, club: 'Leicester City' },
+      { id: 'mkt_14', name: 'Sam Szmodics', naturalPos: 'FWD', nat: 'IRL', age: 31, ovr: 77, price: 12.0, club: 'Ipswich Town' },
+      { id: 'mkt_15', name: 'Hayden Hackney', naturalPos: 'MID', nat: 'SCO', age: 24, ovr: 77, price: 14.5, club: 'Middlesbrough' }
     ];
 
     const SURNAMES = ['Smith', 'Johnson', 'Williams', 'Brown', 'Jones', 'Miller', 'Davis', 'Wilson', 'Anderson', 'Taylor', 'Thomas', 'Moore', 'Jackson', 'Martin', 'Lee', 'White', 'Harris', 'Clark', 'Lewis', 'Robinson', 'Walker', 'Young', 'Allen', 'King', 'Wright', 'Scott', 'Torres', 'Hill', 'Green', 'Adams', 'Baker', 'Hall', 'Campbell', 'Mitchell', 'Carter', 'Roberts', 'Phillips', 'Evans', 'Turner', 'Parker', 'Collins', 'Edwards', 'Stewart', 'Morris', 'Murphy', 'Cook', 'Rogers', 'Morgan', 'Peterson', 'Cooper', 'Reed', 'Bailey', 'Bell', 'Kelly', 'Howard', 'Ward', 'Cox', 'Richardson', 'Watson', 'Brooks', 'Wood', 'James', 'Bennett', 'Gray', 'Hughes', 'Price', 'Sanders', 'Patel', 'Myers', 'Long', 'Ross', 'Foster', 'Powell', 'Jenkins', 'Perry', 'Russell', 'Sullivan'];
@@ -979,6 +1092,7 @@
         const age = 19 + Math.floor(Math.random() * 15);
         const ratingVariance = (idx < 11) ? (Math.floor(Math.random() * 5) - 2) : (Math.floor(Math.random() * 6) - 4);
         const ovr = Math.max(52, Math.min(92, tierBaseRating + ratingVariance));
+        const val = Math.max(0.5, Number(((ovr - 50) * 0.7).toFixed(1)));
 
         return {
           id: `${club.id.toLowerCase()}_${idx + 1}`,
@@ -989,7 +1103,8 @@
           ovr: ovr,
           con: 95 + Math.floor(Math.random() * 5),
           role: p.role,
-          starter: p.starter
+          starter: p.starter,
+          val: val
         };
       });
     }
@@ -1003,7 +1118,9 @@
       audioEnabled: true,
       activeStandingsTab: 0,
       clubs: [],
+      marketPlayers: [],
       standings: {},
+      newsFeed: [],
       manager: {
         name: 'Jason Adams',
         confidence: 82,
@@ -1032,14 +1149,19 @@
       }
 
       ensureAllSquadsHydrated();
+      if (!state.newsFeed || state.newsFeed.length === 0) {
+        generateInitialNews();
+      }
       saveGame();
       renderAll();
     }
 
     function setupFreshState() {
       state.clubs = JSON.parse(JSON.stringify(CLUBS_DATABASE));
+      state.marketPlayers = JSON.parse(JSON.stringify(TRANSFER_SCOUT_POOL));
       state.currentWeek = 1;
       state.standings = {};
+      state.newsFeed = [];
 
       for (let div = 0; div <= 3; div++) {
         state.standings[div] = state.clubs
@@ -1066,7 +1188,8 @@
         }
       });
 
-      generateAllDivisionsFixtures();
+      generateTrueRoundRobinFixtures();
+      generateInitialNews();
     }
 
     function ensureAllSquadsHydrated() {
@@ -1076,12 +1199,16 @@
         }
         c.players.forEach(p => {
           if (!p.naturalPos) p.naturalPos = p.pos || 'MID';
+          if (!p.val) p.val = Math.max(0.5, Number(((p.ovr - 50) * 0.7).toFixed(1)));
         });
         const startersCount = c.players.filter(p => p.starter).length;
         if (startersCount !== 11) {
           c.players.forEach((p, idx) => p.starter = (idx < 11));
         }
       });
+      if (!state.marketPlayers) {
+        state.marketPlayers = JSON.parse(JSON.stringify(TRANSFER_SCOUT_POOL));
+      }
     }
 
     function saveGame() {
@@ -1120,27 +1247,37 @@
       return { att: baseAtt, mid: baseMid, def: baseDef, ovr: overall };
     }
 
-    function generateAllDivisionsFixtures() {
+    /* =====================================================================
+       MATHEMATICAL ROUND-ROBIN TOURNAMENT ALGORITHM (NO DUPLICATES)
+       ===================================================================== */
+    function generateTrueRoundRobinFixtures() {
       state.fixtures = [];
 
+      // Generate round robin schedule for each division
+      const divSchedules = {};
+      for (let div = 0; div <= 3; div++) {
+        const teamIds = state.clubs.filter(c => c.div === div).map(c => c.id);
+        divSchedules[div] = buildRoundRobinSchedule(teamIds);
+      }
+
+      // Combine into 38 synchronized fixture weeks
       for (let w = 1; w <= state.totalWeeks; w++) {
+        const weekIndex = w - 1;
         const weekMatches = [];
 
         for (let div = 0; div <= 3; div++) {
-          const divClubs = state.clubs.filter(c => c.div === div);
-          const shuffled = [...divClubs].sort(() => 0.5 - Math.random());
-
-          for (let i = 0; i < shuffled.length; i += 2) {
-            if (shuffled[i + 1]) {
+          const schedule = divSchedules[div];
+          if (schedule && schedule[weekIndex]) {
+            schedule[weekIndex].forEach(m => {
               weekMatches.push({
                 div: div,
-                home: shuffled[i].id,
-                away: shuffled[i + 1].id,
+                home: m.home,
+                away: m.away,
                 homeGoals: null,
                 awayGoals: null,
                 played: false
               });
-            }
+            });
           }
         }
 
@@ -1148,6 +1285,39 @@
       }
     }
 
+    function buildRoundRobinSchedule(teamsList) {
+      const n = teamsList.length;
+      const teams = [...teamsList];
+      const rounds = [];
+
+      // First leg (n - 1 rounds): Every team plays every other team once
+      for (let r = 0; r < n - 1; r++) {
+        const roundPairings = [];
+        for (let i = 0; i < n / 2; i++) {
+          const home = teams[i];
+          const away = teams[n - 1 - i];
+          // Alternate home and away to maintain balance
+          if (i === 0 && r % 2 === 1) {
+            roundPairings.push({ home: away, away: home });
+          } else {
+            roundPairings.push({ home: home, away: away });
+          }
+        }
+        rounds.push(roundPairings);
+        // Circle rotation: keep teams[0] pinned, rotate remaining
+        const last = teams.pop();
+        teams.splice(1, 0, last);
+      }
+
+      // Second leg: Reverse fixtures (swapped home & away)
+      const secondLeg = rounds.map(r => r.map(m => ({ home: m.away, away: m.home })));
+      const fullCalendar = [...rounds, ...secondLeg];
+      return fullCalendar.slice(0, 38);
+    }
+
+    /* =====================================================================
+       TACTICS ENGINE
+       ===================================================================== */
     function changeFormation(newForm) {
       if (!FORMATIONS[newForm]) return;
       state.currentFormation = newForm;
@@ -1175,7 +1345,7 @@
       const pool = [...club.players].sort((a, b) => b.ovr - a.ovr);
       const picked = [];
 
-      // Pick best GK
+      // Always pick natural GK for position 1
       const gkIndex = pool.findIndex(p => p.naturalPos === 'GK');
       if (gkIndex !== -1) {
         picked.push(pool.splice(gkIndex, 1)[0]);
@@ -1183,7 +1353,7 @@
         picked.push(pool.shift());
       }
 
-      // Pick outfield players according to template
+      // Pick best outfield players matching tactical formation slots
       for (let i = 1; i < 11; i++) {
         const needed = template[i] ? template[i].posType : 'MID';
         const matchIdx = pool.findIndex(p => p.naturalPos === needed);
@@ -1199,8 +1369,7 @@
         if (template[idx]) p.role = template[idx].duty;
       });
 
-      const remainingBench = [...picked, ...pool];
-      club.players = remainingBench;
+      club.players = [...picked, ...pool];
 
       cancelPlayerSwap();
       saveGame();
@@ -1363,6 +1532,202 @@
       });
     }
 
+    /* =====================================================================
+       NEWS ENGINE (LEAGUE PRESS & BREAKING BULLETINS)
+       ===================================================================== */
+    function generateInitialNews() {
+      state.newsFeed = [
+        {
+          tag: 'Season Kick-Off',
+          breaking: true,
+          headline: `New Season Underway: 92 Clubs Battle For Glory`,
+          body: `The 2026/27 campaign officially begins across the Premier League, Championship, League One, and League Two. Managers face mounting pressure as boardrooms set high expectations.`,
+          time: 'Week 1'
+        },
+        {
+          tag: 'Tactical Briefing',
+          breaking: false,
+          headline: `${state.manager.name} Unveils Tactics at ${getCurrentUserClub().name}`,
+          body: `Supporters look forward to seeing how the gaffer sets up. Tactical discipline and squad depth will be key over a grueling 38-game schedule.`,
+          time: 'Week 1'
+        }
+      ];
+    }
+
+    function addNewsStory(tag, headline, body, breaking = false) {
+      state.newsFeed.unshift({
+        tag: tag,
+        headline: headline,
+        body: body,
+        breaking: breaking,
+        time: `Week ${state.currentWeek}`
+      });
+      if (state.newsFeed.length > 25) state.newsFeed.pop();
+    }
+
+    function renderNewsFeed() {
+      const feed = document.getElementById('newsFeedList');
+      feed.innerHTML = '';
+
+      state.newsFeed.forEach(n => {
+        const card = document.createElement('div');
+        card.className = `news-card ${n.breaking ? 'breaking' : ''}`;
+        card.innerHTML = `
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <span class="news-tag">${n.tag}</span>
+            <span class="news-time">${n.time}</span>
+          </div>
+          <div class="news-headline">${n.headline}</div>
+          <div class="news-body">${n.body}</div>
+        `;
+        feed.appendChild(card);
+      });
+    }
+
+    /* =====================================================================
+       TWO-WAY WORKING TRANSFER MARKET (BUY & SELL)
+       ===================================================================== */
+    function renderTransfers() {
+      const club = getCurrentUserClub();
+      document.getElementById('marketBudgetDisplay').innerText = `Available: £${club.budget.toFixed(1)}M`;
+
+      // 1. RENDER BUY TARGETS
+      const filterPos = document.getElementById('filterMarketPos').value;
+      const tbody = document.getElementById('transferMarketBody');
+      tbody.innerHTML = '';
+
+      const targets = state.marketPlayers.filter(p => (filterPos === 'ALL' || p.naturalPos === filterPos));
+
+      targets.forEach(p => {
+        const canAfford = club.budget >= p.price;
+        const tr = document.createElement('tr');
+        tr.className = 'fm-row';
+        tr.innerHTML = `
+          <td><b>${p.name}</b></td>
+          <td><span class="role-badge">${p.naturalPos}</span></td>
+          <td>${p.nat}</td>
+          <td>${p.age}</td>
+          <td><b style="color:var(--gold);">${p.ovr}</b></td>
+          <td><b>£${p.price.toFixed(1)}M</b></td>
+          <td>${p.club}</td>
+          <td>
+            <button class="btn-swap-pill" style="${canAfford ? 'background:#059669; color:#fff;' : 'opacity:0.4; cursor:not-allowed;'}" onclick="buyMarketPlayer('${p.id}')">
+              ${canAfford ? 'Sign (£' + p.price.toFixed(1) + 'M)' : 'No Funds'}
+            </button>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+
+      // 2. RENDER SQUAD FOR SALE
+      const sellBody = document.getElementById('squadSellListBody');
+      sellBody.innerHTML = '';
+
+      club.players.forEach(p => {
+        const tr = document.createElement('tr');
+        tr.className = 'fm-row';
+        tr.innerHTML = `
+          <td><b>${p.name}</b> ${p.starter ? '<span style="font-size:0.7rem; color:#10b981;">[Starter]</span>' : ''}</td>
+          <td><span class="role-badge" style="background:#475569;">${p.naturalPos}</span></td>
+          <td>${p.age}</td>
+          <td><b style="color:var(--gold);">${p.ovr}</b></td>
+          <td><b style="color:#34d399;">£${p.val.toFixed(1)}M</b></td>
+          <td>
+            <button class="btn-sell-pill" onclick="sellSquadPlayer('${p.id}')">
+              Sell (£${p.val.toFixed(1)}M)
+            </button>
+          </td>
+        `;
+        sellBody.appendChild(tr);
+      });
+    }
+
+    function buyMarketPlayer(marketId) {
+      const club = getCurrentUserClub();
+      const pIdx = state.marketPlayers.findIndex(x => x.id === marketId);
+      if (pIdx === -1) return;
+
+      const player = state.marketPlayers[pIdx];
+
+      if (club.budget < player.price) {
+        alert("Insufficient transfer budget to complete this signing.");
+        return;
+      }
+
+      if (confirm(`Confirm signing of ${player.name} from ${player.club} for £${player.price.toFixed(1)}M?`)) {
+        club.budget -= player.price;
+        state.marketPlayers.splice(pIdx, 1);
+
+        const newSquadMember = {
+          id: `trans_${Date.now()}_${Math.floor(Math.random() * 999)}`,
+          name: player.name,
+          naturalPos: player.naturalPos,
+          nat: player.nat,
+          age: player.age,
+          ovr: player.ovr,
+          con: 100,
+          role: player.naturalPos === 'GK' ? 'GK-De' : (player.naturalPos === 'DEF' ? 'CD-De' : (player.naturalPos === 'MID' ? 'CM-At' : 'AF-At')),
+          starter: false,
+          val: player.price
+        };
+
+        club.players.push(newSquadMember);
+
+        addNewsStory(
+          'Transfer Done Deal',
+          `DONE DEAL: ${club.name} Confirm £${player.price.toFixed(1)}M Swoop for ${player.name}!`,
+          `${club.name} have officially announced the capture of ${player.name} from ${player.club}. The manager hailed the marquee acquisition as a statement of intent.`,
+          true
+        );
+
+        saveGame();
+        renderAll();
+        renderTransfers();
+        playSound('cheer');
+        alert(`Success! ${player.name} has signed for ${club.name}!`);
+      }
+    }
+
+    function sellSquadPlayer(playerId) {
+      const club = getCurrentUserClub();
+      if (club.players.length <= 13) {
+        alert("Squad size too small! You cannot sell any more players without signing replacements first.");
+        return;
+      }
+
+      const pIdx = club.players.findIndex(x => x.id === playerId);
+      if (pIdx === -1) return;
+      const player = club.players[pIdx];
+
+      if (confirm(`Sell ${player.name} for £${player.val.toFixed(1)}M?`)) {
+        club.budget += player.val;
+        club.players.splice(pIdx, 1);
+
+        // Ensure we maintain at least 11 starters
+        const startersCount = club.players.filter(p => p.starter).length;
+        if (startersCount < 11) {
+          const nextInLine = club.players.find(p => !p.starter);
+          if (nextInLine) nextInLine.starter = true;
+        }
+
+        addNewsStory(
+          'Player Departure',
+          `DEPARTURE: ${player.name} Departs ${club.name} in £${player.val.toFixed(1)}M Deal`,
+          `${club.name} have sanctioned the departure of ${player.name} for an agreed £${player.val.toFixed(1)}M. The funds will be reinvested into the first-team transfer budget.`,
+          false
+        );
+
+        saveGame();
+        renderAll();
+        renderTransfers();
+        playSound('whistle');
+        alert(`Sold! £${player.val.toFixed(1)}M added to your transfer budget.`);
+      }
+    }
+
+    /* =====================================================================
+       ADVANCE WEEK & FIXTURE ENGINE
+       ===================================================================== */
     function advanceMasterWeek() {
       if (state.currentWeek >= state.totalWeeks) {
         showEndSeasonGala();
@@ -1370,6 +1735,7 @@
       }
 
       simulateCurrentWeekFixtures();
+      generateWeeklyNewsStory();
       state.currentWeek++;
 
       if (state.currentWeek % 4 === 0) {
@@ -1387,7 +1753,7 @@
       if (!weekData) return;
 
       weekData.matches.forEach(m => {
-        if (m.played) return; // If already resolved in live broadcast, don't overwrite
+        if (m.played) return;
 
         const homeClub = state.clubs.find(c => c.id === m.home);
         const awayClub = state.clubs.find(c => c.id === m.away);
@@ -1411,6 +1777,43 @@
           }
         }
       });
+    }
+
+    function generateWeeklyNewsStory() {
+      const userClub = getCurrentUserClub();
+      const weekData = state.fixtures.find(f => f.week === state.currentWeek);
+      const userMatch = weekData ? weekData.matches.find(m => m.home === userClub.id || m.away === userClub.id) : null;
+
+      if (userMatch && userMatch.played) {
+        const isHome = (userMatch.home === userClub.id);
+        const oppId = isHome ? userMatch.away : userMatch.home;
+        const oppClub = state.clubs.find(c => c.id === oppId);
+        const myScore = isHome ? userMatch.homeGoals : userMatch.awayGoals;
+        const oppScore = isHome ? userMatch.awayGoals : userMatch.homeGoals;
+
+        if (myScore > oppScore) {
+          addNewsStory(
+            'Match Reaction',
+            `Victory: ${userClub.name} Triumph Over ${oppClub.name} (${myScore}-${oppScore})`,
+            `${userClub.name} delivered a masterclass performance to pick up 3 crucial league points. The manager was full of praise for the squad's tactical execution.`,
+            false
+          );
+        } else if (myScore < oppScore) {
+          addNewsStory(
+            'Defeat Reaction',
+            `Setback: ${userClub.name} Fall to ${oppClub.name} (${myScore}-${oppScore})`,
+            `Questions were raised after ${userClub.name} slipped to defeat. The gaffer insisted there will be no panic in the dressing room.`,
+            false
+          );
+        } else {
+          addNewsStory(
+            'Match Reaction',
+            `Stalemate: Points Shared in ${userClub.name} vs ${oppClub.name} Clash (${myScore}-${oppScore})`,
+            `Neither side could find a decisive winner in an entertaining contest that leaves both teams reflecting on missed chances.`,
+            false
+          );
+        }
+      }
     }
 
     function recordUserMatchResult(isHome, hg, ag) {
@@ -1590,6 +1993,12 @@
       if (Math.random() > 0.45 && state.manager.confidence > 75) {
         state.manager.motmAwards++;
         state.manager.confidence = Math.min(99, state.manager.confidence + 5);
+        addNewsStory(
+          'Award Winner',
+          `OFFICIAL: ${state.manager.name} Named Manager of the Month!`,
+          `Following an exceptional run of form with ${userClub.name}, ${state.manager.name} has collected the prestigious Manager of the Month trophy.`,
+          true
+        );
         alert(`🏆 ACCOLADE: Congratulations ${state.manager.name}! You have won MANAGER OF THE MONTH for ${userClub.name}!`);
         playSound('cheer');
       }
@@ -1606,14 +2015,14 @@
 
       content.innerHTML = `
         <div style="background:var(--bg-panel); padding:14px; border-radius:8px; margin-bottom:12px;">
-          <h3 style="color:var(--gold); margin-bottom:6px;">👑 Champions</h3>
+          <h3 style="color:var(--gold); margin-bottom:6px;">👑 Champions Crowned</h3>
           <p><b>Premier League:</b> ${sorted[0][0].name}</p>
           <p><b>Championship:</b> ${sorted[1][0].name}</p>
           <p><b>League One:</b> ${sorted[2][0].name}</p>
           <p><b>League Two:</b> ${sorted[3][0].name}</p>
         </div>
         <div style="background:var(--bg-panel); padding:14px; border-radius:8px;">
-          <h3 style="color:#38bdf8; margin-bottom:6px;">📈 Promotion & Relegation</h3>
+          <h3 style="color:#38bdf8; margin-bottom:6px;">📈 Promotion &amp; Relegation</h3>
           <p><b>Promoted to Prem:</b> ${sorted[1][0].name}, ${sorted[1][1].name}, ${sorted[1][2].name}</p>
           <p><b>Relegated to Champ:</b> ${sorted[0][17].name}, ${sorted[0][18].name}, ${sorted[0][19].name}</p>
         </div>
@@ -1635,7 +2044,6 @@
         sorted[d] = [...state.standings[d]].sort((a,b) => (b.pts - a.pts) || (b.gd - a.gd));
       }
 
-      // Execute actual promotions and relegations
       const premRelegated = [sorted[0][17].id, sorted[0][18].id, sorted[0][19].id];
       const champPromoted = [sorted[1][0].id, sorted[1][1].id, sorted[1][2].id];
 
@@ -1677,7 +2085,8 @@
           }));
       }
 
-      generateAllDivisionsFixtures();
+      generateTrueRoundRobinFixtures();
+      generateInitialNews();
       saveGame();
       renderAll();
       alert(`🎉 Welcome to the ${state.seasonYear}/${(state.seasonYear + 1).toString().slice(-2)} Season!`);
@@ -1724,7 +2133,7 @@
     }
 
     function switchTab(tabId) {
-      const tabs = ['tactics', 'matchday', 'standings', 'transfers', 'facilities', 'manager', 'honours'];
+      const tabs = ['tactics', 'matchday', 'news', 'transfers', 'standings', 'facilities', 'manager', 'honours'];
       tabs.forEach(t => {
         const pane = document.getElementById(`tab-${t}`);
         const nav = document.getElementById(`nav-${t}`);
@@ -1733,12 +2142,13 @@
       });
 
       if (tabId === 'tactics') renderTactics();
+      if (tabId === 'news') renderNewsFeed();
+      if (tabId === 'transfers') renderTransfers();
       if (tabId === 'standings') renderStandingsTable(state.activeStandingsTab);
       if (tabId === 'matchday') renderMatchdayView();
       if (tabId === 'facilities') renderFacilities();
       if (tabId === 'manager') renderManagerOffice();
       if (tabId === 'honours') renderHonours();
-      if (tabId === 'transfers') renderTransfers();
     }
 
     function updateBannerStats() {
@@ -1848,28 +2258,6 @@
           <div style="font-weight:800; font-size:1.1rem; color:var(--gold);">${state.manager.motmAwards}</div>
           <div style="font-size:0.75rem; color:var(--text-muted);">Manager of the Month</div>
         </div>
-      `;
-    }
-
-    function renderTransfers() {
-      const body = document.getElementById('transferMarketBody');
-      body.innerHTML = `
-        <tr>
-          <td><b>Harvey Elliott</b></td>
-          <td>FWD</td>
-          <td>23</td>
-          <td><b style="color:var(--gold);">81</b></td>
-          <td>£22.0M</td>
-          <td><button class="btn-swap-pill" onclick="alert('Offer submitted!')">Make Bid</button></td>
-        </tr>
-        <tr>
-          <td><b>Archie Gray</b></td>
-          <td>MID</td>
-          <td>20</td>
-          <td><b style="color:var(--gold);">79</b></td>
-          <td>£18.5M</td>
-          <td><button class="btn-swap-pill" onclick="alert('Offer submitted!')">Make Bid</button></td>
-        </tr>
       `;
     }
 
