@@ -4,6 +4,12 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Football League Manager - 2026/27 Career Edition</title>
+  <!-- PWA & Mobile Tablet Settings -->
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#0a0e17">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="FLM">
   <style>
     :root {
       --bg-dark: #0a0e17;
@@ -441,7 +447,7 @@
       letter-spacing: 0.5px;
     }
     .news-headline { font-size: 1.05rem; font-weight: 800; color: #fff; }
-    .news-body { font-size: 0.85rem; color: #cbd5e1; line-height: 1.5; }
+    .news- { font-size: 0.85rem; color: #cbd5e1; line-height: 1.5; }
     .news-time { font-size: 0.72rem; color: var(--text-muted); font-weight: 600; }
 
     .modal-backdrop {
@@ -469,6 +475,15 @@
     }
   </style>
 </head>
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js')
+          .then(reg => console.log('PWA Service Worker active:', reg.scope))
+          .catch(err => console.log('Service Worker registration error:', err));
+      });
+    }
+  </script>
 <body>
 
   <header>
