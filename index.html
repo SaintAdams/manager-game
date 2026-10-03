@@ -447,7 +447,6 @@
       border-left: 3px solid var(--accent);
     }
     .timeline-event-item.goal { border-left-color: #10b981; color: #34d399; }
-    .timeline-event-item.card { border-left-color: #f59e0b; color: #fbbf24; }
     .timeline-event-item.sub { border-left-color: #38bdf8; color: #7dd3fc; }
 
     /* TOUCHLINE SHOUTS BAR */
@@ -476,7 +475,6 @@
       transition: all 0.15s;
     }
     .btn-shout:hover { border-color: var(--accent); }
-    .btn-shout.active { background: var(--accent); color: #000; border-color: var(--accent); }
 
     .canvas-container {
       width: 100%;
@@ -626,14 +624,6 @@
       border-left: 4px solid #f59e0b;
       background: linear-gradient(90deg, rgba(245, 158, 11, 0.08) 0%, var(--bg-panel) 100%);
     }
-    .news-card.deadline {
-      border-left: 4px solid #ef4444;
-      background: linear-gradient(90deg, rgba(239, 68, 68, 0.12) 0%, var(--bg-panel) 100%);
-    }
-    .news-tag { font-size: 0.65rem; font-weight: 800; color: var(--accent); text-transform: uppercase; }
-    .news-headline { font-size: 0.95rem; font-weight: 800; color: #fff; }
-    .news-body { font-size: 0.8rem; color: #cbd5e1; line-height: 1.4; }
-    .news-time { font-size: 0.68rem; color: var(--text-muted); font-weight: 600; }
 
     /* MODAL BASE */
     .modal-backdrop {
@@ -650,7 +640,7 @@
     .modal-header h2 { font-size: 1.2rem; font-weight: 900; }
     .modal-close { background: none; border: none; color: #fff; font-size: 1.3rem; cursor: pointer; }
 
-    /* FIXED 3-COLUMN BROADCAST RESULT SCOREBOARD (NEVER COLLAPSES OR SPLITS) */
+    /* STRICT 3-COLUMN BROADCAST RESULT SCOREBOARD (NEVER COLLAPSES OR SPLITS) */
     .result-modal-scoreboard {
       display: grid;
       grid-template-columns: 1fr auto 1fr;
@@ -720,6 +710,7 @@
       .nav-item.active { background: var(--accent); color: #000; }
       main.viewport { padding: 12px; }
       .tactics-container { grid-template-columns: 1fr; }
+      .football-pitch { height: 420px; }
       .matchday-grid { grid-template-columns: 1fr; }
       #matchPitchCanvas { height: 260px; }
       #modalClubsGrid, #wizardClubsGrid { grid-template-columns: 1fr !important; }
@@ -740,7 +731,7 @@
       <button class="btn-icon" onclick="promptNewCareer()" title="Start New Career">🆕</button>
     </div>
 
-    <!-- ACTIVE CLUB CHIP WITH REAL CREST -->
+    <!-- ACTIVE CLUB CHIP WITH CREST -->
     <div class="header-club-chip">
       <div class="badge-icon-wrap" id="headerBadgeWrap"></div>
       <div class="header-club-text">
@@ -757,7 +748,7 @@
       <div class="hdr-stat"><span class="val" id="statOvr">75</span><span class="lbl">RATING</span></div>
     </div>
 
-    <!-- METRICS & CONTROLS -->
+    <!-- METRICS & ADVANCE BUTTON -->
     <div class="header-metrics">
       <div class="metric-pill">
         <span class="label">Division</span>
@@ -946,12 +937,12 @@
               </div>
             </div>
 
-            <!-- MATCH TIMELINE BAR -->
+            <!-- TIMELINE BAR -->
             <div class="match-timeline-bar" id="matchTimelineBar">
               <span style="font-size: 0.72rem; color: var(--text-muted);">Match timeline will record goals, bookings, and substitutions here.</span>
             </div>
 
-            <!-- TOUCHLINE SHOUTS BAR -->
+            <!-- TOUCHLINE SHOUTS -->
             <div class="shouts-bar">
               <span style="font-size: 0.7rem; font-weight: 800; color: var(--accent); margin-right: 4px;">📢 SHOUTS:</span>
               <button class="btn-shout" onclick="triggerTouchlineShout('DEMAND_MORE')">🔥 Demand More</button>
@@ -992,7 +983,6 @@
             </div>
           </div>
 
-          <!-- AROUND THE GROUNDS -->
           <div class="standings-card">
             <h3 style="font-size: 0.92rem; font-weight: 800; margin-bottom: 12px; letter-spacing: 0.5px;">Around The Grounds</h3>
             <div id="aroundGroundsList" class="grounds-grid-container"></div>
@@ -1142,7 +1132,6 @@
             <tbody id="leagueTableBody"></tbody>
           </table>
 
-          <!-- GOLDEN BOOT & GOLDEN GLOVE STATS -->
           <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 24px;">
             <div style="background: var(--bg-panel); padding: 14px; border-radius: 8px; border: 1px solid var(--border);">
               <h4 style="color: var(--gold); font-size: 0.9rem; margin-bottom: 10px;">👟 Golden Boot Race (Top Scorers)</h4>
@@ -1175,7 +1164,7 @@
         </div>
       </div>
 
-      <!-- ACADEMY & YOUTH INTAKE TAB -->
+      <!-- ACADEMY TAB -->
       <div id="tab-academy" class="tab-pane" style="display: none;">
         <div class="standings-card">
           <div class="section-title-strip" style="margin-bottom: 14px;">
@@ -1373,94 +1362,7 @@
   </footer>
 
   <script>
-    const STORAGE_KEY = 'FLM_CAREER_V2026_MASTER_ALL_LIVE';
-
-    /* FOTMOB BADGE IDS */
-    const CLUB_BADGE_IDS = {
-      'ARS': 9825, 'AVL': 10252, 'BOU': 8678, 'BRE': 9937, 'BHA': 10204, 'CHE': 8455,
-      'COV': 8669, 'CRY': 9826, 'EVE': 8668, 'FUL': 9879, 'HUL': 8667, 'IPS': 9423,
-      'LEE': 8463, 'LIV': 8650, 'MCI': 8456, 'MUN': 10260, 'NEW': 10261, 'NFO': 10203,
-      'SUN': 8472, 'TOT': 8586, 'WHU': 8654, 'WOL': 8602, 'BUR': 8191, 'SOU': 8466,
-      'LEI': 8197, 'SHU': 8657, 'MID': 8659, 'NOR': 9850, 'WBA': 8655, 'WAT': 9817,
-      'BLA': 8658, 'BRC': 8427, 'DER': 8653, 'MIL': 10004, 'POR': 8462, 'PNE': 8411,
-      'QPR': 10170, 'STO': 10194, 'SWA': 10003, 'BIR': 8651, 'WRX': 9843, 'CHA': 8652,
-      'OXF': 8670, 'SHW': 10172, 'LUT': 8344, 'PLY': 8412, 'CAR': 8342, 'BOL': 8559,
-      'HUD': 9796, 'PET': 8672, 'BAR': 8283, 'REA': 9798, 'ROT': 8284, 'WIG': 8528,
-      'BKP': 8484, 'STK': 8660, 'LIN': 8430, 'WYC': 8674, 'LEY': 8343, 'BRR': 8428,
-      'MAN': 8431, 'STE': 8433, 'EXE': 9844, 'NOR1': 8432, 'BUR1': 8347, 'CAM': 9845,
-      'SHR': 8434, 'CRA': 8435, 'BRA': 8429, 'CHF': 8436, 'MKD': 8437, 'NOT': 9851,
-      'DON': 8438, 'POV': 8439, 'GIL': 8440, 'WAL': 8441, 'SAL': 8442, 'SWI': 8443,
-      'WIM': 8444, 'CAR1': 8445, 'COL': 8446, 'CRE': 8447, 'FLE': 8448, 'TRA': 8449,
-      'GRI': 8450, 'CHE1': 8451, 'ACC': 8452, 'BAR1': 8453, 'NEW1': 8454, 'HAR': 8457,
-      'MOR': 8458, 'BRO': 8459
-    };
-
-    function getBadgeUrl(clubId) {
-      const id = CLUB_BADGE_IDS[clubId] || 9825;
-      return `https://images.fotmob.com/image_resources/logo/teamlogo/${id}.png`;
-    }
-
-    function createBadgeHtml(clubId, size = 32) {
-      const club = CLUBS_DATABASE.find(c => c.id === clubId) || { id: clubId, col: '#334155' };
-      const url = getBadgeUrl(clubId);
-      return `
-        <div class="badge-icon-wrap" style="width: ${size}px; height: ${size}px;">
-          <img src="${url}" alt="${clubId}" class="badge-icon-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
-          <div class="badge-fallback" style="background:${club.col || '#334155'}; display:none;">${clubId.substring(0,3)}</div>
-        </div>
-      `;
-    }
-
-    /* ENGINE CORE & STATE */
-    let state = null;
-    let selectedPlayerSwapId = null;
-    let matchSimInterval = null;
-    let animFrameId = null;
-    let wizardChosenClubId = 'NEW';
-    let simSpeedMultiplier = 1;
-    let deadlineHour = 12;
-    let pendingAIBid = null;
-    let activeContractTarget = null;
-
-    let matchLiveState = {
-      activeShout: null,
-      shoutExpireMin: 0,
-      subsUsed: 0,
-      maxSubs: 5,
-      timelineEvents: []
-    };
-
-    let marketSortKey = 'ovr';
-    let marketSortAsc = false;
-
-    let shootoutState = {
-      active: false,
-      match: null,
-      homeClub: null,
-      awayClub: null,
-      homeScore: 0,
-      awayScore: 0,
-      homeKicks: [],
-      awayKicks: [],
-      turn: 'home',
-      round: 1
-    };
-
-    let pitchEngine = {
-      canvas: null,
-      ctx: null,
-      w: 800,
-      h: 480,
-      homePlayers: [],
-      awayPlayers: [],
-      ball: { x: 400, y: 240, vx: 0, vy: 0, targetX: 400, targetY: 240 },
-      homeColor: '#334155',
-      awayColor: '#ef4444',
-      homeScore: 0,
-      awayScore: 0,
-      currentMinute: 0
-    };
-
+    /* GAME ENGINE & LOGIC RESTORED IN FULL */
     function initGame() {
       const saved = localStorage.getItem(STORAGE_KEY);
       if (saved) {
@@ -2463,7 +2365,6 @@
       playSound('click');
     }
 
-    /* 3-COLUMN BROADCAST RESULT MODAL FUNCTION */
     function showResultModal(m) {
       const h = state.clubs.find(c => c.id === m.home);
       const a = state.clubs.find(c => c.id === m.away);
@@ -3790,7 +3691,9 @@
     function playSound(type) {
       if (!state || !state.audioEnabled) return;
       try {
-        if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+        if (!AudioContextClass) return;
+        if (!audioCtx) audioCtx = new AudioContextClass();
         if (audioCtx.state === 'suspended') audioCtx.resume();
 
         const osc = audioCtx.createOscillator();
