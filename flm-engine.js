@@ -19,7 +19,15 @@ const STORAGE_KEY = 'FLM_CAREER_2026_V2';
 let state = null, selectedPlayerSwapId = null, wizardChosenClubId = 'NEW', activeContractTarget = null,
   deadlineHour = 12, pendingAIBid = null, shootoutState = null, simSpeedMultiplier = 1,
   matchSimInterval = null, animFrameId = null, marketSortKey = 'ovr', marketSortAsc = false;
-let matchLiveState = { activeShout: null, shoutExpireMin: 0, subsUsed: 0, maxSubs: 5, timelineEvents: [] };
+let matchLiveState = { 
+  activeShout: null, 
+  shoutExpireMin: 0, 
+  subsUsed: 0, 
+  maxSubs: 5, 
+  timelineEvents: [],
+  yellows: {},
+  reds: new Set()
+};
 let pitchEngine = { currentMinute: 0, homePlayers: [], awayPlayers: [], ball: { x: 400, y: 240, targetX: 400, targetY: 240 }, w: 800, h: 480 };
 
 const $ = id => document.getElementById(id);
@@ -286,7 +294,11 @@ function handleMasterAdvanceClick() {
   if (state.currentWeek % 4 === 0) evaluateManagerOfMonth();
   saveGame(); renderAll(); playSound('click');
 }
-function resetLiveState() { matchLiveState = { activeShout: null, shoutExpireMin: 0, subsUsed: 0, maxSubs: 5, timelineEvents: [] }; $('activeShoutBadge').innerText = ''; $('subsRemainingText').innerText = 5; }
+function resetLiveState() { 
+  matchLiveState = { activeShout: null, shoutExpireMin: 0, subsUsed: 0, maxSubs: 5, timelineEvents: [], yellows: {}, reds: new Set() }; 
+  $('activeShoutBadge').innerText = ''; 
+  $('subsRemainingText').innerText = 5; 
+}
 function showResultModal(m) {
   const h = clubById(m.home), a = clubById(m.away), mine = m.home === state.userClubId ? m.homeGoals - m.awayGoals : m.awayGoals - m.homeGoals;
   $('modalScoreDisplay').innerHTML = `<div class="result-modal-scoreboard"><div class="result-team">${createBadgeHtml(h.id, 46)}<div class="result-team-name">${h.name}</div></div><div class="result-score-center"><div class="result-score-digits">${m.homeGoals} - ${m.awayGoals}</div><div class="result-ft-badge">FULL TIME</div></div><div class="result-team">${createBadgeHtml(a.id, 46)}<div class="result-team-name">${a.name}</div></div></div>`;
@@ -513,16 +525,155 @@ function makeLiveMatchSub(id) {
   $('subsRemainingText').innerText = matchLiveState.maxSubs - matchLiveState.subsUsed; addTimelineEvent('sub', `🔄 ${pitchEngine.currentMinute}' ${inP.name} on for ${outP.name}`); populateInMatchSubChips(); playSound('click');
 }
 function startMatchdaySim() {
-  const m = userLeagueMatch(); if (!m || m.played) return;
-  const btn = $('btnStartMatch'); btn.disabled = true; const h = clubById(m.home), a = clubById(m.away), feed = $('commentaryFeed');
-  feed.innerHTML = ''; $('matchTimelineBar').innerHTML = ''; matchLiveState.timelineEvents = []; m.scorers = [];
-  let min = 0, hs = 0, as = 0; clearTimeout(matchSimInterval); cancelAnimationFrame(animFrameId);
-  (function loop() { update2DPitchPhysics(); if (min < 90) animFrameId = requestAnimationFrame(loop); })();
+  const m = getActiveUserMatch();
+  if (!m || m.played) return;
+  const btn = $('btnStartMatch');
+  btn.disabled = true;
+  const h = clubById(m.home), a = clubById(m.away), feed = $('commentaryFeed');
+  feed.innerHTML = '';
+  $('matchTimelineBar').innerHTML = '';
+  matchLiveState.timelineEvents = [];
+  matchLiveState.yellows = {};
+  matchLiveState.reds = new Set();
+  m.scorers = [];
+  let min = 0, hs = 0, as = 0;
+  clearTimeout(matchSimInterval);
+  cancelAnimationFrame(animFrameId);
+
+  (function loop() {
+    update2DPitchPhysics();
+    if (min < 90) animFrameId = requestAnimationFrame(loop);
+  })();
+
   const goal = (club, isHome) => {
-    const sc = pickScorer(club); sc.goals++; isHome ? hs++ : as++; m.scorers.push({ team: club.name, player: sc.name, min });
-    pitchEngine.ball.targetX = isHome ? 782 : 18; pitchEngine.ball.targetY = 240;
-    feed.insertAdjacentHTML('afterbegin', `<div class="comm-line goal">⚽ ${min}' GOAL! ${club.name} (${sc.name}) [${hs}-${as}]</div>`); addTimelineEvent('goal', `⚽ ${min}' ${sc.name.split(' ').pop()} (${club.id})`); playSound('goal'); $('sbScore').innerText = `${hs} - ${as}`;
+    const sc = pickScorer(club);
+    sc.goals++;
+    isHome ? hs++ : as++;
+    m.scorers.push({ team: club.name, player: sc.name, min });
+    pitchEngine.ball.targetX = isHome ? 782 : 18;
+    pitchEngine.ball.targetY = 240;
+    feed.insertAdjacentHTML('afterbegin', `<div class="comm-line goal">⚽ ${min}' GOAL! ${club.name} (${sc.name}) [${hs}-${as}]</div>`);
+    addTimelineEvent('goal', `⚽ ${min}' ${sc.name.split(' ').pop()} (${club.id})`);
+    playSound('goal');
+    $('sbScore').innerText = `${hs} - ${as}`;
   };
+
+  const getRandomActivePlayer = (club) => {
+    const active = club.players.filter(p => p.starter && !matchLiveState.reds.has(p.id));
+    return active.length ? pick(active) : null;
+  };
+
+  const triggerCard = (club) => {
+    const p = getRandomActivePlayer(club);
+    if (!p) return;
+    const currentYellows = matchLiveState.yellows[p.id] || 0;
+
+    if (currentYellows === 1 || Math.random() < 0.08) {
+      // Red card (second yellow or straight red)
+      matchLiveState.reds.add(p.id);
+      feed.insertAdjacentHTML('afterbegin', `<div class="comm-line redcard">🟥 ${min}' RED CARD! ${p.name} (${club.name}) is sent off!</div>`);
+      addTimelineEvent('red', `🟥 ${min}' ${p.name.split(' ').pop()}`);
+      playSound('whistle');
+    } else {
+      // Yellow card
+      matchLiveState.yellows[p.id] = 1;
+      feed.insertAdjacentHTML('afterbegin', `<div class="comm-line card">🟨 ${min}' Booking: ${p.name} (${club.name}) receives a yellow card.</div>`);
+      addTimelineEvent('yellow', `🟨 ${min}' ${p.name.split(' ').pop()}`);
+      playSound('click');
+    }
+  };
+
+  const triggerMatchInjury = (club) => {
+    const p = getRandomActivePlayer(club);
+    if (!p || p.inj > 0) return;
+    p.inj = R(1, 3);
+    p.con = Math.max(30, p.con - 35);
+    feed.insertAdjacentHTML('afterbegin', `<div class="comm-line injury">🚑 ${min}' INJURY: ${p.name} (${club.name}) is down in pain!</div>`);
+    addTimelineEvent('injury', `🚑 ${min}' ${p.name.split(' ').pop()}`);
+    playSound('whistle');
+    if (club.id === state.userClubId) {
+      populateInMatchSubChips();
+    }
+  };
+
+  function tick() {
+    min += 2;
+    pitchEngine.currentMinute = min;
+    $('sbMinute').innerText = `${min}'`;
+
+    if (matchLiveState.activeShout && min >= matchLiveState.shoutExpireMin) {
+      matchLiveState.activeShout = null;
+      $('activeShoutBadge').innerText = '';
+    }
+
+    if (min % 4 === 0) {
+      pitchEngine.ball.targetX = 140 + Math.random() * 520;
+      pitchEngine.ball.targetY = 60 + Math.random() * 360;
+    }
+
+    // Fatigue outfield starters slightly during the game
+    if (min % 10 === 0) {
+      [h, a].forEach(club => club.players.forEach(p => {
+        if (p.starter) p.con = Math.max(40, p.con - 1);
+      }));
+    }
+
+    // Disciplinary & Injury Checks (~3.5% chance per tick for foul, ~1.2% for knock)
+    if (Math.random() < 0.035) {
+      triggerCard(Math.random() < 0.5 ? h : a);
+    }
+    if (Math.random() < 0.012) {
+      triggerMatchInjury(Math.random() < 0.5 ? h : a);
+    }
+
+    const userHome = h.id === state.userClubId;
+    const s = matchLiveState.activeShout;
+    const boost = (s === 'DEMAND_MORE' || s === 'PUSH_FORWARD') ? 0.03 : 0;
+    const guard = s === 'TIGHTEN_UP' ? 0.025 : 0;
+
+    // Calculate ratings with 10-man penalty if a red card has occurred
+    const hS = computeClubAttributes(h);
+    const aS = computeClubAttributes(a);
+    const homeRedPenalty = [...matchLiveState.reds].some(id => h.players.some(p => p.id === id)) ? 8 : 0;
+    const awayRedPenalty = [...matchLiveState.reds].some(id => a.players.some(p => p.id === id)) ? 8 : 0;
+
+    const netHomeAtt = Math.max(30, (hS.att + hS.mid) / 2 - homeRedPenalty);
+    const netHomeDef = Math.max(30, (hS.def + hS.mid) / 2 - homeRedPenalty);
+    const netAwayAtt = Math.max(30, (aS.att + aS.mid) / 2 - awayRedPenalty);
+    const netAwayDef = Math.max(30, (aS.def + aS.mid) / 2 - awayRedPenalty);
+
+    const pH = Math.max(0.01, (0.028 + (netHomeAtt - netAwayDef) / 1400 + 0.004) + (userHome ? boost : -guard));
+    const pA = Math.max(0.01, (0.024 + (netAwayAtt - netHomeDef) / 1400) + (userHome ? -guard : boost));
+
+    if (Math.random() < pH * 1.35) goal(h, true);
+    if (Math.random() < pA * 1.35) goal(a, false);
+
+    if (min >= 90) {
+      cancelAnimationFrame(animFrameId);
+      btn.disabled = false;
+      applyResult(m, hs, as, true);
+      $('sbMinute').innerText = 'FULL TIME';
+      feed.insertAdjacentHTML('afterbegin', `<div class="comm-line" style="font-weight:800">🏁 Full-time: ${h.name} ${hs}-${as} ${a.name}</div>`);
+
+      if (m.type === 'CUP') {
+        if (hs === as) {
+          launchPenaltyShootout(m, h, a);
+          return;
+        } else {
+          cupOutcome(m);
+        }
+      }
+
+      $('btnAdvanceMaster').className = 'btn-advance-master btn-continue-mode';$('btnAdvanceText').innerText = `CONTINUE TO WK ${state.currentWeek + 1}`;
+      saveGame();
+      renderStandingsTable(getCurrentUserClub().div);
+      playSound('whistle');
+      return;
+    }
+    matchSimInterval = setTimeout(tick, Math.max(12, 120 / simSpeedMultiplier));
+  }
+  tick();
+}
   function tick() {
     min += 2; pitchEngine.currentMinute = min; $('sbMinute').innerText = `${min}'`;
     if (matchLiveState.activeShout && min >= matchLiveState.shoutExpireMin) { matchLiveState.activeShout = null; $('activeShoutBadge').innerText = ''; }
