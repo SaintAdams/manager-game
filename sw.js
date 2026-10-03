@@ -1,8 +1,10 @@
-const CACHE_NAME = 'flm-cache-v5';
+const CACHE_NAME = 'flm-cache-v6';
 const ASSETS_TO_CACHE = [
   './',
   './index.html',
-  './manifest.json'
+  './manifest.json',
+  './flm-squads.js',
+  './flm-engine.js'
 ];
 
 // Install Service Worker & cache all game files
