@@ -33,8 +33,8 @@ const TAG = { GK: 'GK', DEF: 'DF', MID: 'MF', FWD: 'FW' };
 const DIV_NAMES = ['Premier League', 'Championship', 'League One', 'League Two'];
 const CUP_WEEKS = { 7: ['Carabao Cup', 'carabao', false], 15: ['Carabao Cup', 'carabao', true], 23: ['The FA Cup', 'fa', false], 31: ['The FA Cup', 'fa', true] };
 
-const LEAGUES = ('Arsenal,Aston Villa,Bournemouth,Brentford,Brighton,Chelsea,Crystal Palace,Everton,Fulham,Leeds United,Liverpool,Manchester City,Manchester United,Newcastle United,Nottingham Forest,Sunderland,Tottenham,West Ham,Wolves,Burnley|' +
-  'Leicester City,Southampton,Ipswich Town,Middlesbrough,West Brom,Norwich City,Sheffield United,Coventry City,Watford,Hull City,Stoke City,Swansea City,Bristol City,Millwall,Preston,QPR,Blackburn,Derby County,Portsmouth,Oxford United,Sheffield Wednesday,Plymouth Argyle,Birmingham City,Charlton|' +
+const LEAGUES = ('Arsenal,Aston Villa,Bournemouth,Brentford,Brighton,Chelsea,Crystal Palace,Everton,Fulham,Leeds United,Liverpool,Manchester City,Manchester United,Newcastle United,Nottingham Forest,Sunderland,Tottenham,Coventry City,Ipswich Town,Hull City|' +
+  'Leicester City,Southampton,Burnley,Middlesbrough,West Brom,Norwich City,Sheffield United,West Ham,Watford,Wolves,Stoke City,Swansea City,Bristol City,Millwall,Preston,QPR,Blackburn,Derby County,Portsmouth,Oxford United,Sheffield Wednesday,Plymouth Argyle,Birmingham City,Charlton|' +
   'Wrexham,Bolton,Stockport,Leyton Orient,Huddersfield,Lincoln City,Reading,Wycombe,Barnsley,Peterborough,Blackpool,Rotherham,Cardiff City,Bradford City,Stevenage,Mansfield Town,Exeter City,Northampton,Burton Albion,Wigan,Luton Town,Port Vale,Doncaster,Crawley Town|' +
   'Notts County,Walsall,Chesterfield,Swindon,Gillingham,Salford City,Grimsby Town,Bromley,Crewe Alexandra,Colchester,Fleetwood,Tranmere,AFC Wimbledon,Barrow,Cheltenham,Harrogate,MK Dons,Accrington Stanley,Newport County,Bristol Rovers,Carlisle,Shrewsbury,Morecambe,Oldham Athletic').split('|').map(s => s.split(','));
 
@@ -60,7 +60,17 @@ function mkPlayer(pos, base, i, cid) {
   return { id: `${cid}_${i}_${R(0, 99999)}`, name: pick(FIRSTNAMES) + ' ' + pick(SURNAMES), naturalPos: pos, nat: Math.random() < 0.7 ? 'ENG' : pick(NATS), age: R(18, 35), ovr, con: 100,
     role: ROLE[pos], starter: i < 11, val: Math.max(0.3, +((ovr - 50) * 0.75).toFixed(1)), wage: Math.max(0.01, +((ovr - 45) * 0.003).toFixed(3)), contract: R(1, 5), morale: 'Good', goals: 0, cleanSheets: 0, inj: 0 };
 }
-function generateProceduralSquad(c) { return SQUAD_ORDER.map((pos, i) => mkPlayer(pos, c.str, i, c.id)); }
+function generateProceduralSquad(c) {
+  const real = typeof REAL_SQUADS !== 'undefined' && REAL_SQUADS[c.name];
+  if (!real) return SQUAD_ORDER.map((pos, i) => mkPlayer(pos, c.str, i, c.id));
+  const all = real.map(([name, pos, ovr, age, nat], i) => Object.assign(mkPlayer(pos, ovr, i, c.id), { name, ovr, age: age || R(20, 32), nat: nat || 'ENG', starter: false,
+    val: Math.max(0.3, +((ovr - 50) * 0.75).toFixed(1)), wage: Math.max(0.01, +((ovr - 45) * 0.003).toFixed(3)) })).sort((a, b) => b.ovr - a.ovr);
+  const need = { GK: 1, DEF: 4, MID: 3, FWD: 3 }, xi = [];
+  Object.keys(need).forEach(pos => { for (let k = 0; k < need[pos]; k++) { const i = all.findIndex(p => p.naturalPos === pos); xi.push(i >= 0 ? all.splice(i, 1)[0] : mkPlayer(pos, c.str, 50 + xi.length, c.id)); } });
+  const squad = [...xi, ...all]; let i = squad.length;
+  while (squad.length < 22) squad.push(mkPlayer(SQUAD_ORDER[squad.length], c.str - 6, i++, c.id));
+  squad.forEach((p, j) => { p.starter = j < 11; }); return squad;
+}
 const TRANSFER_SCOUT_POOL = [];
 for (let i = 0; i < 40; i++) {
   const pos = pick(['GK', 'DEF', 'MID', 'FWD']), p = mkPlayer(pos, 66 + R(0, 14), i, 'scout');
