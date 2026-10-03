@@ -26,6 +26,7 @@ let matchLiveState = {
   shoutExpireMin: 0,
   subsUsed: 0,
   maxSubs: 5,
+  pendingSubInID: [],
   timelineEvents: [],
   yellows: {},
   reds: []
@@ -299,7 +300,7 @@ function handleMasterAdvanceClick() {
   saveGame(); renderAll(); playSound('click');
 }
 function resetLiveState() {
-  matchLiveState = { activeShout: null, shoutExpireMin: 0, subsUsed: 0, maxSubs: 5, timelineEvents: [], yellows: {}, reds: [] };
+  matchLiveState = { activeShout: null, shoutExpireMin: 0, subsUsed: 0, maxSubs: 5, pendingSubInId: [], timelineEvents: [], yellows: {}, reds: [] };
   $('activeShoutBadge').innerText = '';
   $('subsRemainingText').innerText = 5;
 }
@@ -516,17 +517,175 @@ function addTimelineEvent(type, text) {
   matchLiveState.timelineEvents.push({ type, text }); const bar = $('matchTimelineBar'); if (matchLiveState.timelineEvents.length === 1) bar.innerHTML = '';
   const i = document.createElement('div'); i.className = `timeline-event-item ${type}`; i.innerText = text; bar.appendChild(i);
 }
+function cancelInMatchSub() {
+  matchLiveState.pendingSubInId = null;
+  populateInMatchSubChips();
+}
+
 function populateInMatchSubChips() {
-  const c = $('benchSubChipsList'); c.innerHTML = '';
-  getCurrentUserClub().players.filter(p => !p.starter && !p.inj).forEach(p => {
-    const d = document.createElement('div'); d.className = 'sub-chip'; d.innerHTML = `<span>${p.name} (${p.naturalPos} • ${p.ovr})</span><b style="color:#10b981">Sub In</b>`; d.onclick = () => makeLiveMatchSub(p.id); c.appendChild(d);
+  const container = $('benchSubChipsList');
+  const titleElem = $('inMatchSubDrawer').querySelector('.in-match-sub-title');
+  container.innerHTML = '';
+  const club = getCurrentUserClub();
+
+  // If a sub has been chosen, show starters to choose who comes off
+  if (matchLiveState.pendingSubInId) {
+    const incomingPlayer = club.players.find(p => p.id === matchLiveState.pendingSubInId);
+    titleElem.innerHTML = `<span>🔄 Subbing in: <b style="color:var(--gold)">${incomingPlayer ? incomingPlayer.name : ''}</b></span> <button class="btn-swap-pill" style="padding:2px 8px;font-size:0.68rem;" onclick="cancelInMatchSub()">Cancel</button>`;
+
+    club.players.filter(p => p.starter).forEach(p => {
+      const isRed = matchLiveState.reds.includes(p.id);
+      const chip = document.createElement('div');
+      chip.className = 'sub-chip starter-chip';
+      chip.style.opacity = isRed ? '0.4' : '1';
+      chip.innerHTML = `<span>${p.name} (${p.naturalPos} • ${p.con}%)</span><b style="color:${isRed ? '#ef4444' : '#f87171'}">${isRed ? 'SENT OFF' : 'Sub Off ⬇'}</b>`;
+      if (!isRed) {
+        chip.onclick = () => confirmLiveMatchSub(p.id);
+      }
+      container.appendChild(chip);
+    });
+    return;
+  }
+
+  // Normal mode: Show available bench players
+  const remaining = matchLiveState.maxSubs - matchLiveState.subsUsed;
+  titleElem.innerHTML = `<span>🔄 TACTICAL SUBSTITUTIONS (REMAINING: <span id="subsRemainingText">${remaining}</span>)</span><span style="font-size: 0.68rem; color: var(--text-muted);">Tap a bench player to bring on</span>`;
+
+  if (remaining <= 0) {
+    container.innerHTML = '<span style="font-size:0.75rem; color:var(--text-muted);">All substitutions used for this match.</span>';
+    return;
+  }
+
+  const bench = club.players.filter(p => !p.starter && !p.inj);
+  if (!bench.length) {
+    container.innerHTML = '<span style="font-size:0.75rem; color:var(--text-muted);">No fit bench players available.</span>';
+    return;
+  }
+
+  bench.forEach(p => {
+    const chip = document.createElement('div');
+    chip.className = 'sub-chip';
+    chip.innerHTML = `<span>${p.name} (${p.naturalPos} • OVR ${p.ovr} • ${p.con}%)</span><b style="color:#10b981">Bring On ⬆</b>`;
+    chip.onclick = () => {
+      matchLiveState.pendingSubInId = p.id;
+      populateInMatchSubChips();
+    };
+    container.appendChild(chip);
   });
 }
-function makeLiveMatchSub(id) {
-  if (matchLiveState.subsUsed >= matchLiveState.maxSubs) { alert('All 5 substitutions used.'); return; }
-  const club = getCurrentUserClub(), inP = club.players.find(x => x.id === id), outP = club.players.filter(p => p.starter && p.naturalPos !== 'GK').sort((a, b) => a.con - b.con)[0];
-  if (!inP || !outP) return; inP.starter = true; outP.starter = false; inP.role = outP.role; matchLiveState.subsUsed++;
-  $('subsRemainingText').innerText = matchLiveState.maxSubs - matchLiveState.subsUsed; addTimelineEvent('sub', `🔄 ${pitchEngine.currentMinute}' ${inP.name} on for ${outP.name}`); populateInMatchSubChips(); playSound('click');
+
+function confirmLiveMatchSub(starterOutId) {
+  if (matchLiveState.subsUsed >= matchLiveState.maxSubs || !matchLiveState.pendingSubInId) return;
+
+  const club = getCurrentUserClub();
+  const inP = club.players.find(x => x.id === matchLiveState.pendingSubInId);
+  const outP = club.players.find(x => x.id === starterOutId);
+
+  if (!inP || !outP) {
+    cancelInMatchSub();
+    return;
+  }
+
+  // Swap starter statuses and roles
+  inP.starter = true;
+  outP.starter = false;
+  inP.role = outP.role;
+  matchLiveState.subsUsed++;
+  matchLiveState.pendingSubInId = null;
+
+  addTimelineEvent('sub', `🔄 ${pitchEngine.currentMinute}' ${inP.name.split(' ').pop()} on for ${outP.name.split(' ').pop()}`);
+  $('commentaryFeed').insertAdjacentHTML('afterbegin', `<div class="comm-line" style="border-left-color:#38bdf8">🔄 ${pitchEngine.currentMinute}' Tactical Substitution: <b>${inP.name}</b> comes on to replace <b>${outP.name}</b>.</div>`);
+
+  // Refresh bench drawer and redraw pitch kits
+  populateInMatchSubChips();
+  const m = getActiveUserMatch();
+  if (m) setup2DPlayers(clubById(m.home), clubById(m.away));
+  playSound('click');
+}
+function cancelInMatchSub() {
+  matchLiveState.pendingSubInId = null;
+  populateInMatchSubChips();
+}
+
+function populateInMatchSubChips() {
+  const container = $('benchSubChipsList');
+  const titleElem = $('inMatchSubDrawer').querySelector('.in-match-sub-title');
+  container.innerHTML = '';
+  const club = getCurrentUserClub();
+
+  // If a sub has been chosen, show starters to choose who comes off
+  if (matchLiveState.pendingSubInId) {
+    const incomingPlayer = club.players.find(p => p.id === matchLiveState.pendingSubInId);
+    titleElem.innerHTML = `<span>🔄 Subbing in: <b style="color:var(--gold)">${incomingPlayer ? incomingPlayer.name : ''}</b></span> <button class="btn-swap-pill" style="padding:2px 8px;font-size:0.68rem;" onclick="cancelInMatchSub()">Cancel</button>`;
+
+    club.players.filter(p => p.starter).forEach(p => {
+      const isRed = matchLiveState.reds.includes(p.id);
+      const chip = document.createElement('div');
+      chip.className = 'sub-chip starter-chip';
+      chip.style.opacity = isRed ? '0.4' : '1';
+      chip.innerHTML = `<span>${p.name} (${p.naturalPos} • ${p.con}%)</span><b style="color:${isRed ? '#ef4444' : '#f87171'}">${isRed ? 'SENT OFF' : 'Sub Off ⬇'}</b>`;
+      if (!isRed) {
+        chip.onclick = () => confirmLiveMatchSub(p.id);
+      }
+      container.appendChild(chip);
+    });
+    return;
+  }
+
+  // Normal mode: Show available bench players
+  const remaining = matchLiveState.maxSubs - matchLiveState.subsUsed;
+  titleElem.innerHTML = `<span>🔄 TACTICAL SUBSTITUTIONS (REMAINING: <span id="subsRemainingText">${remaining}</span>)</span><span style="font-size: 0.68rem; color: var(--text-muted);">Tap a bench player to bring on</span>`;
+
+  if (remaining <= 0) {
+    container.innerHTML = '<span style="font-size:0.75rem; color:var(--text-muted);">All substitutions used for this match.</span>';
+    return;
+  }
+
+  const bench = club.players.filter(p => !p.starter && !p.inj);
+  if (!bench.length) {
+    container.innerHTML = '<span style="font-size:0.75rem; color:var(--text-muted);">No fit bench players available.</span>';
+    return;
+  }
+
+  bench.forEach(p => {
+    const chip = document.createElement('div');
+    chip.className = 'sub-chip';
+    chip.innerHTML = `<span>${p.name} (${p.naturalPos} • OVR ${p.ovr} • ${p.con}%)</span><b style="color:#10b981">Bring On ⬆</b>`;
+    chip.onclick = () => {
+      matchLiveState.pendingSubInId = p.id;
+      populateInMatchSubChips();
+    };
+    container.appendChild(chip);
+  });
+}
+
+function confirmLiveMatchSub(starterOutId) {
+  if (matchLiveState.subsUsed >= matchLiveState.maxSubs || !matchLiveState.pendingSubInId) return;
+
+  const club = getCurrentUserClub();
+  const inP = club.players.find(x => x.id === matchLiveState.pendingSubInId);
+  const outP = club.players.find(x => x.id === starterOutId);
+
+  if (!inP || !outP) {
+    cancelInMatchSub();
+    return;
+  }
+
+  // Swap starter statuses and roles
+  inP.starter = true;
+  outP.starter = false;
+  inP.role = outP.role;
+  matchLiveState.subsUsed++;
+  matchLiveState.pendingSubInId = null;
+
+  addTimelineEvent('sub', `🔄 ${pitchEngine.currentMinute}' ${inP.name.split(' ').pop()} on for ${outP.name.split(' ').pop()}`);
+  $('commentaryFeed').insertAdjacentHTML('afterbegin', `<div class="comm-line" style="border-left-color:#38bdf8">🔄 ${pitchEngine.currentMinute}' Tactical Substitution: <b>${inP.name}</b> comes on to replace <b>${outP.name}</b>.</div>`);
+
+  // Refresh bench drawer and redraw pitch kits
+  populateInMatchSubChips();
+  const m = getActiveUserMatch();
+  if (m) setup2DPlayers(clubById(m.home), clubById(m.away));
+  playSound('click');
 }
 
 function startMatchdaySim() {
