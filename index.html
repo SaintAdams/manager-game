@@ -24,6 +24,7 @@
       --fm-amber: #f59e0b;
       --fm-red: #ef4444;
       --gold: #fbc02d;
+      --purple: #a855f7;
       --text-main: #f1f5f9;
       --text-muted: #94a3b8;
       --pitch-grass-1: #235d31;
@@ -34,6 +35,7 @@
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; user-select: none; }
     body { background-color: var(--bg-dark); color: var(--text-main); min-height: 100vh; display: flex; flex-direction: column; overflow-x: hidden; }
 
+    /* HEADER */
     header {
       background: linear-gradient(180deg, #151d2d 0%, #0d131f 100%);
       border-bottom: 2px solid var(--border);
@@ -59,7 +61,7 @@
     .brand-titles h1 { font-size: 1.05rem; font-weight: 800; color: #fff; }
     .brand-titles p { font-size: 0.72rem; color: var(--text-muted); font-weight: 600; }
 
-    .header-metrics { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+    .header-metrics { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
     .metric-pill {
       background: var(--bg-panel);
       border: 1px solid var(--border);
@@ -77,8 +79,8 @@
       background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
       color: #000;
       font-weight: 900;
-      font-size: 0.9rem;
-      padding: 9px 16px;
+      font-size: 0.88rem;
+      padding: 9px 15px;
       border-radius: 8px;
       border: none;
       cursor: pointer;
@@ -89,8 +91,15 @@
       transition: all 0.2s;
     }
     .btn-advance-master:active { transform: scale(0.97); }
+    .btn-deadline-mode {
+      background: linear-gradient(135deg, #ef4444 0%, #b91c1c 100%) !important;
+      color: #fff !important;
+      box-shadow: 0 0 20px rgba(239, 68, 68, 0.6) !important;
+      animation: pulse 1s infinite alternate;
+    }
     .btn-icon { background: var(--bg-panel); border: 1px solid var(--border); color: #fff; padding: 7px 11px; border-radius: 6px; cursor: pointer; }
 
+    /* LAYOUT */
     .app-container { display: flex; flex: 1; min-height: calc(100vh - 120px); }
 
     nav.sidebar {
@@ -362,6 +371,10 @@
       background: #0369a1; color: #fff; font-size: 0.62rem; font-weight: 800;
       padding: 2px 5px; border-radius: 4px;
     }
+    .injury-badge {
+      background: #ef4444; color: #fff; font-size: 0.6rem; font-weight: 900;
+      padding: 1px 4px; border-radius: 4px; margin-left: 4px;
+    }
 
     .btn-swap-pill {
       background: var(--bg-panel);
@@ -386,7 +399,7 @@
     }
     .btn-sell-pill:active { background: #ef4444; color: #fff; }
 
-    .condition-bar { width: 38px; height: 5px; background: #334155; border-radius: 3px; overflow: hidden; display: inline-block; vertical-align: middle; margin-right: 4px; }
+    .condition-bar { width: 38px; height: 6px; background: #334155; border-radius: 3px; overflow: hidden; display: inline-block; vertical-align: middle; margin-right: 4px; }
     .condition-fill { height: 100%; border-radius: 3px; }
 
     /* MATCHDAY & 2D PITCH ENGINE */
@@ -410,7 +423,6 @@
     .sb-score { font-size: 2.3rem; font-weight: 900; color: #fff; letter-spacing: 3px; }
     .sb-minute { background: var(--bg-panel); padding: 4px 8px; border-radius: 6px; font-weight: 800; font-size: 0.8rem; color: var(--accent); }
 
-    /* PROPORTIONAL 2D PITCH CANVAS */
     .canvas-container {
       width: 100%;
       background: #090e18;
@@ -424,7 +436,7 @@
     }
     #matchPitchCanvas {
       width: 100%;
-      height: 440px; /* Spacious, non-squeezed aspect ratio */
+      height: 440px;
       background: #173f22;
       display: block;
     }
@@ -459,14 +471,11 @@
     }
     .comm-line { font-size: 0.78rem; padding: 5px 8px; border-radius: 6px; background: var(--bg-panel); border-left: 3px solid var(--accent); }
     .comm-line.goal { border-left-color: #10b981; background: rgba(16, 185, 129, 0.15); font-weight: 800; color: #34d399; }
+    .comm-line.pen { border-left-color: var(--purple); background: rgba(168, 85, 247, 0.15); font-weight: 800; color: #c084fc; }
 
-    /* AROUND THE GROUNDS PANEL WITH PINNED GRID */
+    /* AROUND THE GROUNDS PINNED GRID */
     .standings-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; padding: 14px; overflow-x: auto; -webkit-overflow-scrolling: touch; }
-    .grounds-grid-container {
-      display: flex;
-      flex-direction: column;
-      gap: 7px;
-    }
+    .grounds-grid-container { display: flex; flex-direction: column; gap: 7px; }
     .grounds-match-row {
       display: grid;
       grid-template-columns: 1fr 36px 1fr;
@@ -493,7 +502,6 @@
       border-radius: 4px;
       padding: 2px 0;
       font-size: 0.72rem;
-      letter-spacing: 0.5px;
     }
     .grounds-match-row .team-away {
       text-align: left;
@@ -530,11 +538,16 @@
       border-left: 4px solid #f59e0b;
       background: linear-gradient(90deg, rgba(245, 158, 11, 0.08) 0%, var(--bg-panel) 100%);
     }
+    .news-card.deadline {
+      border-left: 4px solid #ef4444;
+      background: linear-gradient(90deg, rgba(239, 68, 68, 0.12) 0%, var(--bg-panel) 100%);
+    }
     .news-tag { font-size: 0.65rem; font-weight: 800; color: var(--accent); text-transform: uppercase; }
     .news-headline { font-size: 0.95rem; font-weight: 800; color: #fff; }
     .news-body { font-size: 0.8rem; color: #cbd5e1; line-height: 1.4; }
     .news-time { font-size: 0.68rem; color: var(--text-muted); font-weight: 600; }
 
+    /* MODAL BASE */
     .modal-backdrop {
       position: fixed; inset: 0; background: rgba(0,0,0,0.88);
       display: flex; align-items: center; justify-content: center; z-index: 1000;
@@ -575,6 +588,27 @@
     }
     .club-select-card:hover { border-color: var(--text-muted); }
     .club-select-card.selected { border-color: var(--accent); background: rgba(0, 210, 255, 0.12); }
+
+    /* PENALTY SHOOTOUT MODAL STYLES */
+    .shootout-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      background: #0d131f;
+      padding: 16px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      margin: 14px 0;
+    }
+    .shootout-scorecard { text-align: center; }
+    .shootout-scorecard h3 { font-size: 1rem; color: #fff; margin-bottom: 6px; }
+    .pen-pips { display: flex; gap: 6px; justify-content: center; margin-top: 8px; }
+    .pen-pip {
+      width: 18px; height: 18px; border-radius: 50%;
+      background: #334155; border: 1px solid #475569;
+    }
+    .pen-pip.scored { background: #10b981; border-color: #059669; }
+    .pen-pip.missed { background: #ef4444; border-color: #b91c1c; }
 
     footer {
       background: #080c14;
@@ -686,7 +720,7 @@
       </div>
       <div class="metric-pill">
         <span class="label">Calendar</span>
-        <span class="val" id="headerWeek">Wk 1 / 38</span>
+        <span class="val" id="headerWeek">Wk 1 / 46</span>
       </div>
       <div class="metric-pill">
         <span class="label">Approval</span>
@@ -698,7 +732,7 @@
       </div>
       
       <button class="btn-advance-master" id="btnAdvanceMaster" onclick="advanceMasterWeek()">
-        <span>⏩</span> ADVANCE WEEK
+        <span>⏩</span> <span id="btnAdvanceText">ADVANCE WEEK</span>
       </button>
     </div>
   </header>
@@ -713,7 +747,10 @@
         <span class="icon">⏱️</span> Matchday
       </div>
 
-      <div class="nav-label">Media & Market</div>
+      <div class="nav-label">Competitions & Market</div>
+      <div class="nav-item" onclick="switchTab('cups')" id="nav-cups">
+        <span class="icon">🏆</span> Cups
+      </div>
       <div class="nav-item" onclick="switchTab('news')" id="nav-news">
         <span class="icon">📰</span> News
       </div>
@@ -723,7 +760,7 @@
 
       <div class="nav-label">Club Operations</div>
       <div class="nav-item" onclick="switchTab('standings')" id="nav-standings">
-        <span class="icon">🏆</span> Tables
+        <span class="icon">📊</span> Tables
       </div>
       <div class="nav-item" onclick="switchTab('facilities')" id="nav-facilities">
         <span class="icon">🏟️</span> Ground
@@ -770,7 +807,7 @@
         </div>
       </div>
 
-      <!-- TACTICS TAB -->
+      <!-- TACTICS TAB WITH REAL FATIGUE & CONDITION -->
       <div id="tab-tactics" class="tab-pane">
         <div id="swapNotificationBar" class="swap-status-bar" style="display: none;">
           <span id="swapNotificationText">🔄 SELECT PLAYER TO SWAP</span>
@@ -806,7 +843,7 @@
             </div>
             
             <p style="font-size: 0.72rem; color: var(--text-muted); text-align: center;">
-              💡 <b>Tap any player on the pitch or table</b> to swap positions.
+              💡 <b>Tap any player on the pitch or table</b> to swap positions. Rotate starters to recover fatigue!
             </p>
           </div>
 
@@ -824,7 +861,7 @@
                   <th>Player Name</th>
                   <th style="width: 40px;">Age</th>
                   <th style="width: 40px;">OVR</th>
-                  <th style="width: 75px;">Con</th>
+                  <th style="width: 80px;">Fitness</th>
                   <th style="width: 80px;">Action</th>
                 </tr>
               </thead>
@@ -844,7 +881,7 @@
                   <th>Player Name</th>
                   <th style="width: 40px;">Age</th>
                   <th style="width: 40px;">OVR</th>
-                  <th style="width: 75px;">Con</th>
+                  <th style="width: 80px;">Fitness</th>
                   <th style="width: 80px;">Action</th>
                 </tr>
               </thead>
@@ -890,16 +927,45 @@
               </div>
             </div>
 
-            <h4 style="font-size: 0.85rem; text-transform: uppercase; color: var(--text-muted);">Match Commentary</h4>
+            <h4 style="font-size: 0.85rem; text-transform: uppercase; color: var(--text-muted);" id="commentaryHeaderTitle">Match Commentary</h4>
             <div class="commentary-box" id="commentaryFeed">
               <div class="comm-line">Teams have emerged from the tunnel. Click "Start Match" to kick off!</div>
             </div>
           </div>
 
-          <!-- AROUND THE GROUNDS WITH PERFECT "V" ALIGNMENT -->
+          <!-- AROUND THE GROUNDS PINNED GRID -->
           <div class="standings-card">
-            <h3 style="font-size: 0.92rem; font-weight: 800; margin-bottom: 12px; letter-spacing: 0.5px;">Around The Grounds</h3>
+            <h3 style="font-size: 0.92rem; font-weight: 800; margin-bottom: 12px; letter-spacing: 0.5px;" id="aroundGroundsTitle">Around The Grounds</h3>
             <div id="aroundGroundsList" class="grounds-grid-container"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- DOMESTIC CUPS TAB -->
+      <div id="tab-cups" class="tab-pane" style="display: none;">
+        <div class="standings-card">
+          <div class="section-title-strip" style="margin-bottom: 14px;">
+            <h3>🏆 Domestic Cup Tournaments</h3>
+            <span class="count">FA Cup &amp; Carabao Cup</span>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 16px;">
+            <div style="background:var(--bg-panel); border:1px solid var(--border); border-radius:10px; padding:16px;">
+              <h4 style="color:#f59e0b; margin-bottom:4px; font-size:1.05rem;">The FA Cup</h4>
+              <p style="font-size:0.75rem; color:var(--text-muted); margin-bottom:8px;">Knockout single-elimination. Replays &amp; Penalties.</p>
+              <div id="faCupStatusBox" style="font-size:0.85rem; font-weight:700;">Status: Round 3 Entry</div>
+            </div>
+
+            <div style="background:var(--bg-panel); border:1px solid var(--border); border-radius:10px; padding:16px;">
+              <h4 style="color:#00d2ff; margin-bottom:4px; font-size:1.05rem;">Carabao Cup</h4>
+              <p style="font-size:0.75rem; color:var(--text-muted); margin-bottom:8px;">Straight to penalties after 90 minutes. Silverware &amp; Prize Money.</p>
+              <div id="carabaoStatusBox" style="font-size:0.85rem; font-weight:700;">Status: Round 1 Active</div>
+            </div>
+          </div>
+
+          <h4 style="font-size:0.9rem; margin-bottom:8px;">Current Cup Draw &amp; Fixture</h4>
+          <div id="cupFixtureDisplay" style="background:var(--bg-panel); border-radius:8px; padding:14px; border:1px solid var(--border); font-size:0.85rem;">
+            No cup ties scheduled for this calendar week.
           </div>
         </div>
       </div>
@@ -1022,6 +1088,65 @@
     </main>
   </div>
 
+  <!-- DEADLINE DAY TICKER MODAL -->
+  <div id="deadlineModal" class="modal-backdrop" style="display: none; z-index: 1500;">
+    <div class="modal-window" style="width: 650px; border-color: #ef4444;">
+      <div class="modal-header">
+        <h2 style="color: #ef4444;">🚨 TRANSFER DEADLINE DAY LIVE</h2>
+        <span id="deadlineClockDisplay" style="font-weight: 900; font-size: 1.1rem; color: #f59e0b;">11:00 AM (12h Remaining)</span>
+      </div>
+      <p style="font-size: 0.82rem; color: var(--text-muted); margin-bottom: 14px;">
+        The transfer window shuts tonight! Rival clubs are circling for last-minute deals.
+      </p>
+
+      <div id="deadlineOfferBox" style="background:var(--bg-panel); border:1px solid var(--border); border-radius:10px; padding:16px; margin-bottom:16px;">
+        <h4 id="deadlineOfferHeadline" style="font-size:1rem; color:#fff; margin-bottom:6px;">Incoming Transfer Enquiries</h4>
+        <p id="deadlineOfferDetails" style="font-size:0.85rem; color:#cbd5e1; line-height:1.5;">No active bids right now. Advance the deadline clock to see market movements.</p>
+        <div id="deadlineActionButtons" style="display:none; gap:10px; margin-top:12px;"></div>
+      </div>
+
+      <div style="display: flex; gap: 10px;">
+        <button class="btn-advance-master" style="flex:1; justify-content:center; background:#ef4444; color:#fff;" onclick="advanceDeadlineHour()">
+          ⏳ ADVANCE 1 HOUR
+        </button>
+        <button class="btn-advance-master" style="justify-content:center;" onclick="closeDeadlineDay()">
+          🏁 SKIP TO WINDOW CLOSE
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- PENALTY SHOOTOUT MODAL -->
+  <div id="shootoutModal" class="modal-backdrop" style="display: none; z-index: 1600;">
+    <div class="modal-window" style="width: 600px; border-color: var(--purple);">
+      <div class="modal-header">
+        <h2 style="color: #c084fc;">🎯 SUDDEN DEATH PENALTY SHOOTOUT</h2>
+      </div>
+
+      <div class="shootout-grid">
+        <div class="shootout-scorecard">
+          <h3 id="penHomeTeamName">Home Team</h3>
+          <div style="font-size: 2.2rem; font-weight: 900; color: #fff;" id="penHomeScore">0</div>
+          <div class="pen-pips" id="penHomePips"></div>
+        </div>
+
+        <div class="shootout-scorecard">
+          <h3 id="penAwayTeamName">Away Team</h3>
+          <div style="font-size: 2.2rem; font-weight: 900; color: #fff;" id="penAwayScore">0</div>
+          <div class="pen-pips" id="penAwayPips"></div>
+        </div>
+      </div>
+
+      <p id="penKickStatusText" style="text-align:center; font-weight:800; font-size:0.9rem; margin-bottom:16px; color:#38bdf8;">
+        Penalty 1: Preparing to shoot...
+      </p>
+
+      <button class="btn-advance-master" style="width: 100%; justify-content: center; background:var(--purple); color:#fff;" id="btnTakePenalty" onclick="takeShootoutTurn()">
+        ⚽ TAKE PENALTY KICK
+      </button>
+    </div>
+  </div>
+
   <!-- CAREER SETUP WIZARD MODAL -->
   <div id="careerSetupModal" class="modal-backdrop" style="display: none; z-index: 2000;">
     <div class="modal-window" style="width: 650px;">
@@ -1088,7 +1213,7 @@
   </footer>
 
   <script>
-    const STORAGE_KEY = 'FLM_CAREER_V2026_MOBILE_V3';
+    const STORAGE_KEY = 'FLM_CAREER_V2026_MASTER_ALL';
 
     const FORMATIONS = {
       '4-3-3': [
@@ -1257,24 +1382,24 @@
     ];
 
     const SOU_REAL_ROSTER = [
-      { id: 'sou_1', name: 'Aaron Ramsdale', naturalPos: 'GK', nat: 'ENG', age: 28, ovr: 81, con: 98, role: 'SK-De', starter: true, val: 24.0 },
-      { id: 'sou_2', name: 'Kyle Walker-Peters', naturalPos: 'DEF', nat: 'ENG', age: 29, ovr: 79, con: 96, role: 'WB-At', starter: true, val: 18.0 },
-      { id: 'sou_3', name: 'Taylor Harwood-Bellis', naturalPos: 'DEF', nat: 'ENG', age: 24, ovr: 78, con: 97, role: 'BPD-De', starter: true, val: 20.0 },
-      { id: 'sou_4', name: 'Jan Bednarek', naturalPos: 'DEF', nat: 'POL', age: 30, ovr: 77, con: 95, role: 'CD-De', starter: true, val: 10.0 },
-      { id: 'sou_5', name: 'Yukinari Sugawara', naturalPos: 'DEF', nat: 'JPN', age: 26, ovr: 77, con: 96, role: 'WB-Su', starter: true, val: 14.0 },
-      { id: 'sou_6', name: 'Flynn Downes', naturalPos: 'MID', nat: 'ENG', age: 27, ovr: 77, con: 98, role: 'DLP-De', starter: true, val: 15.0 },
-      { id: 'sou_7', name: 'Mateus Fernandes', naturalPos: 'MID', nat: 'POR', age: 22, ovr: 78, con: 96, role: 'MEZ-At', starter: true, val: 19.0 },
-      { id: 'sou_8', name: 'Will Smallbone', naturalPos: 'MID', nat: 'IRL', age: 26, ovr: 75, con: 94, role: 'BBM-Su', starter: true, val: 9.0 },
-      { id: 'sou_9', name: 'Tyler Dibling', naturalPos: 'FWD', nat: 'ENG', age: 20, ovr: 78, con: 97, role: 'IF-At', starter: true, val: 22.0 },
-      { id: 'sou_10', name: 'Ryan Fraser', naturalPos: 'FWD', nat: 'SCO', age: 32, ovr: 75, con: 93, role: 'IW-At', starter: true, val: 6.0 },
-      { id: 'sou_11', name: 'Cameron Archer', naturalPos: 'FWD', nat: 'ENG', age: 24, ovr: 77, con: 96, role: 'AF-At', starter: true, val: 16.0 },
-      { id: 'sou_12', name: 'Alex McCarthy', naturalPos: 'GK', nat: 'ENG', age: 36, ovr: 73, con: 100, role: 'GK-De', starter: false, val: 2.0 },
-      { id: 'sou_13', name: 'Jack Stephens', naturalPos: 'DEF', nat: 'ENG', age: 32, ovr: 74, con: 100, role: 'CD-De', starter: false, val: 4.0 },
-      { id: 'sou_14', name: 'Adam Armstrong', naturalPos: 'FWD', nat: 'ENG', age: 29, ovr: 76, con: 98, role: 'AF-At', starter: false, val: 12.0 },
-      { id: 'sou_15', name: 'Kamaldeen Sulemana', naturalPos: 'FWD', nat: 'GHA', age: 24, ovr: 76, con: 98, role: 'W-At', starter: false, val: 15.0 },
-      { id: 'sou_16', name: 'Paul Onuachu', naturalPos: 'FWD', nat: 'NGA', age: 32, ovr: 75, con: 95, role: 'TF-Su', starter: false, val: 7.0 },
-      { id: 'sou_17', name: 'Adam Lallana', naturalPos: 'MID', nat: 'ENG', age: 38, ovr: 74, con: 90, role: 'AP-Su', starter: false, val: 1.5 },
-      { id: 'sou_18', name: 'Joe Lumley', naturalPos: 'GK', nat: 'ENG', age: 31, ovr: 71, con: 100, role: 'GK-De', starter: false, val: 1.0 }
+      { id: 'sou_1', name: 'Aaron Ramsdale', naturalPos: 'GK', nat: 'ENG', age: 28, ovr: 81, con: 98, role: 'SK-De', starter: true, val: 24.0, inj: 0 },
+      { id: 'sou_2', name: 'Kyle Walker-Peters', naturalPos: 'DEF', nat: 'ENG', age: 29, ovr: 79, con: 96, role: 'WB-At', starter: true, val: 18.0, inj: 0 },
+      { id: 'sou_3', name: 'Taylor Harwood-Bellis', naturalPos: 'DEF', nat: 'ENG', age: 24, ovr: 78, con: 97, role: 'BPD-De', starter: true, val: 20.0, inj: 0 },
+      { id: 'sou_4', name: 'Jan Bednarek', naturalPos: 'DEF', nat: 'POL', age: 30, ovr: 77, con: 95, role: 'CD-De', starter: true, val: 10.0, inj: 0 },
+      { id: 'sou_5', name: 'Yukinari Sugawara', naturalPos: 'DEF', nat: 'JPN', age: 26, ovr: 77, con: 96, role: 'WB-Su', starter: true, val: 14.0, inj: 0 },
+      { id: 'sou_6', name: 'Flynn Downes', naturalPos: 'MID', nat: 'ENG', age: 27, ovr: 77, con: 98, role: 'DLP-De', starter: true, val: 15.0, inj: 0 },
+      { id: 'sou_7', name: 'Mateus Fernandes', naturalPos: 'MID', nat: 'POR', age: 22, ovr: 78, con: 96, role: 'MEZ-At', starter: true, val: 19.0, inj: 0 },
+      { id: 'sou_8', name: 'Will Smallbone', naturalPos: 'MID', nat: 'IRL', age: 26, ovr: 75, con: 94, role: 'BBM-Su', starter: true, val: 9.0, inj: 0 },
+      { id: 'sou_9', name: 'Tyler Dibling', naturalPos: 'FWD', nat: 'ENG', age: 20, ovr: 78, con: 97, role: 'IF-At', starter: true, val: 22.0, inj: 0 },
+      { id: 'sou_10', name: 'Ryan Fraser', naturalPos: 'FWD', nat: 'SCO', age: 32, ovr: 75, con: 93, role: 'IW-At', starter: true, val: 6.0, inj: 0 },
+      { id: 'sou_11', name: 'Cameron Archer', naturalPos: 'FWD', nat: 'ENG', age: 24, ovr: 77, con: 96, role: 'AF-At', starter: true, val: 16.0, inj: 0 },
+      { id: 'sou_12', name: 'Alex McCarthy', naturalPos: 'GK', nat: 'ENG', age: 36, ovr: 73, con: 100, role: 'GK-De', starter: false, val: 2.0, inj: 0 },
+      { id: 'sou_13', name: 'Jack Stephens', naturalPos: 'DEF', nat: 'ENG', age: 32, ovr: 74, con: 100, role: 'CD-De', starter: false, val: 4.0, inj: 0 },
+      { id: 'sou_14', name: 'Adam Armstrong', naturalPos: 'FWD', nat: 'ENG', age: 29, ovr: 76, con: 98, role: 'AF-At', starter: false, val: 12.0, inj: 0 },
+      { id: 'sou_15', name: 'Kamaldeen Sulemana', naturalPos: 'FWD', nat: 'GHA', age: 24, ovr: 76, con: 98, role: 'W-At', starter: false, val: 15.0, inj: 0 },
+      { id: 'sou_16', name: 'Paul Onuachu', naturalPos: 'FWD', nat: 'NGA', age: 32, ovr: 75, con: 95, role: 'TF-Su', starter: false, val: 7.0, inj: 0 },
+      { id: 'sou_17', name: 'Adam Lallana', naturalPos: 'MID', nat: 'ENG', age: 38, ovr: 74, con: 90, role: 'AP-Su', starter: false, val: 1.5, inj: 0 },
+      { id: 'sou_18', name: 'Joe Lumley', naturalPos: 'GK', nat: 'ENG', age: 31, ovr: 71, con: 100, role: 'GK-De', starter: false, val: 1.0, inj: 0 }
     ];
 
     const TRANSFER_SCOUT_POOL = [
@@ -1341,7 +1466,8 @@
           con: 95 + Math.floor(Math.random() * 5),
           role: p.role,
           starter: p.starter,
-          val: val
+          val: val,
+          inj: 0
         };
       });
     }
@@ -1352,6 +1478,24 @@
     let animFrameId = null;
     let wizardChosenClubId = 'ARS';
     let simSpeedMultiplier = 1;
+
+    // DEADLINE DAY STATE
+    let deadlineHour = 12; // 12 hours countdown (11am to 11pm)
+    let pendingAIBid = null;
+
+    // PENALTY SHOOTOUT STATE
+    let shootoutState = {
+      active: false,
+      match: null,
+      homeClub: null,
+      awayClub: null,
+      homeScore: 0,
+      awayScore: 0,
+      homeKicks: [],
+      awayKicks: [],
+      turn: 'home',
+      round: 1
+    };
 
     // 2D CANVAS MATCH ENGINE DATA
     let pitchEngine = {
@@ -1366,8 +1510,7 @@
       awayColor: '#2563eb',
       homeScore: 0,
       awayScore: 0,
-      currentMinute: 0,
-      activeEvent: null
+      currentMinute: 0
     };
 
     function initGame() {
@@ -1439,15 +1582,23 @@
       state = {
         seasonYear: 2026,
         currentWeek: 1,
-        totalWeeks: 38,
+        totalWeeks: 46, // Standard 46 weeks across the English football pyramid
         userClubId: clubId,
         currentFormation: '4-3-3',
         audioEnabled: true,
         activeStandingsTab: 0,
+        medicalFacilityLevel: 1,
+        stadiumCapacityBonus: 0,
         clubs: JSON.parse(JSON.stringify(CLUBS_DATABASE)),
         marketPlayers: JSON.parse(JSON.stringify(TRANSFER_SCOUT_POOL)),
         standings: {},
         newsFeed: [],
+        cups: {
+          faCupRound: 3,
+          faCupAlive: true,
+          carabaoRound: 1,
+          carabaoAlive: true
+        },
         manager: {
           name: managerName,
           confidence: 82,
@@ -1455,7 +1606,9 @@
           wins: 0,
           draws: 0,
           losses: 0,
-          motmAwards: 0
+          motmAwards: 0,
+          faCups: 0,
+          carabaoCups: 0
         },
         fixtures: []
       };
@@ -1498,15 +1651,21 @@
         c.players.forEach(p => {
           if (!p.naturalPos) p.naturalPos = p.pos || 'MID';
           if (!p.val) p.val = Math.max(0.5, Number(((p.ovr - 50) * 0.7).toFixed(1)));
+          if (p.inj === undefined) p.inj = 0;
+          if (p.con === undefined) p.con = 100;
         });
         const startersCount = c.players.filter(p => p.starter).length;
         if (startersCount !== 11) {
           c.players.forEach((p, idx) => p.starter = (idx < 11));
         }
       });
+      if (!state.cups) {
+        state.cups = { faCupRound: 3, faCupAlive: true, carabaoRound: 1, carabaoAlive: true };
+      }
       if (!state.marketPlayers) {
         state.marketPlayers = JSON.parse(JSON.stringify(TRANSFER_SCOUT_POOL));
       }
+      if (state.totalWeeks !== 46) state.totalWeeks = 46;
     }
 
     function saveGame() {
@@ -1518,27 +1677,11 @@
       return state.clubs.find(c => c.id === state.userClubId) || state.clubs[0];
     }
 
-    function computeClubAttributes(club) {
-      const starters = club.players.filter(p => p.starter);
-      if (starters.length === 0) return { att: 70, mid: 70, def: 70, ovr: 70 };
-
-      const defs = starters.filter(p => p.naturalPos === 'DEF' || p.naturalPos === 'GK');
-      const mids = starters.filter(p => p.naturalPos === 'MID');
-      const fwds = starters.filter(p => p.naturalPos === 'FWD');
-
-      const avg = (arr, fallback) => arr.length ? Math.round(arr.reduce((s, x) => s + (x.ovr * (x.con / 100)), 0) / arr.length) : fallback;
-
-      const baseDef = avg(defs, 70);
-      const baseMid = avg(mids, 70);
-      const baseAtt = avg(fwds, 70);
-      const overall = Math.round((baseDef + baseMid + baseAtt) / 3);
-
-      return { att: baseAtt, mid: baseMid, def: baseDef, ovr: overall };
-    }
-
+    /* TIER-ACCURATE LEAGUE CALENDAR (38 PREMIER LEAGUE VS 46 EFL) */
     function generateTrueRoundRobinFixtures() {
       state.fixtures = [];
       const divSchedules = {};
+
       for (let div = 0; div <= 3; div++) {
         const teamIds = state.clubs.filter(c => c.div === div).map(c => c.id);
         divSchedules[div] = buildRoundRobinSchedule(teamIds);
@@ -1548,12 +1691,25 @@
         const weekIndex = w - 1;
         const weekMatches = [];
 
+        // Check if this week is designated for Cup matches (e.g. Weeks 7, 15, 23, 31, 39, 45)
+        const isCupWeek = [7, 15, 23, 31, 39, 45].includes(w);
+
         for (let div = 0; div <= 3; div++) {
           const schedule = divSchedules[div];
-          if (schedule && schedule[weekIndex]) {
-            schedule[weekIndex].forEach(m => {
+
+          // Premier League only has 38 league matches -> 8 weeks are Cup ties or rest weeks!
+          if (div === 0 && isCupWeek) {
+            continue; // Premier League teams rest or play domestic cups!
+          }
+
+          // Map league fixture index properly
+          let mappedIndex = (div === 0) ? (w - 1 - [7, 15, 23, 31, 39, 45].filter(x => x < w).length) : weekIndex;
+
+          if (schedule && schedule[mappedIndex]) {
+            schedule[mappedIndex].forEach(m => {
               weekMatches.push({
                 div: div,
+                type: 'LEAGUE',
                 home: m.home,
                 away: m.away,
                 homeGoals: null,
@@ -1563,6 +1719,27 @@
             });
           }
         }
+
+        // Add Domestic Cup fixture if Cup Week!
+        if (isCupWeek) {
+          const cupName = (w <= 23) ? 'Carabao Cup' : 'The FA Cup';
+          const userClub = getCurrentUserClub();
+          // Pick a random domestic opponent for user club
+          const eligibleOpponents = state.clubs.filter(c => c.id !== userClub.id);
+          const opp = eligibleOpponents[Math.floor(Math.random() * eligibleOpponents.length)];
+
+          weekMatches.unshift({
+            div: -1,
+            type: 'CUP',
+            cupName: cupName,
+            home: Math.random() > 0.5 ? userClub.id : opp.id,
+            away: Math.random() > 0.5 ? opp.id : userClub.id,
+            homeGoals: null,
+            awayGoals: null,
+            played: false
+          });
+        }
+
         state.fixtures.push({ week: w, matches: weekMatches });
       }
     }
@@ -1577,11 +1754,8 @@
         for (let i = 0; i < n / 2; i++) {
           const home = teams[i];
           const away = teams[n - 1 - i];
-          if (i === 0 && r % 2 === 1) {
-            roundPairings.push({ home: away, away: home });
-          } else {
-            roundPairings.push({ home: home, away: away });
-          }
+          if (i === 0 && r % 2 === 1) roundPairings.push({ home: away, away: home });
+          else roundPairings.push({ home: home, away: away });
         }
         rounds.push(roundPairings);
         const last = teams.pop();
@@ -1589,7 +1763,26 @@
       }
 
       const secondLeg = rounds.map(r => r.map(m => ({ home: m.away, away: m.home })));
-      return [...rounds, ...secondLeg].slice(0, 38);
+      return [...rounds, ...secondLeg];
+    }
+
+    function computeClubAttributes(club) {
+      const starters = club.players.filter(p => p.starter);
+      if (starters.length === 0) return { att: 70, mid: 70, def: 70, ovr: 70 };
+
+      const defs = starters.filter(p => p.naturalPos === 'DEF' || p.naturalPos === 'GK');
+      const mids = starters.filter(p => p.naturalPos === 'MID');
+      const fwds = starters.filter(p => p.naturalPos === 'FWD');
+
+      // Player performance scales directly with their fitness condition (tired = lower output)
+      const avg = (arr, fallback) => arr.length ? Math.round(arr.reduce((s, x) => s + (x.ovr * (x.inj > 0 ? 0.6 : (x.con / 100))), 0) / arr.length) : fallback;
+
+      const baseDef = avg(defs, 70);
+      const baseMid = avg(mids, 70);
+      const baseAtt = avg(fwds, 70);
+      const overall = Math.round((baseDef + baseMid + baseAtt) / 3);
+
+      return { att: baseAtt, mid: baseMid, def: baseDef, ovr: overall };
     }
 
     function changeFormation(newForm) {
@@ -1614,7 +1807,11 @@
       const template = FORMATIONS[state.currentFormation] || FORMATIONS['4-3-3'];
       
       club.players.forEach(p => p.starter = false);
-      const pool = [...club.players].sort((a, b) => b.ovr - a.ovr);
+      // Fittest and highest rated uninjured players get picked first
+      const pool = [...club.players].sort((a, b) => {
+        if (a.inj !== b.inj) return a.inj - b.inj;
+        return (b.ovr * (b.con / 100)) - (a.ovr * (a.con / 100));
+      });
       const picked = [];
 
       const gkIndex = pool.findIndex(p => p.naturalPos === 'GK');
@@ -1650,7 +1847,7 @@
         const p = club.players.find(x => x.id === playerId);
         const banner = document.getElementById('swapNotificationBar');
         const text = document.getElementById('swapNotificationText');
-        text.innerHTML = `🔄 <b>${p.name} (${p.naturalPos})</b> SELECTED — Tap another player to swap!`;
+        text.innerHTML = `🔄 <b>${p.name} (${p.naturalPos} • ${p.con}%)</b> SELECTED — Tap another player to swap!`;
         banner.style.display = 'flex';
         renderTactics();
         playSound('click');
@@ -1723,8 +1920,8 @@
             <div class="pitch-role-tag">${coords.role || p.naturalPos}</div>
           </div>
           <div class="pitch-name-card">
-            <div class="p-name">${surname}</div>
-            <div class="p-role">${coords.duty || p.role}</div>
+            <div class="p-name">${surname} ${p.inj > 0 ? '🚑' : ''}</div>
+            <div class="p-role">${coords.duty || p.role} • ${p.con}%</div>
           </div>
         `;
         pitchNodesWrapper.appendChild(node);
@@ -1738,6 +1935,8 @@
         const templateEntry = template[idx];
         const assignedPos = templateEntry ? templateEntry.role : p.naturalPos;
 
+        const conColor = p.con > 80 ? '#10b981' : (p.con > 65 ? '#f59e0b' : '#ef4444');
+
         const tr = document.createElement('tr');
         tr.className = `fm-row ${isSelected ? 'selected-for-swap' : ''}`;
         tr.onclick = (e) => {
@@ -1747,12 +1946,12 @@
         tr.innerHTML = `
           <td><span class="badge-pick pick-starter">${assignedPos}</span></td>
           <td><span class="role-badge">${p.role}</span></td>
-          <td><b>${p.name}</b> <span style="font-size:0.68rem; color:var(--text-muted);">(${p.naturalPos})</span></td>
+          <td><b>${p.name}</b> ${p.inj > 0 ? `<span class="injury-badge">INJ (${p.inj}w)</span>` : ''}</td>
           <td>${p.age}</td>
           <td><b style="color:var(--gold);">${p.ovr}</b></td>
           <td>
-            <div class="condition-bar"><div class="condition-fill" style="width:${p.con}%; background:#10b981;"></div></div>
-            <span style="font-size:0.72rem;">${p.con}%</span>
+            <div class="condition-bar"><div class="condition-fill" style="width:${p.con}%; background:${conColor};"></div></div>
+            <span style="font-size:0.72rem; font-weight:800; color:${conColor};">${p.con}%</span>
           </td>
           <td>
             <button class="btn-swap-pill" onclick="handlePlayerSelect('${p.id}')">
@@ -1768,6 +1967,8 @@
 
       bench.forEach((p, idx) => {
         const isSelected = (selectedPlayerSwapId === p.id);
+        const conColor = p.con > 80 ? '#38bdf8' : (p.con > 65 ? '#f59e0b' : '#ef4444');
+
         const tr = document.createElement('tr');
         tr.className = `fm-row ${isSelected ? 'selected-for-swap' : ''}`;
         tr.onclick = (e) => {
@@ -1777,12 +1978,12 @@
         tr.innerHTML = `
           <td><span class="badge-pick pick-sub">S${idx + 1}</span></td>
           <td><span class="role-badge" style="background:#475569;">${p.role}</span></td>
-          <td><b>${p.name}</b> <span style="font-size:0.68rem; color:var(--text-muted);">(${p.naturalPos})</span></td>
+          <td><b>${p.name}</b> ${p.inj > 0 ? `<span class="injury-badge">INJ (${p.inj}w)</span>` : ''}</td>
           <td>${p.age}</td>
           <td><b style="color:var(--gold);">${p.ovr}</b></td>
           <td>
-            <div class="condition-bar"><div class="condition-fill" style="width:${p.con}%; background:#38bdf8;"></div></div>
-            <span style="font-size:0.72rem;">${p.con}%</span>
+            <div class="condition-bar"><div class="condition-fill" style="width:${p.con}%; background:${conColor};"></div></div>
+            <span style="font-size:0.72rem; font-weight:800; color:${conColor};">${p.con}%</span>
           </td>
           <td>
             <button class="btn-swap-pill" onclick="handlePlayerSelect('${p.id}')">
@@ -1792,6 +1993,1077 @@
         `;
         benchBody.appendChild(tr);
       });
+    }
+
+    /* =====================================================================
+       FATIGUE, STAMINA & INJURY SYSTEM (POST-MATCH APPLIED)
+       ===================================================================== */
+    function applySquadFatigueAndRecovery() {
+      const club = getCurrentUserClub();
+      const medBonus = (state.medicalFacilityLevel || 1) * 3;
+
+      club.players.forEach(p => {
+        // Healing injured players
+        if (p.inj > 0) {
+          p.inj--;
+          if (p.inj === 0) {
+            addNewsStory('Medical Update', `FITNESS: ${p.name} Returns from Injury`, `${p.name} has resumed first-team training following a successful rehabilitation program.`, false);
+          }
+        }
+
+        if (p.starter) {
+          // Playing 90 mins drains between 12% and 18% condition
+          const drain = 12 + Math.floor(Math.random() * 7);
+          p.con = Math.max(45, p.con - drain);
+
+          // Overplayed players with low stamina risk injuries
+          if (p.con < 65 && Math.random() < 0.22 && p.inj === 0) {
+            p.inj = 1 + Math.floor(Math.random() * 3);
+            addNewsStory('Injury Blow', `INJURY: ${p.name} Sidelined for ${p.inj} Weeks!`, `${p.name} picked up a muscle strain during matchday duty and faces ${p.inj} weeks out.`, true);
+          }
+        } else {
+          // Benched / reserve players recover condition
+          p.con = Math.min(100, p.con + 14 + medBonus);
+        }
+      });
+    }
+
+    /* =====================================================================
+       TRANSFER DEADLINE DAY ENGINE (HOURLY TICKER & AI OFFERS)
+       ===================================================================== */
+    function checkDeadlineDayTrigger() {
+      // Triggered at Week 4 (End of August) and Week 22 (End of January)
+      if (state.currentWeek === 4 || state.currentWeek === 22) {
+        openDeadlineDay();
+        return true;
+      }
+      return false;
+    }
+
+    function openDeadlineDay() {
+      deadlineHour = 12; // 12 hours remaining (11:00 AM)
+      updateDeadlineModalUI();
+      document.getElementById('deadlineModal').style.display = 'flex';
+      playSound('whistle');
+    }
+
+    function updateDeadlineModalUI() {
+      const timeStr = `${11 + (12 - deadlineHour)}:00 ${deadlineHour > 1 ? 'PM' : 'AM'}`;
+      document.getElementById('deadlineClockDisplay').innerText = `${timeStr} (${deadlineHour}h Remaining)`;
+      
+      const offerHeadline = document.getElementById('deadlineOfferHeadline');
+      const offerDetails = document.getElementById('deadlineOfferDetails');
+      const actionBtns = document.getElementById('deadlineActionButtons');
+
+      if (pendingAIBid) {
+        offerHeadline.innerText = `🚨 Formal Bid Received: £${pendingAIBid.fee.toFixed(1)}M from ${pendingAIBid.buyer}`;
+        offerDetails.innerHTML = `<b>${pendingAIBid.buyer}</b> have tabled an official deadline day offer of <b>£${pendingAIBid.fee.toFixed(1)}M</b> for your star player <b>${pendingAIBid.player.name}</b>.`;
+        actionBtns.style.display = 'flex';
+        actionBtns.innerHTML = `
+          <button class="btn-swap-pill" style="background:#10b981; color:#fff;" onclick="acceptDeadlineBid()">Accept Offer (£${pendingAIBid.fee.toFixed(1)}M)</button>
+          <button class="btn-swap-pill" style="background:#ef4444; color:#fff;" onclick="rejectDeadlineBid()">Reject Offer</button>
+        `;
+      } else {
+        offerHeadline.innerText = "Transfer Market Monitoring";
+        offerDetails.innerText = "No official bids on the fax machine right now. Advance the clock to scout deals or listen to rival inquiries.";
+        actionBtns.style.display = 'none';
+      }
+    }
+
+    function advanceDeadlineHour() {
+      deadlineHour--;
+      const club = getCurrentUserClub();
+
+      // 40% chance an AI club submits a panic bid for one of your players
+      if (Math.random() < 0.45 && !pendingAIBid) {
+        const targetPlayer = club.players[Math.floor(Math.random() * club.players.length)];
+        const aiClubs = state.clubs.filter(c => c.id !== club.id);
+        const buyerClub = aiClubs[Math.floor(Math.random() * aiClubs.length)];
+        const markup = 1.15 + (Math.random() * 0.35);
+        const offeredFee = Number((targetPlayer.val * markup).toFixed(1));
+
+        pendingAIBid = { player: targetPlayer, buyer: buyerClub.name, fee: offeredFee };
+        playSound('click');
+      }
+
+      if (deadlineHour <= 0) {
+        closeDeadlineDay();
+        return;
+      }
+
+      updateDeadlineModalUI();
+    }
+
+    function acceptDeadlineBid() {
+      if (!pendingAIBid) return;
+      const club = getCurrentUserClub();
+      const p = pendingAIBid.player;
+      const fee = pendingAIBid.fee;
+
+      club.budget += fee;
+      const idx = club.players.findIndex(x => x.id === p.id);
+      if (idx !== -1) club.players.splice(idx, 1);
+
+      addNewsStory('Deadline Day Done Deal', `DEADLINE DAY MOVE: ${p.name} Joins ${pendingAIBid.buyer} for £${fee.toFixed(1)}M!`, `In a dramatic late deadline day switch, ${p.name} has completed a transfer from ${club.name} to ${pendingAIBid.buyer}.`, true);
+      alert(`Deal finalized! ${p.name} joins ${pendingAIBid.buyer}. £${fee.toFixed(1)}M added to budget.`);
+      
+      pendingAIBid = null;
+      saveGame();
+      renderAll();
+      updateDeadlineModalUI();
+    }
+
+    function rejectDeadlineBid() {
+      if (!pendingAIBid) return;
+      alert(`You rejected the offer for ${pendingAIBid.player.name}. The player remains at ${getCurrentUserClub().name}.`);
+      pendingAIBid = null;
+      updateDeadlineModalUI();
+    }
+
+    function closeDeadlineDay() {
+      pendingAIBid = null;
+      document.getElementById('deadlineModal').style.display = 'none';
+      addNewsStory('Window Closed', 'TRANSFER WINDOW SLAMS SHUT!', 'The transfer deadline has officially passed. Squads are locked in until the next window opens.', true);
+      saveGame();
+      renderAll();
+    }
+
+    /* =====================================================================
+       INTERACTIVE PENALTY SHOOTOUT SUDDEN-DEATH ENGINE
+       ===================================================================== */
+    function launchPenaltyShootout(match, homeClub, awayClub) {
+      shootoutState = {
+        active: true,
+        match: match,
+        homeClub: homeClub,
+        awayClub: awayClub,
+        homeScore: 0,
+        awayScore: 0,
+        homeKicks: [],
+        awayKicks: [],
+        turn: 'home',
+        round: 1
+      };
+
+      document.getElementById('penHomeTeamName').innerText = homeClub.name;
+      document.getElementById('penAwayTeamName').innerText = awayClub.name;
+      document.getElementById('penHomeScore').innerText = '0';
+      document.getElementById('penAwayScore').innerText = '0';
+      document.getElementById('penHomePips').innerHTML = '';
+      document.getElementById('penAwayPips').innerHTML = '';
+      document.getElementById('penKickStatusText').innerText = `Round 1: ${homeClub.name} to take first!`;
+      document.getElementById('btnTakePenalty').disabled = false;
+
+      document.getElementById('shootoutModal').style.display = 'flex';
+      playSound('whistle');
+    }
+
+    function takeShootoutTurn() {
+      const isHome = (shootoutState.turn === 'home');
+      const team = isHome ? shootoutState.homeClub : shootoutState.awayClub;
+      
+      // 78% conversion probability
+      const scored = Math.random() < 0.78;
+
+      if (isHome) {
+        shootoutState.homeKicks.push(scored);
+        if (scored) shootoutState.homeScore++;
+        shootoutState.turn = 'away';
+      } else {
+        shootoutState.awayKicks.push(scored);
+        if (scored) shootoutState.awayScore++;
+        shootoutState.turn = 'home';
+        shootoutState.round++;
+      }
+
+      // Update Pips
+      updateShootoutPips();
+      document.getElementById('penHomeScore').innerText = shootoutState.homeScore;
+      document.getElementById('penAwayScore').innerText = shootoutState.awayScore;
+
+      if (scored) {
+        playSound('goal');
+        document.getElementById('penKickStatusText').innerHTML = `⚽ <b style="color:#10b981;">SCORED!</b> ${team.name} convert their penalty!`;
+      } else {
+        playSound('click');
+        document.getElementById('penKickStatusText').innerHTML = `❌ <b style="color:#ef4444;">SAVED / MISSED!</b> ${team.name} fail to score!`;
+      }
+
+      // Check for winner (best of 5, then sudden death)
+      const hKicks = shootoutState.homeKicks.length;
+      const aKicks = shootoutState.awayKicks.length;
+
+      if (hKicks >= 5 && aKicks >= 5 && hKicks === aKicks) {
+        if (shootoutState.homeScore !== shootoutState.awayScore) {
+          concludeShootout();
+        }
+      } else if (hKicks <= 5 && aKicks <= 5) {
+        const hRemaining = 5 - hKicks;
+        const aRemaining = 5 - aKicks;
+        if (shootoutState.homeScore > shootoutState.awayScore + aRemaining ||
+            shootoutState.awayScore > shootoutState.homeScore + hRemaining) {
+          concludeShootout();
+        }
+      }
+    }
+
+    function updateShootoutPips() {
+      const hContainer = document.getElementById('penHomePips');
+      const aContainer = document.getElementById('penAwayPips');
+      hContainer.innerHTML = '';
+      aContainer.innerHTML = '';
+
+      shootoutState.homeKicks.forEach(res => {
+        const pip = document.createElement('div');
+        pip.className = `pen-pip ${res ? 'scored' : 'missed'}`;
+        hContainer.appendChild(pip);
+      });
+      shootoutState.awayKicks.forEach(res => {
+        const pip = document.createElement('div');
+        pip.className = `pen-pip ${res ? 'scored' : 'missed'}`;
+        aContainer.appendChild(pip);
+      });
+    }
+
+    function concludeShootout() {
+      document.getElementById('btnTakePenalty').disabled = true;
+      const homeWon = shootoutState.homeScore > shootoutState.awayScore;
+      const winner = homeWon ? shootoutState.homeClub : shootoutState.awayClub;
+
+      const m = shootoutState.match;
+      m.played = true;
+      m.homeGoals = homeWon ? (m.homeGoals + 1) : m.homeGoals; // Mark decider
+
+      const feed = document.getElementById('commentaryFeed');
+      if (feed) {
+        feed.innerHTML = `<div class="comm-line pen">🏆 ${winner.name} WIN ON PENALTIES (${shootoutState.homeScore} - ${shootoutState.awayScore})!</div>` + feed.innerHTML;
+      }
+
+      playSound('cheer');
+      setTimeout(() => {
+        document.getElementById('shootoutModal').style.display = 'none';
+        alert(`🏆 SHOOTOUT RESULT: ${winner.name} advance to the next round (${shootoutState.homeScore} - ${shootoutState.awayScore} pens)!`);
+        saveGame();
+        renderAll();
+      }, 1400);
+    }
+
+    /* =====================================================================
+       ADVANCE WEEK & MULTI-LEAGUE FIXTURE PROGRESSION
+       ===================================================================== */
+    function advanceMasterWeek() {
+      if (!state) return;
+
+      // Check if this week is transfer deadline day
+      if (checkDeadlineDayTrigger()) {
+        return;
+      }
+
+      if (state.currentWeek >= state.totalWeeks) {
+        showEndSeasonGala();
+        return;
+      }
+
+      clearInterval(matchSimInterval);
+      cancelAnimationFrame(animFrameId);
+
+      simulateCurrentWeekFixtures();
+      applySquadFatigueAndRecovery();
+      generateWeeklyNewsStory();
+      state.currentWeek++;
+
+      if (state.currentWeek % 4 === 0) evaluateManagerOfMonth();
+
+      saveGame();
+      renderAll();
+      playSound('whistle');
+    }
+
+    function simulateCurrentWeekFixtures() {
+      const userClub = getCurrentUserClub();
+      const weekData = state.fixtures.find(f => f.week === state.currentWeek);
+      if (!weekData) return;
+
+      weekData.matches.forEach(m => {
+        if (m.played) return;
+
+        const homeClub = state.clubs.find(c => c.id === m.home);
+        const awayClub = state.clubs.find(c => c.id === m.away);
+
+        if (homeClub && awayClub) {
+          const homeStats = computeClubAttributes(homeClub);
+          const awayStats = computeClubAttributes(awayClub);
+
+          const diff = (homeStats.att + homeStats.mid + 4) - (awayStats.def + awayStats.mid);
+          let homeScore = Math.max(0, Math.floor(Math.random() * 3) + (diff > 4 ? 1 : 0));
+          let awayScore = Math.max(0, Math.floor(Math.random() * 3) + (diff < -4 ? 1 : 0));
+
+          m.homeGoals = homeScore;
+          m.awayGoals = awayScore;
+          m.played = true;
+
+          if (m.type === 'LEAGUE') {
+            updateLeagueTableRecord(m.div, m.home, m.away, homeScore, awayScore);
+          } else if (m.type === 'CUP') {
+            // Domestic cup gate receipt split 50/50
+            const gateReceipt = Number(((homeClub.cap * 0.000035) / 2).toFixed(2));
+            homeClub.budget += gateReceipt;
+            awayClub.budget += gateReceipt;
+          }
+
+          if (m.home === userClub.id || m.away === userClub.id) {
+            recordUserMatchResult(m.home === userClub.id, homeScore, awayScore);
+          }
+        }
+      });
+    }
+
+    function generateWeeklyNewsStory() {
+      const userClub = getCurrentUserClub();
+      const weekData = state.fixtures.find(f => f.week === state.currentWeek);
+      const userMatch = weekData ? weekData.matches.find(m => m.home === userClub.id || m.away === userClub.id) : null;
+
+      if (userMatch && userMatch.played) {
+        const isHome = (userMatch.home === userClub.id);
+        const oppId = isHome ? userMatch.away : userMatch.home;
+        const oppClub = state.clubs.find(c => c.id === oppId);
+        const myScore = isHome ? userMatch.homeGoals : userMatch.awayGoals;
+        const oppScore = isHome ? userMatch.awayGoals : userMatch.homeGoals;
+
+        if (myScore > oppScore) {
+          addNewsStory('Match Reaction', `Victory: ${userClub.name} Triumph Over ${oppClub.name} (${myScore}-${oppScore})`, `${userClub.name} delivered a confident display to secure victory.`, false);
+        } else if (myScore < oppScore) {
+          addNewsStory('Defeat Reaction', `Setback: ${userClub.name} Fall to ${oppClub.name} (${myScore}-${oppScore})`, `Questions were asked after ${userClub.name} slipped to defeat against ${oppClub.name}.`, false);
+        } else {
+          addNewsStory('Match Reaction', `Points Shared: ${userClub.name} Draw Against ${oppClub.name} (${myScore}-${oppScore})`, `Neither side could find a late winner in a tight, grueling contest.`, false);
+        }
+      }
+    }
+
+    function recordUserMatchResult(isHome, hg, ag) {
+      const userGoals = isHome ? hg : ag;
+      const oppGoals = isHome ? ag : hg;
+
+      state.manager.matches++;
+      if (userGoals > oppGoals) {
+        state.manager.wins++;
+        state.manager.confidence = Math.min(99, state.manager.confidence + 3);
+      } else if (userGoals === oppGoals) {
+        state.manager.draws++;
+      } else {
+        state.manager.losses++;
+        state.manager.confidence = Math.max(25, state.manager.confidence - 4);
+      }
+    }
+
+    function updateLeagueTableRecord(div, homeId, awayId, hg, ag) {
+      const table = state.standings[div];
+      if (!table) return;
+
+      const hRow = table.find(r => r.id === homeId);
+      const aRow = table.find(r => r.id === awayId);
+
+      if (hRow && aRow) {
+        hRow.played++;
+        aRow.played++;
+        hRow.gf += hg;
+        hRow.ga += ag;
+        hRow.gd = hRow.gf - hRow.ga;
+        aRow.gf += ag;
+        aRow.ga += hg;
+        aRow.gd = aRow.gf - aRow.ga;
+
+        if (hg > ag) {
+          hRow.won++;
+          hRow.pts += 3;
+          aRow.lost++;
+        } else if (hg === ag) {
+          hRow.drawn++;
+          hRow.pts += 1;
+          aRow.drawn++;
+          aRow.pts += 1;
+        } else {
+          aRow.won++;
+          aRow.pts += 3;
+          hRow.lost++;
+        }
+      }
+    }
+
+    /* =====================================================================
+       2D CANVAS MATCH ENGINE - RENDER & SIMULATION
+       ===================================================================== */
+    function initPitchCanvas() {
+      const canvas = document.getElementById('matchPitchCanvas');
+      if (!canvas) return;
+      pitchEngine.canvas = canvas;
+      pitchEngine.ctx = canvas.getContext('2d');
+      pitchEngine.w = 800;
+      pitchEngine.h = 480;
+      canvas.width = 800;
+      canvas.height = 480;
+    }
+
+    function setup2DPlayers(homeClub, awayClub) {
+      initPitchCanvas();
+      pitchEngine.homeColor = homeClub.col || '#ef4444';
+      pitchEngine.awayColor = (awayClub.col && awayClub.col !== homeClub.col) ? awayClub.col : '#2563eb';
+      if (pitchEngine.awayColor === pitchEngine.homeColor) pitchEngine.awayColor = '#38bdf8';
+
+      const hSlots = [
+        { x: 50, y: 240 },
+        { x: 130, y: 75 }, { x: 125, y: 180 }, { x: 125, y: 300 }, { x: 130, y: 405 },
+        { x: 235, y: 110 }, { x: 225, y: 240 }, { x: 235, y: 370 },
+        { x: 335, y: 95 }, { x: 350, y: 240 }, { x: 335, y: 385 }
+      ];
+
+      const aSlots = [
+        { x: 750, y: 240 },
+        { x: 670, y: 75 }, { x: 675, y: 180 }, { x: 675, y: 300 }, { x: 670, y: 405 },
+        { x: 565, y: 110 }, { x: 575, y: 240 }, { x: 565, y: 370 },
+        { x: 465, y: 95 }, { x: 450, y: 240 }, { x: 465, y: 385 }
+      ];
+
+      pitchEngine.homePlayers = hSlots.map((s, idx) => ({
+        id: `h_${idx}`,
+        num: idx + 1,
+        baseX: s.x,
+        baseY: s.y,
+        x: s.x,
+        y: s.y,
+        color: pitchEngine.homeColor
+      }));
+
+      pitchEngine.awayPlayers = aSlots.map((s, idx) => ({
+        id: `a_${idx}`,
+        num: idx + 1,
+        baseX: s.x,
+        baseY: s.y,
+        x: s.x,
+        y: s.y,
+        color: pitchEngine.awayColor
+      }));
+
+      pitchEngine.ball = { x: 400, y: 240, vx: 0, vy: 0, targetX: 400, targetY: 240 };
+      draw2DPitch();
+    }
+
+    function draw2DPitch() {
+      const { ctx, w, h } = pitchEngine;
+      if (!ctx) return;
+
+      ctx.fillStyle = '#235d31';
+      ctx.fillRect(0, 0, w, h);
+
+      ctx.fillStyle = '#1b4926';
+      const stripeW = w / 10;
+      for (let i = 0; i < 10; i += 2) {
+        ctx.fillRect(i * stripeW, 0, stripeW, h);
+      }
+
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.75)';
+      ctx.lineWidth = 2.5;
+      ctx.strokeRect(16, 16, w - 32, h - 32);
+
+      ctx.beginPath();
+      ctx.moveTo(w / 2, 16);
+      ctx.lineTo(w / 2, h - 16);
+      ctx.stroke();
+
+      ctx.beginPath();
+      ctx.arc(w / 2, h / 2, 65, 0, Math.PI * 2);
+      ctx.stroke();
+
+      ctx.fillStyle = '#ffffff';
+      ctx.beginPath();
+      ctx.arc(w / 2, h / 2, 4, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Left Penalty Box
+      ctx.strokeRect(16, h / 2 - 105, 115, 210);
+      ctx.strokeRect(16, h / 2 - 50, 42, 100);
+
+      // Right Penalty Box
+      ctx.strokeRect(w - 16 - 115, h / 2 - 105, 115, 210);
+      ctx.strokeRect(w - 16 - 42, h / 2 - 50, 42, 100);
+
+      // Goals
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.25)';
+      ctx.fillRect(8, h / 2 - 35, 8, 70);
+      ctx.fillRect(w - 16, h / 2 - 35, 8, 70);
+
+      pitchEngine.homePlayers.forEach(p => drawPlayerDot(p.x, p.y, p.color, p.num));
+      pitchEngine.awayPlayers.forEach(p => drawPlayerDot(p.x, p.y, p.color, p.num));
+
+      const b = pitchEngine.ball;
+      ctx.fillStyle = 'rgba(0, 0, 0, 0.45)';
+      ctx.beginPath();
+      ctx.arc(b.x + 3, b.y + 3, 5, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.fillStyle = '#ffffff';
+      ctx.beginPath();
+      ctx.arc(b.x, b.y, 5.5, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.strokeStyle = '#000000';
+      ctx.lineWidth = 1.2;
+      ctx.stroke();
+    }
+
+    function drawPlayerDot(x, y, color, num) {
+      const ctx = pitchEngine.ctx;
+      ctx.fillStyle = '#ffffff';
+      ctx.beginPath();
+      ctx.arc(x, y, 9.5, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.fillStyle = color;
+      ctx.beginPath();
+      ctx.arc(x, y, 7.8, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.fillStyle = '#ffffff';
+      ctx.font = 'bold 8px sans-serif';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(num, x, y + 0.5);
+    }
+
+    function update2DPitchPhysics() {
+      const b = pitchEngine.ball;
+      b.x += (b.targetX - b.x) * 0.15;
+      b.y += (b.targetY - b.y) * 0.15;
+
+      [...pitchEngine.homePlayers, ...pitchEngine.awayPlayers].forEach(p => {
+        const dx = b.x - p.baseX;
+        const dy = b.y - p.baseY;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+
+        const influence = Math.min(38, dist * 0.28);
+        const targetX = p.baseX + (dx / (dist || 1)) * influence;
+        const targetY = p.baseY + (dy / (dist || 1)) * influence;
+
+        p.x += (targetX - p.x) * 0.1;
+        p.y += (targetY - p.y) * 0.1;
+      });
+
+      draw2DPitch();
+    }
+
+    function setSimSpeed(speed) {
+      simSpeedMultiplier = speed;
+      document.getElementById('spd1').className = `btn-speed ${speed === 1 ? 'active' : ''}`;
+      document.getElementById('spd3').className = `btn-speed ${speed === 3 ? 'active' : ''}`;
+    }
+
+    function triggerInstantSim() {
+      simSpeedMultiplier = 25;
+    }
+
+    function startMatchdaySim() {
+      const userClub = getCurrentUserClub();
+      const weekData = state.fixtures.find(f => f.week === state.currentWeek);
+      const userMatch = weekData ? weekData.matches.find(m => m.home === userClub.id || m.away === userClub.id) : null;
+
+      if (!userMatch) {
+        alert("No fixture scheduled for your club this week.");
+        return;
+      }
+
+      if (userMatch.played) {
+        alert("Match already completed this week.");
+        return;
+      }
+
+      const btn = document.getElementById('btnStartMatch');
+      btn.disabled = true;
+
+      const homeClub = state.clubs.find(c => c.id === userMatch.home);
+      const awayClub = state.clubs.find(c => c.id === userMatch.away);
+      const homeStats = computeClubAttributes(homeClub);
+      const awayStats = computeClubAttributes(awayClub);
+
+      const feed = document.getElementById('commentaryFeed');
+      feed.innerHTML = '';
+
+      let min = 0;
+      let hScore = 0;
+      let aScore = 0;
+
+      clearInterval(matchSimInterval);
+      cancelAnimationFrame(animFrameId);
+
+      function animLoop() {
+        update2DPitchPhysics();
+        if (min < 90) {
+          animFrameId = requestAnimationFrame(animLoop);
+        }
+      }
+      animLoop();
+
+      function runSimTick() {
+        min += 2;
+        document.getElementById('sbMinute').innerText = `${min}'`;
+
+        if (min % 4 === 0) {
+          const isHomePos = Math.random() > 0.5;
+          pitchEngine.ball.targetX = isHomePos ? (300 + Math.random() * 360) : (140 + Math.random() * 360);
+          pitchEngine.ball.targetY = 60 + Math.random() * 360;
+          playSound('click');
+        }
+
+        if (Math.random() < 0.16) {
+          const scoringHome = (Math.random() * (homeStats.att + 4) > Math.random() * awayStats.def);
+          if (scoringHome) {
+            hScore++;
+            pitchEngine.ball.targetX = pitchEngine.w - 18;
+            pitchEngine.ball.targetY = pitchEngine.h / 2 + (Math.random() * 24 - 12);
+            feed.innerHTML = `<div class="comm-line goal">⚽ ${min}' GOAL! ${homeClub.name} find the net! (${hScore}-${aScore})</div>` + feed.innerHTML;
+            playSound('goal');
+          } else {
+            aScore++;
+            pitchEngine.ball.targetX = 18;
+            pitchEngine.ball.targetY = pitchEngine.h / 2 + (Math.random() * 24 - 12);
+            feed.innerHTML = `<div class="comm-line goal">⚽ ${min}' GOAL! ${awayClub.name} score on the break! (${hScore}-${aScore})</div>` + feed.innerHTML;
+            playSound('goal');
+          }
+          document.getElementById('sbScore').innerText = `${hScore} - ${aScore}`;
+        }
+
+        if (min >= 90) {
+          clearInterval(matchSimInterval);
+          cancelAnimationFrame(animFrameId);
+          btn.disabled = false;
+
+          userMatch.homeGoals = hScore;
+          userMatch.awayGoals = aScore;
+
+          // If Cup Match is tied at 90 minutes -> SUDDEN DEATH PENALTY SHOOTOUT!
+          if (userMatch.type === 'CUP' && hScore === aScore) {
+            document.getElementById('sbMinute').innerText = `AET / PENS`;
+            feed.innerHTML = `<div class="comm-line pen">🏁 90' Full-time whistle blows tied at ${hScore}-${aScore}! Proceeding to Penalty Shootout!</div>` + feed.innerHTML;
+            launchPenaltyShootout(userMatch, homeClub, awayClub);
+            return;
+          }
+
+          document.getElementById('sbMinute').innerText = `FULL TIME`;
+          feed.innerHTML = `<div class="comm-line" style="font-weight:800;">🏁 90' Full-time! Final score: ${homeClub.name} ${hScore} - ${aScore} ${awayClub.name}.</div>` + feed.innerHTML;
+
+          userMatch.played = true;
+          if (userMatch.type === 'LEAGUE') {
+            updateLeagueTableRecord(userMatch.div, userMatch.home, userMatch.away, hScore, aScore);
+          }
+          recordUserMatchResult(userMatch.home === userClub.id, hScore, aScore);
+
+          saveGame();
+          renderStandingsTable(userClub.div);
+          playSound('whistle');
+          return;
+        }
+
+        const delay = Math.max(12, 120 / simSpeedMultiplier);
+        matchSimInterval = setTimeout(runSimTick, delay);
+      }
+
+      runSimTick();
+    }
+
+    /* =====================================================================
+       STANDINGS TABLES & ACCOLADES
+       ===================================================================== */
+    function renderStandingsTable(divIndex) {
+      state.activeStandingsTab = divIndex;
+      for (let i = 0; i <= 3; i++) {
+        const btn = document.getElementById(`tabTier${i}`);
+        if (btn) btn.className = `league-tab-btn ${i === divIndex ? 'active' : ''}`;
+      }
+
+      const tableBody = document.getElementById('leagueTableBody');
+      tableBody.innerHTML = '';
+
+      const rows = [...(state.standings[divIndex] || [])];
+      rows.sort((a, b) => (b.pts - a.pts) || (b.gd - a.gd) || (b.gf - a.gf));
+
+      rows.forEach((r, idx) => {
+        const pos = idx + 1;
+        let zoneClass = '';
+
+        if (divIndex === 0) {
+          if (pos <= 4) zoneClass = 'zone-ucl';
+          else if (pos >= 18) zoneClass = 'zone-relegation';
+        } else if (divIndex === 1) {
+          if (pos <= 2) zoneClass = 'zone-promo';
+          else if (pos <= 6) zoneClass = 'zone-playoff';
+          else if (pos >= 22) zoneClass = 'zone-relegation';
+        } else if (divIndex === 2) {
+          if (pos <= 2) zoneClass = 'zone-promo';
+          else if (pos <= 6) zoneClass = 'zone-playoff';
+          else if (pos >= 21) zoneClass = 'zone-relegation';
+        } else if (divIndex === 3) {
+          if (pos <= 3) zoneClass = 'zone-promo';
+          else if (pos <= 7) zoneClass = 'zone-playoff';
+          else if (pos >= 23) zoneClass = 'zone-relegation';
+        }
+
+        const isUser = (r.id === state.userClubId);
+        const tr = document.createElement('tr');
+        tr.className = `fm-row ${zoneClass}`;
+        if (isUser) tr.style.background = 'rgba(0, 210, 255, 0.15)';
+
+        tr.innerHTML = `
+          <td><b>${pos}</b></td>
+          <td><b>${r.name}</b> ${isUser ? '⭐' : ''}</td>
+          <td>${r.played}</td>
+          <td>${r.won}</td>
+          <td>${r.drawn}</td>
+          <td>${r.lost}</td>
+          <td>${r.gd > 0 ? '+' + r.gd : r.gd}</td>
+          <td><b style="color:#fff;">${r.pts}</b></td>
+        `;
+        tableBody.appendChild(tr);
+      });
+    }
+
+    function evaluateManagerOfMonth() {
+      const userClub = getCurrentUserClub();
+      if (Math.random() > 0.45 && state.manager.confidence > 75) {
+        state.manager.motmAwards++;
+        state.manager.confidence = Math.min(99, state.manager.confidence + 5);
+        addNewsStory('Award Winner', `OFFICIAL: ${state.manager.name} Named Manager of the Month!`, `Following an impressive run with ${userClub.name}, ${state.manager.name} has picked up the trophy.`, true);
+        alert(`🏆 ACCOLADE: Congratulations ${state.manager.name}! You won MANAGER OF THE MONTH for ${userClub.name}!`);
+        playSound('cheer');
+      }
+    }
+
+    function showEndSeasonGala() {
+      const modal = document.getElementById('endSeasonModal');
+      const content = document.getElementById('eosSummaryContent');
+
+      const sorted = {};
+      for (let d = 0; d <= 3; d++) {
+        sorted[d] = [...state.standings[d]].sort((a,b) => (b.pts - a.pts) || (b.gd - a.gd));
+      }
+
+      content.innerHTML = `
+        <div style="background:var(--bg-panel); padding:12px; border-radius:8px; margin-bottom:10px;">
+          <h3 style="color:var(--gold); margin-bottom:4px;">👑 Champions Crowned</h3>
+          <p><b>Premier League:</b> ${sorted[0][0].name}</p>
+          <p><b>Championship:</b> ${sorted[1][0].name}</p>
+          <p><b>League One:</b> ${sorted[2][0].name}</p>
+          <p><b>League Two:</b> ${sorted[3][0].name}</p>
+        </div>
+        <div style="background:var(--bg-panel); padding:12px; border-radius:8px;">
+          <h3 style="color:#38bdf8; margin-bottom:4px;">📈 Movement</h3>
+          <p><b>Promoted to Prem:</b> ${sorted[1][0].name}, ${sorted[1][1].name}, ${sorted[1][2].name}</p>
+          <p><b>Relegated to Champ:</b> ${sorted[0][17].name}, ${sorted[0][18].name}, ${sorted[0][19].name}</p>
+        </div>
+      `;
+
+      modal.style.display = 'flex';
+      playSound('cheer');
+    }
+
+    function closeEosModal() {
+      document.getElementById('endSeasonModal').style.display = 'none';
+    }
+
+    function executeNextSeasonTransition() {
+      closeEosModal();
+
+      const sorted = {};
+      for (let d = 0; d <= 3; d++) {
+        sorted[d] = [...state.standings[d]].sort((a,b) => (b.pts - a.pts) || (b.gd - a.gd));
+      }
+
+      const premRelegated = [sorted[0][17].id, sorted[0][18].id, sorted[0][19].id];
+      const champPromoted = [sorted[1][0].id, sorted[1][1].id, sorted[1][2].id];
+
+      premRelegated.forEach(id => {
+        const c = state.clubs.find(x => x.id === id);
+        if (c) c.div = 1;
+      });
+      champPromoted.forEach(id => {
+        const c = state.clubs.find(x => x.id === id);
+        if (c) c.div = 0;
+      });
+
+      state.seasonYear++;
+      state.currentWeek = 1;
+
+      state.clubs.forEach(c => {
+        c.players.forEach(p => {
+          p.age += 1;
+          p.con = 100;
+          p.inj = 0;
+          if (p.age < 23) p.ovr += Math.floor(Math.random() * 3);
+          else if (p.age > 33) p.ovr -= Math.floor(Math.random() * 2);
+        });
+      });
+
+      for (let div = 0; div <= 3; div++) {
+        state.standings[div] = state.clubs
+          .filter(c => c.div === div)
+          .map(c => ({
+            id: c.id,
+            name: c.name,
+            played: 0,
+            won: 0,
+            drawn: 0,
+            lost: 0,
+            gf: 0,
+            ga: 0,
+            gd: 0,
+            pts: 0
+          }));
+      }
+
+      generateTrueRoundRobinFixtures();
+      generateInitialNews();
+      saveGame();
+      renderAll();
+      alert(`🎉 Welcome to the ${state.seasonYear}/${(state.seasonYear + 1).toString().slice(-2)} Season!`);
+    }
+
+    function openClubSelectorModal() {
+      filterModalClubs(0);
+      document.getElementById('clubSelectorModal').style.display = 'flex';
+    }
+
+    function closeClubSelectorModal() {
+      document.getElementById('clubSelectorModal').style.display = 'none';
+    }
+
+    function filterModalClubs(divIndex) {
+      for (let i = 0; i <= 3; i++) {
+        const btn = document.getElementById(`mTab${i}`);
+        if (btn) btn.className = `league-tab-btn ${i === divIndex ? 'active' : ''}`;
+      }
+
+      const grid = document.getElementById('modalClubsGrid');
+      grid.innerHTML = '';
+
+      const clubs = state.clubs.filter(c => c.div === divIndex);
+      clubs.forEach(c => {
+        const card = document.createElement('div');
+        card.style.cssText = 'background:var(--bg-panel); padding:8px 10px; border-radius:8px; cursor:pointer; border:1px solid var(--border);';
+        card.onclick = () => {
+          state.userClubId = c.id;
+          closeClubSelectorModal();
+          ensureAllSquadsHydrated();
+          saveGame();
+          renderAll();
+          playSound('whistle');
+        };
+
+        card.innerHTML = `
+          <div style="font-weight:800; font-size:0.85rem;">${c.name}</div>
+          <div style="font-size:0.72rem; color:var(--text-muted);">${c.stadium}</div>
+          <div style="font-size:0.72rem; color:var(--accent);">Budget: £${c.budget}M</div>
+        `;
+        grid.appendChild(card);
+      });
+    }
+
+    function switchTab(tabId) {
+      const tabs = ['tactics', 'matchday', 'cups', 'news', 'transfers', 'standings', 'facilities', 'manager', 'honours'];
+      tabs.forEach(t => {
+        const pane = document.getElementById(`tab-${t}`);
+        const nav = document.getElementById(`nav-${t}`);
+        if (pane) pane.style.display = (t === tabId) ? 'block' : 'none';
+        if (nav) nav.className = `nav-item ${t === tabId ? 'active' : ''}`;
+      });
+
+      if (tabId === 'tactics') renderTactics();
+      if (tabId === 'news') renderNewsFeed();
+      if (tabId === 'cups') renderCupsTab();
+      if (tabId === 'transfers') renderTransfers();
+      if (tabId === 'standings') renderStandingsTable(state.activeStandingsTab);
+      if (tabId === 'matchday') renderMatchdayView();
+      if (tabId === 'facilities') renderFacilities();
+      if (tabId === 'manager') renderManagerOffice();
+      if (tabId === 'honours') renderHonours();
+    }
+
+    function updateBannerStats() {
+      const club = getCurrentUserClub();
+      const stats = computeClubAttributes(club);
+      document.getElementById('statAttack').innerText = stats.att;
+      document.getElementById('statMidfield').innerText = stats.mid;
+      document.getElementById('statDefence').innerText = stats.def;
+      document.getElementById('statOvr').innerText = stats.ovr;
+    }
+
+    function renderAll() {
+      const club = getCurrentUserClub();
+      const divNames = ['Premier League', 'Championship', 'League One', 'League Two'];
+
+      document.getElementById('headerDivName').innerText = divNames[club.div];
+      document.getElementById('headerWeek').innerText = `Wk ${state.currentWeek} / ${state.totalWeeks}`;
+      document.getElementById('headerSeasonTag').innerText = `${state.seasonYear}/${(state.seasonYear + 1).toString().slice(-2)} Career • English Pyramid`;
+      document.getElementById('headerConfidence').innerText = `${state.manager.confidence}%`;
+      document.getElementById('headerBudget').innerText = `£${club.budget.toFixed(1)}M`;
+
+      // Update advance button if Deadline Day
+      const advBtn = document.getElementById('btnAdvanceMaster');
+      const advTxt = document.getElementById('btnAdvanceText');
+      if (state.currentWeek === 4 || state.currentWeek === 22) {
+        advBtn.className = 'btn-advance-master btn-deadline-mode';
+        advTxt.innerText = 'DEADLINE DAY';
+      } else {
+        advBtn.className = 'btn-advance-master';
+        advTxt.innerText = 'ADVANCE WEEK';
+      }
+
+      document.getElementById('bannerBadge').innerText = club.id;
+      document.getElementById('bannerBadge').style.background = club.col || '#e11d48';
+      document.getElementById('bannerClubName').innerText = club.name;
+      document.getElementById('bannerStadium').innerText = `${club.stadium} • Capacity: ${(club.cap + (state.stadiumCapacityBonus || 0)).toLocaleString()}`;
+
+      updateBannerStats();
+      renderTactics();
+      renderStandingsTable(club.div);
+      renderMatchdayView();
+    }
+
+    function renderMatchdayView() {
+      const club = getCurrentUserClub();
+      const weekData = state.fixtures.find(f => f.week === state.currentWeek);
+      const userMatch = weekData ? weekData.matches.find(m => m.home === club.id || m.away === club.id) : null;
+
+      if (userMatch) {
+        const hClub = state.clubs.find(c => c.id === userMatch.home);
+        const aClub = state.clubs.find(c => c.id === userMatch.away);
+        document.getElementById('sbHomeName').innerText = hClub.name;
+        document.getElementById('sbAwayName').innerText = aClub.name;
+        document.getElementById('sbScore').innerText = userMatch.played ? `${userMatch.homeGoals} - ${userMatch.awayGoals}` : '0 - 0';
+        document.getElementById('sbMinute').innerText = userMatch.played ? 'FULL TIME' : 'PRE-MATCH';
+
+        const btn = document.getElementById('btnStartMatch');
+        if (btn) btn.disabled = userMatch.played;
+
+        if (!userMatch.played) {
+          const feed = document.getElementById('commentaryFeed');
+          const compTag = userMatch.type === 'CUP' ? `[${userMatch.cupName}]` : `[League]`;
+          if (feed) feed.innerHTML = `<div class="comm-line">Week ${state.currentWeek} ${compTag}: ${hClub.name} vs ${aClub.name}. Click "Start Match" to begin!</div>`;
+        }
+
+        setup2DPlayers(hClub, aClub);
+      }
+
+      const groundsList = document.getElementById('aroundGroundsList');
+      if (groundsList) {
+        groundsList.innerHTML = '';
+        if (weekData) {
+          const divMatches = weekData.matches.filter(m => m.div === club.div || m.type === 'CUP');
+          divMatches.forEach(m => {
+            const h = state.clubs.find(c => c.id === m.home);
+            const a = state.clubs.find(c => c.id === m.away);
+            const row = document.createElement('div');
+            row.className = 'grounds-match-row';
+            row.innerHTML = `
+              <div class="team-home">${h.name}</div>
+              <div class="match-vs-box">${m.played ? `${m.homeGoals}-${m.awayGoals}` : 'v'}</div>
+              <div class="team-away">${a.name}</div>
+            `;
+            groundsList.appendChild(row);
+          });
+        }
+      }
+    }
+
+    function renderCupsTab() {
+      const club = getCurrentUserClub();
+      const weekData = state.fixtures.find(f => f.week === state.currentWeek);
+      const cupMatch = weekData ? weekData.matches.find(m => m.type === 'CUP') : null;
+
+      const display = document.getElementById('cupFixtureDisplay');
+      if (cupMatch) {
+        const h = state.clubs.find(c => c.id === cupMatch.home);
+        const a = state.clubs.find(c => c.id === cupMatch.away);
+        display.innerHTML = `
+          <div style="font-weight:800; font-size:1rem; color:var(--accent); margin-bottom:6px;">${cupMatch.cupName} Tie</div>
+          <div style="font-size:0.95rem;"><b>${h.name}</b> vs <b>${a.name}</b></div>
+          <div style="font-size:0.75rem; color:var(--text-muted); margin-top:6px;">Knockout match. Penalties after 90 minutes if scores are level. Gate receipts split 50/50.</div>
+        `;
+      } else {
+        display.innerText = "No domestic cup fixtures scheduled for this matchweek.";
+      }
+    }
+
+    function renderFacilities() {
+      const club = getCurrentUserClub();
+      const container = document.getElementById('facilitiesList');
+      const medLvl = state.medicalFacilityLevel || 1;
+      container.innerHTML = `
+        <div style="background:var(--bg-panel); padding:14px; border-radius:8px;">
+          <h4>🏟️ North Stand Expansion</h4>
+          <p style="font-size:0.72rem; color:var(--text-muted); margin:4px 0;">Add 2,500 seats to boost gate revenue.</p>
+          <button class="btn-swap-pill" onclick="upgradeStand(2500, 4.0)">Expand (£4.0M)</button>
+        </div>
+        <div style="background:var(--bg-panel); padding:14px; border-radius:8px;">
+          <h4>🏥 Elite Medical Centre (Lvl ${medLvl})</h4>
+          <p style="font-size:0.72rem; color:var(--text-muted); margin:4px 0;">Accelerates match fitness recovery by +${medLvl * 3}% weekly.</p>
+          <button class="btn-swap-pill" onclick="upgradeMedicalCentre()">Upgrade to Lvl ${medLvl + 1} (£2.5M)</button>
+        </div>
+      `;
+    }
+
+    function upgradeMedicalCentre() {
+      const club = getCurrentUserClub();
+      if (club.budget < 2.5) {
+        alert("Insufficient transfer budget for medical upgrade (£2.5M required).");
+        return;
+      }
+      club.budget -= 2.5;
+      state.medicalFacilityLevel = (state.medicalFacilityLevel || 1) + 1;
+      saveGame();
+      renderAll();
+      alert(`Medical Centre upgraded to Level ${state.medicalFacilityLevel}! Squad recovery speed increased.`);
+    }
+
+    function upgradeStand(seats, cost) {
+      const club = getCurrentUserClub();
+      if (club.budget < cost) {
+        alert("Insufficient transfer budget.");
+        return;
+      }
+      club.budget -= cost;
+      state.stadiumCapacityBonus = (state.stadiumCapacityBonus || 0) + seats;
+      saveGame();
+      renderAll();
+      alert(`Expansion complete! Added ${seats.toLocaleString()} seats.`);
+    }
+
+    function renderManagerOffice() {
+      const summary = document.getElementById('managerProfileSummary');
+      summary.innerHTML = `
+        <p><b>Manager:</b> ${state.manager.name}</p>
+        <p><b>Matches Managed:</b> ${state.manager.matches}</p>
+        <p><b>Record:</b> ${state.manager.wins}W - ${state.manager.draws}D - ${state.manager.losses}L</p>
+        <p><b>Win Rate:</b> ${state.manager.matches ? Math.round((state.manager.wins / state.manager.matches) * 100) : 0}%</p>
+        <p><b>Board Confidence:</b> <span style="color:#34d399; font-weight:800;">${state.manager.confidence}%</span></p>
+      `;
+    }
+
+    function renderHonours() {
+      const honours = document.getElementById('honoursList');
+      honours.innerHTML = `
+        <div style="background:var(--bg-panel); padding:14px; border-radius:8px; text-align:center; min-width:120px;">
+          <div style="font-size:1.8rem;">🏅</div>
+          <div style="font-weight:800; font-size:1rem; color:var(--gold);">${state.manager.motmAwards}</div>
+          <div style="font-size:0.72rem; color:var(--text-muted);">Manager of Month</div>
+        </div>
+        <div style="background:var(--bg-panel); padding:14px; border-radius:8px; text-align:center; min-width:120px;">
+          <div style="font-size:1.8rem;">🏆</div>
+          <div style="font-weight:800; font-size:1rem; color:#f59e0b;">${state.manager.faCups || 0}</div>
+          <div style="font-size:0.72rem; color:var(--text-muted);">FA Cup Trophies</div>
+        </div>
+        <div style="background:var(--bg-panel); padding:14px; border-radius:8px; text-align:center; min-width:120px;">
+          <div style="font-size:1.8rem;">🏆</div>
+          <div style="font-weight:800; font-size:1rem; color:var(--accent);">${state.manager.carabaoCups || 0}</div>
+          <div style="font-size:0.72rem; color:var(--text-muted);">Carabao Cups</div>
+        </div>
+      `;
     }
 
     function generateInitialNews() {
@@ -1807,7 +3079,7 @@
           tag: 'Tactics Briefing',
           breaking: false,
           headline: `${state.manager.name} Outlines Vision at ${getCurrentUserClub().name}`,
-          body: `Supporters look forward to seeing how the gaffer sets up. Tactical discipline and squad depth will be vital over 38 matches.`,
+          body: `Supporters look forward to seeing how the gaffer sets up. Tactical discipline and squad depth will be vital over the grueling calendar.`,
           time: 'Week 1'
         }
       ];
@@ -1921,17 +3193,12 @@
           con: 100,
           role: player.naturalPos === 'GK' ? 'GK-De' : (player.naturalPos === 'DEF' ? 'CD-De' : (player.naturalPos === 'MID' ? 'CM-At' : 'AF-At')),
           starter: false,
-          val: player.price
+          val: player.price,
+          inj: 0
         };
 
         club.players.push(newPlayer);
-
-        addNewsStory(
-          'Transfer Done Deal',
-          `DONE DEAL: ${club.name} Confirm £${player.price.toFixed(1)}M Swoop for ${player.name}!`,
-          `${club.name} have announced the capture of ${player.name} from ${player.club}.`,
-          true
-        );
+        addNewsStory('Transfer Done Deal', `DONE DEAL: ${club.name} Confirm £${player.price.toFixed(1)}M Swoop for ${player.name}!`, `${club.name} have announced the capture of ${player.name} from ${player.club}.`, true);
 
         saveGame();
         renderAll();
@@ -1961,821 +3228,13 @@
           if (nextInLine) nextInLine.starter = true;
         }
 
-        addNewsStory(
-          'Player Departure',
-          `DEPARTURE: ${player.name} Leaves ${club.name} in £${player.val.toFixed(1)}M Deal`,
-          `${club.name} have sanctioned the departure of ${player.name} for £${player.val.toFixed(1)}M.`,
-          false
-        );
+        addNewsStory('Player Departure', `DEPARTURE: ${player.name} Leaves ${club.name} in £${player.val.toFixed(1)}M Deal`, `${club.name} have sanctioned the departure of ${player.name} for £${player.val.toFixed(1)}M.`, false);
 
         saveGame();
         renderAll();
         renderTransfers();
         playSound('whistle');
       }
-    }
-
-    function advanceMasterWeek() {
-      if (!state) return;
-      if (state.currentWeek >= state.totalWeeks) {
-        showEndSeasonGala();
-        return;
-      }
-
-      clearInterval(matchSimInterval);
-      cancelAnimationFrame(animFrameId);
-
-      simulateCurrentWeekFixtures();
-      generateWeeklyNewsStory();
-      state.currentWeek++;
-
-      if (state.currentWeek % 4 === 0) evaluateManagerOfMonth();
-
-      saveGame();
-      renderAll();
-      playSound('whistle');
-    }
-
-    function simulateCurrentWeekFixtures() {
-      const userClub = getCurrentUserClub();
-      const weekData = state.fixtures.find(f => f.week === state.currentWeek);
-      if (!weekData) return;
-
-      weekData.matches.forEach(m => {
-        if (m.played) return;
-
-        const homeClub = state.clubs.find(c => c.id === m.home);
-        const awayClub = state.clubs.find(c => c.id === m.away);
-
-        if (homeClub && awayClub) {
-          const homeStats = computeClubAttributes(homeClub);
-          const awayStats = computeClubAttributes(awayClub);
-
-          const diff = (homeStats.att + homeStats.mid + 4) - (awayStats.def + awayStats.mid);
-          const homeScore = Math.max(0, Math.floor(Math.random() * 3) + (diff > 4 ? 1 : 0));
-          const awayScore = Math.max(0, Math.floor(Math.random() * 3) + (diff < -4 ? 1 : 0));
-
-          m.homeGoals = homeScore;
-          m.awayGoals = awayScore;
-          m.played = true;
-
-          updateLeagueTableRecord(m.div, m.home, m.away, homeScore, awayScore);
-
-          if (m.home === userClub.id || m.away === userClub.id) {
-            recordUserMatchResult(m.home === userClub.id, homeScore, awayScore);
-          }
-        }
-      });
-    }
-
-    function generateWeeklyNewsStory() {
-      const userClub = getCurrentUserClub();
-      const weekData = state.fixtures.find(f => f.week === state.currentWeek);
-      const userMatch = weekData ? weekData.matches.find(m => m.home === userClub.id || m.away === userClub.id) : null;
-
-      if (userMatch && userMatch.played) {
-        const isHome = (userMatch.home === userClub.id);
-        const oppId = isHome ? userMatch.away : userMatch.home;
-        const oppClub = state.clubs.find(c => c.id === oppId);
-        const myScore = isHome ? userMatch.homeGoals : userMatch.awayGoals;
-        const oppScore = isHome ? userMatch.awayGoals : userMatch.homeGoals;
-
-        if (myScore > oppScore) {
-          addNewsStory(
-            'Match Reaction',
-            `Victory: ${userClub.name} Triumph Over ${oppClub.name} (${myScore}-${oppScore})`,
-            `${userClub.name} delivered a confident display to secure 3 crucial points.`,
-            false
-          );
-        } else if (myScore < oppScore) {
-          addNewsStory(
-            'Defeat Reaction',
-            `Setback: ${userClub.name} Fall to ${oppClub.name} (${myScore}-${oppScore})`,
-            `Questions were raised after ${userClub.name} slipped to defeat against ${oppClub.name}.`,
-            false
-          );
-        } else {
-          addNewsStory(
-            'Match Reaction',
-            `Points Shared: ${userClub.name} Draw Against ${oppClub.name} (${myScore}-${oppScore})`,
-            `Neither side could find a decisive late winner in a tight contest.`,
-            false
-          );
-        }
-      }
-    }
-
-    function recordUserMatchResult(isHome, hg, ag) {
-      const userGoals = isHome ? hg : ag;
-      const oppGoals = isHome ? ag : hg;
-
-      state.manager.matches++;
-      if (userGoals > oppGoals) {
-        state.manager.wins++;
-        state.manager.confidence = Math.min(99, state.manager.confidence + 3);
-      } else if (userGoals === oppGoals) {
-        state.manager.draws++;
-      } else {
-        state.manager.losses++;
-        state.manager.confidence = Math.max(25, state.manager.confidence - 4);
-      }
-    }
-
-    function updateLeagueTableRecord(div, homeId, awayId, hg, ag) {
-      const table = state.standings[div];
-      if (!table) return;
-
-      const hRow = table.find(r => r.id === homeId);
-      const aRow = table.find(r => r.id === awayId);
-
-      if (hRow && aRow) {
-        hRow.played++;
-        aRow.played++;
-        hRow.gf += hg;
-        hRow.ga += ag;
-        hRow.gd = hRow.gf - hRow.ga;
-        aRow.gf += ag;
-        aRow.ga += hg;
-        aRow.gd = aRow.gf - aRow.ga;
-
-        if (hg > ag) {
-          hRow.won++;
-          hRow.pts += 3;
-          aRow.lost++;
-        } else if (hg === ag) {
-          hRow.drawn++;
-          hRow.pts += 1;
-          aRow.drawn++;
-          aRow.pts += 1;
-        } else {
-          aRow.won++;
-          aRow.pts += 3;
-          hRow.lost++;
-        }
-      }
-    }
-
-    /* =====================================================================
-       2D CANVAS MATCH ENGINE - RENDER & SIMULATION (800x480 PROPORTIONS)
-       ===================================================================== */
-    function initPitchCanvas() {
-      const canvas = document.getElementById('matchPitchCanvas');
-      if (!canvas) return;
-      pitchEngine.canvas = canvas;
-      pitchEngine.ctx = canvas.getContext('2d');
-      pitchEngine.w = 800;
-      pitchEngine.h = 480;
-      canvas.width = 800;
-      canvas.height = 480;
-    }
-
-    function setup2DPlayers(homeClub, awayClub) {
-      initPitchCanvas();
-      pitchEngine.homeColor = homeClub.col || '#ef4444';
-      pitchEngine.awayColor = (awayClub.col && awayClub.col !== homeClub.col) ? awayClub.col : '#2563eb';
-      if (pitchEngine.awayColor === pitchEngine.homeColor) pitchEngine.awayColor = '#38bdf8';
-
-      // 11 Home positions across left half (x: 40 to 370, y: 50 to 430)
-      const hSlots = [
-        { x: 50, y: 240 }, // GK
-        { x: 130, y: 75 }, { x: 125, y: 180 }, { x: 125, y: 300 }, { x: 130, y: 405 }, // 4 DEF
-        { x: 235, y: 110 }, { x: 225, y: 240 }, { x: 235, y: 370 }, // 3 MID
-        { x: 335, y: 95 }, { x: 350, y: 240 }, { x: 335, y: 385 }  // 3 FWD
-      ];
-
-      // 11 Away positions across right half (x: 430 to 760, y: 50 to 430)
-      const aSlots = [
-        { x: 750, y: 240 }, // GK
-        { x: 670, y: 75 }, { x: 675, y: 180 }, { x: 675, y: 300 }, { x: 670, y: 405 }, // 4 DEF
-        { x: 565, y: 110 }, { x: 575, y: 240 }, { x: 565, y: 370 }, // 3 MID
-        { x: 465, y: 95 }, { x: 450, y: 240 }, { x: 465, y: 385 }  // 3 FWD
-      ];
-
-      pitchEngine.homePlayers = hSlots.map((s, idx) => ({
-        id: `h_${idx}`,
-        num: idx + 1,
-        baseX: s.x,
-        baseY: s.y,
-        x: s.x,
-        y: s.y,
-        color: pitchEngine.homeColor
-      }));
-
-      pitchEngine.awayPlayers = aSlots.map((s, idx) => ({
-        id: `a_${idx}`,
-        num: idx + 1,
-        baseX: s.x,
-        baseY: s.y,
-        x: s.x,
-        y: s.y,
-        color: pitchEngine.awayColor
-      }));
-
-      pitchEngine.ball = { x: 400, y: 240, vx: 0, vy: 0, targetX: 400, targetY: 240 };
-      draw2DPitch();
-    }
-
-    function draw2DPitch() {
-      const { ctx, w, h } = pitchEngine;
-      if (!ctx) return;
-
-      // Base Pitch Grass
-      ctx.fillStyle = '#235d31';
-      ctx.fillRect(0, 0, w, h);
-
-      // Lawn Mower Stripes (10 equal columns)
-      ctx.fillStyle = '#1b4926';
-      const stripeW = w / 10;
-      for (let i = 0; i < 10; i += 2) {
-        ctx.fillRect(i * stripeW, 0, stripeW, h);
-      }
-
-      // Outer Boundary Line
-      ctx.strokeStyle = 'rgba(255, 255, 255, 0.75)';
-      ctx.lineWidth = 2.5;
-      ctx.strokeRect(16, 16, w - 32, h - 32);
-
-      // Halfway Line
-      ctx.beginPath();
-      ctx.moveTo(w / 2, 16);
-      ctx.lineTo(w / 2, h - 16);
-      ctx.stroke();
-
-      // Center Circle & Center Spot
-      ctx.beginPath();
-      ctx.arc(w / 2, h / 2, 65, 0, Math.PI * 2);
-      ctx.stroke();
-
-      ctx.fillStyle = '#ffffff';
-      ctx.beginPath();
-      ctx.arc(w / 2, h / 2, 4, 0, Math.PI * 2);
-      ctx.fill();
-
-      // Left Penalty Box & 6-Yard Box
-      ctx.strokeRect(16, h / 2 - 105, 115, 210);
-      ctx.strokeRect(16, h / 2 - 50, 42, 100);
-
-      // Left Penalty Spot & "D" Arc
-      ctx.beginPath();
-      ctx.arc(16 + 88, h / 2, 3.5, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.beginPath();
-      ctx.arc(16 + 88, h / 2, 50, -0.65, 0.65);
-      ctx.stroke();
-
-      // Right Penalty Box & 6-Yard Box
-      ctx.strokeRect(w - 16 - 115, h / 2 - 105, 115, 210);
-      ctx.strokeRect(w - 16 - 42, h / 2 - 50, 42, 100);
-
-      // Right Penalty Spot & "D" Arc
-      ctx.beginPath();
-      ctx.arc(w - 16 - 88, h / 2, 3.5, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.beginPath();
-      ctx.arc(w - 16 - 88, h / 2, 50, Math.PI - 0.65, Math.PI + 0.65);
-      ctx.stroke();
-
-      // Corner Arcs
-      const drawCornerArc = (cx, cy, sa, ea) => {
-        ctx.beginPath();
-        ctx.arc(cx, cy, 14, sa, ea);
-        ctx.stroke();
-      };
-      drawCornerArc(16, 16, 0, Math.PI / 2);
-      drawCornerArc(16, h - 16, -Math.PI / 2, 0);
-      drawCornerArc(w - 16, 16, Math.PI / 2, Math.PI);
-      drawCornerArc(w - 16, h - 16, Math.PI, -Math.PI / 2);
-
-      // Goals
-      ctx.fillStyle = 'rgba(255, 255, 255, 0.25)';
-      ctx.fillRect(8, h / 2 - 35, 8, 70);
-      ctx.fillRect(w - 16, h / 2 - 35, 8, 70);
-
-      // Draw Home Players (Dots)
-      pitchEngine.homePlayers.forEach(p => {
-        drawPlayerDot(p.x, p.y, p.color, p.num);
-      });
-
-      // Draw Away Players (Dots)
-      pitchEngine.awayPlayers.forEach(p => {
-        drawPlayerDot(p.x, p.y, p.color, p.num);
-      });
-
-      // Draw Ball with Drop Shadow
-      const b = pitchEngine.ball;
-      ctx.fillStyle = 'rgba(0, 0, 0, 0.45)';
-      ctx.beginPath();
-      ctx.arc(b.x + 3, b.y + 3, 5, 0, Math.PI * 2);
-      ctx.fill();
-
-      ctx.fillStyle = '#ffffff';
-      ctx.beginPath();
-      ctx.arc(b.x, b.y, 5.5, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.strokeStyle = '#000000';
-      ctx.lineWidth = 1.2;
-      ctx.stroke();
-    }
-
-    function drawPlayerDot(x, y, color, num) {
-      const ctx = pitchEngine.ctx;
-      // White Outer Ring
-      ctx.fillStyle = '#ffffff';
-      ctx.beginPath();
-      ctx.arc(x, y, 9.5, 0, Math.PI * 2);
-      ctx.fill();
-
-      // Club Colored Body
-      ctx.fillStyle = color;
-      ctx.beginPath();
-      ctx.arc(x, y, 7.8, 0, Math.PI * 2);
-      ctx.fill();
-
-      // Shirt Number
-      ctx.fillStyle = '#ffffff';
-      ctx.font = 'bold 8px sans-serif';
-      ctx.textAlign = 'center';
-      ctx.textBaseline = 'middle';
-      ctx.fillText(num, x, y + 0.5);
-    }
-
-    function update2DPitchPhysics() {
-      const b = pitchEngine.ball;
-      b.x += (b.targetX - b.x) * 0.15;
-      b.y += (b.targetY - b.y) * 0.15;
-
-      [...pitchEngine.homePlayers, ...pitchEngine.awayPlayers].forEach(p => {
-        const dx = b.x - p.baseX;
-        const dy = b.y - p.baseY;
-        const dist = Math.sqrt(dx * dx + dy * dy);
-
-        const influence = Math.min(38, dist * 0.28);
-        const targetX = p.baseX + (dx / (dist || 1)) * influence;
-        const targetY = p.baseY + (dy / (dist || 1)) * influence;
-
-        p.x += (targetX - p.x) * 0.1;
-        p.y += (targetY - p.y) * 0.1;
-      });
-
-      draw2DPitch();
-    }
-
-    function setSimSpeed(speed) {
-      simSpeedMultiplier = speed;
-      document.getElementById('spd1').className = `btn-speed ${speed === 1 ? 'active' : ''}`;
-      document.getElementById('spd3').className = `btn-speed ${speed === 3 ? 'active' : ''}`;
-    }
-
-    function triggerInstantSim() {
-      simSpeedMultiplier = 25;
-    }
-
-    function startMatchdaySim() {
-      const userClub = getCurrentUserClub();
-      const weekData = state.fixtures.find(f => f.week === state.currentWeek);
-      const userMatch = weekData ? weekData.matches.find(m => m.home === userClub.id || m.away === userClub.id) : null;
-
-      if (!userMatch) {
-        alert("No fixture scheduled for your club this week.");
-        return;
-      }
-
-      if (userMatch.played) {
-        alert("Match already completed this week.");
-        return;
-      }
-
-      const btn = document.getElementById('btnStartMatch');
-      btn.disabled = true;
-
-      const homeClub = state.clubs.find(c => c.id === userMatch.home);
-      const awayClub = state.clubs.find(c => c.id === userMatch.away);
-      const homeStats = computeClubAttributes(homeClub);
-      const awayStats = computeClubAttributes(awayClub);
-
-      const feed = document.getElementById('commentaryFeed');
-      feed.innerHTML = '';
-
-      let min = 0;
-      let hScore = 0;
-      let aScore = 0;
-
-      clearInterval(matchSimInterval);
-      cancelAnimationFrame(animFrameId);
-
-      function animLoop() {
-        update2DPitchPhysics();
-        if (min < 90) {
-          animFrameId = requestAnimationFrame(animLoop);
-        }
-      }
-      animLoop();
-
-      function runSimTick() {
-        min += 2;
-        document.getElementById('sbMinute').innerText = `${min}'`;
-
-        // Pass / movement highlights across 800x480 pitch
-        if (min % 4 === 0) {
-          const isHomePos = Math.random() > 0.5;
-          pitchEngine.ball.targetX = isHomePos ? (300 + Math.random() * 360) : (140 + Math.random() * 360);
-          pitchEngine.ball.targetY = 60 + Math.random() * 360;
-          playSound('click');
-        }
-
-        // Scoring Chance
-        if (Math.random() < 0.16) {
-          const scoringHome = (Math.random() * (homeStats.att + 4) > Math.random() * awayStats.def);
-          if (scoringHome) {
-            hScore++;
-            pitchEngine.ball.targetX = pitchEngine.w - 18; // Net right
-            pitchEngine.ball.targetY = pitchEngine.h / 2 + (Math.random() * 24 - 12);
-            feed.innerHTML = `<div class="comm-line goal">⚽ ${min}' GOAL! ${homeClub.name} fire into the top corner! (${hScore}-${aScore})</div>` + feed.innerHTML;
-            playSound('goal');
-          } else {
-            aScore++;
-            pitchEngine.ball.targetX = 18; // Net left
-            pitchEngine.ball.targetY = pitchEngine.h / 2 + (Math.random() * 24 - 12);
-            feed.innerHTML = `<div class="comm-line goal">⚽ ${min}' GOAL! ${awayClub.name} strike on the counter-attack! (${hScore}-${aScore})</div>` + feed.innerHTML;
-            playSound('goal');
-          }
-          document.getElementById('sbScore').innerText = `${hScore} - ${aScore}`;
-        } else if (Math.random() < 0.10) {
-          feed.innerHTML = `<div class="comm-line">🧤 ${min}' Magnificent diving save denies a certain goal!</div>` + feed.innerHTML;
-        }
-
-        if (min >= 90) {
-          clearInterval(matchSimInterval);
-          cancelAnimationFrame(animFrameId);
-          document.getElementById('sbMinute').innerText = `FULL TIME`;
-          feed.innerHTML = `<div class="comm-line" style="font-weight:800;">🏁 90' Full-time! Final score: ${homeClub.name} ${hScore} - ${aScore} ${awayClub.name}.</div>` + feed.innerHTML;
-          btn.disabled = false;
-
-          userMatch.homeGoals = hScore;
-          userMatch.awayGoals = aScore;
-          userMatch.played = true;
-
-          updateLeagueTableRecord(userMatch.div, userMatch.home, userMatch.away, hScore, aScore);
-          recordUserMatchResult(userMatch.home === userClub.id, hScore, aScore);
-
-          saveGame();
-          renderStandingsTable(userClub.div);
-          playSound('whistle');
-          return;
-        }
-
-        const delay = Math.max(12, 120 / simSpeedMultiplier);
-        matchSimInterval = setTimeout(runSimTick, delay);
-      }
-
-      runSimTick();
-    }
-
-    /* =====================================================================
-       STANDINGS TABLES & ACCOLADES
-       ===================================================================== */
-    function renderStandingsTable(divIndex) {
-      state.activeStandingsTab = divIndex;
-      for (let i = 0; i <= 3; i++) {
-        const btn = document.getElementById(`tabTier${i}`);
-        if (btn) btn.className = `league-tab-btn ${i === divIndex ? 'active' : ''}`;
-      }
-
-      const tableBody = document.getElementById('leagueTableBody');
-      tableBody.innerHTML = '';
-
-      const rows = [...(state.standings[divIndex] || [])];
-      rows.sort((a, b) => (b.pts - a.pts) || (b.gd - a.gd) || (b.gf - a.gf));
-
-      rows.forEach((r, idx) => {
-        const pos = idx + 1;
-        let zoneClass = '';
-
-        if (divIndex === 0) {
-          if (pos <= 4) zoneClass = 'zone-ucl';
-          else if (pos >= 18) zoneClass = 'zone-relegation';
-        } else if (divIndex === 1) {
-          if (pos <= 2) zoneClass = 'zone-promo';
-          else if (pos <= 6) zoneClass = 'zone-playoff';
-          else if (pos >= 22) zoneClass = 'zone-relegation';
-        } else if (divIndex === 2) {
-          if (pos <= 2) zoneClass = 'zone-promo';
-          else if (pos <= 6) zoneClass = 'zone-playoff';
-          else if (pos >= 21) zoneClass = 'zone-relegation';
-        } else if (divIndex === 3) {
-          if (pos <= 3) zoneClass = 'zone-promo';
-          else if (pos <= 7) zoneClass = 'zone-playoff';
-          else if (pos >= 23) zoneClass = 'zone-relegation';
-        }
-
-        const isUser = (r.id === state.userClubId);
-        const tr = document.createElement('tr');
-        tr.className = `fm-row ${zoneClass}`;
-        if (isUser) tr.style.background = 'rgba(0, 210, 255, 0.15)';
-
-        tr.innerHTML = `
-          <td><b>${pos}</b></td>
-          <td><b>${r.name}</b> ${isUser ? '⭐' : ''}</td>
-          <td>${r.played}</td>
-          <td>${r.won}</td>
-          <td>${r.drawn}</td>
-          <td>${r.lost}</td>
-          <td>${r.gd > 0 ? '+' + r.gd : r.gd}</td>
-          <td><b style="color:#fff;">${r.pts}</b></td>
-        `;
-        tableBody.appendChild(tr);
-      });
-    }
-
-    function evaluateManagerOfMonth() {
-      const userClub = getCurrentUserClub();
-      if (Math.random() > 0.45 && state.manager.confidence > 75) {
-        state.manager.motmAwards++;
-        state.manager.confidence = Math.min(99, state.manager.confidence + 5);
-        addNewsStory(
-          'Award Winner',
-          `OFFICIAL: ${state.manager.name} Named Manager of the Month!`,
-          `Following an impressive run with ${userClub.name}, ${state.manager.name} has picked up the trophy.`,
-          true
-        );
-        alert(`🏆 ACCOLADE: Congratulations ${state.manager.name}! You won MANAGER OF THE MONTH for ${userClub.name}!`);
-        playSound('cheer');
-      }
-    }
-
-    function showEndSeasonGala() {
-      const modal = document.getElementById('endSeasonModal');
-      const content = document.getElementById('eosSummaryContent');
-
-      const sorted = {};
-      for (let d = 0; d <= 3; d++) {
-        sorted[d] = [...state.standings[d]].sort((a,b) => (b.pts - a.pts) || (b.gd - a.gd));
-      }
-
-      content.innerHTML = `
-        <div style="background:var(--bg-panel); padding:12px; border-radius:8px; margin-bottom:10px;">
-          <h3 style="color:var(--gold); margin-bottom:4px;">👑 Champions Crowned</h3>
-          <p><b>Premier League:</b> ${sorted[0][0].name}</p>
-          <p><b>Championship:</b> ${sorted[1][0].name}</p>
-          <p><b>League One:</b> ${sorted[2][0].name}</p>
-          <p><b>League Two:</b> ${sorted[3][0].name}</p>
-        </div>
-        <div style="background:var(--bg-panel); padding:12px; border-radius:8px;">
-          <h3 style="color:#38bdf8; margin-bottom:4px;">📈 Movement</h3>
-          <p><b>Promoted to Prem:</b> ${sorted[1][0].name}, ${sorted[1][1].name}, ${sorted[1][2].name}</p>
-          <p><b>Relegated to Champ:</b> ${sorted[0][17].name}, ${sorted[0][18].name}, ${sorted[0][19].name}</p>
-        </div>
-      `;
-
-      modal.style.display = 'flex';
-      playSound('cheer');
-    }
-
-    function closeEosModal() {
-      document.getElementById('endSeasonModal').style.display = 'none';
-    }
-
-    function executeNextSeasonTransition() {
-      closeEosModal();
-
-      const sorted = {};
-      for (let d = 0; d <= 3; d++) {
-        sorted[d] = [...state.standings[d]].sort((a,b) => (b.pts - a.pts) || (b.gd - a.gd));
-      }
-
-      const premRelegated = [sorted[0][17].id, sorted[0][18].id, sorted[0][19].id];
-      const champPromoted = [sorted[1][0].id, sorted[1][1].id, sorted[1][2].id];
-
-      premRelegated.forEach(id => {
-        const c = state.clubs.find(x => x.id === id);
-        if (c) c.div = 1;
-      });
-      champPromoted.forEach(id => {
-        const c = state.clubs.find(x => x.id === id);
-        if (c) c.div = 0;
-      });
-
-      state.seasonYear++;
-      state.currentWeek = 1;
-
-      state.clubs.forEach(c => {
-        c.players.forEach(p => {
-          p.age += 1;
-          p.con = 100;
-          if (p.age < 23) p.ovr += Math.floor(Math.random() * 3);
-          else if (p.age > 33) p.ovr -= Math.floor(Math.random() * 2);
-        });
-      });
-
-      for (let div = 0; div <= 3; div++) {
-        state.standings[div] = state.clubs
-          .filter(c => c.div === div)
-          .map(c => ({
-            id: c.id,
-            name: c.name,
-            played: 0,
-            won: 0,
-            drawn: 0,
-            lost: 0,
-            gf: 0,
-            ga: 0,
-            gd: 0,
-            pts: 0
-          }));
-      }
-
-      generateTrueRoundRobinFixtures();
-      generateInitialNews();
-      saveGame();
-      renderAll();
-      alert(`🎉 Welcome to the ${state.seasonYear}/${(state.seasonYear + 1).toString().slice(-2)} Season!`);
-    }
-
-    function openClubSelectorModal() {
-      filterModalClubs(0);
-      document.getElementById('clubSelectorModal').style.display = 'flex';
-    }
-
-    function closeClubSelectorModal() {
-      document.getElementById('clubSelectorModal').style.display = 'none';
-    }
-
-    function filterModalClubs(divIndex) {
-      for (let i = 0; i <= 3; i++) {
-        const btn = document.getElementById(`mTab${i}`);
-        if (btn) btn.className = `league-tab-btn ${i === divIndex ? 'active' : ''}`;
-      }
-
-      const grid = document.getElementById('modalClubsGrid');
-      grid.innerHTML = '';
-
-      const clubs = state.clubs.filter(c => c.div === divIndex);
-      clubs.forEach(c => {
-        const card = document.createElement('div');
-        card.style.cssText = 'background:var(--bg-panel); padding:8px 10px; border-radius:8px; cursor:pointer; border:1px solid var(--border);';
-        card.onclick = () => {
-          state.userClubId = c.id;
-          closeClubSelectorModal();
-          ensureAllSquadsHydrated();
-          saveGame();
-          renderAll();
-          playSound('whistle');
-        };
-
-        card.innerHTML = `
-          <div style="font-weight:800; font-size:0.85rem;">${c.name}</div>
-          <div style="font-size:0.72rem; color:var(--text-muted);">${c.stadium}</div>
-          <div style="font-size:0.72rem; color:var(--accent);">Budget: £${c.budget}M</div>
-        `;
-        grid.appendChild(card);
-      });
-    }
-
-    function switchTab(tabId) {
-      const tabs = ['tactics', 'matchday', 'news', 'transfers', 'standings', 'facilities', 'manager', 'honours'];
-      tabs.forEach(t => {
-        const pane = document.getElementById(`tab-${t}`);
-        const nav = document.getElementById(`nav-${t}`);
-        if (pane) pane.style.display = (t === tabId) ? 'block' : 'none';
-        if (nav) nav.className = `nav-item ${t === tabId ? 'active' : ''}`;
-      });
-
-      if (tabId === 'tactics') renderTactics();
-      if (tabId === 'news') renderNewsFeed();
-      if (tabId === 'transfers') renderTransfers();
-      if (tabId === 'standings') renderStandingsTable(state.activeStandingsTab);
-      if (tabId === 'matchday') renderMatchdayView();
-      if (tabId === 'facilities') renderFacilities();
-      if (tabId === 'manager') renderManagerOffice();
-      if (tabId === 'honours') renderHonours();
-    }
-
-    function updateBannerStats() {
-      const club = getCurrentUserClub();
-      const stats = computeClubAttributes(club);
-      document.getElementById('statAttack').innerText = stats.att;
-      document.getElementById('statMidfield').innerText = stats.mid;
-      document.getElementById('statDefence').innerText = stats.def;
-      document.getElementById('statOvr').innerText = stats.ovr;
-    }
-
-    function renderAll() {
-      const club = getCurrentUserClub();
-      const divNames = ['Premier League', 'Championship', 'League One', 'League Two'];
-
-      document.getElementById('headerDivName').innerText = divNames[club.div];
-      document.getElementById('headerWeek').innerText = `Wk ${state.currentWeek} / ${state.totalWeeks}`;
-      document.getElementById('headerSeasonTag').innerText = `${state.seasonYear}/${(state.seasonYear + 1).toString().slice(-2)} Career • English Pyramid`;
-      document.getElementById('headerConfidence').innerText = `${state.manager.confidence}%`;
-      document.getElementById('headerBudget').innerText = `£${club.budget.toFixed(1)}M`;
-
-      document.getElementById('bannerBadge').innerText = club.id;
-      document.getElementById('bannerBadge').style.background = club.col || '#e11d48';
-      document.getElementById('bannerClubName').innerText = club.name;
-      document.getElementById('bannerStadium').innerText = `${club.stadium} • Capacity: ${club.cap.toLocaleString()}`;
-
-      updateBannerStats();
-      renderTactics();
-      renderStandingsTable(club.div);
-      renderMatchdayView();
-    }
-
-    function renderMatchdayView() {
-      const club = getCurrentUserClub();
-      const weekData = state.fixtures.find(f => f.week === state.currentWeek);
-      const userMatch = weekData ? weekData.matches.find(m => m.home === club.id || m.away === club.id) : null;
-
-      if (userMatch) {
-        const hClub = state.clubs.find(c => c.id === userMatch.home);
-        const aClub = state.clubs.find(c => c.id === userMatch.away);
-        document.getElementById('sbHomeName').innerText = hClub.name;
-        document.getElementById('sbAwayName').innerText = aClub.name;
-        document.getElementById('sbScore').innerText = userMatch.played ? `${userMatch.homeGoals} - ${userMatch.awayGoals}` : '0 - 0';
-        document.getElementById('sbMinute').innerText = userMatch.played ? 'FULL TIME' : 'PRE-MATCH';
-
-        const btn = document.getElementById('btnStartMatch');
-        if (btn) btn.disabled = userMatch.played;
-
-        if (!userMatch.played) {
-          const feed = document.getElementById('commentaryFeed');
-          if (feed) feed.innerHTML = `<div class="comm-line">Week ${state.currentWeek}: ${hClub.name} host ${aClub.name}. Click "Start Match" to begin!</div>`;
-        }
-
-        setup2DPlayers(hClub, aClub);
-      }
-
-      // PINNED 3-COLUMN GRID RENDER FOR AROUND THE GROUNDS
-      const groundsList = document.getElementById('aroundGroundsList');
-      if (groundsList) {
-        groundsList.innerHTML = '';
-        if (weekData) {
-          const divMatches = weekData.matches.filter(m => m.div === club.div);
-          divMatches.forEach(m => {
-            const h = state.clubs.find(c => c.id === m.home);
-            const a = state.clubs.find(c => c.id === m.away);
-            const row = document.createElement('div');
-            row.className = 'grounds-match-row';
-            row.innerHTML = `
-              <div class="team-home">${h.name}</div>
-              <div class="match-vs-box">${m.played ? `${m.homeGoals}-${m.awayGoals}` : 'v'}</div>
-              <div class="team-away">${a.name}</div>
-            `;
-            groundsList.appendChild(row);
-          });
-        }
-      }
-    }
-
-    function renderFacilities() {
-      const club = getCurrentUserClub();
-      const container = document.getElementById('facilitiesList');
-      container.innerHTML = `
-        <div style="background:var(--bg-panel); padding:14px; border-radius:8px;">
-          <h4>🏟️ North Stand Expansion</h4>
-          <p style="font-size:0.72rem; color:var(--text-muted); margin:4px 0;">Add 2,500 seats to boost revenue.</p>
-          <button class="btn-swap-pill" onclick="upgradeStand(2500, 4.0)">Expand (£4.0M)</button>
-        </div>
-        <div style="background:var(--bg-panel); padding:14px; border-radius:8px;">
-          <h4>🏥 Elite Medical Centre</h4>
-          <p style="font-size:0.72rem; color:var(--text-muted); margin:4px 0;">Accelerates match fitness recovery.</p>
-          <button class="btn-swap-pill" onclick="alert('Medical facility upgraded!')">Upgrade (£2.5M)</button>
-        </div>
-      `;
-    }
-
-    function upgradeStand(seats, cost) {
-      const club = getCurrentUserClub();
-      if (club.budget < cost) {
-        alert("Insufficient transfer budget.");
-        return;
-      }
-      club.budget -= cost;
-      club.cap += seats;
-      saveGame();
-      renderAll();
-      alert(`Expansion complete! New capacity: ${club.cap.toLocaleString()}`);
-    }
-
-    function renderManagerOffice() {
-      const summary = document.getElementById('managerProfileSummary');
-      summary.innerHTML = `
-        <p><b>Manager:</b> ${state.manager.name}</p>
-        <p><b>Matches Managed:</b> ${state.manager.matches}</p>
-        <p><b>Record:</b> ${state.manager.wins}W - ${state.manager.draws}D - ${state.manager.losses}L</p>
-        <p><b>Win Rate:</b> ${state.manager.matches ? Math.round((state.manager.wins / state.manager.matches) * 100) : 0}%</p>
-        <p><b>Board Confidence:</b> <span style="color:#34d399; font-weight:800;">${state.manager.confidence}%</span></p>
-      `;
-    }
-
-    function renderHonours() {
-      const honours = document.getElementById('honoursList');
-      honours.innerHTML = `
-        <div style="background:var(--bg-panel); padding:14px; border-radius:8px; text-align:center; min-width:120px;">
-          <div style="font-size:1.8rem;">🏅</div>
-          <div style="font-weight:800; font-size:1rem; color:var(--gold);">${state.manager.motmAwards}</div>
-          <div style="font-size:0.72rem; color:var(--text-muted);">Manager of the Month</div>
-        </div>
-      `;
     }
 
     let audioCtx = null;
