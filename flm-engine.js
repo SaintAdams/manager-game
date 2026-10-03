@@ -26,7 +26,7 @@ let matchLiveState = {
   maxSubs: 5, 
   timelineEvents: [],
   yellows: {},
-  reds: new Set()
+  reds: []
 };
 let pitchEngine = { currentMinute: 0, homePlayers: [], awayPlayers: [], ball: { x: 400, y: 240, targetX: 400, targetY: 240 }, w: 800, h: 480 };
 
@@ -295,7 +295,7 @@ function handleMasterAdvanceClick() {
   saveGame(); renderAll(); playSound('click');
 }
 function resetLiveState() { 
-  matchLiveState = { activeShout: null, shoutExpireMin: 0, subsUsed: 0, maxSubs: 5, timelineEvents: [], yellows: {}, reds: new Set() }; 
+  matchLiveState = { activeShout: null, shoutExpireMin: 0, subsUsed: 0, maxSubs: 5, timelineEvents: [], yellows: {}, reds: [] }; 
   $('activeShoutBadge').innerText = ''; 
   $('subsRemainingText').innerText = 5; 
 }
@@ -534,7 +534,7 @@ function startMatchdaySim() {
   $('matchTimelineBar').innerHTML = '';
   matchLiveState.timelineEvents = [];
   matchLiveState.yellows = {};
-  matchLiveState.reds = new Set();
+  matchLiveState.reds = [];
   m.scorers = [];
   let min = 0, hs = 0, as = 0;
   clearTimeout(matchSimInterval);
@@ -559,7 +559,7 @@ function startMatchdaySim() {
   };
 
   const getRandomActivePlayer = (club) => {
-    const active = club.players.filter(p => p.starter && !matchLiveState.reds.has(p.id));
+    const active = club.players.filter(p => p.starter && !matchLiveState.reds.includes(p.id));
     return active.length ? pick(active) : null;
   };
 
@@ -570,7 +570,7 @@ function startMatchdaySim() {
 
     if (currentYellows === 1 || Math.random() < 0.08) {
       // Red card (second yellow or straight red)
-      matchLiveState.reds.add(p.id);
+      matchLiveState.reds.push(p.id);
       feed.insertAdjacentHTML('afterbegin', `<div class="comm-line redcard">🟥 ${min}' RED CARD! ${p.name} (${club.name}) is sent off!</div>`);
       addTimelineEvent('red', `🟥 ${min}' ${p.name.split(' ').pop()}`);
       playSound('whistle');
@@ -634,8 +634,8 @@ function startMatchdaySim() {
     // Calculate ratings with 10-man penalty if a red card has occurred
     const hS = computeClubAttributes(h);
     const aS = computeClubAttributes(a);
-    const homeRedPenalty = [...matchLiveState.reds].some(id => h.players.some(p => p.id === id)) ? 8 : 0;
-    const awayRedPenalty = [...matchLiveState.reds].some(id => a.players.some(p => p.id === id)) ? 8 : 0;
+    const homeRedPenalty = matchLiveState.reds.some(id => h.players.some(p => p.id === id)) ? 8 : 0;
+    const awayRedPenalty = matchLiveState.reds.some(id => a.players.some(p => p.id === id)) ? 8 : 0;
 
     const netHomeAtt = Math.max(30, (hS.att + hS.mid) / 2 - homeRedPenalty);
     const netHomeDef = Math.max(30, (hS.def + hS.mid) / 2 - homeRedPenalty);
