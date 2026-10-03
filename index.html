@@ -35,7 +35,7 @@
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; user-select: none; }
     body { background-color: var(--bg-dark); color: var(--text-main); min-height: 100vh; display: flex; flex-direction: column; overflow-x: hidden; }
 
-    /* INTEGRATED HEADER MATCHING SCREENSHOT */
+    /* HEADER */
     header {
       background: linear-gradient(180deg, #151d2d 0%, #0d131f 100%);
       border-bottom: 2px solid var(--border);
@@ -63,7 +63,6 @@
     .brand-titles h1 { font-size: 0.95rem; font-weight: 800; color: #fff; }
     .brand-titles p { font-size: 0.68rem; color: var(--text-muted); font-weight: 600; }
 
-    /* CONSOLIDATED CLUB CHIP IN HEADER */
     .header-club-chip {
       display: flex;
       align-items: center;
@@ -86,18 +85,9 @@
       justify-content: center;
       letter-spacing: 0.5px;
     }
-    .header-club-text h2 {
-      font-size: 0.92rem;
-      font-weight: 800;
-      color: #fff;
-      line-height: 1.1;
-    }
-    .header-club-text p {
-      font-size: 0.65rem;
-      color: var(--text-muted);
-    }
+    .header-club-text h2 { font-size: 0.92rem; font-weight: 800; color: #fff; line-height: 1.1; }
+    .header-club-text p { font-size: 0.65rem; color: var(--text-muted); }
 
-    /* RATINGS 4-PACK IN HEADER */
     .header-ratings-cluster {
       display: flex;
       gap: 6px;
@@ -106,27 +96,10 @@
       padding: 4px 8px;
       border-radius: 8px;
     }
-    .hdr-stat {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      min-width: 44px;
-    }
-    .hdr-stat .val {
-      font-size: 0.95rem;
-      font-weight: 900;
-      color: #fff;
-      line-height: 1;
-    }
-    .hdr-stat .lbl {
-      font-size: 0.56rem;
-      font-weight: 800;
-      color: var(--text-muted);
-      text-transform: uppercase;
-      margin-top: 2px;
-    }
+    .hdr-stat { display: flex; flex-direction: column; align-items: center; min-width: 44px; }
+    .hdr-stat .val { font-size: 0.95rem; font-weight: 900; color: #fff; line-height: 1; }
+    .hdr-stat .lbl { font-size: 0.56rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase; margin-top: 2px; }
 
-    /* HEADER METRICS */
     .header-metrics { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
     .metric-pill {
       background: var(--bg-panel);
@@ -631,7 +604,7 @@
     .club-select-card:hover { border-color: var(--text-muted); }
     .club-select-card.selected { border-color: var(--accent); background: rgba(0, 210, 255, 0.12); }
 
-    /* PENALTY SHOOTOUT MODAL STYLES */
+    /* PENALTY SHOOTOUT MODAL */
     .shootout-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -750,7 +723,7 @@
       <div class="hdr-stat"><span class="val" id="statOvr">75</span><span class="lbl">RATING</span></div>
     </div>
 
-    <!-- RIGHT METRIC PILLS WITH FANS APPROVAL -->
+    <!-- METRIC PILLS WITH FANS APPROVAL -->
     <div class="header-metrics">
       <div class="metric-pill">
         <span class="label">Division</span>
@@ -946,7 +919,6 @@
             </div>
           </div>
 
-          <!-- AROUND THE GROUNDS PINNED GRID -->
           <div class="standings-card">
             <h3 style="font-size: 0.92rem; font-weight: 800; margin-bottom: 12px; letter-spacing: 0.5px;">Around The Grounds</h3>
             <div id="aroundGroundsList" class="grounds-grid-container"></div>
@@ -994,15 +966,31 @@
         </div>
       </div>
 
-      <!-- TRANSFER MARKET TAB -->
+      <!-- ADVANCED FILTERABLE & SORTABLE TRANSFER MARKET TAB -->
       <div id="tab-transfers" class="tab-pane" style="display: none;">
         <div class="standings-card">
           <div class="section-title-strip" style="margin-bottom: 12px;">
-            <h3>🛒 Transfer Market</h3>
+            <h3>🛒 Domestic &amp; European Transfer Market</h3>
             <span class="count" id="marketBudgetDisplay">Available: £50.0M</span>
           </div>
           
-          <div style="display: flex; gap: 10px; margin-bottom: 10px;">
+          <!-- DYNAMIC FILTER BAR -->
+          <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 14px; align-items: center; background: var(--bg-panel); padding: 10px; border-radius: 8px; border: 1px solid var(--border);">
+            <input type="text" id="marketSearchInput" placeholder="🔍 Search player name..." class="tactics-select" style="min-width: 170px;" oninput="renderTransfers()">
+
+            <select class="tactics-select" id="filterMarketLeague" onchange="onMarketLeagueChange()">
+              <option value="ALL">All Leagues</option>
+              <option value="0">Premier League</option>
+              <option value="1">Championship</option>
+              <option value="2">League One</option>
+              <option value="3">League Two</option>
+              <option value="SCOUT">Scouted Pool &amp; Foreign</option>
+            </select>
+
+            <select class="tactics-select" id="filterMarketTeam" onchange="renderTransfers()">
+              <option value="ALL">All Teams</option>
+            </select>
+
             <select class="tactics-select" id="filterMarketPos" onchange="renderTransfers()">
               <option value="ALL">All Positions</option>
               <option value="GK">Goalkeepers (GK)</option>
@@ -1010,25 +998,34 @@
               <option value="MID">Midfielders (MID)</option>
               <option value="FWD">Forwards (FWD)</option>
             </select>
+
+            <select class="tactics-select" id="filterMarketNation" onchange="renderTransfers()">
+              <option value="ALL">All Nations</option>
+            </select>
+
+            <button class="btn-swap-pill" onclick="resetMarketFilters()" style="padding: 7px 12px; background: #334155;">Reset</button>
           </div>
 
-          <table class="fm-table">
+          <!-- SORTABLE PLAYERS TABLE -->
+          <table class="fm-table" id="marketTable">
             <thead>
               <tr>
-                <th>Target Player</th>
-                <th>Pos</th>
-                <th>Age</th>
-                <th>OVR</th>
-                <th>Price</th>
-                <th>Club</th>
-                <th style="width: 90px;">Action</th>
+                <th onclick="toggleMarketSort('name')" style="cursor: pointer;">Player <span id="sort_name"></span></th>
+                <th onclick="toggleMarketSort('naturalPos')" style="cursor: pointer; width: 55px;">Pos <span id="sort_naturalPos"></span></th>
+                <th onclick="toggleMarketSort('nat')" style="cursor: pointer; width: 50px;">Nat <span id="sort_nat"></span></th>
+                <th onclick="toggleMarketSort('age')" style="cursor: pointer; width: 50px;">Age <span id="sort_age"></span></th>
+                <th onclick="toggleMarketSort('ovr')" style="cursor: pointer; width: 55px;">OVR <span id="sort_ovr"></span></th>
+                <th onclick="toggleMarketSort('price')" style="cursor: pointer; width: 85px;">Price <span id="sort_price"></span></th>
+                <th onclick="toggleMarketSort('clubName')" style="cursor: pointer;">Club <span id="sort_clubName"></span></th>
+                <th style="width: 95px;">Action</th>
               </tr>
             </thead>
             <tbody id="transferMarketBody"></tbody>
           </table>
+          <p id="marketCountNote" style="font-size: 0.72rem; color: var(--text-muted); margin-top: 8px;"></p>
 
-          <div class="section-title-strip" style="margin-top: 20px; margin-bottom: 12px;">
-            <h3>💼 Sell Squad Players</h3>
+          <div class="section-title-strip" style="margin-top: 24px; margin-bottom: 12px;">
+            <h3>💼 Sell Squad Players (Raise Capital)</h3>
             <span class="count">Raise Funds</span>
           </div>
           <table class="fm-table">
@@ -1038,7 +1035,7 @@
                 <th>Pos</th>
                 <th>Age</th>
                 <th>Rating</th>
-                <th>Value</th>
+                <th>Est. Market Value</th>
                 <th style="width: 90px;">Action</th>
               </tr>
             </thead>
@@ -1109,12 +1106,12 @@
         <span id="deadlineClockDisplay" style="font-weight: 900; font-size: 1.1rem; color: #f59e0b;">11:00 AM (12h Remaining)</span>
       </div>
       <p style="font-size: 0.82rem; color: var(--text-muted); margin-bottom: 14px;">
-        The transfer window shuts tonight! Rival clubs are circling for last-minute deals.
+        The transfer window shuts tonight! Rival clubs are circling for last-minute signings.
       </p>
 
       <div id="deadlineOfferBox" style="background:var(--bg-panel); border:1px solid var(--border); border-radius:10px; padding:16px; margin-bottom:16px;">
         <h4 id="deadlineOfferHeadline" style="font-size:1rem; color:#fff; margin-bottom:6px;">Incoming Transfer Enquiries</h4>
-        <p id="deadlineOfferDetails" style="font-size:0.85rem; color:#cbd5e1; line-height:1.5;">No active bids right now. Advance the clock to scout deals or listen to rival inquiries.</p>
+        <p id="deadlineOfferDetails" style="font-size:0.85rem; color:#cbd5e1; line-height:1.5;">No bids right now. Advance the clock to scout deals or listen to rival inquiries.</p>
         <div id="deadlineActionButtons" style="display:none; gap:10px; margin-top:12px;"></div>
       </div>
 
@@ -1226,7 +1223,7 @@
   </footer>
 
   <script>
-    const STORAGE_KEY = 'FLM_CAREER_V2026_SEASON_ALIGNED';
+    const STORAGE_KEY = 'FLM_CAREER_V2026_FINAL_SORTABLE';
 
     const FORMATIONS = {
       '4-3-3': [
@@ -1296,7 +1293,7 @@
       ]
     };
 
-    /* OFFICIAL 2026/27 SEASON LEAGUE CATALOGUE */
+    /* OFFICIAL 2026/27 SEASON LEAGUE CLUBS */
     const CLUBS_DATABASE = [
       // PREMIER LEAGUE (20 Clubs)
       { id: 'ARS', name: 'Arsenal', div: 0, budget: 65, stadium: 'Emirates Stadium', cap: 60704, col: '#ef4444' },
@@ -1399,7 +1396,7 @@
       { id: 'BRO', name: 'Bromley', div: 3, budget: 1.0, stadium: 'Hayes Lane', cap: 5110, col: '#ffffff' }
     ];
 
-    /* AUTHENTIC NEWCASTLE UNITED ROSTER */
+    /* REAL SQUADS: NEWCASTLE & SOUTHAMPTON */
     const NEW_REAL_ROSTER = [
       { id: 'new_1', name: 'Nick Pope', naturalPos: 'GK', nat: 'ENG', age: 34, ovr: 83, con: 98, role: 'SK-De', starter: true, val: 18.0, inj: 0 },
       { id: 'new_2', name: 'Tino Livramento', naturalPos: 'DEF', nat: 'ENG', age: 23, ovr: 81, con: 96, role: 'WB-At', starter: true, val: 32.0, inj: 0 },
@@ -1412,7 +1409,6 @@
       { id: 'new_9', name: 'Anthony Elanga', naturalPos: 'FWD', nat: 'SWE', age: 24, ovr: 80, con: 97, role: 'IF-At', starter: true, val: 30.0, inj: 0 },
       { id: 'new_10', name: 'Harvey Barnes', naturalPos: 'FWD', nat: 'ENG', age: 28, ovr: 81, con: 96, role: 'IW-At', starter: true, val: 32.0, inj: 0 },
       { id: 'new_11', name: 'Alexander Isak', naturalPos: 'FWD', nat: 'SWE', age: 27, ovr: 87, con: 98, role: 'AF-At', starter: true, val: 75.0, inj: 0 },
-      // Bench
       { id: 'new_12', name: 'Aaron Ramsdale', naturalPos: 'GK', nat: 'ENG', age: 28, ovr: 81, con: 100, role: 'GK-De', starter: false, val: 22.0, inj: 0 },
       { id: 'new_13', name: 'Dan Burn', naturalPos: 'DEF', nat: 'ENG', age: 34, ovr: 78, con: 100, role: 'CD-De', starter: false, val: 8.0, inj: 0 },
       { id: 'new_14', name: 'Kieran Trippier', naturalPos: 'DEF', nat: 'ENG', age: 36, ovr: 79, con: 100, role: 'FB-Su', starter: false, val: 6.0, inj: 0 },
@@ -1422,7 +1418,6 @@
       { id: 'new_18', name: 'Lewis Miley', naturalPos: 'MID', nat: 'ENG', age: 20, ovr: 77, con: 98, role: 'CM-At', starter: false, val: 18.0, inj: 0 }
     ];
 
-    /* AUTHENTIC SOUTHAMPTON 2026/27 ROSTER */
     const SOU_REAL_ROSTER = [
       { id: 'sou_1', name: 'Daniel Peretz', naturalPos: 'GK', nat: 'ISR', age: 26, ovr: 77, con: 98, role: 'SK-De', starter: true, val: 14.0, inj: 0 },
       { id: 'sou_2', name: 'Mads Roerslev', naturalPos: 'DEF', nat: 'DEN', age: 27, ovr: 76, con: 96, role: 'WB-At', starter: true, val: 12.0, inj: 0 },
@@ -1516,10 +1511,14 @@
     let selectedPlayerSwapId = null;
     let matchSimInterval = null;
     let animFrameId = null;
-    let wizardChosenClubId = 'NEW'; // Defaults to Newcastle United as in screenshot!
+    let wizardChosenClubId = 'NEW';
     let simSpeedMultiplier = 1;
     let deadlineHour = 12;
     let pendingAIBid = null;
+
+    // TRANSFER MARKET SORT STATE
+    let marketSortKey = 'ovr';
+    let marketSortAsc = false;
 
     let shootoutState = {
       active: false,
@@ -1556,6 +1555,7 @@
           state = JSON.parse(saved);
           ensureAllSquadsHydrated();
           if (!state.newsFeed || state.newsFeed.length === 0) generateInitialNews();
+          initMarketFilterDropdowns();
           renderAll();
         } catch(e) {
           openCareerSetupWizard();
@@ -1602,6 +1602,7 @@
       const inputName = document.getElementById('wizardNameInput').value.trim() || 'Manager';
       setupFreshState(inputName, wizardChosenClubId);
       document.getElementById('careerSetupModal').style.display = 'none';
+      initMarketFilterDropdowns();
       saveGame();
       renderAll();
       playSound('whistle');
@@ -1630,10 +1631,11 @@
         standings: {},
         newsFeed: [],
         cups: { faCupRound: 3, faCupAlive: true, carabaoRound: 1, carabaoAlive: true },
+        deadlineDaysCompleted: {}, // KEY FIX: Tracks when deadline days have ended so week advance never hangs!
         manager: {
           name: managerName,
           confidence: 85,
-          fansApproval: 82, // NEW Fans Approval
+          fansApproval: 82,
           matches: 0,
           wins: 0,
           draws: 0,
@@ -1663,13 +1665,9 @@
       }
 
       state.clubs.forEach(c => {
-        if (c.id === 'NEW') {
-          c.players = JSON.parse(JSON.stringify(NEW_REAL_ROSTER));
-        } else if (c.id === 'SOU') {
-          c.players = JSON.parse(JSON.stringify(SOU_REAL_ROSTER));
-        } else {
-          c.players = generateProceduralSquad(c);
-        }
+        if (c.id === 'NEW') c.players = JSON.parse(JSON.stringify(NEW_REAL_ROSTER));
+        else if (c.id === 'SOU') c.players = JSON.parse(JSON.stringify(SOU_REAL_ROSTER));
+        else c.players = generateProceduralSquad(c);
       });
 
       generateTrueRoundRobinFixtures();
@@ -1697,6 +1695,7 @@
       });
       if (state.manager.fansApproval === undefined) state.manager.fansApproval = 82;
       if (!state.cups) state.cups = { faCupRound: 3, faCupAlive: true, carabaoRound: 1, carabaoAlive: true };
+      if (!state.deadlineDaysCompleted) state.deadlineDaysCompleted = {};
       if (!state.marketPlayers) state.marketPlayers = JSON.parse(JSON.stringify(TRANSFER_SCOUT_POOL));
     }
 
@@ -2036,8 +2035,10 @@
       });
     }
 
+    /* DEADLINE DAY LOGIC WITH PERMANENT SKIP/COMPLETION FIX */
     function checkDeadlineDayTrigger() {
-      if (state.currentWeek === 4 || state.currentWeek === 22) {
+      const isDeadlineWeek = (state.currentWeek === 4 || state.currentWeek === 22);
+      if (isDeadlineWeek && !state.deadlineDaysCompleted?.[state.currentWeek]) {
         openDeadlineDay();
         return true;
       }
@@ -2124,12 +2125,17 @@
       updateDeadlineModalUI();
     }
 
+    /* FIX: Closes deadline day AND marks it complete so advance week moves forward! */
     function closeDeadlineDay() {
+      if (!state.deadlineDaysCompleted) state.deadlineDaysCompleted = {};
+      state.deadlineDaysCompleted[state.currentWeek] = true; // Permanently unlocks current week!
       pendingAIBid = null;
       document.getElementById('deadlineModal').style.display = 'none';
-      addNewsStory('Window Closed', 'TRANSFER WINDOW SLAMS SHUT!', 'The transfer deadline has passed. Squads are locked in.', true);
+
+      addNewsStory('Window Closed', 'TRANSFER WINDOW SLAMS SHUT!', 'The transfer deadline has officially passed. Squads are locked in until the next window opens.', true);
       saveGame();
       renderAll();
+      alert("The Transfer Window has closed! You can now click ADVANCE WEEK to progress.");
     }
 
     function launchPenaltyShootout(match, homeClub, awayClub) {
@@ -2245,6 +2251,8 @@
 
     function advanceMasterWeek() {
       if (!state) return;
+
+      // Checks if deadline day needs to trigger
       if (checkDeadlineDayTrigger()) return;
 
       if (state.currentWeek >= state.totalWeeks) {
@@ -2380,9 +2388,7 @@
       }
     }
 
-    /* =====================================================================
-       2D CANVAS MATCH ENGINE - RENDER & SIMULATION
-       ===================================================================== */
+    /* 2D CANVAS MATCH ENGINE */
     function initPitchCanvas() {
       const canvas = document.getElementById('matchPitchCanvas');
       if (!canvas) return;
@@ -2469,15 +2475,12 @@
       ctx.arc(w / 2, h / 2, 4, 0, Math.PI * 2);
       ctx.fill();
 
-      // Left Penalty Box
       ctx.strokeRect(16, h / 2 - 105, 115, 210);
       ctx.strokeRect(16, h / 2 - 50, 42, 100);
 
-      // Right Penalty Box
       ctx.strokeRect(w - 16 - 115, h / 2 - 105, 115, 210);
       ctx.strokeRect(w - 16 - 42, h / 2 - 50, 42, 100);
 
-      // Goals
       ctx.fillStyle = 'rgba(255, 255, 255, 0.25)';
       ctx.fillRect(8, h / 2 - 35, 8, 70);
       ctx.fillRect(w - 16, h / 2 - 35, 8, 70);
@@ -2630,7 +2633,7 @@
 
           if (userMatch.type === 'CUP' && hScore === aScore) {
             document.getElementById('sbMinute').innerText = `AET / PENS`;
-            feed.innerHTML = `<div class="comm-line pen">🏁 90' Full-time whistle blows tied at ${hScore}-${aScore}! Proceeding to Penalty Shootout!</div>` + feed.innerHTML;
+            feed.innerHTML = `<div class="comm-line pen">🏁 90' Full-time tied at ${hScore}-${aScore}! Proceeding to Penalty Shootout!</div>` + feed.innerHTML;
             launchPenaltyShootout(userMatch, homeClub, awayClub);
             return;
           }
@@ -2776,6 +2779,7 @@
 
       state.seasonYear++;
       state.currentWeek = 1;
+      state.deadlineDaysCompleted = {};
 
       state.clubs.forEach(c => {
         c.players.forEach(p => {
@@ -2871,7 +2875,6 @@
       if (tabId === 'honours') renderHonours();
     }
 
-    /* UPDATES CONSOLIDATED HEADER CLUB DATA & RATINGS */
     function updateHeaderClubDisplay() {
       const club = getCurrentUserClub();
       const stats = computeClubAttributes(club);
@@ -2898,9 +2901,12 @@
       document.getElementById('headerFansApproval').innerText = `${state.manager.fansApproval || 82}%`;
       document.getElementById('headerBudget').innerText = `£${club.budget.toFixed(1)}M`;
 
+      const isDeadlineWeek = (state.currentWeek === 4 || state.currentWeek === 22);
+      const isDeadlineActive = isDeadlineWeek && !state.deadlineDaysCompleted?.[state.currentWeek];
       const advBtn = document.getElementById('btnAdvanceMaster');
       const advTxt = document.getElementById('btnAdvanceText');
-      if (state.currentWeek === 4 || state.currentWeek === 22) {
+
+      if (isDeadlineActive) {
         advBtn.className = 'btn-advance-master btn-deadline-mode';
         advTxt.innerText = 'DEADLINE DAY';
       } else {
@@ -3103,29 +3109,176 @@
       });
     }
 
+    /* =====================================================================
+       ENHANCED FILTERABLE & SORTABLE TRANSFER MARKET ENGINE
+       ===================================================================== */
+    function initMarketFilterDropdowns() {
+      const nationSel = document.getElementById('filterMarketNation');
+      if (!nationSel) return;
+      const nations = ['ALL', 'ENG', 'SCO', 'WAL', 'IRL', 'NIR', 'FRA', 'ESP', 'GER', 'NED', 'POR', 'BRA', 'ARG', 'SWE', 'DEN', 'ITA', 'BEL'];
+      nationSel.innerHTML = nations.map(n => `<option value="${n}">${n === 'ALL' ? 'All Nations' : n}</option>`).join('');
+      onMarketLeagueChange();
+    }
+
+    function onMarketLeagueChange() {
+      const lVal = document.getElementById('filterMarketLeague').value;
+      const teamSel = document.getElementById('filterMarketTeam');
+      if (!teamSel) return;
+
+      teamSel.innerHTML = '<option value="ALL">All Teams</option>';
+      if (lVal === 'ALL' || lVal === 'SCOUT') {
+        renderTransfers();
+        return;
+      }
+
+      const divNum = parseInt(lVal);
+      const divClubs = state.clubs.filter(c => c.div === divNum && c.id !== state.userClubId);
+      divClubs.forEach(c => {
+        const opt = document.createElement('option');
+        opt.value = c.id;
+        opt.innerText = c.name;
+        teamSel.appendChild(opt);
+      });
+      renderTransfers();
+    }
+
+    function resetMarketFilters() {
+      document.getElementById('marketSearchInput').value = '';
+      document.getElementById('filterMarketLeague').value = 'ALL';
+      document.getElementById('filterMarketPos').value = 'ALL';
+      document.getElementById('filterMarketNation').value = 'ALL';
+      onMarketLeagueChange();
+    }
+
+    function toggleMarketSort(key) {
+      if (marketSortKey === key) {
+        marketSortAsc = !marketSortAsc;
+      } else {
+        marketSortKey = key;
+        marketSortAsc = (key === 'name' || key === 'clubName'); // strings default asc, numbers default desc
+      }
+      renderTransfers();
+    }
+
+    function updateSortHeaderIndicators() {
+      ['name', 'naturalPos', 'nat', 'age', 'ovr', 'price', 'clubName'].forEach(k => {
+        const el = document.getElementById(`sort_${k}`);
+        if (!el) return;
+        if (marketSortKey === k) {
+          el.innerText = marketSortAsc ? ' ▲' : ' ▼';
+          el.style.color = 'var(--accent)';
+        } else {
+          el.innerText = '';
+        }
+      });
+    }
+
+    function getAllMarketAvailablePlayers() {
+      const userClub = getCurrentUserClub();
+      const list = [];
+
+      // 1. Add Scouted & Foreign pool targets
+      state.marketPlayers.forEach(p => {
+        list.push({
+          id: p.id,
+          name: p.name,
+          naturalPos: p.naturalPos,
+          nat: p.nat,
+          age: p.age,
+          ovr: p.ovr,
+          price: p.price,
+          clubName: p.club || 'Free / Foreign',
+          clubId: 'SCOUT',
+          div: -1,
+          isScoutPool: true,
+          originalObj: p
+        });
+      });
+
+      // 2. Add players from all other 91 clubs in the game!
+      state.clubs.forEach(c => {
+        if (c.id === userClub.id) return;
+        c.players.forEach(p => {
+          list.push({
+            id: p.id,
+            name: p.name,
+            naturalPos: p.naturalPos,
+            nat: p.nat,
+            age: p.age,
+            ovr: p.ovr,
+            price: Number((p.val * 1.15).toFixed(1)),
+            clubName: c.name,
+            clubId: c.id,
+            div: c.div,
+            isScoutPool: false,
+            sellingClub: c,
+            originalObj: p
+          });
+        });
+      });
+
+      return list;
+    }
+
     function renderTransfers() {
       const club = getCurrentUserClub();
       document.getElementById('marketBudgetDisplay').innerText = `Available: £${club.budget.toFixed(1)}M`;
+      updateSortHeaderIndicators();
 
-      const filterPos = document.getElementById('filterMarketPos').value;
+      const searchQ = (document.getElementById('marketSearchInput')?.value || '').toLowerCase().trim();
+      const fLeague = document.getElementById('filterMarketLeague')?.value || 'ALL';
+      const fTeam = document.getElementById('filterMarketTeam')?.value || 'ALL';
+      const fPos = document.getElementById('filterMarketPos')?.value || 'ALL';
+      const fNat = document.getElementById('filterMarketNation')?.value || 'ALL';
+
+      let pool = getAllMarketAvailablePlayers();
+
+      // Apply Filters
+      if (searchQ) pool = pool.filter(p => p.name.toLowerCase().includes(searchQ));
+      if (fLeague !== 'ALL') {
+        if (fLeague === 'SCOUT') pool = pool.filter(p => p.isScoutPool);
+        else pool = pool.filter(p => p.div === parseInt(fLeague));
+      }
+      if (fTeam !== 'ALL') pool = pool.filter(p => p.clubId === fTeam);
+      if (fPos !== 'ALL') pool = pool.filter(p => p.naturalPos === fPos);
+      if (fNat !== 'ALL') pool = pool.filter(p => p.nat === fNat);
+
+      // Apply Sort
+      pool.sort((a, b) => {
+        let valA = a[marketSortKey];
+        let valB = b[marketSortKey];
+        if (typeof valA === 'string') {
+          return marketSortAsc ? valA.localeCompare(valB) : valB.localeCompare(valA);
+        }
+        return marketSortAsc ? (valA - valB) : (valB - valA);
+      });
+
+      // Render Display
       const tbody = document.getElementById('transferMarketBody');
       tbody.innerHTML = '';
 
-      const targets = state.marketPlayers.filter(p => (filterPos === 'ALL' || p.naturalPos === filterPos));
+      const countNote = document.getElementById('marketCountNote');
+      const maxDisplay = 100;
+      const displayItems = pool.slice(0, maxDisplay);
 
-      targets.forEach(p => {
+      if (countNote) {
+        countNote.innerText = `Displaying ${displayItems.length} of ${pool.length} matches. Use filters or click column headers to sort.`;
+      }
+
+      displayItems.forEach(p => {
         const canAfford = club.budget >= p.price;
         const tr = document.createElement('tr');
         tr.className = 'fm-row';
         tr.innerHTML = `
           <td><b>${p.name}</b></td>
           <td><span class="role-badge">${p.naturalPos}</span></td>
+          <td><span style="color:var(--text-muted); font-size:0.75rem;">${p.nat}</span></td>
           <td>${p.age}</td>
           <td><b style="color:var(--gold);">${p.ovr}</b></td>
           <td><b>£${p.price.toFixed(1)}M</b></td>
-          <td>${p.club}</td>
+          <td>${p.clubName}</td>
           <td>
-            <button class="btn-swap-pill" style="${canAfford ? 'background:#059669; color:#fff;' : 'opacity:0.4;'}" onclick="buyMarketPlayer('${p.id}')">
+            <button class="btn-swap-pill" style="${canAfford ? 'background:#059669; color:#fff;' : 'opacity:0.4;'}" onclick="executeBuyPlayer('${p.id}', ${p.isScoutPool}, '${p.clubId}')">
               ${canAfford ? 'Sign' : 'No Funds'}
             </button>
           </td>
@@ -3133,6 +3286,7 @@
         tbody.appendChild(tr);
       });
 
+      // Render Squad For Sale
       const sellBody = document.getElementById('squadSellListBody');
       sellBody.innerHTML = '';
 
@@ -3155,43 +3309,82 @@
       });
     }
 
-    function buyMarketPlayer(marketId) {
-      const club = getCurrentUserClub();
-      const pIdx = state.marketPlayers.findIndex(x => x.id === marketId);
-      if (pIdx === -1) return;
+    function executeBuyPlayer(playerId, isScoutPool, sellerClubId) {
+      const userClub = getCurrentUserClub();
 
-      const player = state.marketPlayers[pIdx];
-      if (club.budget < player.price) {
-        alert("Insufficient transfer budget.");
-        return;
-      }
+      if (isScoutPool) {
+        const pIdx = state.marketPlayers.findIndex(x => x.id === playerId);
+        if (pIdx === -1) return;
+        const target = state.marketPlayers[pIdx];
 
-      if (confirm(`Sign ${player.name} from ${player.club} for £${player.price.toFixed(1)}M?`)) {
-        club.budget -= player.price;
-        state.marketPlayers.splice(pIdx, 1);
+        if (userClub.budget < target.price) {
+          alert("Insufficient transfer budget.");
+          return;
+        }
 
-        const newPlayer = {
-          id: `trans_${Date.now()}_${Math.floor(Math.random() * 999)}`,
-          name: player.name,
-          naturalPos: player.naturalPos,
-          nat: player.nat,
-          age: player.age,
-          ovr: player.ovr,
-          con: 100,
-          role: player.naturalPos === 'GK' ? 'GK-De' : (player.naturalPos === 'DEF' ? 'CD-De' : (player.naturalPos === 'MID' ? 'CM-At' : 'AF-At')),
-          starter: false,
-          val: player.price,
-          inj: 0
-        };
+        if (confirm(`Sign ${target.name} from ${target.club} for £${target.price.toFixed(1)}M?`)) {
+          userClub.budget -= target.price;
+          state.marketPlayers.splice(pIdx, 1);
 
-        club.players.push(newPlayer);
-        state.manager.fansApproval = Math.min(99, state.manager.fansApproval + 3);
+          userClub.players.push({
+            id: `trans_${Date.now()}_${Math.floor(Math.random() * 999)}`,
+            name: target.name,
+            naturalPos: target.naturalPos,
+            nat: target.nat,
+            age: target.age,
+            ovr: target.ovr,
+            con: 100,
+            role: target.naturalPos === 'GK' ? 'GK-De' : (target.naturalPos === 'DEF' ? 'CD-De' : (target.naturalPos === 'MID' ? 'CM-At' : 'AF-At')),
+            starter: false,
+            val: target.price,
+            inj: 0
+          });
 
-        addNewsStory('Transfer Done Deal', `DONE DEAL: ${club.name} Confirm £${player.price.toFixed(1)}M Swoop for ${player.name}!`, `${club.name} have announced the capture of ${player.name} from ${player.club}.`, true);
-        saveGame();
-        renderAll();
-        renderTransfers();
-        playSound('cheer');
+          state.manager.fansApproval = Math.min(99, state.manager.fansApproval + 3);
+          addNewsStory('Transfer Done Deal', `DONE DEAL: ${userClub.name} Confirm £${target.price.toFixed(1)}M Signing of ${target.name}!`, `${userClub.name} have officially completed the signing of ${target.name}.`, true);
+          saveGame();
+          renderAll();
+          renderTransfers();
+          playSound('cheer');
+        }
+      } else {
+        // Buying from rival English club
+        const sellerClub = state.clubs.find(c => c.id === sellerClubId);
+        if (!sellerClub) return;
+        const pIdx = sellerClub.players.findIndex(x => x.id === playerId);
+        if (pIdx === -1) return;
+        const target = sellerClub.players[pIdx];
+        const fee = Number((target.val * 1.15).toFixed(1));
+
+        if (userClub.budget < fee) {
+          alert("Insufficient transfer budget.");
+          return;
+        }
+
+        if (sellerClub.players.length <= 13) {
+          alert(`${sellerClub.name} refused your offer because their squad is too thin!`);
+          return;
+        }
+
+        if (confirm(`Buy ${target.name} from ${sellerClub.name} for £${fee.toFixed(1)}M?`)) {
+          userClub.budget -= fee;
+          sellerClub.budget += fee;
+
+          sellerClub.players.splice(pIdx, 1);
+          userClub.players.push({
+            ...target,
+            starter: false,
+            inj: 0,
+            con: 100
+          });
+
+          state.manager.fansApproval = Math.min(99, state.manager.fansApproval + 3);
+          addNewsStory('Transfer Done Deal', `DONE DEAL: ${userClub.name} Raid ${sellerClub.name} for ${target.name} (£${fee}M)!`, `${target.name} has signed terms with ${userClub.name} in an agreed £${fee}M transaction.`, true);
+          saveGame();
+          renderAll();
+          renderTransfers();
+          playSound('cheer');
+        }
       }
     }
 
@@ -3217,7 +3410,6 @@
         }
 
         state.manager.fansApproval = Math.max(20, state.manager.fansApproval - 2);
-
         addNewsStory('Player Departure', `DEPARTURE: ${player.name} Leaves ${club.name} in £${player.val.toFixed(1)}M Deal`, `${club.name} sanctioned the departure of ${player.name} for £${player.val.toFixed(1)}M.`, false);
         saveGame();
         renderAll();
@@ -3226,6 +3418,7 @@
       }
     }
 
+    /* WEB AUDIO EFFECTS */
     let audioCtx = null;
     function playSound(type) {
       if (!state || !state.audioEnabled) return;
