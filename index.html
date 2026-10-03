@@ -2,2445 +2,1278 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Football League Manager - 2026/27 Career Edition</title>
-
-  <!-- PWA & Mobile Settings -->
-  <link rel="manifest" href="manifest.json">
-  <meta name="theme-color" content="#0a0e17">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="apple-mobile-web-app-title" content="FLM">
-
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Football League Manager (FLM) — 2026/27 Career Edition</title>
   <style>
     :root {
-      --bg-dark: #0a0e17;
-      --bg-card: #121824;
-      --bg-panel: #182030;
-      --bg-panel-hover: #1e283d;
-      --border: #243048;
-      --accent: #00d2ff;
-      --fm-green: #10b981;
-      --fm-amber: #f59e0b;
-      --fm-red: #ef4444;
-      --gold: #fbc02d;
-      --text-main: #f1f5f9;
-      --text-muted: #94a3b8;
-      --pitch-grass-1: #235c31;
-      --pitch-grass-2: #1e4e2a;
-      --pitch-line: rgba(255, 255, 255, 0.4);
+      --bg-dark: #0a0f0d;
+      --panel-bg: #111a14;
+      --panel-border: #1d2d22;
+      --pitch-grass-1: #1b3823;
+      --pitch-grass-2: #162f1d;
+      --pitch-line: rgba(255, 255, 255, 0.7);
+      --accent: #10b981;
+      --accent-hover: #059669;
+      --gold: #f59e0b;
+      --text-main: #f3f4f6;
+      --text-muted: #9ca3af;
     }
 
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; user-select: none; }
-    body { background-color: var(--bg-dark); color: var(--text-main); min-height: 100vh; display: flex; flex-direction: column; overflow-x: hidden; }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+    }
+
+    body {
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 12px;
+    }
 
     header {
-      background: linear-gradient(180deg, #151d2d 0%, #0d131f 100%);
-      border-bottom: 2px solid var(--border);
-      padding: 10px 16px;
+      width: 100%;
+      max-width: 1080px;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      position: sticky;
-      top: 0;
-      z-index: 100;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.5);
-    }
-    .brand-group { display: flex; align-items: center; gap: 10px; }
-    .brand-logo {
-      background: linear-gradient(135deg, var(--accent) 0%, #0072ff 100%);
-      color: #000;
-      font-weight: 900;
-      font-size: 1.05rem;
-      padding: 5px 10px;
-      border-radius: 6px;
-      letter-spacing: 1px;
-    }
-    .brand-titles h1 { font-size: 1.05rem; font-weight: 800; color: #fff; }
-    .brand-titles p { font-size: 0.72rem; color: var(--text-muted); font-weight: 600; }
-
-    .header-metrics { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
-    .metric-pill {
-      background: var(--bg-panel);
-      border: 1px solid var(--border);
-      padding: 5px 10px;
+      padding: 8px 16px;
+      margin-bottom: 12px;
+      background: var(--panel-bg);
+      border: 1px solid var(--panel-border);
       border-radius: 8px;
+    }
+
+    .brand h1 {
+      font-size: 1.1rem;
+      font-weight: 800;
+      letter-spacing: 0.5px;
+      color: #fff;
+    }
+
+    .brand span {
       font-size: 0.75rem;
-      display: flex;
-      flex-direction: column;
-      align-items: flex-start;
-    }
-    .metric-pill span.label { font-size: 0.62rem; color: var(--text-muted); text-transform: uppercase; font-weight: 700; }
-    .metric-pill span.val { font-weight: 800; color: #fff; }
-
-    .btn-advance-master {
-      background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
-      color: #000;
-      font-weight: 900;
-      font-size: 0.9rem;
-      padding: 9px 16px;
-      border-radius: 8px;
-      border: none;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      box-shadow: 0 0 15px rgba(245, 158, 11, 0.4);
-      transition: all 0.2s;
-    }
-    .btn-advance-master:active { transform: scale(0.97); }
-    .btn-icon { background: var(--bg-panel); border: 1px solid var(--border); color: #fff; padding: 7px 11px; border-radius: 6px; cursor: pointer; }
-
-    .app-container { display: flex; flex: 1; min-height: calc(100vh - 120px); }
-
-    nav.sidebar {
-      width: 230px;
-      background: #0d121c;
-      border-right: 1px solid var(--border);
-      padding: 14px 10px;
-      display: flex;
-      flex-direction: column;
-      gap: 5px;
-    }
-    .nav-label { font-size: 0.65rem; font-weight: 800; color: #475569; text-transform: uppercase; padding: 6px 10px 2px; }
-    .nav-item {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding: 10px 12px;
-      color: #94a3b8;
-      border-radius: 8px;
-      font-size: 0.85rem;
-      font-weight: 700;
-      cursor: pointer;
-      transition: all 0.15s;
-    }
-    .nav-item:hover { background: var(--bg-panel); color: #fff; }
-    .nav-item.active {
-      background: linear-gradient(90deg, rgba(0, 210, 255, 0.15) 0%, rgba(0, 210, 255, 0.03) 100%);
       color: var(--accent);
-      border-left: 3px solid var(--accent);
+      font-weight: 600;
     }
-    .nav-item span.icon { font-size: 1.05rem; }
 
-    main.viewport { flex: 1; padding: 16px; overflow-y: auto; background: var(--bg-dark); }
-
-    .club-banner {
-      background: linear-gradient(90deg, #162032 0%, #111724 100%);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 12px 16px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 16px;
+    .header-credits {
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      text-align: right;
     }
-    .club-info-badge { display: flex; align-items: center; gap: 14px; }
-    .club-badge-box {
-      width: 44px; height: 44px; border-radius: 10px; background: #e11d48;
-      display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 1rem; color: #fff;
+
+    main {
+      width: 100%;
+      max-width: 1080px;
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 12px;
     }
-    .club-text h2 { font-size: 1.2rem; font-weight: 800; }
-    .club-text p { font-size: 0.78rem; color: var(--text-muted); }
 
-    .team-stats-strip { display: flex; gap: 14px; }
-    .strip-stat { text-align: center; }
-    .strip-stat .val { font-size: 1.15rem; font-weight: 900; color: #fff; }
-    .strip-stat .lbl { font-size: 0.62rem; color: var(--text-muted); text-transform: uppercase; font-weight: 700; }
+    @media (min-width: 900px) {
+      main {
+        grid-template-columns: 700px 1fr;
+      }
+    }
 
-    .tactics-container { display: grid; grid-template-columns: 460px 1fr; gap: 16px; }
-
-    .pitch-card {
-      background: var(--bg-card);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 12px;
+    .match-panel {
+      background: var(--panel-bg);
+      border: 1px solid var(--panel-border);
+      border-radius: 10px;
+      overflow: hidden;
       display: flex;
       flex-direction: column;
-      gap: 10px;
     }
-    .tactics-toolbar {
+
+    .match-hud {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      align-items: center;
+      padding: 10px 16px;
+      background: #0d1610;
+      border-bottom: 1px solid var(--panel-border);
+    }
+
+    .team-hud {
       display: flex;
-      justify-content: space-between;
       align-items: center;
       gap: 8px;
     }
-    .tactics-select {
-      background: var(--bg-panel);
-      color: #fff;
-      border: 1px solid var(--border);
-      padding: 7px 10px;
-      border-radius: 6px;
-      font-weight: 700;
-      font-size: 0.8rem;
-      outline: none;
-    }
-    .btn-auto-pick {
-      background: linear-gradient(135deg, #059669 0%, #047857 100%);
-      color: #fff;
-      border: none;
-      padding: 7px 12px;
-      border-radius: 6px;
-      font-weight: 800;
-      font-size: 0.78rem;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      gap: 5px;
+
+    .team-hud.away {
+      justify-content: flex-end;
     }
 
-    .football-pitch {
-      width: 100%;
-      height: 480px;
-      background: repeating-linear-gradient(
-        0deg,
-        var(--pitch-grass-1),
-        var(--pitch-grass-1) 48px,
-        var(--pitch-grass-2) 48px,
-        var(--pitch-grass-2) 96px
-      );
-      border: 2px solid rgba(255, 255, 255, 0.7);
-      border-radius: 8px;
-      position: relative;
-      overflow: hidden;
-      box-shadow: inset 0 0 30px rgba(0,0,0,0.6);
-    }
-    .pitch-line-half { position: absolute; top: 50%; left: 0; right: 0; height: 2px; background: var(--pitch-line); transform: translateY(-50%); }
-    .pitch-circle-center {
-      position: absolute; top: 50%; left: 50%; width: 90px; height: 90px;
-      border: 2px solid var(--pitch-line); border-radius: 50%; transform: translate(-50%, -50%);
-    }
-    .pitch-spot-center { position: absolute; top: 50%; left: 50%; width: 6px; height: 6px; background: #fff; border-radius: 50%; transform: translate(-50%, -50%); }
-    .penalty-box-top {
-      position: absolute; top: 0; left: 50%; width: 180px; height: 75px;
-      border: 2px solid var(--pitch-line); border-top: none; transform: translateX(-50%);
-    }
-    .six-yard-top {
-      position: absolute; top: 0; left: 50%; width: 90px; height: 30px;
-      border: 2px solid var(--pitch-line); border-top: none; transform: translateX(-50%);
-    }
-    .penalty-box-bottom {
-      position: absolute; bottom: 0; left: 50%; width: 180px; height: 75px;
-      border: 2px solid var(--pitch-line); border-bottom: none; transform: translateX(-50%);
-    }
-    .six-yard-bottom {
-      position: absolute; bottom: 0; left: 50%; width: 90px; height: 30px;
-      border: 2px solid var(--pitch-line); border-bottom: none; transform: translateX(-50%);
-    }
-
-    .pitch-node {
-      position: absolute;
-      transform: translate(-50%, -50%);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      cursor: pointer;
-      z-index: 10;
-      transition: transform 0.15s ease;
-      width: 66px;
-    }
-    .pitch-node:active { transform: translate(-50%, -50%) scale(1.1); }
-    .pitch-node.selected-for-swap {
-      transform: translate(-50%, -50%) scale(1.15);
-      z-index: 30;
-      filter: drop-shadow(0 0 8px #f59e0b);
-    }
-    .pitch-kit {
-      width: 34px;
-      height: 34px;
-      background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
-      border: 2px solid #fff;
+    .team-badge {
+      width: 12px;
+      height: 12px;
       border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: 900;
+      border: 1.5px solid rgba(255, 255, 255, 0.4);
+    }
+
+    .team-name {
+      font-size: 0.95rem;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+    }
+
+    .score-box {
+      font-size: 1.4rem;
+      font-weight: 800;
+      color: var(--accent);
+      padding: 0 8px;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .time-box {
       font-size: 0.85rem;
-      color: #fff;
-      box-shadow: 0 3px 6px rgba(0,0,0,0.6);
-      position: relative;
-    }
-    .pitch-node.selected-for-swap .pitch-kit { border-color: #f59e0b; background: #d97706; }
-    .pitch-role-tag {
-      position: absolute;
-      bottom: -6px;
-      background: #0284c7;
-      color: #fff;
-      font-size: 0.58rem;
-      font-weight: 800;
-      padding: 1px 3px;
-      border-radius: 3px;
-      line-height: 1;
-      text-transform: uppercase;
-    }
-    .pitch-name-card {
-      margin-top: 4px;
-      background: rgba(15, 23, 42, 0.9);
-      border: 1px solid rgba(255, 255, 255, 0.2);
-      border-radius: 4px;
-      padding: 2px 4px;
-      text-align: center;
-      width: 100%;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-    .pitch-name-card .p-name { font-size: 0.68rem; font-weight: 800; color: #fff; }
-    .pitch-name-card .p-role { font-size: 0.58rem; font-weight: 700; color: #38bdf8; }
-
-    .swap-status-bar {
-      background: linear-gradient(90deg, #b45309 0%, #d97706 100%);
-      color: #fff;
-      padding: 8px 12px;
-      border-radius: 8px;
-      font-size: 0.78rem;
-      font-weight: 800;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 12px;
-      animation: pulse 1.5s infinite;
-    }
-    @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.85; } }
-    .swap-status-bar button {
-      background: rgba(0,0,0,0.3); border: 1px solid #fff; color: #fff;
-      padding: 3px 8px; border-radius: 4px; cursor: pointer; font-size: 0.72rem; font-weight: 700;
-    }
-
-    .squad-roster-card {
-      background: var(--bg-card);
-      border: 1px solid var(--border);
+      font-weight: 700;
+      color: var(--gold);
+      background: rgba(245, 158, 11, 0.12);
+      padding: 4px 10px;
       border-radius: 12px;
-      padding: 14px;
+      border: 1px solid rgba(245, 158, 11, 0.25);
+    }
+
+    .canvas-container {
+      position: relative;
+      width: 100%;
+      background: #000;
+    }
+
+    canvas {
+      display: block;
+      width: 100%;
+      height: auto;
+      aspect-ratio: 1000 / 680;
+    }
+
+    .ticker-bar {
+      padding: 8px 12px;
+      background: #080d09;
+      border-top: 1px solid var(--panel-border);
+      font-size: 0.78rem;
+      color: #e5e7eb;
+      min-height: 34px;
+      display: flex;
+      align-items: center;
+      font-family: monospace;
+    }
+
+    .controls-strip {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      padding: 10px;
+      background: #0d1610;
+      border-top: 1px solid var(--panel-border);
+      align-items: center;
+    }
+
+    button {
+      background: #1f3325;
+      color: #fff;
+      border: 1px solid #2d4a36;
+      border-radius: 6px;
+      padding: 6px 12px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.15s ease, border-color 0.15s ease;
+    }
+
+    button:hover {
+      background: #2a4733;
+      border-color: var(--accent);
+    }
+
+    button.active {
+      background: var(--accent);
+      color: #000;
+      border-color: var(--accent);
+    }
+
+    .sidebar {
       display: flex;
       flex-direction: column;
       gap: 12px;
-      overflow-x: auto;
-      -webkit-overflow-scrolling: touch;
     }
-    .section-title-strip {
+
+    .card {
+      background: var(--panel-bg);
+      border: 1px solid var(--panel-border);
+      border-radius: 10px;
+      padding: 14px;
+    }
+
+    .card-title {
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: var(--accent);
+      text-transform: uppercase;
+      letter-spacing: 0.75px;
+      margin-bottom: 10px;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      border-bottom: 1px solid var(--border);
-      padding-bottom: 6px;
     }
-    .section-title-strip h3 { font-size: 0.9rem; font-weight: 800; text-transform: uppercase; color: var(--text-main); }
-    .section-title-strip span.count { font-size: 0.72rem; color: var(--text-muted); font-weight: 700; }
 
-    table.fm-table { width: 100%; border-collapse: collapse; font-size: 0.78rem; text-align: left; }
-    table.fm-table th {
-      background: var(--bg-panel);
+    .tactics-group {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+
+    select {
+      background: #0a0f0d;
+      color: #fff;
+      border: 1px solid var(--panel-border);
+      border-radius: 6px;
+      padding: 6px 8px;
+      font-size: 0.78rem;
+    }
+
+    .cup-log {
+      max-height: 200px;
+      overflow-y: auto;
+      font-size: 0.75rem;
       color: var(--text-muted);
-      font-size: 0.65rem;
-      font-weight: 800;
-      text-transform: uppercase;
-      padding: 7px 8px;
-      border-bottom: 2px solid var(--border);
-      white-space: nowrap;
-    }
-    table.fm-table td {
-      padding: 7px 8px;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-      vertical-align: middle;
-      font-weight: 600;
-      white-space: nowrap;
-    }
-    table.fm-table tr.fm-row { cursor: pointer; transition: background 0.15s; }
-    table.fm-table tr.fm-row:hover { background: var(--bg-panel-hover); }
-    table.fm-table tr.fm-row.selected-for-swap { background: rgba(245, 158, 11, 0.2) !important; outline: 1px solid #f59e0b; }
-
-    .badge-pick {
-      display: inline-block; padding: 2px 5px; border-radius: 4px;
-      font-size: 0.65rem; font-weight: 800; text-align: center;
-    }
-    .pick-starter { background: rgba(16, 185, 129, 0.2); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.4); }
-    .pick-sub { background: rgba(245, 158, 11, 0.2); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.4); }
-
-    .role-badge {
-      background: #0369a1; color: #fff; font-size: 0.62rem; font-weight: 800;
-      padding: 2px 5px; border-radius: 4px;
-    }
-
-    .btn-swap-pill {
-      background: var(--bg-panel);
-      color: var(--text-main);
-      border: 1px solid var(--border);
-      padding: 4px 8px;
-      border-radius: 4px;
-      font-size: 0.7rem;
-      font-weight: 700;
-      cursor: pointer;
-    }
-    .btn-swap-pill:active { background: var(--accent); color: #000; }
-    .btn-sell-pill {
-      background: rgba(239, 68, 68, 0.2);
-      color: #f87171;
-      border: 1px solid rgba(239, 68, 68, 0.4);
-      padding: 4px 8px;
-      border-radius: 4px;
-      font-size: 0.7rem;
-      font-weight: 700;
-      cursor: pointer;
-    }
-    .btn-sell-pill:active { background: #ef4444; color: #fff; }
-
-    .condition-bar { width: 38px; height: 5px; background: #334155; border-radius: 3px; overflow: hidden; display: inline-block; vertical-align: middle; margin-right: 4px; }
-    .condition-fill { height: 100%; border-radius: 3px; }
-
-    .matchday-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 16px; }
-    .broadcast-card {
-      background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; padding: 16px;
-      display: flex; flex-direction: column; gap: 14px;
-    }
-    .scoreboard-box {
-      background: linear-gradient(180deg, #151d2c 0%, #0c121d 100%);
-      border: 2px solid var(--border);
-      border-radius: 12px;
-      padding: 16px;
-      display: flex;
-      justify-content: space-around;
-      align-items: center;
-      text-align: center;
-    }
-    .sb-team h2 { font-size: 1.2rem; font-weight: 900; }
-    .sb-team p { font-size: 0.75rem; color: var(--text-muted); }
-    .sb-score { font-size: 2.5rem; font-weight: 900; color: #fff; letter-spacing: 3px; }
-    .sb-minute { background: var(--bg-panel); padding: 4px 8px; border-radius: 6px; font-weight: 800; font-size: 0.8rem; color: var(--accent); }
-
-    .commentary-box {
-      background: #090d14; border: 1px solid var(--border); border-radius: 8px; height: 230px;
-      overflow-y: auto; padding: 10px; display: flex; flex-direction: column; gap: 6px;
-      -webkit-overflow-scrolling: touch;
-    }
-    .comm-line { font-size: 0.78rem; padding: 5px 8px; border-radius: 6px; background: var(--bg-panel); border-left: 3px solid var(--accent); }
-    .comm-line.goal { border-left-color: #10b981; background: rgba(16, 185, 129, 0.15); font-weight: 800; color: #34d399; }
-
-    .standings-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; padding: 14px; overflow-x: auto; -webkit-overflow-scrolling: touch; }
-    .league-tabs { display: flex; gap: 8px; margin-bottom: 12px; overflow-x: auto; padding-bottom: 4px; }
-    .league-tab-btn {
-      background: var(--bg-panel); color: var(--text-muted); border: 1px solid var(--border);
-      padding: 6px 12px; border-radius: 8px; font-weight: 800; font-size: 0.75rem; cursor: pointer; white-space: nowrap;
-    }
-    .league-tab-btn.active { background: var(--accent); color: #000; border-color: var(--accent); }
-
-    .zone-ucl { border-left: 4px solid #3b82f6 !important; }
-    .zone-promo { border-left: 4px solid #10b981 !important; }
-    .zone-playoff { border-left: 4px solid #06b6d4 !important; }
-    .zone-relegation { border-left: 4px solid #ef4444 !important; }
-
-    .news-grid { display: flex; flex-direction: column; gap: 12px; }
-    .news-card {
-      background: var(--bg-panel);
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 14px 16px;
       display: flex;
       flex-direction: column;
-      gap: 5px;
+      gap: 6px;
+      padding-right: 4px;
     }
-    .news-card.breaking {
-      border-left: 4px solid #f59e0b;
-      background: linear-gradient(90deg, rgba(245, 158, 11, 0.08) 0%, var(--bg-panel) 100%);
-    }
-    .news-tag { font-size: 0.65rem; font-weight: 800; color: var(--accent); text-transform: uppercase; }
-    .news-headline { font-size: 0.95rem; font-weight: 800; color: #fff; }
-    .news-body { font-size: 0.8rem; color: #cbd5e1; line-height: 1.4; }
-    .news-time { font-size: 0.68rem; color: var(--text-muted); font-weight: 600; }
 
-    /* MODAL BASE */
-    .modal-backdrop {
-      position: fixed; inset: 0; background: rgba(0,0,0,0.88);
-      display: flex; align-items: center; justify-content: center; z-index: 1000;
-      padding: 12px;
+    .cup-tie-result {
+      background: #09100a;
+      padding: 6px 8px;
+      border-radius: 4px;
+      border-left: 2px solid var(--accent);
+      color: #d1d5db;
     }
-    .modal-window {
-      background: var(--bg-card); border: 2px solid var(--border); border-radius: 16px;
-      width: 600px; max-width: 100%; max-height: 85vh; overflow-y: auto; padding: 20px;
-      box-shadow: 0 10px 40px rgba(0,0,0,0.8);
-      -webkit-overflow-scrolling: touch;
-    }
-    .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
-    .modal-header h2 { font-size: 1.2rem; font-weight: 900; }
-    .modal-close { background: none; border: none; color: #fff; font-size: 1.3rem; cursor: pointer; }
 
-    /* WIZARD INPUTS */
-    .wizard-input-box {
-      background: var(--bg-panel);
-      border: 1px solid var(--border);
+    .cup-tie-result.upset {
+      border-left-color: var(--gold);
+    }
+
+    .cup-tie-result strong {
       color: #fff;
-      font-size: 0.9rem;
-      padding: 10px 14px;
-      border-radius: 8px;
-      width: 100%;
-      outline: none;
-      font-weight: 700;
-      margin-top: 4px;
-      margin-bottom: 14px;
     }
-    .wizard-input-box:focus { border-color: var(--accent); }
-
-    .club-select-card {
-      background: var(--bg-panel);
-      border: 2px solid var(--border);
-      padding: 10px 12px;
-      border-radius: 8px;
-      cursor: pointer;
-      transition: all 0.15s;
-    }
-    .club-select-card:hover { border-color: var(--text-muted); }
-    .club-select-card.selected { border-color: var(--accent); background: rgba(0, 210, 255, 0.12); }
 
     footer {
-      background: #080c14;
-      border-top: 1px solid var(--border);
-      padding: 10px 16px;
+      width: 100%;
+      max-width: 1080px;
       text-align: center;
-      font-size: 0.75rem;
-      font-weight: 700;
-      color: #64748b;
-    }
-
-    @media (max-width: 860px) {
-      header {
-        flex-direction: column;
-        align-items: stretch;
-        gap: 8px;
-        padding: 8px 12px;
-      }
-      .brand-group { justify-content: space-between; width: 100%; }
-      .header-metrics {
-        width: 100%;
-        display: grid;
-        grid-template-columns: repeat(4, 1fr);
-        gap: 6px;
-      }
-      .metric-pill { min-width: 0; padding: 4px 6px; }
-      .metric-pill span.label { font-size: 0.58rem; }
-      .metric-pill span.val { font-size: 0.72rem; }
-      .btn-advance-master {
-        grid-column: span 4;
-        width: 100%;
-        justify-content: center;
-        padding: 10px;
-        font-size: 0.92rem;
-      }
-
-      .app-container { flex-direction: column; }
-      nav.sidebar {
-        width: 100%;
-        border-right: none;
-        border-bottom: 1px solid var(--border);
-        flex-direction: row;
-        overflow-x: auto;
-        white-space: nowrap;
-        padding: 8px 10px;
-        gap: 6px;
-        scrollbar-width: none;
-        -webkit-overflow-scrolling: touch;
-      }
-      nav.sidebar::-webkit-scrollbar { display: none; }
-      .nav-label { display: none; }
-      .nav-item {
-        padding: 8px 14px;
-        font-size: 0.8rem;
-        border-radius: 20px;
-        background: var(--bg-panel);
-        border-left: none !important;
-      }
-      .nav-item.active { background: var(--accent); color: #000; }
-
-      main.viewport { padding: 12px; }
-      .club-banner { flex-direction: column; align-items: stretch; gap: 12px; }
-      .team-stats-strip {
-        justify-content: space-between;
-        background: var(--bg-panel);
-        padding: 8px 12px;
-        border-radius: 8px;
-      }
-
-      .tactics-container { grid-template-columns: 1fr; }
-      .football-pitch { height: 420px; }
-      .pitch-node { width: 58px; }
-      .pitch-kit { width: 30px; height: 30px; font-size: 0.8rem; }
-      .pitch-role-tag { font-size: 0.52rem; }
-      .pitch-name-card .p-name { font-size: 0.62rem; }
-      .pitch-name-card .p-role { font-size: 0.52rem; }
-
-      .matchday-grid { grid-template-columns: 1fr; }
-      .scoreboard-box { padding: 12px 8px; }
-      .sb-team h2 { font-size: 1rem; }
-      .sb-score { font-size: 2rem; }
-
-      #modalClubsGrid, #wizardClubsGrid { grid-template-columns: 1fr !important; }
+      padding: 12px;
+      font-size: 0.7rem;
+      color: #6b7280;
+      margin-top: 12px;
     }
   </style>
 </head>
 <body>
 
   <header>
-    <div class="brand-group">
-      <div style="display: flex; align-items: center; gap: 10px;">
-        <div class="brand-logo">FLM</div>
-        <div class="brand-titles">
-          <h1>FOOTBALL LEAGUE MANAGER</h1>
-          <p id="headerSeasonTag">2026/27 Career • English Football Pyramid</p>
-        </div>
-      </div>
-      <div style="display: flex; gap: 6px;">
-        <button class="btn-icon" onclick="toggleAudio()" id="btnAudio" title="Toggle Sound">🔊</button>
-        <button class="btn-icon" onclick="promptNewCareer()" title="Start New Career">🆕</button>
-      </div>
+    <div class="brand">
+      <h1>Football League Manager</h1>
+      <span>2026/27 Career Edition • English Football Pyramid</span>
     </div>
-
-    <div class="header-metrics">
-      <div class="metric-pill">
-        <span class="label">Division</span>
-        <span class="val" id="headerDivName">Premier League</span>
-      </div>
-      <div class="metric-pill">
-        <span class="label">Calendar</span>
-        <span class="val" id="headerWeek">Wk 1 / 38</span>
-      </div>
-      <div class="metric-pill">
-        <span class="label">Approval</span>
-        <span class="val" id="headerConfidence" style="color: #34d399;">82%</span>
-      </div>
-      <div class="metric-pill">
-        <span class="label">Budget</span>
-        <span class="val" id="headerBudget">£24.5M</span>
-      </div>
-      
-      <button class="btn-advance-master" id="btnAdvanceMaster" onclick="advanceMasterWeek()">
-        <span>⏩</span> ADVANCE WEEK
-      </button>
+    <div class="header-credits">
+      Created by Jason Adams &amp; Jonathan Brewer<br>
+      Single-File Modular Architecture
     </div>
   </header>
 
-  <div class="app-container">
-    <nav class="sidebar">
-      <div class="nav-label">Squad Management</div>
-      <div class="nav-item active" onclick="switchTab('tactics')" id="nav-tactics">
-        <span class="icon">👕</span> Tactics
-      </div>
-      <div class="nav-item" onclick="switchTab('matchday')" id="nav-matchday">
-        <span class="icon">⏱️</span> Matchday
-      </div>
-
-      <div class="nav-label">Media & Market</div>
-      <div class="nav-item" onclick="switchTab('news')" id="nav-news">
-        <span class="icon">📰</span> News
-      </div>
-      <div class="nav-item" onclick="switchTab('transfers')" id="nav-transfers">
-        <span class="icon">🔄</span> Market
-      </div>
-
-      <div class="nav-label">Club Operations</div>
-      <div class="nav-item" onclick="switchTab('standings')" id="nav-standings">
-        <span class="icon">🏆</span> Tables
-      </div>
-      <div class="nav-item" onclick="switchTab('facilities')" id="nav-facilities">
-        <span class="icon">🏟️</span> Ground
-      </div>
-
-      <div class="nav-label">Management Office</div>
-      <div class="nav-item" onclick="switchTab('manager')" id="nav-manager">
-        <span class="icon">📋</span> Office
-      </div>
-      <div class="nav-item" onclick="switchTab('honours')" id="nav-honours">
-        <span class="icon">🎖️</span> Honours
-      </div>
-      <div class="nav-item" onclick="openClubSelectorModal()" id="nav-switch">
-        <span class="icon">🔀</span> Club
-      </div>
-    </nav>
-
-    <main class="viewport" id="mainViewport">
-      <div class="club-banner" id="clubBanner">
-        <div class="club-info-badge">
-          <div class="club-badge-box" id="bannerBadge">SOU</div>
-          <div class="club-text">
-            <h2 id="bannerClubName">Southampton</h2>
-            <p id="bannerStadium">St Mary's Stadium • Capacity: 32,384</p>
-          </div>
+  <main>
+    <section class="match-panel">
+      <div class="match-hud">
+        <div class="team-hud home">
+          <span class="team-badge" id="hudHomeBadge"></span>
+          <span class="team-name" id="hudHomeName">SOU</span>
+          <span class="score-box" id="hudHomeScore">0</span>
         </div>
-        <div class="team-stats-strip">
-          <div class="strip-stat">
-            <div class="val" id="statAttack">78</div>
-            <div class="lbl">Attack</div>
-          </div>
-          <div class="strip-stat">
-            <div class="val" id="statMidfield">77</div>
-            <div class="lbl">Midfield</div>
-          </div>
-          <div class="strip-stat">
-            <div class="val" id="statDefence">76</div>
-            <div class="lbl">Defence</div>
-          </div>
-          <div class="strip-stat">
-            <div class="val" id="statOvr">77</div>
-            <div class="lbl">Rating</div>
-          </div>
+        <div class="time-box" id="hudMatchTime">00:00</div>
+        <div class="team-hud away">
+          <span class="score-box" id="hudAwayScore">0</span>
+          <span class="team-name" id="hudAwayName">ARS</span>
+          <span class="team-badge" id="hudAwayBadge"></span>
         </div>
       </div>
 
-      <div id="tab-tactics" class="tab-pane">
-        <div id="swapNotificationBar" class="swap-status-bar" style="display: none;">
-          <span id="swapNotificationText">🔄 SELECT PLAYER TO SWAP</span>
-          <button onclick="cancelPlayerSwap()">Cancel</button>
-        </div>
-
-        <div class="tactics-container">
-          <div class="pitch-card">
-            <div class="tactics-toolbar">
-              <select class="tactics-select" id="formationSelect" onchange="changeFormation(this.value)">
-                <option value="4-3-3">4-3-3 (Gegenpress)</option>
-                <option value="4-2-3-1">4-2-3-1 (Wide)</option>
-                <option value="4-4-2">4-4-2 (Flat)</option>
-                <option value="5-3-2">5-3-2 (Wing-Backs)</option>
-                <option value="3-5-2">3-5-2 (Counter)</option>
-              </select>
-
-              <button class="btn-auto-pick" onclick="autoPickBestXI()">
-                ⚡ Auto-Pick XI
-              </button>
-            </div>
-
-            <div class="football-pitch" id="pitchSurface">
-              <div class="pitch-line-half"></div>
-              <div class="pitch-circle-center"></div>
-              <div class="pitch-spot-center"></div>
-              <div class="penalty-box-top"></div>
-              <div class="six-yard-top"></div>
-              <div class="penalty-box-bottom"></div>
-              <div class="six-yard-bottom"></div>
-
-              <div id="pitchNodesWrapper"></div>
-            </div>
-            
-            <p style="font-size: 0.72rem; color: var(--text-muted); text-align: center;">
-              💡 <b>Tap any player on the pitch or table</b> to swap positions.
-            </p>
-          </div>
-
-          <div class="squad-roster-card">
-            <div class="section-title-strip">
-              <h3>Starting Eleven</h3>
-              <span class="count">11 Selected</span>
-            </div>
-
-            <table class="fm-table" id="startersTable">
-              <thead>
-                <tr>
-                  <th style="width: 44px;">PK</th>
-                  <th style="width: 70px;">Role</th>
-                  <th>Player Name</th>
-                  <th style="width: 40px;">Age</th>
-                  <th style="width: 40px;">OVR</th>
-                  <th style="width: 75px;">Con</th>
-                  <th style="width: 80px;">Action</th>
-                </tr>
-              </thead>
-              <tbody id="startersTableBody"></tbody>
-            </table>
-
-            <div class="section-title-strip" style="margin-top: 10px;">
-              <h3>Substitutes Bench</h3>
-              <span class="count">Reserves</span>
-            </div>
-
-            <table class="fm-table" id="benchTable">
-              <thead>
-                <tr>
-                  <th style="width: 44px;">PK</th>
-                  <th style="width: 70px;">Role</th>
-                  <th>Player Name</th>
-                  <th style="width: 40px;">Age</th>
-                  <th style="width: 40px;">OVR</th>
-                  <th style="width: 75px;">Con</th>
-                  <th style="width: 80px;">Action</th>
-                </tr>
-              </thead>
-              <tbody id="benchTableBody"></tbody>
-            </table>
-          </div>
-        </div>
+      <div class="canvas-container">
+        <canvas id="flmPitchCanvas" width="1000" height="680"></canvas>
       </div>
 
-      <div id="tab-matchday" class="tab-pane" style="display: none;">
-        <div class="matchday-grid">
-          <div class="broadcast-card">
-            <div class="scoreboard-box">
-              <div class="sb-team">
-                <h2 id="sbHomeName">Southampton</h2>
-                <p id="sbHomeRole">HOME</p>
-              </div>
-              <div>
-                <div class="sb-score" id="sbScore">0 - 0</div>
-                <span class="sb-minute" id="sbMinute">PRE-MATCH</span>
-              </div>
-              <div class="sb-team">
-                <h2 id="sbAwayName">Opponent</h2>
-                <p id="sbAwayRole">AWAY</p>
-              </div>
-            </div>
-
-            <button class="btn-advance-master" style="width: 100%; justify-content: center;" onclick="startMatchdaySim()" id="btnStartMatch">
-              ▶️️ SIMULATE 90 MINUTES
-            </button>
-
-            <h4 style="font-size: 0.85rem; text-transform: uppercase; color: var(--text-muted);">Match Commentary</h4>
-            <div class="commentary-box" id="commentaryFeed">
-              <div class="comm-line">Teams have completed warmups and are emerging onto the pitch.</div>
-            </div>
-          </div>
-
-          <div class="standings-card">
-            <h3 style="font-size: 0.92rem; font-weight: 800; margin-bottom: 10px;">Around The Grounds</h3>
-            <div id="aroundGroundsList" style="display: flex; flex-direction: column; gap: 8px; font-size: 0.78rem;"></div>
-          </div>
-        </div>
+      <div class="ticker-bar" id="commentaryTicker">
+        Match ready for kickoff. Select tactics or change fixture below.
       </div>
 
-      <div id="tab-news" class="tab-pane" style="display: none;">
-        <div class="standings-card">
-          <div class="section-title-strip" style="margin-bottom: 14px;">
-            <h3>🗞️ League Press &amp; Media Hub</h3>
-            <span class="count">Live Wire</span>
-          </div>
-          <div class="news-grid" id="newsFeedList"></div>
-        </div>
+      <div class="controls-strip">
+        <button id="btnPlayPause">Kick Off</button>
+        <button id="btnSpeed1" class="active">1x</button>
+        <button id="btnSpeed2">2x</button>
+        <button id="btnSpeed4">4x</button>
+        <button id="btnResetMatch">Reset Pitch</button>
+        <button id="btnMuteAudio">Audio: ON</button>
       </div>
+    </section>
 
-      <div id="tab-transfers" class="tab-pane" style="display: none;">
-        <div class="standings-card">
-          <div class="section-title-strip" style="margin-bottom: 12px;">
-            <h3>🛒 Transfer Market</h3>
-            <span class="count" id="marketBudgetDisplay">Available: £24.5M</span>
+    <aside class="sidebar">
+      <div class="card">
+        <div class="card-title">Matchday Matchup</div>
+        <div class="tactics-group">
+          <div>
+            <label style="font-size:0.7rem; color:var(--text-muted); display:block; margin-bottom:4px;">Home Club</label>
+            <select id="selHomeTeam" style="width:100%;"></select>
           </div>
-          
-          <div style="display: flex; gap: 10px; margin-bottom: 10px;">
-            <select class="tactics-select" id="filterMarketPos" onchange="renderTransfers()">
-              <option value="ALL">All Positions</option>
-              <option value="GK">Goalkeepers (GK)</option>
-              <option value="DEF">Defenders (DEF)</option>
-              <option value="MID">Midfielders (MID)</option>
-              <option value="FWD">Forwards (FWD)</option>
+          <div>
+            <label style="font-size:0.7rem; color:var(--text-muted); display:block; margin-bottom:4px;">Away Club</label>
+            <select id="selAwayTeam" style="width:100%;"></select>
+          </div>
+        </div>
+
+        <div class="tactics-group">
+          <div>
+            <label style="font-size:0.7rem; color:var(--text-muted); display:block; margin-bottom:4px;">Home Mentality</label>
+            <select id="selHomeMentality" style="width:100%;">
+              <option value="defensive">Defensive</option>
+              <option value="balanced" selected>Balanced</option>
+              <option value="attacking">Attacking</option>
             </select>
           </div>
-
-          <table class="fm-table">
-            <thead>
-              <tr>
-                <th>Target Player</th>
-                <th>Pos</th>
-                <th>Age</th>
-                <th>OVR</th>
-                <th>Price</th>
-                <th>Club</th>
-                <th style="width: 90px;">Action</th>
-              </tr>
-            </thead>
-            <tbody id="transferMarketBody"></tbody>
-          </table>
-
-          <div class="section-title-strip" style="margin-top: 20px; margin-bottom: 12px;">
-            <h3>💼 Sell Squad Players</h3>
-            <span class="count">Raise Funds</span>
+          <div>
+            <label style="font-size:0.7rem; color:var(--text-muted); display:block; margin-bottom:4px;">Away Mentality</label>
+            <select id="selAwayMentality" style="width:100%;">
+              <option value="defensive">Defensive</option>
+              <option value="balanced" selected>Balanced</option>
+              <option value="attacking">Attacking</option>
+            </select>
           </div>
-          <table class="fm-table">
-            <thead>
-              <tr>
-                <th>Squad Player</th>
-                <th>Pos</th>
-                <th>Age</th>
-                <th>Rating</th>
-                <th>Value</th>
-                <th style="width: 90px;">Action</th>
-              </tr>
-            </thead>
-            <tbody id="squadSellListBody"></tbody>
-          </table>
         </div>
       </div>
 
-      <div id="tab-standings" class="tab-pane" style="display: none;">
-        <div class="standings-card">
-          <div class="league-tabs">
-            <button class="league-tab-btn active" onclick="renderStandingsTable(0)" id="tabTier0">Premier League</button>
-            <button class="league-tab-btn" onclick="renderStandingsTable(1)" id="tabTier1">Championship</button>
-            <button class="league-tab-btn" onclick="renderStandingsTable(2)" id="tabTier2">League One</button>
-            <button class="league-tab-btn" onclick="renderStandingsTable(3)" id="tabTier3">League Two</button>
-          </div>
-
-          <table class="fm-table" id="leagueTableElem">
-            <thead>
-              <tr>
-                <th style="width: 35px;">Pos</th>
-                <th>Club</th>
-                <th style="width: 35px;">P</th>
-                <th style="width: 35px;">W</th>
-                <th style="width: 35px;">D</th>
-                <th style="width: 35px;">L</th>
-                <th style="width: 40px;">GD</th>
-                <th style="width: 45px;">PTS</th>
-              </tr>
-            </thead>
-            <tbody id="leagueTableBody"></tbody>
-          </table>
+      <div class="card">
+        <div class="card-title">
+          <span>Domestic Cups Subsystem</span>
+          <span id="cupPurseDisplay" style="color:var(--gold); font-size:0.75rem;">Budget: £12.5M</span>
+        </div>
+        <div style="display:flex; gap:8px; margin-bottom:10px;">
+          <button id="btnSimCarabao" style="flex:1;">Sim Carabao Round</button>
+          <button id="btnSimFaCup" style="flex:1;">Sim FA Cup Round</button>
+        </div>
+        <div class="cup-log" id="cupResultsLog">
+          <div style="font-style:italic;">No cup ties simulated yet. Run a round to simulate extra time, sudden-death shootouts, and gate windfalls.</div>
         </div>
       </div>
-
-      <div id="tab-facilities" class="tab-pane" style="display: none;">
-        <div class="standings-card">
-          <h3 style="margin-bottom: 12px;">Ground Expansion &amp; Medical Facilities</h3>
-          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px;" id="facilitiesList"></div>
-        </div>
-      </div>
-
-      <div id="tab-manager" class="tab-pane" style="display: none;">
-        <div class="standings-card">
-          <h3 style="margin-bottom: 12px;">Manager Dossier &amp; Record</h3>
-          <div id="managerProfileSummary" style="font-size: 0.85rem; line-height: 1.6;"></div>
-        </div>
-      </div>
-
-      <div id="tab-honours" class="tab-pane" style="display: none;">
-        <div class="standings-card">
-          <h3 style="margin-bottom: 12px;">Trophy Room &amp; Accolades</h3>
-          <div id="honoursList" style="display: flex; gap: 12px; flex-wrap: wrap;"></div>
-        </div>
-      </div>
-    </main>
-  </div>
-
-  <!-- CAREER SETUP WIZARD MODAL (FIRST TIME ONBOARDING) -->
-  <div id="careerSetupModal" class="modal-backdrop" style="display: none; z-index: 2000;">
-    <div class="modal-window" style="width: 650px;">
-      <div class="modal-header">
-        <h2>⚽ Create Your Managerial Career</h2>
-      </div>
-
-      <p style="font-size: 0.82rem; color: var(--text-muted); margin-bottom: 14px;">
-        Welcome to Football League Manager. Configure your profile and select your starting club.
-      </p>
-
-      <label style="font-size: 0.75rem; text-transform: uppercase; font-weight: 800; color: var(--text-muted);">Manager Full Name</label>
-      <input type="text" class="wizard-input-box" id="wizardNameInput" placeholder="Enter your full name..." value="Manager">
-
-      <label style="font-size: 0.75rem; text-transform: uppercase; font-weight: 800; color: var(--text-muted);">Select Your Club</label>
-      <div class="league-tabs" style="margin-top: 6px;">
-        <button class="league-tab-btn active" onclick="filterWizardClubs(0)" id="wTab0">Premier League (20)</button>
-        <button class="league-tab-btn" onclick="filterWizardClubs(1)" id="wTab1">Championship (24)</button>
-        <button class="league-tab-btn" onclick="filterWizardClubs(2)" id="wTab2">League One (24)</button>
-        <button class="league-tab-btn" onclick="filterWizardClubs(3)" id="wTab3">League Two (24)</button>
-      </div>
-
-      <div id="wizardClubsGrid" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; max-height: 250px; overflow-y: auto; margin-bottom: 18px;"></div>
-
-      <button class="btn-advance-master" style="width: 100%; justify-content: center; padding: 12px;" onclick="confirmNewCareerSetup()">
-        🚀 BEGIN MANAGERIAL CAREER
-      </button>
-    </div>
-  </div>
-
-  <!-- END OF SEASON MODAL -->
-  <div id="endSeasonModal" class="modal-backdrop" style="display: none;">
-    <div class="modal-window">
-      <div class="modal-header">
-        <h2 id="eosTitle">🏆 End of Season Review</h2>
-        <button class="modal-close" onclick="closeEosModal()">✕</button>
-      </div>
-      <div id="eosSummaryContent" style="font-size: 0.82rem; line-height: 1.5; margin-bottom: 16px;"></div>
-      <button class="btn-advance-master" style="width: 100%; justify-content: center;" onclick="executeNextSeasonTransition()">
-        🎉 COMMENCE NEXT SEASON
-      </button>
-    </div>
-  </div>
-
-  <!-- CLUB SELECTOR MODAL -->
-  <div id="clubSelectorModal" class="modal-backdrop" style="display: none;">
-    <div class="modal-window">
-      <div class="modal-header">
-        <h2>Choose Your Club</h2>
-        <button class="modal-close" onclick="closeClubSelectorModal()">✕</button>
-      </div>
-      <div class="league-tabs">
-        <button class="league-tab-btn active" onclick="filterModalClubs(0)" id="mTab0">Premier League</button>
-        <button class="league-tab-btn" onclick="filterModalClubs(1)" id="mTab1">Championship</button>
-        <button class="league-tab-btn" onclick="filterModalClubs(2)" id="mTab2">League One</button>
-        <button class="league-tab-btn" onclick="filterModalClubs(3)" id="mTab3">League Two</button>
-      </div>
-      <div id="modalClubsGrid" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; max-height: 380px; overflow-y: auto;"></div>
-    </div>
-  </div>
+    </aside>
+  </main>
 
   <footer>
-    Created by Jason Adams &amp; Jonathan Brewer - Football League Manager
+    Football League Manager (FLM) — 2026/27 Career Edition • Pure Client-Side Single-File Web App Architecture
   </footer>
 
   <script>
-    const STORAGE_KEY = 'FLM_CAREER_V2026_MOBILE_V2';
+    /* =========================================================================
+       1. CLUB REGISTRY & 2026/27 DATABASE (AUTHENTIC REFS)
+       ========================================================================= */
+    const FLM_CLUBS = [
+      {
+        id: 'SOU',
+        name: 'Southampton',
+        code: 'SOU',
+        div: 'PL',
+        color1: '#d71920',
+        color2: '#ffffff',
+        formation: '4-3-3',
+        stadiumCapacity: 32384,
+        ratingOverall: 76,
+        players: [
+          { role: 'GK', naturalPos: 'GK', rating: 77 },
+          { role: 'RB', naturalPos: 'DEF', rating: 75 },
+          { role: 'RCB', naturalPos: 'DEF', rating: 76 },
+          { role: 'LCB', naturalPos: 'DEF', rating: 76 },
+          { role: 'LB', naturalPos: 'DEF', rating: 75 },
+          { role: 'DM', naturalPos: 'MID', rating: 77 },
+          { role: 'RCM', naturalPos: 'MID', rating: 76 },
+          { role: 'LCM', naturalPos: 'MID', rating: 77 },
+          { role: 'RW', naturalPos: 'FWD', rating: 76 },
+          { role: 'ST', naturalPos: 'FWD', rating: 78 },
+          { role: 'LW', naturalPos: 'FWD', rating: 76 }
+        ]
+      },
+      {
+        id: 'ARS',
+        name: 'Arsenal',
+        code: 'ARS',
+        div: 'PL',
+        color1: '#ef0107',
+        color2: '#ffffff',
+        formation: '4-3-3',
+        stadiumCapacity: 60704,
+        ratingOverall: 86,
+        players: [
+          { role: 'GK', naturalPos: 'GK', rating: 86 },
+          { role: 'RB', naturalPos: 'DEF', rating: 84 },
+          { role: 'RCB', naturalPos: 'DEF', rating: 88 },
+          { role: 'LCB', naturalPos: 'DEF', rating: 87 },
+          { role: 'LB', naturalPos: 'DEF', rating: 83 },
+          { role: 'DM', naturalPos: 'MID', rating: 89 },
+          { role: 'RCM', naturalPos: 'MID', rating: 88 },
+          { role: 'LCM', naturalPos: 'MID', rating: 84 },
+          { role: 'RW', naturalPos: 'FWD', rating: 89 },
+          { role: 'ST', naturalPos: 'FWD', rating: 84 },
+          { role: 'LW', naturalPos: 'FWD', rating: 85 }
+        ]
+      },
+      {
+        id: 'MCI',
+        name: 'Manchester City',
+        code: 'MCI',
+        div: 'PL',
+        color1: '#6cabdd',
+        color2: '#1c2c5b',
+        formation: '4-2-3-1',
+        stadiumCapacity: 53400,
+        ratingOverall: 88,
+        players: [
+          { role: 'GK', naturalPos: 'GK', rating: 88 },
+          { role: 'RB', naturalPos: 'DEF', rating: 85 },
+          { role: 'RCB', naturalPos: 'DEF', rating: 89 },
+          { role: 'LCB', naturalPos: 'DEF', rating: 87 },
+          { role: 'LB', naturalPos: 'DEF', rating: 85 },
+          { role: 'RDM', naturalPos: 'MID', rating: 91 },
+          { role: 'LDM', naturalPos: 'MID', rating: 86 },
+          { role: 'RAM', naturalPos: 'MID', rating: 88 },
+          { role: 'CAM', naturalPos: 'MID', rating: 90 },
+          { role: 'LAM', naturalPos: 'MID', rating: 87 },
+          { role: 'ST', naturalPos: 'FWD', rating: 92 }
+        ]
+      },
+      {
+        id: 'LIV',
+        name: 'Liverpool',
+        code: 'LIV',
+        div: 'PL',
+        color1: '#c8102e',
+        color2: '#00b2a9',
+        formation: '4-3-3',
+        stadiumCapacity: 61276,
+        ratingOverall: 86,
+        players: Array.from({ length: 11 }, (_, i) => ({ role: 'POS', naturalPos: i === 0 ? 'GK' : 'OUT', rating: 85 }))
+      },
+      {
+        id: 'SHW',
+        name: 'Sheffield Wednesday',
+        code: 'SHW',
+        div: 'CH',
+        color1: '#0e32fa',
+        color2: '#ffffff',
+        formation: '5-3-2',
+        stadiumCapacity: 34835,
+        ratingOverall: 71,
+        players: Array.from({ length: 11 }, (_, i) => ({ role: 'POS', naturalPos: i === 0 ? 'GK' : 'OUT', rating: 71 }))
+      },
+      {
+        id: 'SUN',
+        name: 'Sunderland',
+        code: 'SUN',
+        div: 'CH',
+        color1: '#eb172b',
+        color2: '#ffffff',
+        formation: '4-2-3-1',
+        stadiumCapacity: 49000,
+        ratingOverall: 73,
+        players: Array.from({ length: 11 }, (_, i) => ({ role: 'POS', naturalPos: i === 0 ? 'GK' : 'OUT', rating: 73 }))
+      },
+      {
+        id: 'WRE',
+        name: 'Wrexham',
+        code: 'WRE',
+        div: 'L1',
+        color1: '#cf1229',
+        color2: '#ffffff',
+        formation: '5-3-2',
+        stadiumCapacity: 12600,
+        ratingOverall: 68,
+        players: Array.from({ length: 11 }, (_, i) => ({ role: 'POS', naturalPos: i === 0 ? 'GK' : 'OUT', rating: 68 }))
+      },
+      {
+        id: 'BRO',
+        name: 'Bromley',
+        code: 'BRO',
+        div: 'L2',
+        color1: '#ffffff',
+        color2: '#000000',
+        formation: '4-4-2',
+        stadiumCapacity: 5000,
+        ratingOverall: 61,
+        players: Array.from({ length: 11 }, (_, i) => ({ role: 'POS', naturalPos: i === 0 ? 'GK' : 'OUT', rating: 61 }))
+      }
+    ];
 
-    const FORMATIONS = {
-      '4-3-3': [
-        { role: 'GK', duty: 'SK-De', x: 50, y: 88, posType: 'GK' },
-        { role: 'DR', duty: 'WB-At', x: 86, y: 70, posType: 'DEF' },
-        { role: 'DCR', duty: 'BPD-De', x: 62, y: 73, posType: 'DEF' },
-        { role: 'DCL', duty: 'CD-De', x: 38, y: 73, posType: 'DEF' },
-        { role: 'DL', duty: 'WB-Su', x: 14, y: 70, posType: 'DEF' },
-        { role: 'DM', duty: 'DLP-De', x: 50, y: 55, posType: 'MID' },
-        { role: 'MCR', duty: 'MEZ-At', x: 68, y: 44, posType: 'MID' },
-        { role: 'MCL', duty: 'BBM-Su', x: 32, y: 44, posType: 'MID' },
-        { role: 'AMR', duty: 'IF-At', x: 84, y: 25, posType: 'FWD' },
-        { role: 'AML', duty: 'IW-At', x: 16, y: 25, posType: 'FWD' },
-        { role: 'STC', duty: 'AF-At', x: 50, y: 15, posType: 'FWD' }
-      ],
-      '4-2-3-1': [
-        { role: 'GK', duty: 'SK-De', x: 50, y: 88, posType: 'GK' },
-        { role: 'DR', duty: 'FB-At', x: 86, y: 70, posType: 'DEF' },
-        { role: 'DCR', duty: 'BPD-De', x: 62, y: 73, posType: 'DEF' },
-        { role: 'DCL', duty: 'CD-De', x: 38, y: 73, posType: 'DEF' },
-        { role: 'DL', duty: 'FB-Su', x: 14, y: 70, posType: 'DEF' },
-        { role: 'MCR', duty: 'BBM-Su', x: 64, y: 53, posType: 'MID' },
-        { role: 'MCL', duty: 'DLP-De', x: 36, y: 53, posType: 'MID' },
-        { role: 'AMR', duty: 'W-At', x: 84, y: 32, posType: 'FWD' },
-        { role: 'AMC', duty: 'AP-Su', x: 50, y: 32, posType: 'MID' },
-        { role: 'AML', duty: 'IF-At', x: 16, y: 32, posType: 'FWD' },
-        { role: 'STC', duty: 'PF-At', x: 50, y: 14, posType: 'FWD' }
-      ],
-      '4-4-2': [
-        { role: 'GK', duty: 'GK-De', x: 50, y: 88, posType: 'GK' },
-        { role: 'DR', duty: 'FB-Su', x: 86, y: 70, posType: 'DEF' },
-        { role: 'DCR', duty: 'CD-De', x: 62, y: 73, posType: 'DEF' },
-        { role: 'DCL', duty: 'CD-De', x: 38, y: 73, posType: 'DEF' },
-        { role: 'DL', duty: 'FB-Su', x: 14, y: 70, posType: 'DEF' },
-        { role: 'MR', duty: 'W-Su', x: 86, y: 46, posType: 'MID' },
-        { role: 'MCR', duty: 'CM-At', x: 62, y: 48, posType: 'MID' },
-        { role: 'MCL', duty: 'BBM-Su', x: 38, y: 48, posType: 'MID' },
-        { role: 'ML', duty: 'W-At', x: 14, y: 46, posType: 'MID' },
-        { role: 'STR', duty: 'AF-At', x: 60, y: 18, posType: 'FWD' },
-        { role: 'STL', duty: 'TF-Su', x: 40, y: 18, posType: 'FWD' }
-      ],
-      '5-3-2': [
-        { role: 'GK', duty: 'SK-De', x: 50, y: 88, posType: 'GK' },
-        { role: 'WBR', duty: 'CWB-At', x: 88, y: 58, posType: 'DEF' },
-        { role: 'DCR', duty: 'BPD-De', x: 68, y: 73, posType: 'DEF' },
-        { role: 'DC', duty: 'CD-Co', x: 50, y: 75, posType: 'DEF' },
-        { role: 'DCL', duty: 'BPD-De', x: 32, y: 73, posType: 'DEF' },
-        { role: 'WBL', duty: 'CWB-At', x: 12, y: 58, posType: 'DEF' },
-        { role: 'MCR', duty: 'MEZ-Su', x: 66, y: 42, posType: 'MID' },
-        { role: 'MC', duty: 'DLP-De', x: 50, y: 45, posType: 'MID' },
-        { role: 'MCL', duty: 'BBM-Su', x: 34, y: 42, posType: 'MID' },
-        { role: 'STR', duty: 'AF-At', x: 60, y: 16, posType: 'FWD' },
-        { role: 'STL', duty: 'PF-At', x: 40, y: 16, posType: 'FWD' }
-      ],
-      '3-5-2': [
-        { role: 'GK', duty: 'SK-De', x: 50, y: 88, posType: 'GK' },
-        { role: 'DCR', duty: 'WCB-Su', x: 70, y: 73, posType: 'DEF' },
-        { role: 'DC', duty: 'CD-De', x: 50, y: 75, posType: 'DEF' },
-        { role: 'DCL', duty: 'WCB-Su', x: 30, y: 73, posType: 'DEF' },
-        { role: 'MR', duty: 'DW-Su', x: 88, y: 46, posType: 'MID' },
-        { role: 'MCR', duty: 'CM-At', x: 64, y: 44, posType: 'MID' },
-        { role: 'MC', duty: 'BBM-Su', x: 50, y: 48, posType: 'MID' },
-        { role: 'MCL', duty: 'DLP-De', x: 36, y: 44, posType: 'MID' },
-        { role: 'ML', duty: 'DW-Su', x: 12, y: 46, posType: 'MID' },
-        { role: 'STR', duty: 'AF-At', x: 60, y: 18, posType: 'FWD' },
-        { role: 'STL', duty: 'DLF-Su', x: 40, y: 18, posType: 'FWD' }
-      ]
+    /* =========================================================================
+       2. PROCEDURAL SOUND SYNTHESIS (WEB AUDIO API)
+       ========================================================================= */
+    const FLMAudio = {
+      ctx: null,
+      muted: false,
+
+      ensureCtx() {
+        if (!this.ctx) {
+          const AudioContext = window.AudioContext || window.webkitAudioContext;
+          if (AudioContext) this.ctx = new AudioContext();
+        }
+        if (this.ctx && this.ctx.state === 'suspended') {
+          this.ctx.resume();
+        }
+      },
+
+      playWhistle(isDouble = false) {
+        if (this.muted) return;
+        this.ensureCtx();
+        if (!this.ctx) return;
+
+        const now = this.ctx.currentTime;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(2600, now);
+        osc.frequency.exponentialRampToValueAtTime(2850, now + 0.15);
+
+        gain.gain.setValueAtTime(0, now);
+        gain.gain.linearRampToValueAtTime(0.3, now + 0.02);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + (isDouble ? 0.25 : 0.4));
+
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+
+        osc.start(now);
+        osc.stop(now + (isDouble ? 0.25 : 0.4));
+
+        if (isDouble) {
+          setTimeout(() => this.playWhistle(false), 200);
+        }
+      },
+
+      playBallKick() {
+        if (this.muted) return;
+        this.ensureCtx();
+        if (!this.ctx) return;
+
+        const now = this.ctx.currentTime;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(150, now);
+        osc.frequency.exponentialRampToValueAtTime(30, now + 0.09);
+
+        gain.gain.setValueAtTime(0.4, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.09);
+
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+
+        osc.start(now);
+        osc.stop(now + 0.09);
+      },
+
+      playCrowdRoar(goal = false) {
+        if (this.muted) return;
+        this.ensureCtx();
+        if (!this.ctx) return;
+
+        const duration = goal ? 2.2 : 0.9;
+        const bufferSize = Math.floor(this.ctx.sampleRate * duration);
+        const buffer = this.ctx.createBuffer(1, bufferSize, this.ctx.sampleRate);
+        const data = buffer.getChannelData(0);
+
+        for (let i = 0; i < bufferSize; i++) {
+          data[i] = (Math.random() * 2 - 1) * Math.exp(-i / (bufferSize * 0.8));
+        }
+
+        const noise = this.ctx.createBufferSource();
+        noise.buffer = buffer;
+
+        const filter = this.ctx.createBiquadFilter();
+        filter.type = goal ? 'lowpass' : 'bandpass';
+        filter.frequency.value = goal ? 800 : 500;
+
+        const gain = this.ctx.createGain();
+        const now = this.ctx.currentTime;
+        gain.gain.setValueAtTime(0.01, now);
+        gain.gain.linearRampToValueAtTime(goal ? 0.45 : 0.2, now + 0.15);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + duration);
+
+        noise.connect(filter);
+        filter.connect(gain);
+        gain.connect(this.ctx.destination);
+
+        noise.start(now);
+      }
     };
 
-    const CLUBS_DATABASE = [
-      { id: 'ARS', name: 'Arsenal', div: 0, budget: 65, stadium: 'Emirates Stadium', cap: 60704, col: '#ef4444' },
-      { id: 'AVL', name: 'Aston Villa', div: 0, budget: 35, stadium: 'Villa Park', cap: 42682, col: '#9333ea' },
-      { id: 'BOU', name: 'Bournemouth', div: 0, budget: 18, stadium: 'Vitality Stadium', cap: 11307, col: '#dc2626' },
-      { id: 'BRE', name: 'Brentford', div: 0, budget: 20, stadium: 'Gtech Stadium', cap: 17250, col: '#e11d48' },
-      { id: 'BHA', name: 'Brighton', div: 0, budget: 30, stadium: 'Amex Stadium', cap: 31800, col: '#0284c7' },
-      { id: 'CHE', name: 'Chelsea', div: 0, budget: 75, stadium: 'Stamford Bridge', cap: 40341, col: '#2563eb' },
-      { id: 'CRY', name: 'Crystal Palace', div: 0, budget: 22, stadium: 'Selhurst Park', cap: 25486, col: '#1d4ed8' },
-      { id: 'EVE', name: 'Everton', div: 0, budget: 15, stadium: 'Hill Dickinson Stadium', cap: 52888, col: '#1e40af' },
-      { id: 'FUL', name: 'Fulham', div: 0, budget: 22, stadium: 'Craven Cottage', cap: 25700, col: '#ffffff' },
-      { id: 'IPS', name: 'Ipswich Town', div: 0, budget: 15, stadium: 'Portman Road', cap: 30014, col: '#1d4ed8' },
-      { id: 'LEI', name: 'Leicester City', div: 0, budget: 20, stadium: 'King Power Stadium', cap: 32262, col: '#2563eb' },
-      { id: 'LIV', name: 'Liverpool', div: 0, budget: 70, stadium: 'Anfield', cap: 61276, col: '#dc2626' },
-      { id: 'MCI', name: 'Manchester City', div: 0, budget: 95, stadium: 'Etihad Stadium', cap: 53400, col: '#38bdf8' },
-      { id: 'MUN', name: 'Manchester United', div: 0, budget: 60, stadium: 'Old Trafford', cap: 74310, col: '#b91c1c' },
-      { id: 'NEW', name: 'Newcastle United', div: 0, budget: 50, stadium: "St James' Park", cap: 52305, col: '#334155' },
-      { id: 'NFO', name: 'Nottm Forest', div: 0, budget: 25, stadium: 'City Ground', cap: 30445, col: '#dc2626' },
-      { id: 'SOU', name: 'Southampton', div: 0, budget: 24, stadium: "St Mary's Stadium", cap: 32384, col: '#e11d48' },
-      { id: 'TOT', name: 'Tottenham Hotspur', div: 0, budget: 55, stadium: 'Tottenham Stadium', cap: 62850, col: '#ffffff' },
-      { id: 'WHU', name: 'West Ham United', div: 0, budget: 35, stadium: 'London Stadium', cap: 62500, col: '#831843' },
-      { id: 'WOL', name: 'Wolves', div: 0, budget: 22, stadium: 'Molineux', cap: 31750, col: '#d97706' },
+    /* =========================================================================
+       3. DOMESTIC CUP TOURNAMENTS ENGINE (KNOCKOUT / PENALTIES / GATE CASH)
+       ========================================================================= */
+    const FLMCupEngine = {
+      userClubId: 'SOU',
+      userBudget: 12500000,
 
-      { id: 'BLA', name: 'Blackburn', div: 1, budget: 7, stadium: 'Ewood Park', cap: 31367, col: '#2563eb' },
-      { id: 'BRC', name: 'Bristol City', div: 1, budget: 8, stadium: 'Ashton Gate', cap: 27000, col: '#dc2626' },
-      { id: 'BUR', name: 'Burnley', div: 1, budget: 18, stadium: 'Turf Moor', cap: 21944, col: '#831843' },
-      { id: 'CAR', name: 'Cardiff City', div: 1, budget: 8, stadium: 'Cardiff Stadium', cap: 33280, col: '#1d4ed8' },
-      { id: 'COV', name: 'Coventry City', div: 1, budget: 10, stadium: 'Coventry Arena', cap: 32609, col: '#38bdf8' },
-      { id: 'DER', name: 'Derby County', div: 1, budget: 7, stadium: 'Pride Park', cap: 33597, col: '#ffffff' },
-      { id: 'HUL', name: 'Hull City', div: 1, budget: 8, stadium: 'MKM Stadium', cap: 25586, col: '#f59e0b' },
-      { id: 'LEE', name: 'Leeds United', div: 1, budget: 22, stadium: 'Elland Road', cap: 37608, col: '#ffffff' },
-      { id: 'LUT', name: 'Luton Town', div: 1, budget: 14, stadium: 'Kenilworth Road', cap: 12000, col: '#ea580c' },
-      { id: 'MID', name: 'Middlesbrough', div: 1, budget: 12, stadium: 'Riverside Stadium', cap: 34742, col: '#dc2626' },
-      { id: 'MIL', name: 'Millwall', div: 1, budget: 6, stadium: 'The Den', cap: 20146, col: '#1e3a8a' },
-      { id: 'NOR', name: 'Norwich City', div: 1, budget: 11, stadium: 'Carrow Road', cap: 27244, col: '#eab308' },
-      { id: 'OXF', name: 'Oxford United', div: 1, budget: 5, stadium: 'Kassam Stadium', cap: 12500, col: '#facc15' },
-      { id: 'PLY', name: 'Plymouth Argyle', div: 1, budget: 6, stadium: 'Home Park', cap: 17900, col: '#065f46' },
-      { id: 'POR', name: 'Portsmouth', div: 1, budget: 7, stadium: 'Fratton Park', cap: 20895, col: '#1d4ed8' },
-      { id: 'PNE', name: 'Preston North End', div: 1, budget: 6, stadium: 'Deepdale', cap: 23408, col: '#ffffff' },
-      { id: 'QPR', name: 'QPR', div: 1, budget: 7, stadium: 'Loftus Road', cap: 18439, col: '#1e40af' },
-      { id: 'SHU', name: 'Sheffield United', div: 1, budget: 16, stadium: 'Bramall Lane', cap: 32050, col: '#dc2626' },
-      { id: 'SHW', name: 'Sheffield Wednesday', div: 1, budget: 8, stadium: 'Hillsborough', cap: 39732, col: '#2563eb' },
-      { id: 'STO', name: 'Stoke City', div: 1, budget: 8, stadium: 'bet365 Stadium', cap: 30089, col: '#dc2626' },
-      { id: 'SUN', name: 'Sunderland', div: 1, budget: 14, stadium: 'Stadium of Light', cap: 49000, col: '#dc2626' },
-      { id: 'SWA', name: 'Swansea City', div: 1, budget: 8, stadium: '.com Stadium', cap: 21088, col: '#ffffff' },
-      { id: 'WAT', name: 'Watford', div: 1, budget: 9, stadium: 'Vicarage Road', cap: 22200, col: '#eab308' },
-      { id: 'WBA', name: 'West Brom', div: 1, budget: 11, stadium: 'The Hawthorns', cap: 26850, col: '#1e3a8a' },
+      competitions: {
+        carabao: {
+          name: 'Carabao Cup',
+          currentRound: 1,
+          rounds: ['Round 1', 'Round 2', 'Round 3', 'Round 4', 'Quarter-Final', 'Semi-Final', 'Final']
+        },
+        faCup: {
+          name: 'FA Cup',
+          currentRound: 1,
+          rounds: ['Round 1', 'Round 2', 'Round 3', 'Round 4', 'Round 5', 'Quarter-Final', 'Semi-Final', 'Final']
+        }
+      },
 
-      { id: 'BAR', name: 'Barnsley', div: 2, budget: 3.5, stadium: 'Oakwell', cap: 23287, col: '#dc2626' },
-      { id: 'BIR', name: 'Birmingham City', div: 2, budget: 8.0, stadium: "St Andrew's", cap: 29409, col: '#1d4ed8' },
-      { id: 'BKP', name: 'Blackpool', div: 2, budget: 3.0, stadium: 'Bloomfield Road', cap: 16616, col: '#ea580c' },
-      { id: 'BOL', name: 'Bolton', div: 2, budget: 4.0, stadium: 'Toughsheet Stadium', cap: 28723, col: '#1e3a8a' },
-      { id: 'BRR', name: 'Bristol Rovers', div: 2, budget: 2.5, stadium: 'Memorial Stadium', cap: 12011, col: '#2563eb' },
-      { id: 'BUR1', name: 'Burton Albion', div: 2, budget: 2.0, stadium: 'Pirelli Stadium', cap: 6912, col: '#facc15' },
-      { id: 'CAM', name: 'Cambridge United', div: 2, budget: 2.0, stadium: 'Abbey Stadium', cap: 7937, col: '#f59e0b' },
-      { id: 'CHA', name: 'Charlton', div: 2, budget: 3.5, stadium: 'The Valley', cap: 27111, col: '#dc2626' },
-      { id: 'CRA', name: 'Crawley Town', div: 2, budget: 1.8, stadium: 'Broadfield Stadium', cap: 6134, col: '#dc2626' },
-      { id: 'EXE', name: 'Exeter City', div: 2, budget: 2.0, stadium: 'St James Park', cap: 8720, col: '#dc2626' },
-      { id: 'HUD', name: 'Huddersfield', div: 2, budget: 4.5, stadium: 'John Smith Stadium', cap: 24121, col: '#38bdf8' },
-      { id: 'LEY', name: 'Leyton Orient', div: 2, budget: 2.5, stadium: 'Brisbane Road', cap: 9271, col: '#dc2626' },
-      { id: 'LIN', name: 'Lincoln City', div: 2, budget: 2.8, stadium: 'LNER Stadium', cap: 10669, col: '#dc2626' },
-      { id: 'MAN', name: 'Mansfield Town', div: 2, budget: 2.2, stadium: 'Field Mill', cap: 9186, col: '#eab308' },
-      { id: 'NOR1', name: 'Northampton', div: 2, budget: 2.0, stadium: 'Sixfields Stadium', cap: 7798, col: '#831843' },
-      { id: 'PET', name: 'Peterborough', div: 2, budget: 3.5, stadium: 'London Road', cap: 15314, col: '#2563eb' },
-      { id: 'REA', name: 'Reading', div: 2, budget: 3.0, stadium: 'SCL Stadium', cap: 24161, col: '#1e40af' },
-      { id: 'ROT', name: 'Rotherham', div: 2, budget: 3.5, stadium: 'New York Stadium', cap: 12021, col: '#dc2626' },
-      { id: 'SHR', name: 'Shrewsbury', div: 2, budget: 2.0, stadium: 'New Meadow', cap: 9875, col: '#1d4ed8' },
-      { id: 'STE', name: 'Stevenage', div: 2, budget: 2.2, stadium: 'Broadhall Way', cap: 7800, col: '#dc2626' },
-      { id: 'STK', name: 'Stockport', div: 2, budget: 3.0, stadium: 'Edgeley Park', cap: 10852, col: '#2563eb' },
-      { id: 'WIG', name: 'Wigan Athletic', div: 2, budget: 3.2, stadium: 'Brick Stadium', cap: 25138, col: '#1d4ed8' },
-      { id: 'WRX', name: 'Wrexham', div: 2, budget: 5.5, stadium: 'Racecourse Ground', cap: 12600, col: '#dc2626' },
-      { id: 'WYC', name: 'Wycombe', div: 2, budget: 2.5, stadium: 'Adams Park', cap: 10137, col: '#38bdf8' },
+      simulateRound(compId) {
+        const comp = this.competitions[compId];
+        const roundName = comp.rounds[comp.currentRound - 1] || 'Final';
+        const ties = [];
 
-      { id: 'ACC', name: 'Accrington', div: 3, budget: 1.2, stadium: 'Wham Stadium', cap: 5450, col: '#dc2626' },
-      { id: 'WIM', name: 'AFC Wimbledon', div: 3, budget: 1.5, stadium: 'Plough Lane', cap: 9215, col: '#1d4ed8' },
-      { id: 'BAR1', name: 'Barrow', div: 3, budget: 1.2, stadium: 'Holker Street', cap: 5045, col: '#2563eb' },
-      { id: 'BRA', name: 'Bradford City', div: 3, budget: 2.2, stadium: 'Valley Parade', cap: 25136, col: '#831843' },
-      { id: 'BRO', name: 'Bromley', div: 3, budget: 1.0, stadium: 'Hayes Lane', cap: 5110, col: '#ffffff' },
-      { id: 'CAR1', name: 'Carlisle United', div: 3, budget: 1.5, stadium: 'Brunton Park', cap: 17949, col: '#1e40af' },
-      { id: 'CHE1', name: 'Cheltenham', div: 3, budget: 1.3, stadium: 'Whaddon Road', cap: 7066, col: '#dc2626' },
-      { id: 'CHF', name: 'Chesterfield', div: 3, budget: 2.0, stadium: 'SMH Stadium', cap: 10504, col: '#1d4ed8' },
-      { id: 'COL', name: 'Colchester', div: 3, budget: 1.4, stadium: 'Colchester Stadium', cap: 10105, col: '#2563eb' },
-      { id: 'CRE', name: 'Crewe Alexandra', div: 3, budget: 1.4, stadium: 'Gresty Road', cap: 10153, col: '#dc2626' },
-      { id: 'DON', name: 'Doncaster', div: 3, budget: 1.8, stadium: 'Eco-Power Stadium', cap: 15231, col: '#dc2626' },
-      { id: 'FLE', name: 'Fleetwood Town', div: 3, budget: 1.4, stadium: 'Highbury Stadium', cap: 5472, col: '#dc2626' },
-      { id: 'GIL', name: 'Gillingham', div: 3, budget: 1.7, stadium: 'Priestfield Stadium', cap: 11582, col: '#1d4ed8' },
-      { id: 'GRI', name: 'Grimsby Town', div: 3, budget: 1.3, stadium: 'Blundell Park', cap: 9052, col: '#334155' },
-      { id: 'HAR', name: 'Harrogate Town', div: 3, budget: 1.0, stadium: 'Wetherby Road', cap: 5000, col: '#eab308' },
-      { id: 'MKD', name: 'MK Dons', div: 3, budget: 2.2, stadium: 'Stadium MK', cap: 30500, col: '#ffffff' },
-      { id: 'MOR', name: 'Morecambe', div: 3, budget: 1.0, stadium: 'Mazuma Stadium', cap: 6476, col: '#dc2626' },
-      { id: 'NEW1', name: 'Newport County', div: 3, budget: 1.1, stadium: 'Rodney Parade', cap: 7850, col: '#f59e0b' },
-      { id: 'NOT', name: 'Notts County', div: 3, budget: 2.0, stadium: 'Meadow Lane', cap: 19841, col: '#334155' },
-      { id: 'POV', name: 'Port Vale', div: 3, budget: 1.8, stadium: 'Vale Park', cap: 15695, col: '#ffffff' },
-      { id: 'SAL', name: 'Salford City', div: 3, budget: 1.6, stadium: 'Moor Lane', cap: 5108, col: '#dc2626' },
-      { id: 'SWI', name: 'Swindon Town', div: 3, budget: 1.5, stadium: 'County Ground', cap: 15728, col: '#dc2626' },
-      { id: 'TRA', name: 'Tranmere Rovers', div: 3, budget: 1.4, stadium: 'Prenton Park', cap: 16587, col: '#ffffff' },
-      { id: 'WAL', name: 'Walsall', div: 3, budget: 1.6, stadium: 'Bescot Stadium', cap: 11300, col: '#dc2626' }
-    ];
+        // Shuffle all clubs for knockout pairing
+        const pool = [...FLM_CLUBS].sort(() => Math.random() - 0.5);
+        for (let i = 0; i < pool.length - 1; i += 2) {
+          ties.push({ home: pool[i], away: pool[i + 1] });
+        }
 
-    const SOU_REAL_ROSTER = [
-      { id: 'sou_1', name: 'Aaron Ramsdale', naturalPos: 'GK', nat: 'ENG', age: 28, ovr: 81, con: 98, role: 'SK-De', starter: true, val: 24.0 },
-      { id: 'sou_2', name: 'Kyle Walker-Peters', naturalPos: 'DEF', nat: 'ENG', age: 29, ovr: 79, con: 96, role: 'WB-At', starter: true, val: 18.0 },
-      { id: 'sou_3', name: 'Taylor Harwood-Bellis', naturalPos: 'DEF', nat: 'ENG', age: 24, ovr: 78, con: 97, role: 'BPD-De', starter: true, val: 20.0 },
-      { id: 'sou_4', name: 'Jan Bednarek', naturalPos: 'DEF', nat: 'POL', age: 30, ovr: 77, con: 95, role: 'CD-De', starter: true, val: 10.0 },
-      { id: 'sou_5', name: 'Yukinari Sugawara', naturalPos: 'DEF', nat: 'JPN', age: 26, ovr: 77, con: 96, role: 'WB-Su', starter: true, val: 14.0 },
-      { id: 'sou_6', name: 'Flynn Downes', naturalPos: 'MID', nat: 'ENG', age: 27, ovr: 77, con: 98, role: 'DLP-De', starter: true, val: 15.0 },
-      { id: 'sou_7', name: 'Mateus Fernandes', naturalPos: 'MID', nat: 'POR', age: 22, ovr: 78, con: 96, role: 'MEZ-At', starter: true, val: 19.0 },
-      { id: 'sou_8', name: 'Will Smallbone', naturalPos: 'MID', nat: 'IRL', age: 26, ovr: 75, con: 94, role: 'BBM-Su', starter: true, val: 9.0 },
-      { id: 'sou_9', name: 'Tyler Dibling', naturalPos: 'FWD', nat: 'ENG', age: 20, ovr: 78, con: 97, role: 'IF-At', starter: true, val: 22.0 },
-      { id: 'sou_10', name: 'Ryan Fraser', naturalPos: 'FWD', nat: 'SCO', age: 32, ovr: 75, con: 93, role: 'IW-At', starter: true, val: 6.0 },
-      { id: 'sou_11', name: 'Cameron Archer', naturalPos: 'FWD', nat: 'ENG', age: 24, ovr: 77, con: 96, role: 'AF-At', starter: true, val: 16.0 },
-      { id: 'sou_12', name: 'Alex McCarthy', naturalPos: 'GK', nat: 'ENG', age: 36, ovr: 73, con: 100, role: 'GK-De', starter: false, val: 2.0 },
-      { id: 'sou_13', name: 'Jack Stephens', naturalPos: 'DEF', nat: 'ENG', age: 32, ovr: 74, con: 100, role: 'CD-De', starter: false, val: 4.0 },
-      { id: 'sou_14', name: 'Adam Armstrong', naturalPos: 'FWD', nat: 'ENG', age: 29, ovr: 76, con: 98, role: 'AF-At', starter: false, val: 12.0 },
-      { id: 'sou_15', name: 'Kamaldeen Sulemana', naturalPos: 'FWD', nat: 'GHA', age: 24, ovr: 76, con: 98, role: 'W-At', starter: false, val: 15.0 },
-      { id: 'sou_16', name: 'Paul Onuachu', naturalPos: 'FWD', nat: 'NGA', age: 32, ovr: 75, con: 95, role: 'TF-Su', starter: false, val: 7.0 },
-      { id: 'sou_17', name: 'Adam Lallana', naturalPos: 'MID', nat: 'ENG', age: 38, ovr: 74, con: 90, role: 'AP-Su', starter: false, val: 1.5 },
-      { id: 'sou_18', name: 'Joe Lumley', naturalPos: 'GK', nat: 'ENG', age: 31, ovr: 71, con: 100, role: 'GK-De', starter: false, val: 1.0 }
-    ];
+        const results = ties.map(tie => this.resolveTie(tie, roundName === 'Final'));
+        comp.currentRound = Math.min(comp.currentRound + 1, comp.rounds.length);
+        return { roundName, results };
+      },
 
-    const TRANSFER_SCOUT_POOL = [
-      { id: 'mkt_1', name: 'Marc Guéhi', naturalPos: 'DEF', nat: 'ENG', age: 26, ovr: 83, price: 42.0, club: 'Crystal Palace' },
-      { id: 'mkt_2', name: 'Ivan Toney', naturalPos: 'FWD', nat: 'ENG', age: 30, ovr: 83, price: 38.0, club: 'Al-Ahli' },
-      { id: 'mkt_3', name: 'Eberechi Eze', naturalPos: 'MID', nat: 'ENG', age: 28, ovr: 82, price: 45.0, club: 'Crystal Palace' },
-      { id: 'mkt_4', name: 'Angel Gomes', naturalPos: 'MID', nat: 'ENG', age: 26, ovr: 81, price: 28.0, club: 'Lille' },
-      { id: 'mkt_5', name: 'Jarrad Branthwaite', naturalPos: 'DEF', nat: 'ENG', age: 24, ovr: 82, price: 48.0, club: 'Everton' },
-      { id: 'mkt_6', name: 'Rico Lewis', naturalPos: 'DEF', nat: 'ENG', age: 21, ovr: 80, price: 34.0, club: 'Man City' },
-      { id: 'mkt_7', name: 'Liam Delap', naturalPos: 'FWD', nat: 'ENG', age: 23, ovr: 79, price: 24.0, club: 'Ipswich Town' },
-      { id: 'mkt_8', name: 'Conor Gallagher', naturalPos: 'MID', nat: 'ENG', age: 26, ovr: 82, price: 36.0, club: 'Atlético Madrid' },
-      { id: 'mkt_9', name: 'James Trafford', naturalPos: 'GK', nat: 'ENG', age: 23, ovr: 78, price: 18.0, club: 'Burnley' },
-      { id: 'mkt_10', name: 'Morgan Gibbs-White', naturalPos: 'MID', nat: 'ENG', age: 26, ovr: 82, price: 44.0, club: 'Nottm Forest' },
-      { id: 'mkt_11', name: 'Milos Kerkez', naturalPos: 'DEF', nat: 'HUN', age: 22, ovr: 80, price: 26.0, club: 'Bournemouth' },
-      { id: 'mkt_12', name: 'Omari Hutchinson', naturalPos: 'FWD', nat: 'JAM', age: 22, ovr: 78, price: 21.0, club: 'Ipswich Town' },
-      { id: 'mkt_13', name: 'Mads Hermansen', naturalPos: 'GK', nat: 'DEN', age: 26, ovr: 79, price: 16.0, club: 'Leicester City' },
-      { id: 'mkt_14', name: 'Sam Szmodics', naturalPos: 'FWD', nat: 'IRL', age: 31, ovr: 77, price: 12.0, club: 'Ipswich Town' },
-      { id: 'mkt_15', name: 'Hayden Hackney', naturalPos: 'MID', nat: 'SCO', age: 24, ovr: 77, price: 14.5, club: 'Middlesbrough' }
-    ];
+      resolveTie(tie, isFinal) {
+        const home = tie.home;
+        const away = tie.away;
+        const diff = (home.ratingOverall - away.ratingOverall) / 12;
+        const homeAdv = isFinal ? 0 : 0.25;
 
-    const SURNAMES = ['Smith', 'Johnson', 'Williams', 'Brown', 'Jones', 'Miller', 'Davis', 'Wilson', 'Anderson', 'Taylor', 'Thomas', 'Moore', 'Jackson', 'Martin', 'Lee', 'White', 'Harris', 'Clark', 'Lewis', 'Robinson', 'Walker', 'Young', 'Allen', 'King', 'Wright', 'Scott', 'Torres', 'Hill', 'Green', 'Adams', 'Baker', 'Hall', 'Campbell', 'Mitchell', 'Carter', 'Roberts', 'Phillips', 'Evans', 'Turner', 'Parker', 'Collins', 'Edwards', 'Stewart', 'Morris', 'Murphy', 'Cook', 'Rogers', 'Morgan', 'Peterson', 'Cooper', 'Reed', 'Bailey', 'Bell', 'Kelly', 'Howard', 'Ward', 'Cox', 'Richardson', 'Watson', 'Brooks', 'Wood', 'James', 'Bennett', 'Gray', 'Hughes', 'Price', 'Sanders', 'Patel', 'Myers', 'Long', 'Ross', 'Foster', 'Powell', 'Jenkins', 'Perry', 'Russell', 'Sullivan'];
-    const FIRSTNAMES = ['Jack', 'Oliver', 'Harry', 'George', 'Noah', 'Charlie', 'Jacob', 'Alfie', 'Freddie', 'Oscar', 'Leo', 'Logan', 'Archie', 'Theo', 'Thomas', 'James', 'Joshua', 'William', 'Henry', 'Lucas', 'Ethan', 'Mason', 'Harrison', 'Isaac', 'Finley', 'Alexander', 'Daniel', 'Arthur', 'Edward'];
-    const NATIONS = ['ENG', 'ENG', 'ENG', 'SCO', 'WAL', 'IRL', 'NIR', 'FRA', 'ESP', 'GER', 'NED', 'POR', 'BRA', 'ARG'];
+        let homeScore = Math.max(0, Math.floor(Math.random() * 3 + (diff + homeAdv) * 0.7));
+        let awayScore = Math.max(0, Math.floor(Math.random() * 3 - (diff + homeAdv) * 0.4));
+        let aet = false;
+        let shootout = null;
 
-    function generateProceduralSquad(club) {
-      const tierBaseRating = [78, 71, 65, 60][club.div] || 65;
-      const squadLayout = [
-        { naturalPos: 'GK', role: 'SK-De', starter: true },
-        { naturalPos: 'DEF', role: 'WB-At', starter: true },
-        { naturalPos: 'DEF', role: 'BPD-De', starter: true },
-        { naturalPos: 'DEF', role: 'CD-De', starter: true },
-        { naturalPos: 'DEF', role: 'WB-Su', starter: true },
-        { naturalPos: 'MID', role: 'DLP-De', starter: true },
-        { naturalPos: 'MID', role: 'MEZ-At', starter: true },
-        { naturalPos: 'MID', role: 'BBM-Su', starter: true },
-        { naturalPos: 'FWD', role: 'IF-At', starter: true },
-        { naturalPos: 'FWD', role: 'IW-At', starter: true },
-        { naturalPos: 'FWD', role: 'AF-At', starter: true },
-        { naturalPos: 'GK', role: 'GK-De', starter: false },
-        { naturalPos: 'DEF', role: 'CD-De', starter: false },
-        { naturalPos: 'DEF', role: 'FB-Su', starter: false },
-        { naturalPos: 'MID', role: 'CM-At', starter: false },
-        { naturalPos: 'MID', role: 'W-At', starter: false },
-        { naturalPos: 'FWD', role: 'AF-At', starter: false },
-        { naturalPos: 'FWD', role: 'AP-Su', starter: false }
-      ];
+        if (homeScore === awayScore) {
+          aet = true;
+          if (Math.random() < 0.35) homeScore += 1;
+          if (Math.random() < 0.30) awayScore += 1;
+        }
 
-      return squadLayout.map((p, idx) => {
-        const fn = FIRSTNAMES[Math.floor(Math.random() * FIRSTNAMES.length)];
-        const sn = SURNAMES[Math.floor(Math.random() * SURNAMES.length)];
-        const nat = NATIONS[Math.floor(Math.random() * NATIONS.length)];
-        const age = 19 + Math.floor(Math.random() * 15);
-        const ratingVariance = (idx < 11) ? (Math.floor(Math.random() * 5) - 2) : (Math.floor(Math.random() * 6) - 4);
-        const ovr = Math.max(52, Math.min(92, tierBaseRating + ratingVariance));
-        const val = Math.max(0.5, Number(((ovr - 50) * 0.7).toFixed(1)));
+        if (homeScore === awayScore) {
+          shootout = this.simulateShootout();
+        }
+
+        const winner = shootout
+          ? (shootout.home > shootout.away ? home : away)
+          : (homeScore > awayScore ? home : away);
+
+        // Gate Receipts Split (45% Home, 45% Away, 10% FA)
+        const cap = isFinal ? 90000 : home.stadiumCapacity;
+        const gateGross = Math.floor(cap * 0.88) * 34;
+        const perClubSplit = Math.floor(gateGross * 0.45);
+
+        let windfallBonus = 0;
+        let isUpset = false;
+
+        if (home.id === this.userClubId || away.id === this.userClubId) {
+          this.userBudget += perClubSplit;
+
+          const tierRank = { PL: 4, CH: 3, L1: 2, L2: 1 };
+          const userClub = home.id === this.userClubId ? home : away;
+          const oppClub = home.id === this.userClubId ? away : home;
+
+          if (winner.id === this.userClubId && tierRank[userClub.div] < tierRank[oppClub.div]) {
+            isUpset = true;
+            windfallBonus = (tierRank[oppClub.div] - tierRank[userClub.div]) * 500000;
+            this.userBudget += windfallBonus;
+          }
+        }
 
         return {
-          id: `${club.id.toLowerCase()}_${idx + 1}`,
-          name: `${fn} ${sn}`,
-          naturalPos: p.naturalPos,
-          nat: nat,
-          age: age,
-          ovr: ovr,
-          con: 95 + Math.floor(Math.random() * 5),
-          role: p.role,
-          starter: p.starter,
-          val: val
+          home,
+          away,
+          homeScore,
+          awayScore,
+          aet,
+          shootout,
+          winner,
+          windfallBonus,
+          isUpset
         };
-      });
-    }
+      },
 
-    let state = null;
-    let selectedPlayerSwapId = null;
-    let matchSimInterval = null;
-    let wizardChosenClubId = 'ARS';
-
-    function initGame() {
-      const saved = localStorage.getItem(STORAGE_KEY);
-      if (saved) {
-        try {
-          state = JSON.parse(saved);
-          ensureAllSquadsHydrated();
-          if (!state.newsFeed || state.newsFeed.length === 0) generateInitialNews();
-          renderAll();
-        } catch(e) {
-          openCareerSetupWizard();
+      simulateShootout() {
+        let h = 0;
+        let a = 0;
+        for (let i = 0; i < 5; i++) {
+          if (Math.random() < 0.75) h++;
+          if (Math.random() < 0.73) a++;
+          const rem = 4 - i;
+          if (h > a + rem || a > h + rem) break;
         }
-      } else {
-        openCareerSetupWizard();
-      }
-    }
 
-    function openCareerSetupWizard() {
-      wizardChosenClubId = 'ARS';
-      filterWizardClubs(0);
-      document.getElementById('careerSetupModal').style.display = 'flex';
-    }
-
-    function filterWizardClubs(divIndex) {
-      for (let i = 0; i <= 3; i++) {
-        const btn = document.getElementById(`wTab${i}`);
-        if (btn) btn.className = `league-tab-btn ${i === divIndex ? 'active' : ''}`;
-      }
-
-      const grid = document.getElementById('wizardClubsGrid');
-      grid.innerHTML = '';
-
-      const clubs = CLUBS_DATABASE.filter(c => c.div === divIndex);
-      clubs.forEach(c => {
-        const card = document.createElement('div');
-        card.className = `club-select-card ${c.id === wizardChosenClubId ? 'selected' : ''}`;
-        card.onclick = () => {
-          wizardChosenClubId = c.id;
-          filterWizardClubs(divIndex);
-        };
-
-        card.innerHTML = `
-          <div style="font-weight:800; font-size:0.85rem;">${c.name}</div>
-          <div style="font-size:0.7rem; color:var(--text-muted);">${c.stadium}</div>
-          <div style="font-size:0.72rem; color:var(--accent);">Budget: £${c.budget}M</div>
-        `;
-        grid.appendChild(card);
-      });
-    }
-
-    function confirmNewCareerSetup() {
-      const inputName = document.getElementById('wizardNameInput').value.trim() || 'Manager';
-      setupFreshState(inputName, wizardChosenClubId);
-      document.getElementById('careerSetupModal').style.display = 'none';
-      saveGame();
-      renderAll();
-      playSound('whistle');
-    }
-
-    function promptNewCareer() {
-      if (confirm("Start a completely new career? Any unsaved progress will be reset.")) {
-        localStorage.removeItem(STORAGE_KEY);
-        openCareerSetupWizard();
-      }
-    }
-
-    function setupFreshState(managerName = 'Manager', clubId = 'ARS') {
-      state = {
-        seasonYear: 2026,
-        currentWeek: 1,
-        totalWeeks: 38,
-        userClubId: clubId,
-        currentFormation: '4-3-3',
-        audioEnabled: true,
-        activeStandingsTab: 0,
-        clubs: JSON.parse(JSON.stringify(CLUBS_DATABASE)),
-        marketPlayers: JSON.parse(JSON.stringify(TRANSFER_SCOUT_POOL)),
-        standings: {},
-        newsFeed: [],
-        manager: {
-          name: managerName,
-          confidence: 82,
-          matches: 0,
-          wins: 0,
-          draws: 0,
-          losses: 0,
-          motmAwards: 0
-        },
-        fixtures: []
-      };
-
-      for (let div = 0; div <= 3; div++) {
-        state.standings[div] = state.clubs
-          .filter(c => c.div === div)
-          .map(c => ({
-            id: c.id,
-            name: c.name,
-            played: 0,
-            won: 0,
-            drawn: 0,
-            lost: 0,
-            gf: 0,
-            ga: 0,
-            gd: 0,
-            pts: 0
-          }));
-      }
-
-      state.clubs.forEach(c => {
-        if (c.id === 'SOU') {
-          c.players = JSON.parse(JSON.stringify(SOU_REAL_ROSTER));
-        } else {
-          c.players = generateProceduralSquad(c);
+        let kick = 6;
+        while (h === a && kick <= 12) {
+          if (Math.random() < 0.70) h++;
+          if (Math.random() < 0.70) a++;
+          kick++;
         }
-      });
+        if (h === a) h++;
+        return { home: h, away: a };
+      }
+    };
 
-      generateTrueRoundRobinFixtures();
-      generateInitialNews();
-    }
+    /* =========================================================================
+       4. 2D MINI-PITCH MATCH ENGINE (CANVAS DOT SIMULATION)
+       ========================================================================= */
+    const FLM2DPitchEngine = {
+      canvas: null,
+      ctx: null,
+      width: 1000,
+      height: 680,
+      animId: null,
+      lastTimestamp: 0,
+      isRunning: false,
+      speedMultiplier: 1.0,
 
-    function ensureAllSquadsHydrated() {
-      if (!state) return;
-      state.clubs.forEach(c => {
-        if (!c.players || c.players.length < 18) {
-          c.players = (c.id === 'SOU') ? JSON.parse(JSON.stringify(SOU_REAL_ROSTER)) : generateProceduralSquad(c);
-        }
-        c.players.forEach(p => {
-          if (!p.naturalPos) p.naturalPos = p.pos || 'MID';
-          if (!p.val) p.val = Math.max(0.5, Number(((p.ovr - 50) * 0.7).toFixed(1)));
+      formations: {
+        '4-3-3': [
+          { role: 'GK', x: 65, y: 340 },
+          { role: 'RB', x: 230, y: 560 },
+          { role: 'RCB', x: 200, y: 420 },
+          { role: 'LCB', x: 200, y: 260 },
+          { role: 'LB', x: 230, y: 120 },
+          { role: 'DM', x: 340, y: 340 },
+          { role: 'RCM', x: 440, y: 460 },
+          { role: 'LCM', x: 440, y: 220 },
+          { role: 'RW', x: 670, y: 540 },
+          { role: 'ST', x: 730, y: 340 },
+          { role: 'LW', x: 670, y: 140 }
+        ],
+        '4-2-3-1': [
+          { role: 'GK', x: 65, y: 340 },
+          { role: 'RB', x: 230, y: 560 },
+          { role: 'RCB', x: 200, y: 420 },
+          { role: 'LCB', x: 200, y: 260 },
+          { role: 'LB', x: 230, y: 120 },
+          { role: 'RDM', x: 350, y: 420 },
+          { role: 'LDM', x: 350, y: 260 },
+          { role: 'RAM', x: 550, y: 500 },
+          { role: 'CAM', x: 570, y: 340 },
+          { role: 'LAM', x: 550, y: 180 },
+          { role: 'ST', x: 740, y: 340 }
+        ],
+        '4-4-2': [
+          { role: 'GK', x: 65, y: 340 },
+          { role: 'RB', x: 230, y: 560 },
+          { role: 'RCB', x: 200, y: 420 },
+          { role: 'LCB', x: 200, y: 260 },
+          { role: 'LB', x: 230, y: 120 },
+          { role: 'RM', x: 440, y: 550 },
+          { role: 'RCM', x: 430, y: 410 },
+          { role: 'LCM', x: 430, y: 270 },
+          { role: 'LM', x: 440, y: 130 },
+          { role: 'RST', x: 720, y: 400 },
+          { role: 'LST', x: 720, y: 280 }
+        ],
+        '5-3-2': [
+          { role: 'GK', x: 65, y: 340 },
+          { role: 'RWB', x: 260, y: 570 },
+          { role: 'RCB', x: 190, y: 450 },
+          { role: 'CB', x: 180, y: 340 },
+          { role: 'LCB', x: 190, y: 230 },
+          { role: 'LWB', x: 260, y: 110 },
+          { role: 'RCM', x: 430, y: 450 },
+          { role: 'CM', x: 410, y: 340 },
+          { role: 'LCM', x: 430, y: 230 },
+          { role: 'RST', x: 720, y: 400 },
+          { role: 'LST', x: 720, y: 280 }
+        ]
+      },
+
+      homeClub: null,
+      awayClub: null,
+      homeMentality: 'balanced',
+      awayMentality: 'balanced',
+
+      players: [],
+      ball: {
+        x: 500,
+        y: 340,
+        targetX: 500,
+        targetY: 340,
+        speed: 400,
+        holder: null,
+        state: 'REST' // 'REST', 'IN_FLIGHT', 'DRIBBLE'
+      },
+
+      matchMinute: 0,
+      secondAcc: 0,
+      homeScore: 0,
+      awayScore: 0,
+      eventCooldown: 0,
+
+      init(canvasId) {
+        this.canvas = document.getElementById(canvasId);
+        this.ctx = this.canvas.getContext('2d');
+        this.resize();
+        window.addEventListener('resize', () => this.resize());
+      },
+
+      resize() {
+        const dpr = window.devicePixelRatio || 1;
+        const rect = this.canvas.getBoundingClientRect();
+        this.canvas.width = rect.width * dpr;
+        this.canvas.height = (rect.width * 0.68) * dpr;
+        this.ctx.resetTransform?.();
+        this.ctx.scale(this.canvas.width / this.width, this.canvas.height / this.height);
+      },
+
+      setupMatch(home, away) {
+        this.homeClub = home;
+        this.awayClub = away;
+        this.matchMinute = 0;
+        this.secondAcc = 0;
+        this.homeScore = 0;
+        this.awayScore = 0;
+        this.players = [];
+
+        const hForm = this.formations[home.formation || '4-3-3'] || this.formations['4-3-3'];
+        const aForm = this.formations[away.formation || '4-4-2'] || this.formations['4-4-2'];
+
+        // Home team (Left to Right)
+        hForm.forEach((pos, i) => {
+          this.players.push({
+            id: `H${i + 1}`,
+            team: 'home',
+            number: i + 1,
+            role: pos.role,
+            anchorX: pos.x,
+            anchorY: pos.y,
+            x: pos.x,
+            y: pos.y,
+            speed: 120 + Math.random() * 25,
+            primaryColor: home.color1,
+            secondaryColor: home.color2
+          });
         });
-        const startersCount = c.players.filter(p => p.starter).length;
-        if (startersCount !== 11) {
-          c.players.forEach((p, idx) => p.starter = (idx < 11));
+
+        // Away team (Right to Left, Mirrored)
+        aForm.forEach((pos, i) => {
+          const mx = this.width - pos.x;
+          const my = this.height - pos.y;
+          this.players.push({
+            id: `A${i + 1}`,
+            team: 'away',
+            number: i + 1,
+            role: pos.role,
+            anchorX: mx,
+            anchorY: my,
+            x: mx,
+            y: my,
+            speed: 120 + Math.random() * 25,
+            primaryColor: away.color1,
+            secondaryColor: away.color2
+          });
+        });
+
+        this.resetBall();
+        this.updateHUD();
+        this.render();
+      },
+
+      resetBall() {
+        this.ball.x = 500;
+        this.ball.y = 340;
+        this.ball.targetX = 500;
+        this.ball.targetY = 340;
+        this.ball.state = 'DRIBBLE';
+        // Pick an attacking midfielder or forward to hold on restart
+        const initialCarrier = this.players.find(p => p.team === 'home' && (p.role === 'ST' || p.role === 'CAM')) || this.players[9];
+        this.ball.holder = initialCarrier;
+      },
+
+      start() {
+        if (this.isRunning) return;
+        this.isRunning = true;
+        this.lastTimestamp = performance.now();
+        FLMAudio.playWhistle(false);
+        this.loop(this.lastTimestamp);
+      },
+
+      pause() {
+        this.isRunning = false;
+        if (this.animId) cancelAnimationFrame(this.animId);
+      },
+
+      loop(time) {
+        if (!this.isRunning) return;
+        const dt = Math.min((time - this.lastTimestamp) / 1000, 0.1) * this.speedMultiplier;
+        this.lastTimestamp = time;
+
+        this.update(dt);
+        this.render();
+
+        if (this.matchMinute < 90) {
+          this.animId = requestAnimationFrame(t => this.loop(t));
+        } else {
+          this.isRunning = false;
+          FLMAudio.playWhistle(true);
+          this.logCommentary(`FULL TIME: ${this.homeClub.name} ${this.homeScore} - ${this.awayScore} ${this.awayClub.name}`);
         }
-      });
-      if (!state.marketPlayers) {
-        state.marketPlayers = JSON.parse(JSON.stringify(TRANSFER_SCOUT_POOL));
-      }
-    }
+      },
 
-    function saveGame() {
-      if (!state) return;
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
-    }
+      update(dt) {
+        // Clock advance
+        this.secondAcc += dt * 3.5;
+        if (this.secondAcc >= 1) {
+          this.matchMinute += Math.floor(this.secondAcc);
+          this.secondAcc = 0;
+          this.updateHUD();
+        }
 
-    function getCurrentUserClub() {
-      return state.clubs.find(c => c.id === state.userClubId) || state.clubs[0];
-    }
+        this.eventCooldown -= dt;
 
-    function computeClubAttributes(club) {
-      const starters = club.players.filter(p => p.starter);
-      if (starters.length === 0) return { att: 70, mid: 70, def: 70, ovr: 70 };
+        // Mentality adjustments (shifts formation anchors)
+        const homeShift = this.homeMentality === 'attacking' ? 60 : (this.homeMentality === 'defensive' ? -60 : 0);
+        const awayShift = this.awayMentality === 'attacking' ? -60 : (this.awayMentality === 'defensive' ? 60 : 0);
 
-      const defs = starters.filter(p => p.naturalPos === 'DEF' || p.naturalPos === 'GK');
-      const mids = starters.filter(p => p.naturalPos === 'MID');
-      const fwds = starters.filter(p => p.naturalPos === 'FWD');
+        // Carrier logic & Dribbling
+        if (this.ball.state === 'DRIBBLE' && this.ball.holder) {
+          const carrier = this.ball.holder;
+          const dir = carrier.team === 'home' ? 1 : -1;
 
-      const avg = (arr, fallback) => arr.length ? Math.round(arr.reduce((s, x) => s + (x.ovr * (x.con / 100)), 0) / arr.length) : fallback;
+          // Carrier advances toward opponent goal
+          carrier.x += dir * 48 * dt;
+          this.ball.x = carrier.x + dir * 8;
+          this.ball.y = carrier.y;
 
-      const baseDef = avg(defs, 70);
-      const baseMid = avg(mids, 70);
-      const baseAtt = avg(fwds, 70);
-      const overall = Math.round((baseDef + baseMid + baseAtt) / 3);
+          // Pressing check
+          const presser = this.players.find(p => p.team !== carrier.team && Math.hypot(p.x - carrier.x, p.y - carrier.y) < 55);
 
-      return { att: baseAtt, mid: baseMid, def: baseDef, ovr: overall };
-    }
+          // Trigger pass or shot
+          const inShotZone = carrier.team === 'home' ? carrier.x > 840 : carrier.x < 160;
 
-    function generateTrueRoundRobinFixtures() {
-      state.fixtures = [];
-      const divSchedules = {};
-      for (let div = 0; div <= 3; div++) {
-        const teamIds = state.clubs.filter(c => c.div === div).map(c => c.id);
-        divSchedules[div] = buildRoundRobinSchedule(teamIds);
-      }
-
-      for (let w = 1; w <= state.totalWeeks; w++) {
-        const weekIndex = w - 1;
-        const weekMatches = [];
-
-        for (let div = 0; div <= 3; div++) {
-          const schedule = divSchedules[div];
-          if (schedule && schedule[weekIndex]) {
-            schedule[weekIndex].forEach(m => {
-              weekMatches.push({
-                div: div,
-                home: m.home,
-                away: m.away,
-                homeGoals: null,
-                awayGoals: null,
-                played: false
-              });
-            });
+          if (inShotZone && this.eventCooldown <= 0) {
+            this.shoot(carrier);
+          } else if (presser || Math.random() < 0.03) {
+            this.pass(carrier);
           }
-        }
-        state.fixtures.push({ week: w, matches: weekMatches });
-      }
-    }
+        } else if (this.ball.state === 'IN_FLIGHT') {
+          const dx = this.ball.targetX - this.ball.x;
+          const dy = this.ball.targetY - this.ball.y;
+          const dist = Math.hypot(dx, dy);
 
-    function buildRoundRobinSchedule(teamsList) {
-      const n = teamsList.length;
-      const teams = [...teamsList];
-      const rounds = [];
+          if (dist < 14) {
+            this.ball.x = this.ball.targetX;
+            this.ball.y = this.ball.targetY;
+            this.ball.state = 'DRIBBLE';
 
-      for (let r = 0; r < n - 1; r++) {
-        const roundPairings = [];
-        for (let i = 0; i < n / 2; i++) {
-          const home = teams[i];
-          const away = teams[n - 1 - i];
-          if (i === 0 && r % 2 === 1) {
-            roundPairings.push({ home: away, away: home });
+            // Find closest player to receive
+            const receiver = this.players.find(p => Math.hypot(p.x - this.ball.x, p.y - this.ball.y) < 36);
+            this.ball.holder = receiver || null;
+            FLMAudio.playBallKick();
           } else {
-            roundPairings.push({ home: home, away: away });
+            this.ball.x += (dx / dist) * this.ball.speed * dt;
+            this.ball.y += (dy / dist) * this.ball.speed * dt;
           }
         }
-        rounds.push(roundPairings);
-        const last = teams.pop();
-        teams.splice(1, 0, last);
-      }
 
-      const secondLeg = rounds.map(r => r.map(m => ({ home: m.away, away: m.home })));
-      return [...rounds, ...secondLeg].slice(0, 38);
-    }
+        // Elastic formation anchoring & pressing for all 22 agents
+        this.players.forEach(p => {
+          let targetX = p.anchorX + (p.team === 'home' ? homeShift : awayShift);
+          let targetY = p.anchorY;
 
-    function changeFormation(newForm) {
-      if (!FORMATIONS[newForm]) return;
-      state.currentFormation = newForm;
-      const club = getCurrentUserClub();
-      const template = FORMATIONS[newForm];
-      const starters = club.players.filter(p => p.starter);
+          // Move whole team with match progression
+          const ballProgress = (this.ball.x - 500) * 0.32;
+          targetX += ballProgress;
 
-      starters.forEach((p, idx) => {
-        if (template[idx]) p.role = template[idx].duty;
-      });
+          // Press ball if within defending threshold
+          const isDefending = this.ball.holder && this.ball.holder.team !== p.team;
+          const distToBall = Math.hypot(p.x - this.ball.x, p.y - this.ball.y);
 
-      saveGame();
-      renderTactics();
-      updateBannerStats();
-      playSound('click');
-    }
+          if (isDefending && distToBall < 130 && p.role !== 'GK') {
+            targetX = this.ball.x;
+            targetY = this.ball.y;
+          }
 
-    function autoPickBestXI() {
-      const club = getCurrentUserClub();
-      const template = FORMATIONS[state.currentFormation] || FORMATIONS['4-3-3'];
-      
-      club.players.forEach(p => p.starter = false);
-      const pool = [...club.players].sort((a, b) => b.ovr - a.ovr);
-      const picked = [];
+          if (p !== this.ball.holder) {
+            p.x += (targetX - p.x) * 1.7 * dt;
+            p.y += (targetY - p.y) * 1.7 * dt;
+          }
 
-      const gkIndex = pool.findIndex(p => p.naturalPos === 'GK');
-      if (gkIndex !== -1) picked.push(pool.splice(gkIndex, 1)[0]);
-      else picked.push(pool.shift());
+          // Pitch limits
+          p.x = Math.max(30, Math.min(970, p.x));
+          p.y = Math.max(30, Math.min(650, p.y));
+        });
+      },
 
-      for (let i = 1; i < 11; i++) {
-        const needed = template[i] ? template[i].posType : 'MID';
-        const matchIdx = pool.findIndex(p => p.naturalPos === needed);
-        if (matchIdx !== -1) picked.push(pool.splice(matchIdx, 1)[0]);
-        else picked.push(pool.shift());
-      }
+      pass(carrier) {
+        const teamMates = this.players.filter(p => p.team === carrier.team && p !== carrier && p.role !== 'GK');
+        if (!teamMates.length) return;
 
-      picked.forEach((p, idx) => {
-        p.starter = true;
-        if (template[idx]) p.role = template[idx].duty;
-      });
+        const isHome = carrier.team === 'home';
+        teamMates.sort((a, b) => isHome ? (b.x - a.x) : (a.x - b.x));
+        const receiver = teamMates[Math.floor(Math.random() * Math.min(3, teamMates.length))];
 
-      club.players = [...picked, ...pool];
+        this.ball.holder = null;
+        this.ball.state = 'IN_FLIGHT';
+        this.ball.targetX = receiver.x + (isHome ? 25 : -25);
+        this.ball.targetY = receiver.y;
+        FLMAudio.playBallKick();
+      },
 
-      cancelPlayerSwap();
-      saveGame();
-      renderTactics();
-      updateBannerStats();
-      playSound('whistle');
-    }
+      shoot(carrier) {
+        this.eventCooldown = 3.5;
+        const isHome = carrier.team === 'home';
+        const targetX = isHome ? 980 : 20;
+        const targetY = 340 + (Math.random() * 80 - 40);
 
-    function handlePlayerSelect(playerId) {
-      const club = getCurrentUserClub();
+        this.ball.holder = null;
+        this.ball.state = 'IN_FLIGHT';
+        this.ball.targetX = targetX;
+        this.ball.targetY = targetY;
+        FLMAudio.playBallKick();
 
-      if (!selectedPlayerSwapId) {
-        selectedPlayerSwapId = playerId;
-        const p = club.players.find(x => x.id === playerId);
-        const banner = document.getElementById('swapNotificationBar');
-        const text = document.getElementById('swapNotificationText');
-        text.innerHTML = `🔄 <b>${p.name} (${p.naturalPos})</b> SELECTED — Tap another player to swap!`;
-        banner.style.display = 'flex';
-        renderTactics();
-        playSound('click');
-        return;
-      }
+        const goalScored = Math.random() < 0.35;
+        setTimeout(() => {
+          if (goalScored) {
+            if (isHome) this.homeScore++;
+            else this.awayScore++;
 
-      if (selectedPlayerSwapId === playerId) {
-        cancelPlayerSwap();
-        return;
-      }
+            this.updateHUD();
+            FLMAudio.playCrowdRoar(true);
+            this.logCommentary(`GOAL! ${carrier.team === 'home' ? this.homeClub.name : this.awayClub.name} find the net! (${this.matchMinute}')`);
+            this.resetBall();
+          } else {
+            FLMAudio.playCrowdRoar(false);
+            this.logCommentary(`Close chance! Shot parried away at ${this.matchMinute}'`);
+            this.resetBall();
+          }
+        }, 650);
+      },
 
-      const p1Index = club.players.findIndex(x => x.id === selectedPlayerSwapId);
-      const p2Index = club.players.findIndex(x => x.id === playerId);
+      render() {
+        const ctx = this.ctx;
+        ctx.clearRect(0, 0, this.width, this.height);
 
-      if (p1Index !== -1 && p2Index !== -1) {
-        const p1 = club.players[p1Index];
-        const p2 = club.players[p2Index];
+        // Turf and mowed bands
+        ctx.fillStyle = '#183820';
+        ctx.fillRect(0, 0, this.width, this.height);
 
-        const tempStarter = p1.starter;
-        p1.starter = p2.starter;
-        p2.starter = tempStarter;
-
-        const tempRole = p1.role;
-        p1.role = p2.role;
-        p2.role = tempRole;
-
-        club.players[p1Index] = p2;
-        club.players[p2Index] = p1;
-      }
-
-      cancelPlayerSwap();
-      saveGame();
-      renderTactics();
-      updateBannerStats();
-      playSound('whistle');
-    }
-
-    function cancelPlayerSwap() {
-      selectedPlayerSwapId = null;
-      document.getElementById('swapNotificationBar').style.display = 'none';
-      renderTactics();
-    }
-
-    function renderTactics() {
-      const club = getCurrentUserClub();
-      ensureAllSquadsHydrated();
-
-      const starters = club.players.filter(p => p.starter);
-      const bench = club.players.filter(p => !p.starter);
-      const template = FORMATIONS[state.currentFormation] || FORMATIONS['4-3-3'];
-
-      const pitchNodesWrapper = document.getElementById('pitchNodesWrapper');
-      pitchNodesWrapper.innerHTML = '';
-
-      starters.forEach((p, idx) => {
-        const coords = template[idx] || { x: 50, y: 50, role: p.naturalPos, duty: p.role };
-        const isSelected = (selectedPlayerSwapId === p.id);
-
-        const node = document.createElement('div');
-        node.className = `pitch-node ${isSelected ? 'selected-for-swap' : ''}`;
-        node.style.left = `${coords.x}%`;
-        node.style.top = `${coords.y}%`;
-        node.onclick = () => handlePlayerSelect(p.id);
-
-        const surname = p.name.split(' ').pop();
-
-        node.innerHTML = `
-          <div class="pitch-kit">
-            ${idx + 1}
-            <div class="pitch-role-tag">${coords.role || p.naturalPos}</div>
-          </div>
-          <div class="pitch-name-card">
-            <div class="p-name">${surname}</div>
-            <div class="p-role">${coords.duty || p.role}</div>
-          </div>
-        `;
-        pitchNodesWrapper.appendChild(node);
-      });
-
-      const startersBody = document.getElementById('startersTableBody');
-      startersBody.innerHTML = '';
-
-      starters.forEach((p, idx) => {
-        const isSelected = (selectedPlayerSwapId === p.id);
-        const templateEntry = template[idx];
-        const assignedPos = templateEntry ? templateEntry.role : p.naturalPos;
-
-        const tr = document.createElement('tr');
-        tr.className = `fm-row ${isSelected ? 'selected-for-swap' : ''}`;
-        tr.onclick = (e) => {
-          if (!e.target.classList.contains('btn-swap-pill')) handlePlayerSelect(p.id);
-        };
-
-        tr.innerHTML = `
-          <td><span class="badge-pick pick-starter">${assignedPos}</span></td>
-          <td><span class="role-badge">${p.role}</span></td>
-          <td><b>${p.name}</b> <span style="font-size:0.68rem; color:var(--text-muted);">(${p.naturalPos})</span></td>
-          <td>${p.age}</td>
-          <td><b style="color:var(--gold);">${p.ovr}</b></td>
-          <td>
-            <div class="condition-bar"><div class="condition-fill" style="width:${p.con}%; background:#10b981;"></div></div>
-            <span style="font-size:0.72rem;">${p.con}%</span>
-          </td>
-          <td>
-            <button class="btn-swap-pill" onclick="handlePlayerSelect('${p.id}')">
-              ${isSelected ? 'Cancel' : 'Swap ⇅'}
-            </button>
-          </td>
-        `;
-        startersBody.appendChild(tr);
-      });
-
-      const benchBody = document.getElementById('benchTableBody');
-      benchBody.innerHTML = '';
-
-      bench.forEach((p, idx) => {
-        const isSelected = (selectedPlayerSwapId === p.id);
-        const tr = document.createElement('tr');
-        tr.className = `fm-row ${isSelected ? 'selected-for-swap' : ''}`;
-        tr.onclick = (e) => {
-          if (!e.target.classList.contains('btn-swap-pill')) handlePlayerSelect(p.id);
-        };
-
-        tr.innerHTML = `
-          <td><span class="badge-pick pick-sub">S${idx + 1}</span></td>
-          <td><span class="role-badge" style="background:#475569;">${p.role}</span></td>
-          <td><b>${p.name}</b> <span style="font-size:0.68rem; color:var(--text-muted);">(${p.naturalPos})</span></td>
-          <td>${p.age}</td>
-          <td><b style="color:var(--gold);">${p.ovr}</b></td>
-          <td>
-            <div class="condition-bar"><div class="condition-fill" style="width:${p.con}%; background:#38bdf8;"></div></div>
-            <span style="font-size:0.72rem;">${p.con}%</span>
-          </td>
-          <td>
-            <button class="btn-swap-pill" onclick="handlePlayerSelect('${p.id}')">
-              ${isSelected ? 'Cancel' : 'Sub ⇅'}
-            </button>
-          </td>
-        `;
-        benchBody.appendChild(tr);
-      });
-    }
-
-    function generateInitialNews() {
-      state.newsFeed = [
-        {
-          tag: 'Season Kick-Off',
-          breaking: true,
-          headline: `New Season Underway: 92 Clubs Battle For Glory`,
-          body: `The 2026/27 campaign officially begins across the English Football Pyramid. Managers face pressure as boards demand results.`,
-          time: 'Week 1'
-        },
-        {
-          tag: 'Tactics Briefing',
-          breaking: false,
-          headline: `${state.manager.name} Outlines Vision at ${getCurrentUserClub().name}`,
-          body: `Supporters look forward to seeing how the gaffer sets up. Tactical discipline and squad depth will be vital over 38 matches.`,
-          time: 'Week 1'
+        ctx.fillStyle = '#15321c';
+        const stripe = this.width / 10;
+        for (let i = 0; i < 10; i += 2) {
+          ctx.fillRect(i * stripe, 0, stripe, this.height);
         }
+
+        // Lines
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.65)';
+        ctx.lineWidth = 2.5;
+
+        // Pitch boundaries
+        ctx.strokeRect(30, 25, 940, 630);
+
+        // Center line & circle
+        ctx.beginPath();
+        ctx.moveTo(500, 25);
+        ctx.lineTo(500, 655);
+        ctx.stroke();
+
+        ctx.beginPath();
+        ctx.arc(500, 340, 70, 0, Math.PI * 2);
+        ctx.stroke();
+
+        // Penalty boxes
+        ctx.strokeRect(30, 160, 140, 360);
+        ctx.strokeRect(30, 240, 50, 200);
+
+        ctx.strokeRect(830, 160, 140, 360);
+        ctx.strokeRect(920, 240, 50, 200);
+
+        // Render 22 Player Dots
+        this.players.forEach(p => {
+          if (p === this.ball.holder) {
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, 14, 0, Math.PI * 2);
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.28)';
+            ctx.fill();
+          }
+
+          // Dot
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, 9, 0, Math.PI * 2);
+          ctx.fillStyle = p.primaryColor;
+          ctx.fill();
+          ctx.strokeStyle = p.secondaryColor;
+          ctx.lineWidth = 2;
+          ctx.stroke();
+
+          // Kit number
+          ctx.fillStyle = p.secondaryColor;
+          ctx.font = 'bold 8px system-ui';
+          ctx.textAlign = 'center';
+          ctx.textBaseline = 'middle';
+          ctx.fillText(p.number, p.x, p.y);
+        });
+
+        // Ball
+        ctx.beginPath();
+        ctx.arc(this.ball.x, this.ball.y, 4.5, 0, Math.PI * 2);
+        ctx.fillStyle = '#ffffff';
+        ctx.fill();
+        ctx.strokeStyle = '#000000';
+        ctx.lineWidth = 1;
+        ctx.stroke();
+      },
+
+      updateHUD() {
+        document.getElementById('hudHomeScore').textContent = this.homeScore;
+        document.getElementById('hudAwayScore').textContent = this.awayScore;
+        document.getElementById('hudMatchTime').textContent = `${String(this.matchMinute).padStart(2, '0')}:00`;
+      },
+
+      logCommentary(msg) {
+        document.getElementById('commentaryTicker').textContent = msg;
+      }
+    };
+
+    /* =========================================================================
+       5. UI BINDINGS & CONTROLLER
+       ========================================================================= */
+    function initUI() {
+      const selHome = document.getElementById('selHomeTeam');
+      const selAway = document.getElementById('selAwayTeam');
+
+      FLM_CLUBS.forEach((c, idx) => {
+        const optH = new Option(`${c.name} (${c.div})`, c.id, false, idx === 0);
+        const optA = new Option(`${c.name} (${c.div})`, c.id, false, idx === 1);
+        selHome.add(optH);
+        selAway.add(optA);
+      });
+
+      function applyMatchup() {
+        const home = FLM_CLUBS.find(c => c.id === selHome.value);
+        const away = FLM_CLUBS.find(c => c.id === selAway.value);
+
+        document.getElementById('hudHomeName').textContent = home.code;
+        document.getElementById('hudAwayName').textContent = away.code;
+        document.getElementById('hudHomeBadge').style.backgroundColor = home.color1;
+        document.getElementById('hudAwayBadge').style.backgroundColor = away.color1;
+
+        FLM2DPitchEngine.setupMatch(home, away);
+      }
+
+      selHome.addEventListener('change', applyMatchup);
+      selAway.addEventListener('change', applyMatchup);
+
+      document.getElementById('selHomeMentality').addEventListener('change', e => {
+        FLM2DPitchEngine.homeMentality = e.target.value;
+      });
+
+      document.getElementById('selAwayMentality').addEventListener('change', e => {
+        FLM2DPitchEngine.awayMentality = e.target.value;
+      });
+
+      // Play / Pause
+      const btnPlay = document.getElementById('btnPlayPause');
+      btnPlay.addEventListener('click', () => {
+        if (FLM2DPitchEngine.isRunning) {
+          FLM2DPitchEngine.pause();
+          btnPlay.textContent = 'Resume';
+        } else {
+          FLM2DPitchEngine.start();
+          btnPlay.textContent = 'Pause';
+        }
+      });
+
+      // Reset
+      document.getElementById('btnResetMatch').addEventListener('click', () => {
+        FLM2DPitchEngine.pause();
+        btnPlay.textContent = 'Kick Off';
+        applyMatchup();
+      });
+
+      // Speeds
+      const speedBtns = [
+        { id: 'btnSpeed1', val: 1.0 },
+        { id: 'btnSpeed2', val: 2.0 },
+        { id: 'btnSpeed4', val: 4.0 }
       ];
-    }
 
-    function addNewsStory(tag, headline, body, breaking = false) {
-      state.newsFeed.unshift({
-        tag: tag,
-        headline: headline,
-        body: body,
-        breaking: breaking,
-        time: `Week ${state.currentWeek}`
-      });
-      if (state.newsFeed.length > 25) state.newsFeed.pop();
-    }
-
-    function renderNewsFeed() {
-      const feed = document.getElementById('newsFeedList');
-      feed.innerHTML = '';
-
-      state.newsFeed.forEach(n => {
-        const card = document.createElement('div');
-        card.className = `news-card ${n.breaking ? 'breaking' : ''}`;
-        card.innerHTML = `
-          <div style="display:flex; justify-content:space-between; align-items:center;">
-            <span class="news-tag">${n.tag}</span>
-            <span class="news-time">${n.time}</span>
-          </div>
-          <div class="news-headline">${n.headline}</div>
-          <div class="news-body">${n.body}</div>
-        `;
-        feed.appendChild(card);
-      });
-    }
-
-    function renderTransfers() {
-      const club = getCurrentUserClub();
-      document.getElementById('marketBudgetDisplay').innerText = `Available: £${club.budget.toFixed(1)}M`;
-
-      const filterPos = document.getElementById('filterMarketPos').value;
-      const tbody = document.getElementById('transferMarketBody');
-      tbody.innerHTML = '';
-
-      const targets = state.marketPlayers.filter(p => (filterPos === 'ALL' || p.naturalPos === filterPos));
-
-      targets.forEach(p => {
-        const canAfford = club.budget >= p.price;
-        const tr = document.createElement('tr');
-        tr.className = 'fm-row';
-        tr.innerHTML = `
-          <td><b>${p.name}</b></td>
-          <td><span class="role-badge">${p.naturalPos}</span></td>
-          <td>${p.age}</td>
-          <td><b style="color:var(--gold);">${p.ovr}</b></td>
-          <td><b>£${p.price.toFixed(1)}M</b></td>
-          <td>${p.club}</td>
-          <td>
-            <button class="btn-swap-pill" style="${canAfford ? 'background:#059669; color:#fff;' : 'opacity:0.4;'}" onclick="buyMarketPlayer('${p.id}')">
-              ${canAfford ? 'Sign' : 'No Funds'}
-            </button>
-          </td>
-        `;
-        tbody.appendChild(tr);
-      });
-
-      const sellBody = document.getElementById('squadSellListBody');
-      sellBody.innerHTML = '';
-
-      club.players.forEach(p => {
-        const tr = document.createElement('tr');
-        tr.className = 'fm-row';
-        tr.innerHTML = `
-          <td><b>${p.name}</b> ${p.starter ? '<span style="font-size:0.65rem; color:#10b981;">[XI]</span>' : ''}</td>
-          <td><span class="role-badge" style="background:#475569;">${p.naturalPos}</span></td>
-          <td>${p.age}</td>
-          <td><b style="color:var(--gold);">${p.ovr}</b></td>
-          <td><b style="color:#34d399;">£${p.val.toFixed(1)}M</b></td>
-          <td>
-            <button class="btn-sell-pill" onclick="sellSquadPlayer('${p.id}')">
-              Sell
-            </button>
-          </td>
-        `;
-        sellBody.appendChild(tr);
-      });
-    }
-
-    function buyMarketPlayer(marketId) {
-      const club = getCurrentUserClub();
-      const pIdx = state.marketPlayers.findIndex(x => x.id === marketId);
-      if (pIdx === -1) return;
-
-      const player = state.marketPlayers[pIdx];
-
-      if (club.budget < player.price) {
-        alert("Insufficient transfer budget.");
-        return;
-      }
-
-      if (confirm(`Sign ${player.name} from ${player.club} for £${player.price.toFixed(1)}M?`)) {
-        club.budget -= player.price;
-        state.marketPlayers.splice(pIdx, 1);
-
-        const newPlayer = {
-          id: `trans_${Date.now()}_${Math.floor(Math.random() * 999)}`,
-          name: player.name,
-          naturalPos: player.naturalPos,
-          nat: player.nat,
-          age: player.age,
-          ovr: player.ovr,
-          con: 100,
-          role: player.naturalPos === 'GK' ? 'GK-De' : (player.naturalPos === 'DEF' ? 'CD-De' : (player.naturalPos === 'MID' ? 'CM-At' : 'AF-At')),
-          starter: false,
-          val: player.price
-        };
-
-        club.players.push(newPlayer);
-
-        addNewsStory(
-          'Transfer Done Deal',
-          `DONE DEAL: ${club.name} Confirm £${player.price.toFixed(1)}M Swoop for ${player.name}!`,
-          `${club.name} have announced the capture of ${player.name} from ${player.club}.`,
-          true
-        );
-
-        saveGame();
-        renderAll();
-        renderTransfers();
-        playSound('cheer');
-      }
-    }
-
-    function sellSquadPlayer(playerId) {
-      const club = getCurrentUserClub();
-      if (club.players.length <= 13) {
-        alert("Squad size too small! Sign replacements first.");
-        return;
-      }
-
-      const pIdx = club.players.findIndex(x => x.id === playerId);
-      if (pIdx === -1) return;
-      const player = club.players[pIdx];
-
-      if (confirm(`Sell ${player.name} for £${player.val.toFixed(1)}M?`)) {
-        club.budget += player.val;
-        club.players.splice(pIdx, 1);
-
-        const startersCount = club.players.filter(p => p.starter).length;
-        if (startersCount < 11) {
-          const nextInLine = club.players.find(p => !p.starter);
-          if (nextInLine) nextInLine.starter = true;
-        }
-
-        addNewsStory(
-          'Player Departure',
-          `DEPARTURE: ${player.name} Leaves ${club.name} in £${player.val.toFixed(1)}M Deal`,
-          `${club.name} have sanctioned the departure of ${player.name} for £${player.val.toFixed(1)}M.`,
-          false
-        );
-
-        saveGame();
-        renderAll();
-        renderTransfers();
-        playSound('whistle');
-      }
-    }
-
-    function advanceMasterWeek() {
-      if (!state) return;
-      if (state.currentWeek >= state.totalWeeks) {
-        showEndSeasonGala();
-        return;
-      }
-
-      simulateCurrentWeekFixtures();
-      generateWeeklyNewsStory();
-      state.currentWeek++;
-
-      if (state.currentWeek % 4 === 0) evaluateManagerOfMonth();
-
-      saveGame();
-      renderAll();
-      playSound('whistle');
-    }
-
-    function simulateCurrentWeekFixtures() {
-      const userClub = getCurrentUserClub();
-      const weekData = state.fixtures.find(f => f.week === state.currentWeek);
-      if (!weekData) return;
-
-      weekData.matches.forEach(m => {
-        if (m.played) return;
-
-        const homeClub = state.clubs.find(c => c.id === m.home);
-        const awayClub = state.clubs.find(c => c.id === m.away);
-
-        if (homeClub && awayClub) {
-          const homeStats = computeClubAttributes(homeClub);
-          const awayStats = computeClubAttributes(awayClub);
-
-          const diff = (homeStats.att + homeStats.mid + 4) - (awayStats.def + awayStats.mid);
-          const homeScore = Math.max(0, Math.floor(Math.random() * 3) + (diff > 4 ? 1 : 0));
-          const awayScore = Math.max(0, Math.floor(Math.random() * 3) + (diff < -4 ? 1 : 0));
-
-          m.homeGoals = homeScore;
-          m.awayGoals = awayScore;
-          m.played = true;
-
-          updateLeagueTableRecord(m.div, m.home, m.away, homeScore, awayScore);
-
-          if (m.home === userClub.id || m.away === userClub.id) {
-            recordUserMatchResult(m.home === userClub.id, homeScore, awayScore);
-          }
-        }
-      });
-    }
-
-    function generateWeeklyNewsStory() {
-      const userClub = getCurrentUserClub();
-      const weekData = state.fixtures.find(f => f.week === state.currentWeek);
-      const userMatch = weekData ? weekData.matches.find(m => m.home === userClub.id || m.away === userClub.id) : null;
-
-      if (userMatch && userMatch.played) {
-        const isHome = (userMatch.home === userClub.id);
-        const oppId = isHome ? userMatch.away : userMatch.home;
-        const oppClub = state.clubs.find(c => c.id === oppId);
-        const myScore = isHome ? userMatch.homeGoals : userMatch.awayGoals;
-        const oppScore = isHome ? userMatch.awayGoals : userMatch.homeGoals;
-
-        if (myScore > oppScore) {
-          addNewsStory(
-            'Match Reaction',
-            `Victory: ${userClub.name} Triumph Over ${oppClub.name} (${myScore}-${oppScore})`,
-            `${userClub.name} delivered a confident display to secure 3 crucial points.`,
-            false
-          );
-        } else if (myScore < oppScore) {
-          addNewsStory(
-            'Defeat Reaction',
-            `Setback: ${userClub.name} Fall to ${oppClub.name} (${myScore}-${oppScore})`,
-            `Questions were raised after ${userClub.name} slipped to defeat against ${oppClub.name}.`,
-            false
-          );
-        } else {
-          addNewsStory(
-            'Match Reaction',
-            `Points Shared: ${userClub.name} Draw Against ${oppClub.name} (${myScore}-${oppScore})`,
-            `Neither side could find a decisive late winner in a tight contest.`,
-            false
-          );
-        }
-      }
-    }
-
-    function recordUserMatchResult(isHome, hg, ag) {
-      const userGoals = isHome ? hg : ag;
-      const oppGoals = isHome ? ag : hg;
-
-      state.manager.matches++;
-      if (userGoals > oppGoals) {
-        state.manager.wins++;
-        state.manager.confidence = Math.min(99, state.manager.confidence + 3);
-      } else if (userGoals === oppGoals) {
-        state.manager.draws++;
-      } else {
-        state.manager.losses++;
-        state.manager.confidence = Math.max(25, state.manager.confidence - 4);
-      }
-    }
-
-    function updateLeagueTableRecord(div, homeId, awayId, hg, ag) {
-      const table = state.standings[div];
-      if (!table) return;
-
-      const hRow = table.find(r => r.id === homeId);
-      const aRow = table.find(r => r.id === awayId);
-
-      if (hRow && aRow) {
-        hRow.played++;
-        aRow.played++;
-        hRow.gf += hg;
-        hRow.ga += ag;
-        hRow.gd = hRow.gf - hRow.ga;
-        aRow.gf += ag;
-        aRow.ga += hg;
-        aRow.gd = aRow.gf - aRow.ga;
-
-        if (hg > ag) {
-          hRow.won++;
-          hRow.pts += 3;
-          aRow.lost++;
-        } else if (hg === ag) {
-          hRow.drawn++;
-          hRow.pts += 1;
-          aRow.drawn++;
-          aRow.pts += 1;
-        } else {
-          aRow.won++;
-          aRow.pts += 3;
-          hRow.lost++;
-        }
-      }
-    }
-
-    function startMatchdaySim() {
-      const userClub = getCurrentUserClub();
-      const weekData = state.fixtures.find(f => f.week === state.currentWeek);
-      const userMatch = weekData ? weekData.matches.find(m => m.home === userClub.id || m.away === userClub.id) : null;
-
-      if (!userMatch) {
-        alert("No fixture scheduled for your club this week.");
-        return;
-      }
-
-      if (userMatch.played) {
-        alert("Match already played this week.");
-        return;
-      }
-
-      const btn = document.getElementById('btnStartMatch');
-      btn.disabled = true;
-
-      const homeClub = state.clubs.find(c => c.id === userMatch.home);
-      const awayClub = state.clubs.find(c => c.id === userMatch.away);
-      const homeStats = computeClubAttributes(homeClub);
-      const awayStats = computeClubAttributes(awayClub);
-
-      const feed = document.getElementById('commentaryFeed');
-      feed.innerHTML = '';
-
-      let min = 0;
-      let hScore = 0;
-      let aScore = 0;
-
-      clearInterval(matchSimInterval);
-      matchSimInterval = setInterval(() => {
-        min += 5;
-        document.getElementById('sbMinute').innerText = `${min}'`;
-
-        if (Math.random() < 0.28) {
-          const scoringHome = (Math.random() * (homeStats.att + 4) > Math.random() * awayStats.def);
-          if (scoringHome) {
-            hScore++;
-            feed.innerHTML = `<div class="comm-line goal">⚽ ${min}' GOAL! ${homeClub.name} score! (${hScore}-${aScore})</div>` + feed.innerHTML;
-            playSound('goal');
-          } else {
-            aScore++;
-            feed.innerHTML = `<div class="comm-line goal">⚽ ${min}' GOAL! ${awayClub.name} hit on the break! (${hScore}-${aScore})</div>` + feed.innerHTML;
-            playSound('goal');
-          }
-          document.getElementById('sbScore').innerText = `${hScore} - ${aScore}`;
-        }
-
-        if (min >= 90) {
-          clearInterval(matchSimInterval);
-          document.getElementById('sbMinute').innerText = `FULL TIME`;
-          feed.innerHTML = `<div class="comm-line" style="font-weight:800;">🏁 90' Full-time whistle blows! Final: ${homeClub.name} ${hScore} - ${aScore} ${awayClub.name}.</div>` + feed.innerHTML;
-          btn.disabled = false;
-
-          userMatch.homeGoals = hScore;
-          userMatch.awayGoals = aScore;
-          userMatch.played = true;
-
-          updateLeagueTableRecord(userMatch.div, userMatch.home, userMatch.away, hScore, aScore);
-          recordUserMatchResult(userMatch.home === userClub.id, hScore, aScore);
-
-          saveGame();
-          renderStandingsTable(userClub.div);
-          playSound('whistle');
-        }
-      }, 140);
-    }
-
-    function renderStandingsTable(divIndex) {
-      state.activeStandingsTab = divIndex;
-      for (let i = 0; i <= 3; i++) {
-        const btn = document.getElementById(`tabTier${i}`);
-        if (btn) btn.className = `league-tab-btn ${i === divIndex ? 'active' : ''}`;
-      }
-
-      const tableBody = document.getElementById('leagueTableBody');
-      tableBody.innerHTML = '';
-
-      const rows = [...(state.standings[divIndex] || [])];
-      rows.sort((a, b) => (b.pts - a.pts) || (b.gd - a.gd) || (b.gf - a.gf));
-
-      rows.forEach((r, idx) => {
-        const pos = idx + 1;
-        let zoneClass = '';
-
-        if (divIndex === 0) {
-          if (pos <= 4) zoneClass = 'zone-ucl';
-          else if (pos >= 18) zoneClass = 'zone-relegation';
-        } else if (divIndex === 1) {
-          if (pos <= 2) zoneClass = 'zone-promo';
-          else if (pos <= 6) zoneClass = 'zone-playoff';
-          else if (pos >= 22) zoneClass = 'zone-relegation';
-        } else if (divIndex === 2) {
-          if (pos <= 2) zoneClass = 'zone-promo';
-          else if (pos <= 6) zoneClass = 'zone-playoff';
-          else if (pos >= 21) zoneClass = 'zone-relegation';
-        } else if (divIndex === 3) {
-          if (pos <= 3) zoneClass = 'zone-promo';
-          else if (pos <= 7) zoneClass = 'zone-playoff';
-          else if (pos >= 23) zoneClass = 'zone-relegation';
-        }
-
-        const isUser = (r.id === state.userClubId);
-        const tr = document.createElement('tr');
-        tr.className = `fm-row ${zoneClass}`;
-        if (isUser) tr.style.background = 'rgba(0, 210, 255, 0.15)';
-
-        tr.innerHTML = `
-          <td><b>${pos}</b></td>
-          <td><b>${r.name}</b> ${isUser ? '⭐' : ''}</td>
-          <td>${r.played}</td>
-          <td>${r.won}</td>
-          <td>${r.drawn}</td>
-          <td>${r.lost}</td>
-          <td>${r.gd > 0 ? '+' + r.gd : r.gd}</td>
-          <td><b style="color:#fff;">${r.pts}</b></td>
-        `;
-        tableBody.appendChild(tr);
-      });
-    }
-
-    function evaluateManagerOfMonth() {
-      const userClub = getCurrentUserClub();
-      if (Math.random() > 0.45 && state.manager.confidence > 75) {
-        state.manager.motmAwards++;
-        state.manager.confidence = Math.min(99, state.manager.confidence + 5);
-        addNewsStory(
-          'Award Winner',
-          `OFFICIAL: ${state.manager.name} Named Manager of the Month!`,
-          `Following a fine run with ${userClub.name}, ${state.manager.name} has picked up the award.`,
-          true
-        );
-        alert(`🏆 ACCOLADE: Congratulations ${state.manager.name}! You won MANAGER OF THE MONTH for ${userClub.name}!`);
-        playSound('cheer');
-      }
-    }
-
-    function showEndSeasonGala() {
-      const modal = document.getElementById('endSeasonModal');
-      const content = document.getElementById('eosSummaryContent');
-
-      const sorted = {};
-      for (let d = 0; d <= 3; d++) {
-        sorted[d] = [...state.standings[d]].sort((a,b) => (b.pts - a.pts) || (b.gd - a.gd));
-      }
-
-      content.innerHTML = `
-        <div style="background:var(--bg-panel); padding:12px; border-radius:8px; margin-bottom:10px;">
-          <h3 style="color:var(--gold); margin-bottom:4px;">👑 Champions</h3>
-          <p><b>Premier League:</b> ${sorted[0][0].name}</p>
-          <p><b>Championship:</b> ${sorted[1][0].name}</p>
-          <p><b>League One:</b> ${sorted[2][0].name}</p>
-          <p><b>League Two:</b> ${sorted[3][0].name}</p>
-        </div>
-        <div style="background:var(--bg-panel); padding:12px; border-radius:8px;">
-          <h3 style="color:#38bdf8; margin-bottom:4px;">📈 Movement</h3>
-          <p><b>Promoted to Prem:</b> ${sorted[1][0].name}, ${sorted[1][1].name}, ${sorted[1][2].name}</p>
-          <p><b>Relegated to Champ:</b> ${sorted[0][17].name}, ${sorted[0][18].name}, ${sorted[0][19].name}</p>
-        </div>
-      `;
-
-      modal.style.display = 'flex';
-      playSound('cheer');
-    }
-
-    function closeEosModal() {
-      document.getElementById('endSeasonModal').style.display = 'none';
-    }
-
-    function executeNextSeasonTransition() {
-      closeEosModal();
-
-      const sorted = {};
-      for (let d = 0; d <= 3; d++) {
-        sorted[d] = [...state.standings[d]].sort((a,b) => (b.pts - a.pts) || (b.gd - a.gd));
-      }
-
-      const premRelegated = [sorted[0][17].id, sorted[0][18].id, sorted[0][19].id];
-      const champPromoted = [sorted[1][0].id, sorted[1][1].id, sorted[1][2].id];
-
-      premRelegated.forEach(id => {
-        const c = state.clubs.find(x => x.id === id);
-        if (c) c.div = 1;
-      });
-      champPromoted.forEach(id => {
-        const c = state.clubs.find(x => x.id === id);
-        if (c) c.div = 0;
-      });
-
-      state.seasonYear++;
-      state.currentWeek = 1;
-
-      state.clubs.forEach(c => {
-        c.players.forEach(p => {
-          p.age += 1;
-          p.con = 100;
-          if (p.age < 23) p.ovr += Math.floor(Math.random() * 3);
-          else if (p.age > 33) p.ovr -= Math.floor(Math.random() * 2);
+      speedBtns.forEach(sb => {
+        document.getElementById(sb.id).addEventListener('click', () => {
+          speedBtns.forEach(o => document.getElementById(o.id).classList.remove('active'));
+          document.getElementById(sb.id).classList.add('active');
+          FLM2DPitchEngine.speedMultiplier = sb.val;
         });
       });
 
-      for (let div = 0; div <= 3; div++) {
-        state.standings[div] = state.clubs
-          .filter(c => c.div === div)
-          .map(c => ({
-            id: c.id,
-            name: c.name,
-            played: 0,
-            won: 0,
-            drawn: 0,
-            lost: 0,
-            gf: 0,
-            ga: 0,
-            gd: 0,
-            pts: 0
-          }));
-      }
-
-      generateTrueRoundRobinFixtures();
-      generateInitialNews();
-      saveGame();
-      renderAll();
-      alert(`🎉 Welcome to the ${state.seasonYear}/${(state.seasonYear + 1).toString().slice(-2)} Season!`);
-    }
-
-    function openClubSelectorModal() {
-      filterModalClubs(0);
-      document.getElementById('clubSelectorModal').style.display = 'flex';
-    }
-
-    function closeClubSelectorModal() {
-      document.getElementById('clubSelectorModal').style.display = 'none';
-    }
-
-    function filterModalClubs(divIndex) {
-      for (let i = 0; i <= 3; i++) {
-        const btn = document.getElementById(`mTab${i}`);
-        if (btn) btn.className = `league-tab-btn ${i === divIndex ? 'active' : ''}`;
-      }
-
-      const grid = document.getElementById('modalClubsGrid');
-      grid.innerHTML = '';
-
-      const clubs = state.clubs.filter(c => c.div === divIndex);
-      clubs.forEach(c => {
-        const card = document.createElement('div');
-        card.style.cssText = 'background:var(--bg-panel); padding:8px 10px; border-radius:8px; cursor:pointer; border:1px solid var(--border);';
-        card.onclick = () => {
-          state.userClubId = c.id;
-          closeClubSelectorModal();
-          ensureAllSquadsHydrated();
-          saveGame();
-          renderAll();
-          playSound('whistle');
-        };
-
-        card.innerHTML = `
-          <div style="font-weight:800; font-size:0.85rem;">${c.name}</div>
-          <div style="font-size:0.72rem; color:var(--text-muted);">${c.stadium}</div>
-          <div style="font-size:0.72rem; color:var(--accent);">Budget: £${c.budget}M</div>
-        `;
-        grid.appendChild(card);
-      });
-    }
-
-    function switchTab(tabId) {
-      const tabs = ['tactics', 'matchday', 'news', 'transfers', 'standings', 'facilities', 'manager', 'honours'];
-      tabs.forEach(t => {
-        const pane = document.getElementById(`tab-${t}`);
-        const nav = document.getElementById(`nav-${t}`);
-        if (pane) pane.style.display = (t === tabId) ? 'block' : 'none';
-        if (nav) nav.className = `nav-item ${t === tabId ? 'active' : ''}`;
+      // Audio Toggle
+      const btnMute = document.getElementById('btnMuteAudio');
+      btnMute.addEventListener('click', () => {
+        FLMAudio.muted = !FLMAudio.muted;
+        btnMute.textContent = FLMAudio.muted ? 'Audio: OFF' : 'Audio: ON';
       });
 
-      if (tabId === 'tactics') renderTactics();
-      if (tabId === 'news') renderNewsFeed();
-      if (tabId === 'transfers') renderTransfers();
-      if (tabId === 'standings') renderStandingsTable(state.activeStandingsTab);
-      if (tabId === 'matchday') renderMatchdayView();
-      if (tabId === 'facilities') renderFacilities();
-      if (tabId === 'manager') renderManagerOffice();
-      if (tabId === 'honours') renderHonours();
+      // Domestic Cups Simulation Buttons
+      document.getElementById('btnSimCarabao').addEventListener('click', () => {
+        runCupRoundSimulation('carabao');
+      });
+
+      document.getElementById('btnSimFaCup').addEventListener('click', () => {
+        runCupRoundSimulation('faCup');
+      });
+
+      applyMatchup();
     }
 
-    function updateBannerStats() {
-      const club = getCurrentUserClub();
-      const stats = computeClubAttributes(club);
-      document.getElementById('statAttack').innerText = stats.att;
-      document.getElementById('statMidfield').innerText = stats.mid;
-      document.getElementById('statDefence').innerText = stats.def;
-      document.getElementById('statOvr').innerText = stats.ovr;
-    }
+    function runCupRoundSimulation(compId) {
+      const sim = FLMCupEngine.simulateRound(compId);
+      const log = document.getElementById('cupResultsLog');
+      log.innerHTML = '';
 
-    function renderAll() {
-      const club = getCurrentUserClub();
-      const divNames = ['Premier League', 'Championship', 'League One', 'League Two'];
+      sim.results.forEach(res => {
+        const row = document.createElement('div');
+        row.className = `cup-tie-result ${res.isUpset ? 'upset' : ''}`;
 
-      document.getElementById('headerDivName').innerText = divNames[club.div];
-      document.getElementById('headerWeek').innerText = `Wk ${state.currentWeek} / ${state.totalWeeks}`;
-      document.getElementById('headerSeasonTag').innerText = `${state.seasonYear}/${(state.seasonYear + 1).toString().slice(-2)} Career • English Pyramid`;
-      document.getElementById('headerConfidence').innerText = `${state.manager.confidence}%`;
-      document.getElementById('headerBudget').innerText = `£${club.budget.toFixed(1)}M`;
-
-      document.getElementById('bannerBadge').innerText = club.id;
-      document.getElementById('bannerBadge').style.background = club.col || '#e11d48';
-      document.getElementById('bannerClubName').innerText = club.name;
-      document.getElementById('bannerStadium').innerText = `${club.stadium} • Capacity: ${club.cap.toLocaleString()}`;
-
-      updateBannerStats();
-      renderTactics();
-      renderStandingsTable(club.div);
-    }
-
-    function renderMatchdayView() {
-      const club = getCurrentUserClub();
-      const weekData = state.fixtures.find(f => f.week === state.currentWeek);
-      const userMatch = weekData ? weekData.matches.find(m => m.home === club.id || m.away === club.id) : null;
-
-      if (userMatch) {
-        const hClub = state.clubs.find(c => c.id === userMatch.home);
-        const aClub = state.clubs.find(c => c.id === userMatch.away);
-        document.getElementById('sbHomeName').innerText = hClub.name;
-        document.getElementById('sbAwayName').innerText = aClub.name;
-        document.getElementById('sbScore').innerText = userMatch.played ? `${userMatch.homeGoals} - ${userMatch.awayGoals}` : '0 - 0';
-        document.getElementById('sbMinute').innerText = userMatch.played ? 'FULL TIME' : 'PRE-MATCH';
-      }
-
-      const groundsList = document.getElementById('aroundGroundsList');
-      groundsList.innerHTML = '';
-      if (weekData) {
-        const divMatches = weekData.matches.filter(m => m.div === club.div);
-        divMatches.forEach(m => {
-          const h = state.clubs.find(c => c.id === m.home);
-          const a = state.clubs.find(c => c.id === m.away);
-          const line = document.createElement('div');
-          line.style.cssText = 'display:flex; justify-content:space-between; padding:5px 8px; background:var(--bg-panel); border-radius:6px;';
-          line.innerHTML = `<span>${h.name}</span> <b>${m.played ? `${m.homeGoals}-${m.awayGoals}` : 'v'}</b> <span>${a.name}</span>`;
-          groundsList.appendChild(line);
-        });
-      }
-    }
-
-    function renderFacilities() {
-      const club = getCurrentUserClub();
-      const container = document.getElementById('facilitiesList');
-      container.innerHTML = `
-        <div style="background:var(--bg-panel); padding:14px; border-radius:8px;">
-          <h4>🏟️ North Stand Expansion</h4>
-          <p style="font-size:0.72rem; color:var(--text-muted); margin:4px 0;">Add 2,500 seats to boost revenue.</p>
-          <button class="btn-swap-pill" onclick="upgradeStand(2500, 4.0)">Expand (£4.0M)</button>
-        </div>
-        <div style="background:var(--bg-panel); padding:14px; border-radius:8px;">
-          <h4>🏥 Elite Medical Centre</h4>
-          <p style="font-size:0.72rem; color:var(--text-muted); margin:4px 0;">Accelerates match fitness recovery.</p>
-          <button class="btn-swap-pill" onclick="alert('Medical facility upgraded!')">Upgrade (£2.5M)</button>
-        </div>
-      `;
-    }
-
-    function upgradeStand(seats, cost) {
-      const club = getCurrentUserClub();
-      if (club.budget < cost) {
-        alert("Insufficient transfer budget.");
-        return;
-      }
-      club.budget -= cost;
-      club.cap += seats;
-      saveGame();
-      renderAll();
-      alert(`Expansion complete! New capacity: ${club.cap.toLocaleString()}`);
-    }
-
-    function renderManagerOffice() {
-      const summary = document.getElementById('managerProfileSummary');
-      summary.innerHTML = `
-        <p><b>Manager:</b> ${state.manager.name}</p>
-        <p><b>Matches Managed:</b> ${state.manager.matches}</p>
-        <p><b>Record:</b> ${state.manager.wins}W - ${state.manager.draws}D - ${state.manager.losses}L</p>
-        <p><b>Win Rate:</b> ${state.manager.matches ? Math.round((state.manager.wins / state.manager.matches) * 100) : 0}%</p>
-        <p><b>Board Confidence:</b> <span style="color:#34d399; font-weight:800;">${state.manager.confidence}%</span></p>
-      `;
-    }
-
-    function renderHonours() {
-      const honours = document.getElementById('honoursList');
-      honours.innerHTML = `
-        <div style="background:var(--bg-panel); padding:14px; border-radius:8px; text-align:center; min-width:120px;">
-          <div style="font-size:1.8rem;">🏅</div>
-          <div style="font-weight:800; font-size:1rem; color:var(--gold);">${state.manager.motmAwards}</div>
-          <div style="font-size:0.72rem; color:var(--text-muted);">Manager of the Month</div>
-        </div>
-      `;
-    }
-
-    let audioCtx = null;
-    function playSound(type) {
-      if (!state || !state.audioEnabled) return;
-      try {
-        if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        if (audioCtx.state === 'suspended') audioCtx.resume();
-
-        const osc = audioCtx.createOscillator();
-        const gain = audioCtx.createGain();
-        osc.connect(gain);
-        gain.connect(audioCtx.destination);
-
-        const now = audioCtx.currentTime;
-
-        if (type === 'whistle') {
-          osc.type = 'triangle';
-          osc.frequency.setValueAtTime(2200, now);
-          osc.frequency.setValueAtTime(2600, now + 0.08);
-          gain.gain.setValueAtTime(0.2, now);
-          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.25);
-          osc.start(now);
-          osc.stop(now + 0.25);
-        } else if (type === 'goal') {
-          osc.type = 'sawtooth';
-          osc.frequency.setValueAtTime(140, now);
-          osc.frequency.exponentialRampToValueAtTime(40, now + 0.4);
-          gain.gain.setValueAtTime(0.3, now);
-          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.4);
-          osc.start(now);
-          osc.stop(now + 0.4);
-        } else if (type === 'click') {
-          osc.type = 'sine';
-          osc.frequency.setValueAtTime(600, now);
-          gain.gain.setValueAtTime(0.1, now);
-          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.05);
-          osc.start(now);
-          osc.stop(now + 0.05);
-        } else if (type === 'cheer') {
-          osc.type = 'triangle';
-          osc.frequency.setValueAtTime(440, now);
-          osc.frequency.exponentialRampToValueAtTime(880, now + 0.5);
-          gain.gain.setValueAtTime(0.2, now);
-          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.5);
-          osc.start(now);
-          osc.stop(now + 0.5);
+        let detail = `${res.home.code} ${res.homeScore} - ${res.awayScore} ${res.away.code}`;
+        if (res.shootout) {
+          detail += ` (${res.shootout.home}-${res.shootout.away} pens)`;
+        } else if (res.aet) {
+          detail += ' (AET)';
         }
-      } catch(e) {}
+
+        row.innerHTML = `<strong>${sim.roundName}:</strong> ${detail} &rarr; <strong>${res.winner.name}</strong> through`;
+        if (res.windfallBonus > 0) {
+          row.innerHTML += `<br><span style="color:var(--gold);">★ Giant-killing windfall: +£${(res.windfallBonus / 1000000).toFixed(2)}M</span>`;
+        }
+        log.appendChild(row);
+      });
+
+      document.getElementById('cupPurseDisplay').textContent = `Budget: £${(FLMCupEngine.userBudget / 1000000).toFixed(2)}M`;
     }
 
-    function toggleAudio() {
-      if (!state) return;
-      state.audioEnabled = !state.audioEnabled;
-      document.getElementById('btnAudio').innerText = state.audioEnabled ? '🔊' : '🔇';
-      playSound('click');
-    }
-
+    // Launch engine on DOM load
     window.addEventListener('DOMContentLoaded', () => {
-      initGame();
-      if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('./sw.js').catch(() => {});
-      }
+      FLM2DPitchEngine.init('flmPitchCanvas');
+      initUI();
     });
   </script>
 </body>
