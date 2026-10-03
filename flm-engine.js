@@ -15,19 +15,22 @@
     '.md-right .standings-card{flex:1;min-height:0;overflow-y:auto}}';
   document.head.appendChild(s);
 })();
+
 const STORAGE_KEY = 'FLM_CAREER_2026_V2';
 let state = null, selectedPlayerSwapId = null, wizardChosenClubId = 'NEW', activeContractTarget = null,
   deadlineHour = 12, pendingAIBid = null, shootoutState = null, simSpeedMultiplier = 1,
   matchSimInterval = null, animFrameId = null, marketSortKey = 'ovr', marketSortAsc = false;
-let matchLiveState = { 
-  activeShout: null, 
-  shoutExpireMin: 0, 
-  subsUsed: 0, 
-  maxSubs: 5, 
+
+let matchLiveState = {
+  activeShout: null,
+  shoutExpireMin: 0,
+  subsUsed: 0,
+  maxSubs: 5,
   timelineEvents: [],
   yellows: {},
   reds: []
 };
+
 let pitchEngine = { currentMinute: 0, homePlayers: [], awayPlayers: [], ball: { x: 400, y: 240, targetX: 400, targetY: 240 }, w: 800, h: 480 };
 
 const $ = id => document.getElementById(id);
@@ -98,6 +101,7 @@ const getActiveUserMatch = () => {
   if (league && !league.played) return league;
   return cup || league;
 };
+
 function createBadgeHtml(id, size = 30) {
   const c = (state ? state.clubs : CLUBS_DATABASE).find(x => x.id === id) || {};
   const ini = (c.name || id).replace(/[^A-Za-z ]/g, '').split(' ').filter(Boolean).map(w => w[0]).join('').slice(0, 3).toUpperCase();
@@ -247,7 +251,7 @@ function finalizeWeek() {
     const [hg, ag] = simGoals(h, a); applyResult(m, hg, ag, false);
     if (m.type === 'CUP') { if (hg === ag) { w.pendingPens = true; launchPenaltyShootout(m, h, a); } else cupOutcome(m); }
   });
-  const club = getCurrentUserClub(), lm = userLeagueMatch();
+  const club = getCurrentUserClub(), lm = getActiveUserMatch();
   if (lm && lm.home === club.id) club.budget += +(((club.cap + state.stadiumCapacityBonus) * 0.00004)).toFixed(2);
   applyWeeklyFinancesAndFatigue(); generateWeeklyNewsStory();
   if (state.currentWeek === 30 && !state.youthIntakeCompleted) generateYouthIntake(true);
@@ -265,7 +269,7 @@ function applyWeeklyFinancesAndFatigue() {
   });
 }
 function generateWeeklyNewsStory() {
-  const m = getActiveUserMatch(); if (!m || m.played) return;
+  const m = getActiveUserMatch(); if (!m || !m.played) return;
   const uc = getCurrentUserClub(), home = m.home === uc.id, opp = clubById(home ? m.away : m.home), my = home ? m.homeGoals : m.awayGoals, th = home ? m.awayGoals : m.homeGoals;
   if (my > th) addNewsStory('Match Reaction', `Victory: ${uc.name} beat ${opp.name} (${my}-${th})`, 'A confident display.', false);
   else if (my < th) addNewsStory('Defeat Reaction', `Setback: ${uc.name} lose to ${opp.name} (${my}-${th})`, 'Supporters question the tactics.', false);
@@ -282,11 +286,11 @@ function evaluateManagerOfMonth() {
 function handleMasterAdvanceClick() {
   if (!state || (shootoutState && shootoutState.active)) return;
   if (checkDeadlineDayTrigger()) return;
-  const lm = getActiveUserMatch();
-  if (lm && !lm.played) {
+  const m = getActiveUserMatch();
+  if (m && !m.played) {
     clearTimeout(matchSimInterval); cancelAnimationFrame(animFrameId); $('btnStartMatch').disabled = false;
     finalizeWeek(); renderAll();
-    if (!(shootoutState && shootoutState.active)) showResultModal(lm); return;
+    if (!(shootoutState && shootoutState.active)) showResultModal(m); return;
   }
   const w = getWeek(); if (w && !w.done) { finalizeWeek(); if (shootoutState && shootoutState.active) return; }
   if (state.currentWeek >= state.totalWeeks) { showEndSeasonGala(); return; }
@@ -294,10 +298,10 @@ function handleMasterAdvanceClick() {
   if (state.currentWeek % 4 === 0) evaluateManagerOfMonth();
   saveGame(); renderAll(); playSound('click');
 }
-function resetLiveState() { 
-  matchLiveState = { activeShout: null, shoutExpireMin: 0, subsUsed: 0, maxSubs: 5, timelineEvents: [], yellows: {}, reds: [] }; 
-  $('activeShoutBadge').innerText = ''; 
-  $('subsRemainingText').innerText = 5; 
+function resetLiveState() {
+  matchLiveState = { activeShout: null, shoutExpireMin: 0, subsUsed: 0, maxSubs: 5, timelineEvents: [], yellows: {}, reds: [] };
+  $('activeShoutBadge').innerText = '';
+  $('subsRemainingText').innerText = 5;
 }
 function showResultModal(m) {
   const h = clubById(m.home), a = clubById(m.away), mine = m.home === state.userClubId ? m.homeGoals - m.awayGoals : m.awayGoals - m.homeGoals;
@@ -331,7 +335,7 @@ function concludeShootout() {
   setTimeout(() => {
     $('shootoutModal').style.display = 'none'; s.active = false; const w = getWeek(); if (w) w.pendingPens = false;
     alert(`🏆 ${winner.name} win ${s.homeScore}-${s.awayScore} on penalties!`); saveGame(); renderAll();
-    const lm = userLeagueMatch(); showResultModal(lm || s.match);
+    const lm = getActiveUserMatch(); showResultModal(lm || s.match);
   }, 1200);
 }
 
@@ -435,11 +439,10 @@ function renderTactics() {
 
 /* ---------- matchday ---------- */
 function initPitchCanvas() { const c = $('matchPitchCanvas'); pitchEngine.ctx = c.getContext('2d'); c.width = 800; c.height = 480; }
+
 function getFormationCoords(formationKey, isAway = false) {
   const tpl = FORMATIONS[formationKey] || FORMATIONS['4-3-3'];
-  const pitchW = 800;
-  const pitchH = 480;
-
+  const pitchW = 800, pitchH = 480;
   return tpl.map((slot) => {
     let normX = ((100 - slot.y) / 100) * (pitchW * 0.42) + 40;
     let normY = (slot.x / 100) * (pitchH - 80) + 40;
@@ -482,6 +485,7 @@ function setup2DPlayers(h, a) {
   pitchEngine.ball = { x: 400, y: 240, targetX: 400, targetY: 240 };
   draw2DPitch();
 }
+
 function draw2DPitch() {
   const { ctx, w, h } = pitchEngine; if (!ctx) return;
   ctx.fillStyle = '#235d31'; ctx.fillRect(0, 0, w, h); ctx.fillStyle = '#1b4926'; for (let i = 0; i < 10; i += 2) ctx.fillRect(i * 80, 0, 80, h);
@@ -505,7 +509,7 @@ function setSimSpeed(s) { simSpeedMultiplier = s; $('spd1').className = `btn-spe
 function triggerInstantSim() { simSpeedMultiplier = 25; }
 function triggerTouchlineShout(t) {
   matchLiveState.activeShout = t; matchLiveState.shoutExpireMin = (pitchEngine.currentMinute || 0) + 12;
-  const L = { DEMAND_MORE: '🔥 Demand More', TIGHTEN_UP: '🛡️ Tighten Up', PUSH_FORWARD: '⚡ Push Forward', WASTE_TIME: '⏱️ Waste Time' };
+  const L = { DEMAND_MORE: '🔥 Demand More', TIGHTEN_UP: '🛡️ Tighten Up', PUSH_FORWARD: '⚡ Push Forward', WASTE_TIME: '⏱️️ Waste Time' };
   $('activeShoutBadge').innerText = L[t] || ''; $('commentaryFeed').insertAdjacentHTML('afterbegin', `<div class="comm-line" style="border-left-color:#f59e0b">📢 Shout: ${L[t]}</div>`); playSound('whistle');
 }
 function addTimelineEvent(type, text) {
@@ -524,6 +528,7 @@ function makeLiveMatchSub(id) {
   if (!inP || !outP) return; inP.starter = true; outP.starter = false; inP.role = outP.role; matchLiveState.subsUsed++;
   $('subsRemainingText').innerText = matchLiveState.maxSubs - matchLiveState.subsUsed; addTimelineEvent('sub', `🔄 ${pitchEngine.currentMinute}' ${inP.name} on for ${outP.name}`); populateInMatchSubChips(); playSound('click');
 }
+
 function startMatchdaySim() {
   const m = getActiveUserMatch();
   if (!m || m.played) return;
@@ -569,13 +574,11 @@ function startMatchdaySim() {
     const currentYellows = matchLiveState.yellows[p.id] || 0;
 
     if (currentYellows === 1 || Math.random() < 0.08) {
-      // Red card (second yellow or straight red)
       matchLiveState.reds.push(p.id);
       feed.insertAdjacentHTML('afterbegin', `<div class="comm-line redcard">🟥 ${min}' RED CARD! ${p.name} (${club.name}) is sent off!</div>`);
       addTimelineEvent('red', `🟥 ${min}' ${p.name.split(' ').pop()}`);
       playSound('whistle');
     } else {
-      // Yellow card
       matchLiveState.yellows[p.id] = 1;
       feed.insertAdjacentHTML('afterbegin', `<div class="comm-line card">🟨 ${min}' Booking: ${p.name} (${club.name}) receives a yellow card.</div>`);
       addTimelineEvent('yellow', `🟨 ${min}' ${p.name.split(' ').pop()}`);
@@ -611,14 +614,12 @@ function startMatchdaySim() {
       pitchEngine.ball.targetY = 60 + Math.random() * 360;
     }
 
-    // Fatigue outfield starters slightly during the game
     if (min % 10 === 0) {
       [h, a].forEach(club => club.players.forEach(p => {
         if (p.starter) p.con = Math.max(40, p.con - 1);
       }));
     }
 
-    // Disciplinary & Injury Checks (~3.5% chance per tick for foul, ~1.2% for knock)
     if (Math.random() < 0.035) {
       triggerCard(Math.random() < 0.5 ? h : a);
     }
@@ -631,7 +632,6 @@ function startMatchdaySim() {
     const boost = (s === 'DEMAND_MORE' || s === 'PUSH_FORWARD') ? 0.03 : 0;
     const guard = s === 'TIGHTEN_UP' ? 0.025 : 0;
 
-    // Calculate ratings with 10-man penalty if a red card has occurred
     const hS = computeClubAttributes(h);
     const aS = computeClubAttributes(a);
     const homeRedPenalty = matchLiveState.reds.some(id => h.players.some(p => p.id === id)) ? 8 : 0;
@@ -674,24 +674,6 @@ function startMatchdaySim() {
   }
   tick();
 }
-  function tick() {
-    min += 2; pitchEngine.currentMinute = min; $('sbMinute').innerText = `${min}'`;
-    if (matchLiveState.activeShout && min >= matchLiveState.shoutExpireMin) { matchLiveState.activeShout = null; $('activeShoutBadge').innerText = ''; }
-    if (min % 4 === 0) { pitchEngine.ball.targetX = 140 + Math.random() * 520; pitchEngine.ball.targetY = 60 + Math.random() * 360; }
-    const userHome = h.id === state.userClubId, s = matchLiveState.activeShout, boost = (s === 'DEMAND_MORE' || s === 'PUSH_FORWARD') ? 0.03 : 0, guard = s === 'TIGHTEN_UP' ? 0.025 : 0;
-    const hS = computeClubAttributes(h), aS = computeClubAttributes(a);
-    const pH = Math.max(0.01, (0.028 + ((hS.att + hS.mid) / 2 - (aS.def + aS.mid) / 2) / 1400 + 0.004) + (userHome ? boost - 0 : -guard * 0)), pA = Math.max(0.01, 0.024 + ((aS.att + aS.mid) / 2 - (hS.def + hS.mid) / 2) / 1400);
-    const bonusH = userHome ? boost - 0 : -guard, bonusA = userHome ? -guard : boost;
-    if (Math.random() < pH * 1.4 + bonusH * 0.3) goal(h, true); if (Math.random() < pA * 1.4 + bonusA * 0.3) goal(a, false);
-    if (min >= 90) {
-      cancelAnimationFrame(animFrameId); btn.disabled = false; applyResult(m, hs, as, true); $('sbMinute').innerText = 'FULL TIME';
-      feed.insertAdjacentHTML('afterbegin', `<div class="comm-line" style="font-weight:800">🏁 Full-time: ${h.name} ${hs}-${as} ${a.name}</div>`);
-      $('btnAdvanceMaster').className = 'btn-advance-master btn-continue-mode'; $('btnAdvanceText').innerText = `CONTINUE TO WK ${state.currentWeek + 1}`; saveGame(); renderStandingsTable(getCurrentUserClub().div); playSound('whistle'); return;
-    }
-    matchSimInterval = setTimeout(tick, Math.max(12, 120 / simSpeedMultiplier));
-  }
-  tick();
-}
 
 /* ---------- tables / views ---------- */
 function renderStandingsTable(div) {
@@ -712,11 +694,14 @@ function renderMatchdayView() {
   const m = getActiveUserMatch(), w = getWeek();
   if (m) {
     const h = clubById(m.home), a = clubById(m.away);
-    $('sbHomeBadgeWrap').innerHTML = createBadgeHtml(h.id, 40); $('sbAwayBadgeWrap').innerHTML = createBadgeHtml(a.id, 40); $('sbHomeName').innerText = h.name; $('sbAwayName').innerText = a.name;
-    $('sbScore').innerText = m.played ? `${m.homeGoals} - ${m.awayGoals}` : '0 - 0'; $('sbMinute').innerText = m.played ? 'FULL TIME' : 'PRE-MATCH'; $('btnStartMatch').disabled = m.played;
-    if (!m.played) $('commentaryFeed').innerHTML = `<div class="comm-line">Week ${state.currentWeek}: ${h.name} vs ${a.name}. Click "Start Match" or "Advance Week".</div>`;
+    $('sbHomeBadgeWrap').innerHTML = createBadgeHtml(h.id, 40);$('sbAwayBadgeWrap').innerHTML = createBadgeHtml(a.id, 40); $('sbHomeName').innerText = h.name; $('sbAwayName').innerText = a.name;
+    $('sbScore').innerText = m.played ? `${m.homeGoals} - ${m.awayGoals}` : '0 - 0'; $('sbMinute').innerText = m.played ? 'FULL TIME' : (m.type === 'CUP' ? `${m.cupName.toUpperCase()}` : 'PRE-MATCH'); $('btnStartMatch').disabled = m.played;
+    if (!m.played) {
+      const matchTypePrefix = m.type === 'CUP' ? `🏆 ${m.cupName}:` : `Week ${state.currentWeek}:`;
+      $('commentaryFeed').innerHTML = `<div class="comm-line">${matchTypePrefix} ${h.name} vs ${a.name}. Click "Start Match" or "Advance Week".</div>`;
+    }
     setup2DPlayers(h, a); populateInMatchSubChips();
-  } else { $('sbScore').innerText = '-'; $('sbMinute').innerText = 'NO MATCH'; $('btnStartMatch').disabled = true; $('commentaryFeed').innerHTML = '<div class="comm-line">No league fixture for your club this week.</div>'; }
+  } else { $('sbScore').innerText = '-';$('sbMinute').innerText = 'NO FIXTURE'; $('btnStartMatch').disabled = true; $('commentaryFeed').innerHTML = '<div class="comm-line">No fixture scheduled for your club this calendar week.</div>'; }
   const g = $('aroundGroundsList'); g.innerHTML = '';
   if (w) w.matches.filter(x => x.div === getCurrentUserClub().div || (x.type === 'CUP' && (x.home === state.userClubId || x.away === state.userClubId))).forEach(x => {
     const h = clubById(x.home), a = clubById(x.away), r = document.createElement('div'); r.className = 'grounds-match-row';
@@ -762,7 +747,7 @@ function generateYouthIntake(announce) {
   if (announce) { state.youthIntakeCompleted = true; addNewsStory('Academy Day', `Spring intake: ${n} new prospects at ${getCurrentUserClub().name}`, 'Inspect them in the Academy tab.', true); }
 }
 function renderAcademyTab() {
-  const g = $('academyProspectsGrid'); g.innerHTML = ''; $('academyIntakeStatusTag').innerText = state.youthIntakeCompleted ? 'Spring Intake Active' : `Next intake: Week 30 (now Wk ${state.currentWeek})`;
+  const g = $('academyProspectsGrid'); g.innerHTML = '';$('academyIntakeStatusTag').innerText = state.youthIntakeCompleted ? 'Spring Intake Active' : `Next intake: Week 30 (now Wk ${state.currentWeek})`;
   if (!state.youthIntakeCompleted) { g.innerHTML = '<p style="color:var(--text-muted);font-size:.8rem">No prospects yet. The spring intake arrives in Week 30.</p>'; return; }
   state.youthProspects.forEach(p => { const c = document.createElement('div'); c.className = 'prospect-card'; c.innerHTML = `<div class="prospect-tag">${p.potential >= 88 ? '⭐ Wonderkid' : 'Prospect'}</div><div style="font-weight:900">${p.name}</div><div style="font-size:.75rem;color:var(--text-muted)">${p.naturalPos} • ${p.age} yrs</div><div style="display:flex;justify-content:space-between;font-size:.8rem"><span>Now <b style="color:var(--gold)">${p.ovr}</b></span><span>Potential <b style="color:#10b981">${p.potential}</b></span></div><button class="btn-swap-pill" style="margin-top:8px;background:${p.signed ? '#334155' : '#059669'};color:#fff" onclick="signAcademyProspect('${p.id}')">${p.signed ? 'Signed' : 'Sign (£5k/w)'}</button>`; g.appendChild(c); });
 }
@@ -777,29 +762,29 @@ function initMarketFilterDropdowns() {
   $('filterMarketNation').innerHTML = ['ALL', 'ENG', 'SCO', 'WAL', 'IRL', 'NIR', ...NATS.slice(4)].map(n => `<option value="${n}">${n === 'ALL' ? 'All Nations' : n}</option>`).join(''); onMarketLeagueChange();
 }
 function onMarketLeagueChange() {
-  const v = $('filterMarketLeague').value, t = $('filterMarketTeam'); t.innerHTML = '<option value="ALL">All Teams</option>';
+  const v = $('filterMarketLeague').value, t =$('filterMarketTeam'); t.innerHTML = '<option value="ALL">All Teams</option>';
   if (v !== 'ALL' && v !== 'SCOUT') state.clubs.filter(c => c.div === +v && c.id !== state.userClubId).forEach(c => { const o = document.createElement('option'); o.value = c.id; o.innerText = c.name; t.appendChild(o); });
   renderTransfers();
 }
-function resetMarketFilters() { $('marketSearchInput').value = ''; $('filterMarketLeague').value = 'ALL'; $('filterMarketPos').value = 'ALL'; $('filterMarketNation').value = 'ALL'; onMarketLeagueChange(); }
+function resetMarketFilters() { $('marketSearchInput').value = '';$('filterMarketLeague').value = 'ALL'; $('filterMarketPos').value = 'ALL';$('filterMarketNation').value = 'ALL'; onMarketLeagueChange(); }
 function toggleMarketSort(k) { if (marketSortKey === k) marketSortAsc = !marketSortAsc; else { marketSortKey = k; marketSortAsc = k === 'name' || k === 'clubName'; } renderTransfers(); }
 function renderTransfers() {
   const club = getCurrentUserClub(); $('marketBudgetDisplay').innerText = `Available: £${club.budget.toFixed(1)}M`;
   ['name', 'naturalPos', 'nat', 'age', 'ovr', 'price', 'clubName'].forEach(k => { const e = $(`sort_${k}`); if (e) e.innerText = marketSortKey === k ? (marketSortAsc ? ' ▲' : ' ▼') : ''; });
-  const q = $('marketSearchInput').value.toLowerCase().trim(), fl = $('filterMarketLeague').value, ft = $('filterMarketTeam').value, fp = $('filterMarketPos').value, fn = $('filterMarketNation').value;
+  const q = $('marketSearchInput').value.toLowerCase().trim(), fl = $('filterMarketLeague').value, ft =$('filterMarketTeam').value, fp = $('filterMarketPos').value, fn =$('filterMarketNation').value;
   let pool = state.marketPlayers.map(p => ({
-  id: p.id,
-  name: p.name,
-  naturalPos: p.naturalPos,
-  nat: p.nat,
-  age: p.age,
-  ovr: p.ovr,
-  price: p.price,
-  clubName: p.club || (p.price === 0 ? 'Free Agent' : 'Foreign Club'),
-  clubId: 'SCOUT',
-  div: -1,
-  scout: true
-}));
+    id: p.id,
+    name: p.name,
+    naturalPos: p.naturalPos,
+    nat: p.nat,
+    age: p.age,
+    ovr: p.ovr,
+    price: p.price,
+    clubName: p.club || (p.price === 0 ? 'Free Agent' : 'Foreign Club'),
+    clubId: 'SCOUT',
+    div: -1,
+    scout: true
+  }));
   state.clubs.forEach(c => { if (c.id !== club.id) c.players.forEach(p => pool.push({ id: p.id, name: p.name, naturalPos: p.naturalPos, nat: p.nat, age: p.age, ovr: p.ovr, price: +(p.val * 1.15).toFixed(1), clubName: c.name, clubId: c.id, div: c.div, scout: false })); });
   if (q) pool = pool.filter(p => p.name.toLowerCase().includes(q)); if (fl === 'SCOUT') pool = pool.filter(p => p.scout); else if (fl !== 'ALL') pool = pool.filter(p => p.div === +fl);
   if (ft !== 'ALL') pool = pool.filter(p => p.clubId === ft); if (fp !== 'ALL') pool = pool.filter(p => p.naturalPos === fp); if (fn !== 'ALL') pool = pool.filter(p => p.nat === fn);
@@ -835,10 +820,11 @@ function sellSquadPlayer(id) {
 const sortedDivs = () => { const s = {}; for (let d = 0; d <= 3; d++) s[d] = [...state.standings[d]].sort((a, b) => b.pts - a.pts || b.gd - a.gd || b.gf - a.gf); return s; };
 function showEndSeasonGala() {
   const s = sortedDivs(), mv = d => `<p><b>Up from ${DIV_NAMES[d + 1]}:</b> ${s[d + 1].slice(0, 3).map(r => r.name).join(', ')}</p><p><b>Down from ${DIV_NAMES[d]}:</b> ${s[d].slice(-3).map(r => r.name).join(', ')}</p>`;
-  $('eosSummaryContent').innerHTML = `<div style="background:var(--bg-panel);padding:12px;border-radius:8px;margin-bottom:10px"><h3 style="color:var(--gold)">👑 Champions</h3>${[0, 1, 2, 3].map(d => `<p><b>${DIV_NAMES[d]}:</b> ${s[d][0].name}</p>`).join('')}</div><div style="background:var(--bg-panel);padding:12px;border-radius:8px"><h3 style="color:#38bdf8">📈 Movement</h3>${mv(0)}${mv(1)}${mv(2)}</div>`;
+  $('eosSummaryContent').innerHTML = `<div style="background:var(--bg-panel);padding:12px;border-radius:8px;margin-bottom:10px"><h3 style="color:var(--gold)">👑 Champions</h3>${[0, 1, 2, 3].map(d => `<p><b>${DIV_NAMES[d]}:</b>${s[d][0].name}</p>`).join('')}</div><div style="background:var(--bg-panel);padding:12px;border-radius:8px"><h3 style="color:#38bdf8">📈 Movement</h3>${mv(0)}${mv(1)}${mv(2)}</div>`;
   $('endSeasonModal').style.display = 'flex'; playSound('cheer');
 }
 function closeEosModal() { $('endSeasonModal').style.display = 'none'; }
+
 function executeNextSeasonTransition() {
   closeEosModal();
   const s = sortedDivs(), move = {};
@@ -858,7 +844,6 @@ function executeNextSeasonTransition() {
 
   let userReleasedCount = 0;
 
-  // Age players, decrement contracts, and handle free agency
   state.clubs.forEach(c => {
     const retainedPlayers = [];
 
@@ -868,16 +853,13 @@ function executeNextSeasonTransition() {
       p.inj = 0;
       p.goals = 0;
       p.cleanSheets = 0;
-      p.contract--; // Decrement contract year
+      p.contract--;
 
-      // Attribute aging curve
       if (p.age < 23) p.ovr += R(0, 2);
       else if (p.age > 31) p.ovr -= R(0, 2);
       p.val = Math.max(0.3, +((p.ovr - 50) * 0.75).toFixed(1));
 
-      // Check for contract expiry
       if (p.contract <= 0) {
-        // Player is now a Free Agent! Add them to the transfer pool with £0 fee
         state.marketPlayers.push({
           id: p.id,
           name: p.name,
@@ -885,7 +867,7 @@ function executeNextSeasonTransition() {
           nat: p.nat,
           age: p.age,
           ovr: p.ovr,
-          price: 0.0, // Free agent fee!
+          price: 0.0,
           club: 'Free Agent',
           wage: p.wage,
           contract: 2
@@ -901,7 +883,6 @@ function executeNextSeasonTransition() {
 
     c.players = retainedPlayers;
 
-    // Safety net: ensure club always maintains at least 15 players
     while (c.players.length < 16) {
       c.players.push(mkPlayer(SQUAD_ORDER[c.players.length % SQUAD_ORDER.length], c.str - 4, c.players.length, c.id));
     }
@@ -930,14 +911,14 @@ function updateHeaderClubDisplay() {
 }
 function renderAll() {
   const club = getCurrentUserClub(); ensureCupTie();
-  $('headerDivName').innerText = DIV_NAMES[club.div]; $('headerWeek').innerText = `Wk ${state.currentWeek} / ${state.totalWeeks}`;
+  $('headerDivName').innerText = DIV_NAMES[club.div];$('headerWeek').innerText = `Wk ${state.currentWeek} / ${state.totalWeeks}`;
   $('headerSeasonTag').innerText = `${state.seasonYear}/${String(state.seasonYear + 1).slice(-2)} Career • English Pyramid`;
   $('headerConfidence').innerText = `${state.manager.confidence}%`; $('headerFansApproval').innerText = `${state.manager.fansApproval}%`; $('headerBudget').innerText = `£${club.budget.toFixed(1)}M`;
   $('btnAudio').innerText = state.audioEnabled ? '🔊' : '🔇';
-  const lm = getActiveUserMatch(), w = getWeek(), dl = (state.currentWeek === 4 || state.currentWeek === 22) && !state.deadlineDaysCompleted[state.currentWeek];
-  const b = $('btnAdvanceMaster'), t = $('btnAdvanceText');
+  const activeMatch = getActiveUserMatch(), w = getWeek(), dl = (state.currentWeek === 4 || state.currentWeek === 22) && !state.deadlineDaysCompleted[state.currentWeek];
+  const b = $('btnAdvanceMaster'), t =$('btnAdvanceText');
   if (dl) { b.className = 'btn-advance-master btn-deadline-mode'; t.innerText = 'DEADLINE DAY'; }
-  else if ((lm && lm.played) || (w && w.done)) { b.className = 'btn-advance-master btn-continue-mode'; t.innerText = state.currentWeek >= state.totalWeeks ? 'END SEASON' : `CONTINUE TO WK ${state.currentWeek + 1}`; }
+  else if ((activeMatch && activeMatch.played) || (w && w.done)) { b.className = 'btn-advance-master btn-continue-mode'; t.innerText = state.currentWeek >= state.totalWeeks ? 'END SEASON' : `CONTINUE TO WK ${state.currentWeek + 1}`; }
   else { b.className = 'btn-advance-master'; t.innerText = 'ADVANCE WEEK'; }
   updateHeaderClubDisplay(); renderTactics(); renderStandingsTable(club.div); renderMatchdayView();
 }
