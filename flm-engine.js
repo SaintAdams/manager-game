@@ -2,8 +2,17 @@
 (function () {
   const s = document.createElement('style');
   s.textContent = '.matchday-grid>*,.broadcast-card>*,.canvas-container{min-width:0;max-width:100%}' +
-    '#matchPitchCanvas{height:auto!important;aspect-ratio:800/480}' +
-    '.sub-chips-row{max-width:100%;overflow-x:auto}.commentary-box{min-height:160px}';
+    '#matchPitchCanvas{height:auto!important;aspect-ratio:800/480}.sub-chips-row{max-width:100%;overflow-x:auto}' +
+    '@media (min-width:901px){#tab-matchday{height:calc(100vh - 96px);min-height:540px}' +
+    '.matchday-grid{height:100%;grid-template-columns:minmax(0,1.55fr) minmax(0,1fr);gap:12px}' +
+    '.broadcast-card{height:100%;min-height:0;padding:10px;gap:8px}' +
+    '.scoreboard-box{padding:6px 12px}.sb-score{font-size:1.8rem}.sb-team h2{font-size:1rem}.match-timeline-bar{min-height:32px}' +
+    '.canvas-container{flex:1;min-height:0}' +
+    '#matchPitchCanvas{flex:1;min-height:0;width:100%;height:auto!important;aspect-ratio:auto;object-fit:contain;background:#090e18}' +
+    '.md-right{display:flex;flex-direction:column;gap:10px;min-width:0;min-height:0;height:100%}' +
+    '.md-right .commentary-box{flex:1.3;min-height:0;height:auto}' +
+    '.md-right .in-match-sub-drawer{max-height:32%;overflow-y:auto}.md-right .sub-chips-row{flex-wrap:wrap;overflow:visible}' +
+    '.md-right .standings-card{flex:1;min-height:0;overflow-y:auto}}';
   document.head.appendChild(s);
 })();
 const STORAGE_KEY = 'FLM_CAREER_2026_V2';
@@ -102,7 +111,7 @@ function initGame() {
     if (saved) { state = JSON.parse(saved); if (!state.clubs || state.clubs.length < 92 || !state.manager) throw 0; ensureAllSquadsHydrated(); ok = true; }
   } catch (e) { state = null; }
   if (!ok) { setupFreshState('Manager', 'NEW'); saveGame(); }
-  initMarketFilterDropdowns(); renderAll();
+  layoutMatchday(); initMarketFilterDropdowns(); renderAll();
 }
 
 /* ---------- career wizard / club switch ---------- */
@@ -642,4 +651,11 @@ function renderAll() {
 function switchTab(id) {
   ['tactics', 'matchday', 'cups', 'news', 'transfers', 'standings', 'academy', 'facilities', 'manager', 'honours'].forEach(t => { $(`tab-${t}`).style.display = t === id ? 'block' : 'none'; $(`nav-${t}`).className = `nav-item ${t === id ? 'active' : ''}`; });
   ({ tactics: renderTactics, news: renderNewsFeed, cups: renderCupsTab, transfers: renderTransfers, standings: () => renderStandingsTable(state.activeStandingsTab), academy: renderAcademyTab, matchday: renderMatchdayView, facilities: renderFacilities, manager: renderManagerOffice, honours: renderHonours })[id]();
+}
+
+/* Matchday: pitch + scoreboard left; commentary, subs and other games right (one screen, no scrolling) */
+function layoutMatchday() {
+  const grid = document.querySelector('.matchday-grid'); if (!grid || grid.dataset.laid) return; grid.dataset.laid = 1;
+  const grounds = grid.querySelector('.standings-card'), comm = $('commentaryFeed'), right = document.createElement('div'); right.className = 'md-right';
+  right.append(comm.previousElementSibling, comm, $('inMatchSubDrawer'), grounds); grid.appendChild(right);
 }
