@@ -35,11 +35,11 @@
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; user-select: none; }
     body { background-color: var(--bg-dark); color: var(--text-main); min-height: 100vh; display: flex; flex-direction: column; overflow-x: hidden; }
 
-    /* HEADER */
+    /* INTEGRATED HEADER MATCHING SCREENSHOT */
     header {
       background: linear-gradient(180deg, #151d2d 0%, #0d131f 100%);
       border-bottom: 2px solid var(--border);
-      padding: 10px 16px;
+      padding: 8px 16px;
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -47,32 +47,98 @@
       top: 0;
       z-index: 100;
       box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+      gap: 12px;
+      flex-wrap: wrap;
     }
-    .brand-group { display: flex; align-items: center; gap: 10px; }
+    .brand-group { display: flex; align-items: center; gap: 8px; }
     .brand-logo {
       background: linear-gradient(135deg, var(--accent) 0%, #0072ff 100%);
       color: #000;
       font-weight: 900;
-      font-size: 1.05rem;
-      padding: 5px 10px;
+      font-size: 1rem;
+      padding: 5px 9px;
       border-radius: 6px;
       letter-spacing: 1px;
     }
-    .brand-titles h1 { font-size: 1.05rem; font-weight: 800; color: #fff; }
-    .brand-titles p { font-size: 0.72rem; color: var(--text-muted); font-weight: 600; }
+    .brand-titles h1 { font-size: 0.95rem; font-weight: 800; color: #fff; }
+    .brand-titles p { font-size: 0.68rem; color: var(--text-muted); font-weight: 600; }
 
+    /* CONSOLIDATED CLUB CHIP IN HEADER */
+    .header-club-chip {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: var(--bg-panel);
+      border: 1px solid var(--border);
+      padding: 5px 12px;
+      border-radius: 8px;
+    }
+    .header-badge-box {
+      width: 34px;
+      height: 34px;
+      border-radius: 6px;
+      background: #334155;
+      color: #fff;
+      font-weight: 900;
+      font-size: 0.8rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      letter-spacing: 0.5px;
+    }
+    .header-club-text h2 {
+      font-size: 0.92rem;
+      font-weight: 800;
+      color: #fff;
+      line-height: 1.1;
+    }
+    .header-club-text p {
+      font-size: 0.65rem;
+      color: var(--text-muted);
+    }
+
+    /* RATINGS 4-PACK IN HEADER */
+    .header-ratings-cluster {
+      display: flex;
+      gap: 6px;
+      background: var(--bg-panel);
+      border: 1px solid var(--border);
+      padding: 4px 8px;
+      border-radius: 8px;
+    }
+    .hdr-stat {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-width: 44px;
+    }
+    .hdr-stat .val {
+      font-size: 0.95rem;
+      font-weight: 900;
+      color: #fff;
+      line-height: 1;
+    }
+    .hdr-stat .lbl {
+      font-size: 0.56rem;
+      font-weight: 800;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      margin-top: 2px;
+    }
+
+    /* HEADER METRICS */
     .header-metrics { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
     .metric-pill {
       background: var(--bg-panel);
       border: 1px solid var(--border);
       padding: 5px 10px;
       border-radius: 8px;
-      font-size: 0.75rem;
+      font-size: 0.72rem;
       display: flex;
       flex-direction: column;
       align-items: flex-start;
     }
-    .metric-pill span.label { font-size: 0.62rem; color: var(--text-muted); text-transform: uppercase; font-weight: 700; }
+    .metric-pill span.label { font-size: 0.6rem; color: var(--text-muted); text-transform: uppercase; font-weight: 700; }
     .metric-pill span.val { font-weight: 800; color: #fff; }
 
     .btn-advance-master {
@@ -80,7 +146,7 @@
       color: #000;
       font-weight: 900;
       font-size: 0.88rem;
-      padding: 9px 15px;
+      padding: 8px 14px;
       border-radius: 8px;
       border: none;
       cursor: pointer;
@@ -97,13 +163,13 @@
       box-shadow: 0 0 20px rgba(239, 68, 68, 0.6) !important;
       animation: pulse 1s infinite alternate;
     }
-    .btn-icon { background: var(--bg-panel); border: 1px solid var(--border); color: #fff; padding: 7px 11px; border-radius: 6px; cursor: pointer; }
+    .btn-icon { background: var(--bg-panel); border: 1px solid var(--border); color: #fff; padding: 6px 10px; border-radius: 6px; cursor: pointer; }
 
     /* LAYOUT */
-    .app-container { display: flex; flex: 1; min-height: calc(100vh - 120px); }
+    .app-container { display: flex; flex: 1; min-height: calc(100vh - 75px); }
 
     nav.sidebar {
-      width: 230px;
+      width: 220px;
       background: #0d121c;
       border-right: 1px solid var(--border);
       padding: 14px 10px;
@@ -134,32 +200,8 @@
 
     main.viewport { flex: 1; padding: 16px; overflow-y: auto; background: var(--bg-dark); }
 
-    .club-banner {
-      background: linear-gradient(90deg, #162032 0%, #111724 100%);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 12px 16px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 16px;
-    }
-    .club-info-badge { display: flex; align-items: center; gap: 14px; }
-    .club-badge-box {
-      width: 44px; height: 44px; border-radius: 10px; background: #e11d48;
-      display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 1rem; color: #fff;
-    }
-    .club-text h2 { font-size: 1.2rem; font-weight: 800; }
-    .club-text p { font-size: 0.78rem; color: var(--text-muted); }
-
-    .team-stats-strip { display: flex; gap: 14px; }
-    .strip-stat { text-align: center; }
-    .strip-stat .val { font-size: 1.15rem; font-weight: 900; color: #fff; }
-    .strip-stat .lbl { font-size: 0.62rem; color: var(--text-muted); text-transform: uppercase; font-weight: 700; }
-
     /* TACTICS */
     .tactics-container { display: grid; grid-template-columns: 460px 1fr; gap: 16px; }
-
     .pitch-card {
       background: var(--bg-card);
       border: 1px solid var(--border);
@@ -620,7 +662,7 @@
       color: #64748b;
     }
 
-    @media (max-width: 860px) {
+    @media (max-width: 900px) {
       header {
         flex-direction: column;
         align-items: stretch;
@@ -628,17 +670,16 @@
         padding: 8px 12px;
       }
       .brand-group { justify-content: space-between; width: 100%; }
+      .header-club-chip, .header-ratings-cluster { width: 100%; justify-content: space-between; }
       .header-metrics {
         width: 100%;
         display: grid;
-        grid-template-columns: repeat(4, 1fr);
+        grid-template-columns: repeat(3, 1fr);
         gap: 6px;
       }
       .metric-pill { min-width: 0; padding: 4px 6px; }
-      .metric-pill span.label { font-size: 0.58rem; }
-      .metric-pill span.val { font-size: 0.72rem; }
       .btn-advance-master {
-        grid-column: span 4;
+        grid-column: span 3;
         width: 100%;
         justify-content: center;
         padding: 10px;
@@ -670,27 +711,9 @@
       .nav-item.active { background: var(--accent); color: #000; }
 
       main.viewport { padding: 12px; }
-      .club-banner { flex-direction: column; align-items: stretch; gap: 12px; }
-      .team-stats-strip {
-        justify-content: space-between;
-        background: var(--bg-panel);
-        padding: 8px 12px;
-        border-radius: 8px;
-      }
-
       .tactics-container { grid-template-columns: 1fr; }
       .football-pitch { height: 420px; }
-      .pitch-node { width: 58px; }
-      .pitch-kit { width: 30px; height: 30px; font-size: 0.8rem; }
-      .pitch-role-tag { font-size: 0.52rem; }
-      .pitch-name-card .p-name { font-size: 0.62rem; }
-      .pitch-name-card .p-role { font-size: 0.52rem; }
-
       .matchday-grid { grid-template-columns: 1fr; }
-      .scoreboard-box { padding: 12px 8px; }
-      .sb-team h2 { font-size: 1rem; }
-      .sb-score { font-size: 2rem; }
-
       #matchPitchCanvas { height: 260px; }
       #modalClubsGrid, #wizardClubsGrid { grid-template-columns: 1fr !important; }
     }
@@ -698,21 +721,36 @@
 </head>
 <body>
 
+  <!-- INTEGRATED CONSOLIDATED HEADER -->
   <header>
     <div class="brand-group">
-      <div style="display: flex; align-items: center; gap: 10px;">
-        <div class="brand-logo">FLM</div>
-        <div class="brand-titles">
-          <h1>FOOTBALL LEAGUE MANAGER</h1>
-          <p id="headerSeasonTag">2026/27 Career • English Football Pyramid</p>
-        </div>
+      <div class="brand-logo">FLM</div>
+      <div class="brand-titles">
+        <h1>FOOTBALL LEAGUE MANAGER</h1>
+        <p id="headerSeasonTag">2026/27 Career • English Football Pyramid</p>
       </div>
-      <div style="display: flex; gap: 6px;">
-        <button class="btn-icon" onclick="toggleAudio()" id="btnAudio" title="Toggle Sound">🔊</button>
-        <button class="btn-icon" onclick="promptNewCareer()" title="Start New Career">🆕</button>
+      <button class="btn-icon" onclick="toggleAudio()" id="btnAudio" title="Toggle Sound">🔊</button>
+      <button class="btn-icon" onclick="promptNewCareer()" title="Start New Career">🆕</button>
+    </div>
+
+    <!-- ACTIVE CLUB CHIP IN HEADER -->
+    <div class="header-club-chip">
+      <div class="header-badge-box" id="headerBadge">NEW</div>
+      <div class="header-club-text">
+        <h2 id="headerClubName">Newcastle United</h2>
+        <p id="headerStadium">St James' Park • Capacity: 52,305</p>
       </div>
     </div>
 
+    <!-- TEAM RATINGS 4-PACK IN HEADER -->
+    <div class="header-ratings-cluster">
+      <div class="hdr-stat"><span class="val" id="statAttack">75</span><span class="lbl">ATTACK</span></div>
+      <div class="hdr-stat"><span class="val" id="statMidfield">75</span><span class="lbl">MIDFIELD</span></div>
+      <div class="hdr-stat"><span class="val" id="statDefence">75</span><span class="lbl">DEFENCE</span></div>
+      <div class="hdr-stat"><span class="val" id="statOvr">75</span><span class="lbl">RATING</span></div>
+    </div>
+
+    <!-- RIGHT METRIC PILLS WITH FANS APPROVAL -->
     <div class="header-metrics">
       <div class="metric-pill">
         <span class="label">Division</span>
@@ -720,15 +758,19 @@
       </div>
       <div class="metric-pill">
         <span class="label">Calendar</span>
-        <span class="val" id="headerWeek">Wk 1 / 46</span>
+        <span class="val" id="headerWeek">Wk 1 / 38</span>
       </div>
       <div class="metric-pill">
-        <span class="label">Approval</span>
-        <span class="val" id="headerConfidence" style="color: #34d399;">82%</span>
+        <span class="label">Board Approval</span>
+        <span class="val" id="headerConfidence" style="color: #34d399;">85%</span>
+      </div>
+      <div class="metric-pill">
+        <span class="label">Fans Approval</span>
+        <span class="val" id="headerFansApproval" style="color: #38bdf8;">82%</span>
       </div>
       <div class="metric-pill">
         <span class="label">Budget</span>
-        <span class="val" id="headerBudget">£24.5M</span>
+        <span class="val" id="headerBudget">£50.0M</span>
       </div>
       
       <button class="btn-advance-master" id="btnAdvanceMaster" onclick="advanceMasterWeek()">
@@ -779,35 +821,7 @@
     </nav>
 
     <main class="viewport" id="mainViewport">
-      <div class="club-banner" id="clubBanner">
-        <div class="club-info-badge">
-          <div class="club-badge-box" id="bannerBadge">SOU</div>
-          <div class="club-text">
-            <h2 id="bannerClubName">Southampton</h2>
-            <p id="bannerStadium">St Mary's Stadium • Capacity: 32,384</p>
-          </div>
-        </div>
-        <div class="team-stats-strip">
-          <div class="strip-stat">
-            <div class="val" id="statAttack">78</div>
-            <div class="lbl">Attack</div>
-          </div>
-          <div class="strip-stat">
-            <div class="val" id="statMidfield">77</div>
-            <div class="lbl">Midfield</div>
-          </div>
-          <div class="strip-stat">
-            <div class="val" id="statDefence">76</div>
-            <div class="lbl">Defence</div>
-          </div>
-          <div class="strip-stat">
-            <div class="val" id="statOvr">77</div>
-            <div class="lbl">Rating</div>
-          </div>
-        </div>
-      </div>
-
-      <!-- TACTICS TAB WITH REAL FATIGUE & CONDITION -->
+      <!-- TACTICS TAB -->
       <div id="tab-tactics" class="tab-pane">
         <div id="swapNotificationBar" class="swap-status-bar" style="display: none;">
           <span id="swapNotificationText">🔄 SELECT PLAYER TO SWAP</span>
@@ -843,7 +857,7 @@
             </div>
             
             <p style="font-size: 0.72rem; color: var(--text-muted); text-align: center;">
-              💡 <b>Tap any player on the pitch or table</b> to swap positions. Rotate starters to recover fatigue!
+              💡 <b>Tap any player on the pitch or table</b> to swap positions. Rotate starters to recover match fatigue!
             </p>
           </div>
 
@@ -897,7 +911,7 @@
           <div class="broadcast-card">
             <div class="scoreboard-box">
               <div class="sb-team">
-                <h2 id="sbHomeName">Southampton</h2>
+                <h2 id="sbHomeName">Newcastle United</h2>
                 <p id="sbHomeRole">HOME</p>
               </div>
               <div>
@@ -905,12 +919,11 @@
                 <span class="sb-minute" id="sbMinute">PRE-MATCH</span>
               </div>
               <div class="sb-team">
-                <h2 id="sbAwayName">Opponent</h2>
+                <h2 id="sbAwayName">Brentford</h2>
                 <p id="sbAwayRole">AWAY</p>
               </div>
             </div>
 
-            <!-- PROPORTIONAL 2D MATCH CANVAS -->
             <div class="canvas-container">
               <canvas id="matchPitchCanvas" width="800" height="480"></canvas>
               
@@ -927,15 +940,15 @@
               </div>
             </div>
 
-            <h4 style="font-size: 0.85rem; text-transform: uppercase; color: var(--text-muted);" id="commentaryHeaderTitle">Match Commentary</h4>
+            <h4 style="font-size: 0.85rem; text-transform: uppercase; color: var(--text-muted);">Match Commentary</h4>
             <div class="commentary-box" id="commentaryFeed">
-              <div class="comm-line">Teams have emerged from the tunnel. Click "Start Match" to kick off!</div>
+              <div class="comm-line">Teams have emerged onto the pitch. Click "Start Match" to kick off!</div>
             </div>
           </div>
 
           <!-- AROUND THE GROUNDS PINNED GRID -->
           <div class="standings-card">
-            <h3 style="font-size: 0.92rem; font-weight: 800; margin-bottom: 12px; letter-spacing: 0.5px;" id="aroundGroundsTitle">Around The Grounds</h3>
+            <h3 style="font-size: 0.92rem; font-weight: 800; margin-bottom: 12px; letter-spacing: 0.5px;">Around The Grounds</h3>
             <div id="aroundGroundsList" class="grounds-grid-container"></div>
           </div>
         </div>
@@ -952,20 +965,20 @@
           <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 16px;">
             <div style="background:var(--bg-panel); border:1px solid var(--border); border-radius:10px; padding:16px;">
               <h4 style="color:#f59e0b; margin-bottom:4px; font-size:1.05rem;">The FA Cup</h4>
-              <p style="font-size:0.75rem; color:var(--text-muted); margin-bottom:8px;">Knockout single-elimination. Replays &amp; Penalties.</p>
-              <div id="faCupStatusBox" style="font-size:0.85rem; font-weight:700;">Status: Round 3 Entry</div>
+              <p style="font-size:0.75rem; color:var(--text-muted); margin-bottom:8px;">Knockout bracket. 50/50 shared gate receipts &amp; penalties.</p>
+              <div style="font-size:0.85rem; font-weight:700;">Status: Round 3 Entry (January)</div>
             </div>
 
             <div style="background:var(--bg-panel); border:1px solid var(--border); border-radius:10px; padding:16px;">
               <h4 style="color:#00d2ff; margin-bottom:4px; font-size:1.05rem;">Carabao Cup</h4>
               <p style="font-size:0.75rem; color:var(--text-muted); margin-bottom:8px;">Straight to penalties after 90 minutes. Silverware &amp; Prize Money.</p>
-              <div id="carabaoStatusBox" style="font-size:0.85rem; font-weight:700;">Status: Round 1 Active</div>
+              <div style="font-size:0.85rem; font-weight:700;">Status: Active Round</div>
             </div>
           </div>
 
           <h4 style="font-size:0.9rem; margin-bottom:8px;">Current Cup Draw &amp; Fixture</h4>
           <div id="cupFixtureDisplay" style="background:var(--bg-panel); border-radius:8px; padding:14px; border:1px solid var(--border); font-size:0.85rem;">
-            No cup ties scheduled for this calendar week.
+            No cup matches scheduled this calendar week.
           </div>
         </div>
       </div>
@@ -986,7 +999,7 @@
         <div class="standings-card">
           <div class="section-title-strip" style="margin-bottom: 12px;">
             <h3>🛒 Transfer Market</h3>
-            <span class="count" id="marketBudgetDisplay">Available: £24.5M</span>
+            <span class="count" id="marketBudgetDisplay">Available: £50.0M</span>
           </div>
           
           <div style="display: flex; gap: 10px; margin-bottom: 10px;">
@@ -1101,7 +1114,7 @@
 
       <div id="deadlineOfferBox" style="background:var(--bg-panel); border:1px solid var(--border); border-radius:10px; padding:16px; margin-bottom:16px;">
         <h4 id="deadlineOfferHeadline" style="font-size:1rem; color:#fff; margin-bottom:6px;">Incoming Transfer Enquiries</h4>
-        <p id="deadlineOfferDetails" style="font-size:0.85rem; color:#cbd5e1; line-height:1.5;">No active bids right now. Advance the deadline clock to see market movements.</p>
+        <p id="deadlineOfferDetails" style="font-size:0.85rem; color:#cbd5e1; line-height:1.5;">No active bids right now. Advance the clock to scout deals or listen to rival inquiries.</p>
         <div id="deadlineActionButtons" style="display:none; gap:10px; margin-top:12px;"></div>
       </div>
 
@@ -1213,7 +1226,7 @@
   </footer>
 
   <script>
-    const STORAGE_KEY = 'FLM_CAREER_V2026_MASTER_ALL';
+    const STORAGE_KEY = 'FLM_CAREER_V2026_SEASON_ALIGNED';
 
     const FORMATIONS = {
       '4-3-3': [
@@ -1283,123 +1296,152 @@
       ]
     };
 
+    /* OFFICIAL 2026/27 SEASON LEAGUE CATALOGUE */
     const CLUBS_DATABASE = [
+      // PREMIER LEAGUE (20 Clubs)
       { id: 'ARS', name: 'Arsenal', div: 0, budget: 65, stadium: 'Emirates Stadium', cap: 60704, col: '#ef4444' },
-      { id: 'AVL', name: 'Aston Villa', div: 0, budget: 35, stadium: 'Villa Park', cap: 42682, col: '#9333ea' },
-      { id: 'BOU', name: 'Bournemouth', div: 0, budget: 18, stadium: 'Vitality Stadium', cap: 11307, col: '#dc2626' },
-      { id: 'BRE', name: 'Brentford', div: 0, budget: 20, stadium: 'Gtech Stadium', cap: 17250, col: '#e11d48' },
-      { id: 'BHA', name: 'Brighton', div: 0, budget: 30, stadium: 'Amex Stadium', cap: 31800, col: '#0284c7' },
-      { id: 'CHE', name: 'Chelsea', div: 0, budget: 75, stadium: 'Stamford Bridge', cap: 40341, col: '#2563eb' },
-      { id: 'CRY', name: 'Crystal Palace', div: 0, budget: 22, stadium: 'Selhurst Park', cap: 25486, col: '#1d4ed8' },
+      { id: 'AVL', name: 'Aston Villa', div: 0, budget: 35, stadium: 'Villa Park', cap: 42918, col: '#9333ea' },
+      { id: 'BOU', name: 'AFC Bournemouth', div: 0, budget: 18, stadium: 'Vitality Stadium', cap: 11307, col: '#dc2626' },
+      { id: 'BRE', name: 'Brentford', div: 0, budget: 20, stadium: 'Gtech Community Stadium', cap: 17250, col: '#e11d48' },
+      { id: 'BHA', name: 'Brighton', div: 0, budget: 30, stadium: 'Amex Stadium', cap: 31876, col: '#0284c7' },
+      { id: 'CHE', name: 'Chelsea', div: 0, budget: 75, stadium: 'Stamford Bridge', cap: 40173, col: '#2563eb' },
+      { id: 'COV', name: 'Coventry City', div: 0, budget: 16, stadium: 'CBS Arena', cap: 32609, col: '#38bdf8' },
+      { id: 'CRY', name: 'Crystal Palace', div: 0, budget: 22, stadium: 'Selhurst Park', cap: 25194, col: '#1d4ed8' },
       { id: 'EVE', name: 'Everton', div: 0, budget: 15, stadium: 'Hill Dickinson Stadium', cap: 52888, col: '#1e40af' },
-      { id: 'FUL', name: 'Fulham', div: 0, budget: 22, stadium: 'Craven Cottage', cap: 25700, col: '#ffffff' },
-      { id: 'IPS', name: 'Ipswich Town', div: 0, budget: 15, stadium: 'Portman Road', cap: 30014, col: '#1d4ed8' },
-      { id: 'LEI', name: 'Leicester City', div: 0, budget: 20, stadium: 'King Power Stadium', cap: 32262, col: '#2563eb' },
+      { id: 'FUL', name: 'Fulham', div: 0, budget: 22, stadium: 'Craven Cottage', cap: 29589, col: '#ffffff' },
+      { id: 'HUL', name: 'Hull City', div: 0, budget: 14, stadium: 'MKM Stadium', cap: 25586, col: '#f59e0b' },
+      { id: 'IPS', name: 'Ipswich Town', div: 0, budget: 16, stadium: 'Portman Road', cap: 30056, col: '#1d4ed8' },
+      { id: 'LEE', name: 'Leeds United', div: 0, budget: 24, stadium: 'Elland Road', cap: 37608, col: '#ffffff' },
       { id: 'LIV', name: 'Liverpool', div: 0, budget: 70, stadium: 'Anfield', cap: 61276, col: '#dc2626' },
       { id: 'MCI', name: 'Manchester City', div: 0, budget: 95, stadium: 'Etihad Stadium', cap: 53400, col: '#38bdf8' },
-      { id: 'MUN', name: 'Manchester United', div: 0, budget: 60, stadium: 'Old Trafford', cap: 74310, col: '#b91c1c' },
+      { id: 'MUN', name: 'Manchester United', div: 0, budget: 60, stadium: 'Old Trafford', cap: 74244, col: '#b91c1c' },
       { id: 'NEW', name: 'Newcastle United', div: 0, budget: 50, stadium: "St James' Park", cap: 52305, col: '#334155' },
-      { id: 'NFO', name: 'Nottm Forest', div: 0, budget: 25, stadium: 'City Ground', cap: 30445, col: '#dc2626' },
-      { id: 'SOU', name: 'Southampton', div: 0, budget: 24, stadium: "St Mary's Stadium", cap: 32384, col: '#e11d48' },
-      { id: 'TOT', name: 'Tottenham Hotspur', div: 0, budget: 55, stadium: 'Tottenham Stadium', cap: 62850, col: '#ffffff' },
-      { id: 'WHU', name: 'West Ham United', div: 0, budget: 35, stadium: 'London Stadium', cap: 62500, col: '#831843' },
-      { id: 'WOL', name: 'Wolves', div: 0, budget: 22, stadium: 'Molineux', cap: 31750, col: '#d97706' },
+      { id: 'NFO', name: 'Nottingham Forest', div: 0, budget: 25, stadium: 'City Ground', cap: 30404, col: '#dc2626' },
+      { id: 'SUN', name: 'Sunderland', div: 0, budget: 18, stadium: 'Stadium of Light', cap: 49000, col: '#dc2626' },
+      { id: 'TOT', name: 'Tottenham Hotspur', div: 0, budget: 55, stadium: 'Tottenham Hotspur Stadium', cap: 62850, col: '#ffffff' },
 
-      { id: 'BLA', name: 'Blackburn', div: 1, budget: 7, stadium: 'Ewood Park', cap: 31367, col: '#2563eb' },
-      { id: 'BRC', name: 'Bristol City', div: 1, budget: 8, stadium: 'Ashton Gate', cap: 27000, col: '#dc2626' },
+      // CHAMPIONSHIP (24 Clubs)
+      { id: 'WHU', name: 'West Ham United', div: 1, budget: 26, stadium: 'London Stadium', cap: 62500, col: '#831843' },
+      { id: 'WOL', name: 'Wolverhampton Wanderers', div: 1, budget: 18, stadium: 'Molineux', cap: 31750, col: '#d97706' },
       { id: 'BUR', name: 'Burnley', div: 1, budget: 18, stadium: 'Turf Moor', cap: 21944, col: '#831843' },
-      { id: 'CAR', name: 'Cardiff City', div: 1, budget: 8, stadium: 'Cardiff Stadium', cap: 33280, col: '#1d4ed8' },
-      { id: 'COV', name: 'Coventry City', div: 1, budget: 10, stadium: 'Coventry Arena', cap: 32609, col: '#38bdf8' },
-      { id: 'DER', name: 'Derby County', div: 1, budget: 7, stadium: 'Pride Park', cap: 33597, col: '#ffffff' },
-      { id: 'HUL', name: 'Hull City', div: 1, budget: 8, stadium: 'MKM Stadium', cap: 25586, col: '#f59e0b' },
-      { id: 'LEE', name: 'Leeds United', div: 1, budget: 22, stadium: 'Elland Road', cap: 37608, col: '#ffffff' },
-      { id: 'LUT', name: 'Luton Town', div: 1, budget: 14, stadium: 'Kenilworth Road', cap: 12000, col: '#ea580c' },
+      { id: 'SOU', name: 'Southampton', div: 1, budget: 20, stadium: "St Mary's Stadium", cap: 32384, col: '#e11d48' },
+      { id: 'LEI', name: 'Leicester City', div: 1, budget: 16, stadium: 'King Power Stadium', cap: 32259, col: '#2563eb' },
+      { id: 'SHU', name: 'Sheffield United', div: 1, budget: 14, stadium: 'Bramall Lane', cap: 32050, col: '#dc2626' },
       { id: 'MID', name: 'Middlesbrough', div: 1, budget: 12, stadium: 'Riverside Stadium', cap: 34742, col: '#dc2626' },
-      { id: 'MIL', name: 'Millwall', div: 1, budget: 6, stadium: 'The Den', cap: 20146, col: '#1e3a8a' },
       { id: 'NOR', name: 'Norwich City', div: 1, budget: 11, stadium: 'Carrow Road', cap: 27244, col: '#eab308' },
-      { id: 'OXF', name: 'Oxford United', div: 1, budget: 5, stadium: 'Kassam Stadium', cap: 12500, col: '#facc15' },
-      { id: 'PLY', name: 'Plymouth Argyle', div: 1, budget: 6, stadium: 'Home Park', cap: 17900, col: '#065f46' },
+      { id: 'WBA', name: 'West Brom', div: 1, budget: 11, stadium: 'The Hawthorns', cap: 26850, col: '#1e3a8a' },
+      { id: 'WAT', name: 'Watford', div: 1, budget: 9, stadium: 'Vicarage Road', cap: 22200, col: '#eab308' },
+      { id: 'BLA', name: 'Blackburn Rovers', div: 1, budget: 7, stadium: 'Ewood Park', cap: 31367, col: '#2563eb' },
+      { id: 'BRC', name: 'Bristol City', div: 1, budget: 8, stadium: 'Ashton Gate', cap: 27000, col: '#dc2626' },
+      { id: 'DER', name: 'Derby County', div: 1, budget: 7, stadium: 'Pride Park', cap: 33597, col: '#ffffff' },
+      { id: 'MIL', name: 'Millwall', div: 1, budget: 6, stadium: 'The Den', cap: 20146, col: '#1e3a8a' },
       { id: 'POR', name: 'Portsmouth', div: 1, budget: 7, stadium: 'Fratton Park', cap: 20895, col: '#1d4ed8' },
       { id: 'PNE', name: 'Preston North End', div: 1, budget: 6, stadium: 'Deepdale', cap: 23408, col: '#ffffff' },
       { id: 'QPR', name: 'QPR', div: 1, budget: 7, stadium: 'Loftus Road', cap: 18439, col: '#1e40af' },
-      { id: 'SHU', name: 'Sheffield United', div: 1, budget: 16, stadium: 'Bramall Lane', cap: 32050, col: '#dc2626' },
-      { id: 'SHW', name: 'Sheffield Wednesday', div: 1, budget: 8, stadium: 'Hillsborough', cap: 39732, col: '#2563eb' },
       { id: 'STO', name: 'Stoke City', div: 1, budget: 8, stadium: 'bet365 Stadium', cap: 30089, col: '#dc2626' },
-      { id: 'SUN', name: 'Sunderland', div: 1, budget: 14, stadium: 'Stadium of Light', cap: 49000, col: '#dc2626' },
-      { id: 'SWA', name: 'Swansea City', div: 1, budget: 8, stadium: '.com Stadium', cap: 21088, col: '#ffffff' },
-      { id: 'WAT', name: 'Watford', div: 1, budget: 9, stadium: 'Vicarage Road', cap: 22200, col: '#eab308' },
-      { id: 'WBA', name: 'West Brom', div: 1, budget: 11, stadium: 'The Hawthorns', cap: 26850, col: '#1e3a8a' },
+      { id: 'SWA', name: 'Swansea City', div: 1, budget: 8, stadium: 'Swansea.com Stadium', cap: 21088, col: '#ffffff' },
+      { id: 'BIR', name: 'Birmingham City', div: 1, budget: 9, stadium: "St Andrew's", cap: 29409, col: '#1d4ed8' },
+      { id: 'WRX', name: 'Wrexham', div: 1, budget: 8, stadium: 'Racecourse Ground', cap: 12600, col: '#dc2626' },
+      { id: 'CHA', name: 'Charlton Athletic', div: 1, budget: 6, stadium: 'The Valley', cap: 27111, col: '#dc2626' },
+      { id: 'OXF', name: 'Oxford United', div: 1, budget: 5, stadium: 'Kassam Stadium', cap: 12500, col: '#facc15' },
+      { id: 'SHW', name: 'Sheffield Wednesday', div: 1, budget: 6, stadium: 'Hillsborough', cap: 39732, col: '#2563eb' },
 
+      // LEAGUE ONE (24 Clubs)
+      { id: 'LUT', name: 'Luton Town', div: 2, budget: 6, stadium: 'Kenilworth Road', cap: 12000, col: '#ea580c' },
+      { id: 'PLY', name: 'Plymouth Argyle', div: 2, budget: 4, stadium: 'Home Park', cap: 17900, col: '#065f46' },
+      { id: 'CAR', name: 'Cardiff City', div: 2, budget: 5, stadium: 'Cardiff Stadium', cap: 33280, col: '#1d4ed8' },
+      { id: 'BOL', name: 'Bolton Wanderers', div: 2, budget: 4, stadium: 'Toughsheet Stadium', cap: 28723, col: '#1e3a8a' },
+      { id: 'HUD', name: 'Huddersfield Town', div: 2, budget: 4, stadium: 'John Smith Stadium', cap: 24121, col: '#38bdf8' },
+      { id: 'PET', name: 'Peterborough United', div: 2, budget: 3.5, stadium: 'London Road', cap: 15314, col: '#2563eb' },
       { id: 'BAR', name: 'Barnsley', div: 2, budget: 3.5, stadium: 'Oakwell', cap: 23287, col: '#dc2626' },
-      { id: 'BIR', name: 'Birmingham City', div: 2, budget: 8.0, stadium: "St Andrew's", cap: 29409, col: '#1d4ed8' },
+      { id: 'REA', name: 'Reading', div: 2, budget: 3.0, stadium: 'Select Car Leasing Stadium', cap: 24161, col: '#1e40af' },
+      { id: 'ROT', name: 'Rotherham United', div: 2, budget: 3.2, stadium: 'New York Stadium', cap: 12021, col: '#dc2626' },
+      { id: 'WIG', name: 'Wigan Athletic', div: 2, budget: 3.0, stadium: 'Brick Community Stadium', cap: 25138, col: '#1d4ed8' },
       { id: 'BKP', name: 'Blackpool', div: 2, budget: 3.0, stadium: 'Bloomfield Road', cap: 16616, col: '#ea580c' },
-      { id: 'BOL', name: 'Bolton', div: 2, budget: 4.0, stadium: 'Toughsheet Stadium', cap: 28723, col: '#1e3a8a' },
+      { id: 'STK', name: 'Stockport County', div: 2, budget: 3.0, stadium: 'Edgeley Park', cap: 10852, col: '#2563eb' },
+      { id: 'LIN', name: 'Lincoln City', div: 2, budget: 2.8, stadium: 'LNER Stadium', cap: 10669, col: '#dc2626' },
+      { id: 'WYC', name: 'Wycombe Wanderers', div: 2, budget: 2.5, stadium: 'Adams Park', cap: 10137, col: '#38bdf8' },
+      { id: 'LEY', name: 'Leyton Orient', div: 2, budget: 2.5, stadium: 'Brisbane Road', cap: 9271, col: '#dc2626' },
       { id: 'BRR', name: 'Bristol Rovers', div: 2, budget: 2.5, stadium: 'Memorial Stadium', cap: 12011, col: '#2563eb' },
+      { id: 'MAN', name: 'Mansfield Town', div: 2, budget: 2.2, stadium: 'Field Mill', cap: 9186, col: '#eab308' },
+      { id: 'STE', name: 'Stevenage', div: 2, budget: 2.2, stadium: 'Broadhall Way', cap: 7800, col: '#dc2626' },
+      { id: 'EXE', name: 'Exeter City', div: 2, budget: 2.0, stadium: 'St James Park', cap: 8720, col: '#dc2626' },
+      { id: 'NOR1', name: 'Northampton Town', div: 2, budget: 2.0, stadium: 'Sixfields Stadium', cap: 7798, col: '#831843' },
       { id: 'BUR1', name: 'Burton Albion', div: 2, budget: 2.0, stadium: 'Pirelli Stadium', cap: 6912, col: '#facc15' },
       { id: 'CAM', name: 'Cambridge United', div: 2, budget: 2.0, stadium: 'Abbey Stadium', cap: 7937, col: '#f59e0b' },
-      { id: 'CHA', name: 'Charlton', div: 2, budget: 3.5, stadium: 'The Valley', cap: 27111, col: '#dc2626' },
+      { id: 'SHR', name: 'Shrewsbury Town', div: 2, budget: 2.0, stadium: 'New Meadow', cap: 9875, col: '#1d4ed8' },
       { id: 'CRA', name: 'Crawley Town', div: 2, budget: 1.8, stadium: 'Broadfield Stadium', cap: 6134, col: '#dc2626' },
-      { id: 'EXE', name: 'Exeter City', div: 2, budget: 2.0, stadium: 'St James Park', cap: 8720, col: '#dc2626' },
-      { id: 'HUD', name: 'Huddersfield', div: 2, budget: 4.5, stadium: 'John Smith Stadium', cap: 24121, col: '#38bdf8' },
-      { id: 'LEY', name: 'Leyton Orient', div: 2, budget: 2.5, stadium: 'Brisbane Road', cap: 9271, col: '#dc2626' },
-      { id: 'LIN', name: 'Lincoln City', div: 2, budget: 2.8, stadium: 'LNER Stadium', cap: 10669, col: '#dc2626' },
-      { id: 'MAN', name: 'Mansfield Town', div: 2, budget: 2.2, stadium: 'Field Mill', cap: 9186, col: '#eab308' },
-      { id: 'NOR1', name: 'Northampton', div: 2, budget: 2.0, stadium: 'Sixfields Stadium', cap: 7798, col: '#831843' },
-      { id: 'PET', name: 'Peterborough', div: 2, budget: 3.5, stadium: 'London Road', cap: 15314, col: '#2563eb' },
-      { id: 'REA', name: 'Reading', div: 2, budget: 3.0, stadium: 'SCL Stadium', cap: 24161, col: '#1e40af' },
-      { id: 'ROT', name: 'Rotherham', div: 2, budget: 3.5, stadium: 'New York Stadium', cap: 12021, col: '#dc2626' },
-      { id: 'SHR', name: 'Shrewsbury', div: 2, budget: 2.0, stadium: 'New Meadow', cap: 9875, col: '#1d4ed8' },
-      { id: 'STE', name: 'Stevenage', div: 2, budget: 2.2, stadium: 'Broadhall Way', cap: 7800, col: '#dc2626' },
-      { id: 'STK', name: 'Stockport', div: 2, budget: 3.0, stadium: 'Edgeley Park', cap: 10852, col: '#2563eb' },
-      { id: 'WIG', name: 'Wigan Athletic', div: 2, budget: 3.2, stadium: 'Brick Stadium', cap: 25138, col: '#1d4ed8' },
-      { id: 'WRX', name: 'Wrexham', div: 2, budget: 5.5, stadium: 'Racecourse Ground', cap: 12600, col: '#dc2626' },
-      { id: 'WYC', name: 'Wycombe', div: 2, budget: 2.5, stadium: 'Adams Park', cap: 10137, col: '#38bdf8' },
 
-      { id: 'ACC', name: 'Accrington', div: 3, budget: 1.2, stadium: 'Wham Stadium', cap: 5450, col: '#dc2626' },
-      { id: 'WIM', name: 'AFC Wimbledon', div: 3, budget: 1.5, stadium: 'Plough Lane', cap: 9215, col: '#1d4ed8' },
-      { id: 'BAR1', name: 'Barrow', div: 3, budget: 1.2, stadium: 'Holker Street', cap: 5045, col: '#2563eb' },
+      // LEAGUE TWO (24 Clubs)
       { id: 'BRA', name: 'Bradford City', div: 3, budget: 2.2, stadium: 'Valley Parade', cap: 25136, col: '#831843' },
-      { id: 'BRO', name: 'Bromley', div: 3, budget: 1.0, stadium: 'Hayes Lane', cap: 5110, col: '#ffffff' },
-      { id: 'CAR1', name: 'Carlisle United', div: 3, budget: 1.5, stadium: 'Brunton Park', cap: 17949, col: '#1e40af' },
-      { id: 'CHE1', name: 'Cheltenham', div: 3, budget: 1.3, stadium: 'Whaddon Road', cap: 7066, col: '#dc2626' },
-      { id: 'CHF', name: 'Chesterfield', div: 3, budget: 2.0, stadium: 'SMH Stadium', cap: 10504, col: '#1d4ed8' },
-      { id: 'COL', name: 'Colchester', div: 3, budget: 1.4, stadium: 'Colchester Stadium', cap: 10105, col: '#2563eb' },
-      { id: 'CRE', name: 'Crewe Alexandra', div: 3, budget: 1.4, stadium: 'Gresty Road', cap: 10153, col: '#dc2626' },
-      { id: 'DON', name: 'Doncaster', div: 3, budget: 1.8, stadium: 'Eco-Power Stadium', cap: 15231, col: '#dc2626' },
-      { id: 'FLE', name: 'Fleetwood Town', div: 3, budget: 1.4, stadium: 'Highbury Stadium', cap: 5472, col: '#dc2626' },
-      { id: 'GIL', name: 'Gillingham', div: 3, budget: 1.7, stadium: 'Priestfield Stadium', cap: 11582, col: '#1d4ed8' },
-      { id: 'GRI', name: 'Grimsby Town', div: 3, budget: 1.3, stadium: 'Blundell Park', cap: 9052, col: '#334155' },
-      { id: 'HAR', name: 'Harrogate Town', div: 3, budget: 1.0, stadium: 'Wetherby Road', cap: 5000, col: '#eab308' },
+      { id: 'CHF', name: 'Chesterfield', div: 3, budget: 2.0, stadium: 'SMH Group Stadium', cap: 10504, col: '#1d4ed8' },
       { id: 'MKD', name: 'MK Dons', div: 3, budget: 2.2, stadium: 'Stadium MK', cap: 30500, col: '#ffffff' },
-      { id: 'MOR', name: 'Morecambe', div: 3, budget: 1.0, stadium: 'Mazuma Stadium', cap: 6476, col: '#dc2626' },
-      { id: 'NEW1', name: 'Newport County', div: 3, budget: 1.1, stadium: 'Rodney Parade', cap: 7850, col: '#f59e0b' },
       { id: 'NOT', name: 'Notts County', div: 3, budget: 2.0, stadium: 'Meadow Lane', cap: 19841, col: '#334155' },
+      { id: 'DON', name: 'Doncaster Rovers', div: 3, budget: 1.8, stadium: 'Eco-Power Stadium', cap: 15231, col: '#dc2626' },
       { id: 'POV', name: 'Port Vale', div: 3, budget: 1.8, stadium: 'Vale Park', cap: 15695, col: '#ffffff' },
+      { id: 'GIL', name: 'Gillingham', div: 3, budget: 1.7, stadium: 'Priestfield Stadium', cap: 11582, col: '#1d4ed8' },
+      { id: 'WAL', name: 'Walsall', div: 3, budget: 1.6, stadium: 'Bescot Stadium', cap: 11300, col: '#dc2626' },
       { id: 'SAL', name: 'Salford City', div: 3, budget: 1.6, stadium: 'Moor Lane', cap: 5108, col: '#dc2626' },
       { id: 'SWI', name: 'Swindon Town', div: 3, budget: 1.5, stadium: 'County Ground', cap: 15728, col: '#dc2626' },
+      { id: 'WIM', name: 'AFC Wimbledon', div: 3, budget: 1.5, stadium: 'Plough Lane', cap: 9215, col: '#1d4ed8' },
+      { id: 'CAR1', name: 'Carlisle United', div: 3, budget: 1.5, stadium: 'Brunton Park', cap: 17949, col: '#1e40af' },
+      { id: 'COL', name: 'Colchester United', div: 3, budget: 1.4, stadium: 'Colchester Stadium', cap: 10105, col: '#2563eb' },
+      { id: 'CRE', name: 'Crewe Alexandra', div: 3, budget: 1.4, stadium: 'Gresty Road', cap: 10153, col: '#dc2626' },
+      { id: 'FLE', name: 'Fleetwood Town', div: 3, budget: 1.4, stadium: 'Highbury Stadium', cap: 5472, col: '#dc2626' },
       { id: 'TRA', name: 'Tranmere Rovers', div: 3, budget: 1.4, stadium: 'Prenton Park', cap: 16587, col: '#ffffff' },
-      { id: 'WAL', name: 'Walsall', div: 3, budget: 1.6, stadium: 'Bescot Stadium', cap: 11300, col: '#dc2626' }
+      { id: 'GRI', name: 'Grimsby Town', div: 3, budget: 1.3, stadium: 'Blundell Park', cap: 9052, col: '#334155' },
+      { id: 'CHE1', name: 'Cheltenham Town', div: 3, budget: 1.3, stadium: 'Whaddon Road', cap: 7066, col: '#dc2626' },
+      { id: 'ACC', name: 'Accrington Stanley', div: 3, budget: 1.2, stadium: 'Wham Stadium', cap: 5450, col: '#dc2626' },
+      { id: 'BAR1', name: 'Barrow', div: 3, budget: 1.2, stadium: 'Holker Street', cap: 5045, col: '#2563eb' },
+      { id: 'NEW1', name: 'Newport County', div: 3, budget: 1.1, stadium: 'Rodney Parade', cap: 7850, col: '#f59e0b' },
+      { id: 'HAR', name: 'Harrogate Town', div: 3, budget: 1.0, stadium: 'Wetherby Road', cap: 5000, col: '#eab308' },
+      { id: 'MOR', name: 'Morecambe', div: 3, budget: 1.0, stadium: 'Mazuma Stadium', cap: 6476, col: '#dc2626' },
+      { id: 'BRO', name: 'Bromley', div: 3, budget: 1.0, stadium: 'Hayes Lane', cap: 5110, col: '#ffffff' }
     ];
 
+    /* AUTHENTIC NEWCASTLE UNITED ROSTER */
+    const NEW_REAL_ROSTER = [
+      { id: 'new_1', name: 'Nick Pope', naturalPos: 'GK', nat: 'ENG', age: 34, ovr: 83, con: 98, role: 'SK-De', starter: true, val: 18.0, inj: 0 },
+      { id: 'new_2', name: 'Tino Livramento', naturalPos: 'DEF', nat: 'ENG', age: 23, ovr: 81, con: 96, role: 'WB-At', starter: true, val: 32.0, inj: 0 },
+      { id: 'new_3', name: 'Fabian Schär', naturalPos: 'DEF', nat: 'SUI', age: 34, ovr: 80, con: 95, role: 'BPD-De', starter: true, val: 12.0, inj: 0 },
+      { id: 'new_4', name: 'Sven Botman', naturalPos: 'DEF', nat: 'NED', age: 26, ovr: 83, con: 97, role: 'CD-De', starter: true, val: 40.0, inj: 0 },
+      { id: 'new_5', name: 'Lewis Hall', naturalPos: 'DEF', nat: 'ENG', age: 21, ovr: 79, con: 96, role: 'WB-Su', starter: true, val: 26.0, inj: 0 },
+      { id: 'new_6', name: 'Sandro Tonali', naturalPos: 'MID', nat: 'ITA', age: 26, ovr: 84, con: 98, role: 'DLP-De', starter: true, val: 48.0, inj: 0 },
+      { id: 'new_7', name: 'Bruno Guimarães', naturalPos: 'MID', nat: 'BRA', age: 28, ovr: 86, con: 97, role: 'MEZ-At', starter: true, val: 65.0, inj: 0 },
+      { id: 'new_8', name: 'Joelinton', naturalPos: 'MID', nat: 'BRA', age: 30, ovr: 82, con: 95, role: 'BBM-Su', starter: true, val: 28.0, inj: 0 },
+      { id: 'new_9', name: 'Anthony Elanga', naturalPos: 'FWD', nat: 'SWE', age: 24, ovr: 80, con: 97, role: 'IF-At', starter: true, val: 30.0, inj: 0 },
+      { id: 'new_10', name: 'Harvey Barnes', naturalPos: 'FWD', nat: 'ENG', age: 28, ovr: 81, con: 96, role: 'IW-At', starter: true, val: 32.0, inj: 0 },
+      { id: 'new_11', name: 'Alexander Isak', naturalPos: 'FWD', nat: 'SWE', age: 27, ovr: 87, con: 98, role: 'AF-At', starter: true, val: 75.0, inj: 0 },
+      // Bench
+      { id: 'new_12', name: 'Aaron Ramsdale', naturalPos: 'GK', nat: 'ENG', age: 28, ovr: 81, con: 100, role: 'GK-De', starter: false, val: 22.0, inj: 0 },
+      { id: 'new_13', name: 'Dan Burn', naturalPos: 'DEF', nat: 'ENG', age: 34, ovr: 78, con: 100, role: 'CD-De', starter: false, val: 8.0, inj: 0 },
+      { id: 'new_14', name: 'Kieran Trippier', naturalPos: 'DEF', nat: 'ENG', age: 36, ovr: 79, con: 100, role: 'FB-Su', starter: false, val: 6.0, inj: 0 },
+      { id: 'new_15', name: 'Joe Willock', naturalPos: 'MID', nat: 'ENG', age: 27, ovr: 79, con: 98, role: 'CM-At', starter: false, val: 20.0, inj: 0 },
+      { id: 'new_16', name: 'Jacob Murphy', naturalPos: 'MID', nat: 'ENG', age: 31, ovr: 77, con: 98, role: 'W-At', starter: false, val: 12.0, inj: 0 },
+      { id: 'new_17', name: 'William Osula', naturalPos: 'FWD', nat: 'DEN', age: 23, ovr: 76, con: 98, role: 'AF-At', starter: false, val: 14.0, inj: 0 },
+      { id: 'new_18', name: 'Lewis Miley', naturalPos: 'MID', nat: 'ENG', age: 20, ovr: 77, con: 98, role: 'CM-At', starter: false, val: 18.0, inj: 0 }
+    ];
+
+    /* AUTHENTIC SOUTHAMPTON 2026/27 ROSTER */
     const SOU_REAL_ROSTER = [
-      { id: 'sou_1', name: 'Aaron Ramsdale', naturalPos: 'GK', nat: 'ENG', age: 28, ovr: 81, con: 98, role: 'SK-De', starter: true, val: 24.0, inj: 0 },
-      { id: 'sou_2', name: 'Kyle Walker-Peters', naturalPos: 'DEF', nat: 'ENG', age: 29, ovr: 79, con: 96, role: 'WB-At', starter: true, val: 18.0, inj: 0 },
+      { id: 'sou_1', name: 'Daniel Peretz', naturalPos: 'GK', nat: 'ISR', age: 26, ovr: 77, con: 98, role: 'SK-De', starter: true, val: 14.0, inj: 0 },
+      { id: 'sou_2', name: 'Mads Roerslev', naturalPos: 'DEF', nat: 'DEN', age: 27, ovr: 76, con: 96, role: 'WB-At', starter: true, val: 12.0, inj: 0 },
       { id: 'sou_3', name: 'Taylor Harwood-Bellis', naturalPos: 'DEF', nat: 'ENG', age: 24, ovr: 78, con: 97, role: 'BPD-De', starter: true, val: 20.0, inj: 0 },
-      { id: 'sou_4', name: 'Jan Bednarek', naturalPos: 'DEF', nat: 'POL', age: 30, ovr: 77, con: 95, role: 'CD-De', starter: true, val: 10.0, inj: 0 },
+      { id: 'sou_4', name: 'Jack Stephens', naturalPos: 'DEF', nat: 'ENG', age: 32, ovr: 74, con: 95, role: 'CD-De', starter: true, val: 4.0, inj: 0 },
       { id: 'sou_5', name: 'Yukinari Sugawara', naturalPos: 'DEF', nat: 'JPN', age: 26, ovr: 77, con: 96, role: 'WB-Su', starter: true, val: 14.0, inj: 0 },
       { id: 'sou_6', name: 'Flynn Downes', naturalPos: 'MID', nat: 'ENG', age: 27, ovr: 77, con: 98, role: 'DLP-De', starter: true, val: 15.0, inj: 0 },
-      { id: 'sou_7', name: 'Mateus Fernandes', naturalPos: 'MID', nat: 'POR', age: 22, ovr: 78, con: 96, role: 'MEZ-At', starter: true, val: 19.0, inj: 0 },
-      { id: 'sou_8', name: 'Will Smallbone', naturalPos: 'MID', nat: 'IRL', age: 26, ovr: 75, con: 94, role: 'BBM-Su', starter: true, val: 9.0, inj: 0 },
-      { id: 'sou_9', name: 'Tyler Dibling', naturalPos: 'FWD', nat: 'ENG', age: 20, ovr: 78, con: 97, role: 'IF-At', starter: true, val: 22.0, inj: 0 },
-      { id: 'sou_10', name: 'Ryan Fraser', naturalPos: 'FWD', nat: 'SCO', age: 32, ovr: 75, con: 93, role: 'IW-At', starter: true, val: 6.0, inj: 0 },
+      { id: 'sou_7', name: 'Caspar Jander', naturalPos: 'MID', nat: 'GER', age: 23, ovr: 76, con: 96, role: 'MEZ-At', starter: true, val: 12.0, inj: 0 },
+      { id: 'sou_8', name: 'Finn Azaz', naturalPos: 'MID', nat: 'IRL', age: 26, ovr: 75, con: 94, role: 'BBM-Su', starter: true, val: 9.0, inj: 0 },
+      { id: 'sou_9', name: 'Tom Fellows', naturalPos: 'MID', nat: 'ENG', age: 23, ovr: 76, con: 97, role: 'IF-At', starter: true, val: 12.0, inj: 0 },
+      { id: 'sou_10', name: 'Samuel Edozie', naturalPos: 'FWD', nat: 'ENG', age: 23, ovr: 75, con: 95, role: 'IW-At', starter: true, val: 11.0, inj: 0 },
       { id: 'sou_11', name: 'Cameron Archer', naturalPos: 'FWD', nat: 'ENG', age: 24, ovr: 77, con: 96, role: 'AF-At', starter: true, val: 16.0, inj: 0 },
       { id: 'sou_12', name: 'Alex McCarthy', naturalPos: 'GK', nat: 'ENG', age: 36, ovr: 73, con: 100, role: 'GK-De', starter: false, val: 2.0, inj: 0 },
-      { id: 'sou_13', name: 'Jack Stephens', naturalPos: 'DEF', nat: 'ENG', age: 32, ovr: 74, con: 100, role: 'CD-De', starter: false, val: 4.0, inj: 0 },
-      { id: 'sou_14', name: 'Adam Armstrong', naturalPos: 'FWD', nat: 'ENG', age: 29, ovr: 76, con: 98, role: 'AF-At', starter: false, val: 12.0, inj: 0 },
-      { id: 'sou_15', name: 'Kamaldeen Sulemana', naturalPos: 'FWD', nat: 'GHA', age: 24, ovr: 76, con: 98, role: 'W-At', starter: false, val: 15.0, inj: 0 },
-      { id: 'sou_16', name: 'Paul Onuachu', naturalPos: 'FWD', nat: 'NGA', age: 32, ovr: 75, con: 95, role: 'TF-Su', starter: false, val: 7.0, inj: 0 },
-      { id: 'sou_17', name: 'Adam Lallana', naturalPos: 'MID', nat: 'ENG', age: 38, ovr: 74, con: 90, role: 'AP-Su', starter: false, val: 1.5, inj: 0 },
-      { id: 'sou_18', name: 'Joe Lumley', naturalPos: 'GK', nat: 'ENG', age: 31, ovr: 71, con: 100, role: 'GK-De', starter: false, val: 1.0, inj: 0 }
+      { id: 'sou_13', name: 'Nathan Wood', naturalPos: 'DEF', nat: 'ENG', age: 24, ovr: 74, con: 100, role: 'CD-De', starter: false, val: 7.0, inj: 0 },
+      { id: 'sou_14', name: 'Ben Brereton Díaz', naturalPos: 'FWD', nat: 'CHI', age: 27, ovr: 76, con: 98, role: 'AF-At', starter: false, val: 14.0, inj: 0 },
+      { id: 'sou_15', name: 'Ryan Manning', naturalPos: 'DEF', nat: 'IRL', age: 30, ovr: 74, con: 98, role: 'FB-Su', starter: false, val: 5.0, inj: 0 },
+      { id: 'sou_16', name: 'Divin Mubama', naturalPos: 'FWD', nat: 'ENG', age: 21, ovr: 73, con: 98, role: 'AF-At', starter: false, val: 8.0, inj: 0 },
+      { id: 'sou_17', name: 'James Bree', naturalPos: 'DEF', nat: 'ENG', age: 28, ovr: 73, con: 95, role: 'FB-Su', starter: false, val: 4.0, inj: 0 },
+      { id: 'sou_18', name: 'George Long', naturalPos: 'GK', nat: 'ENG', age: 32, ovr: 70, con: 100, role: 'GK-De', starter: false, val: 1.0, inj: 0 }
     ];
 
     const TRANSFER_SCOUT_POOL = [
@@ -1415,9 +1457,7 @@
       { id: 'mkt_10', name: 'Morgan Gibbs-White', naturalPos: 'MID', nat: 'ENG', age: 26, ovr: 82, price: 44.0, club: 'Nottm Forest' },
       { id: 'mkt_11', name: 'Milos Kerkez', naturalPos: 'DEF', nat: 'HUN', age: 22, ovr: 80, price: 26.0, club: 'Bournemouth' },
       { id: 'mkt_12', name: 'Omari Hutchinson', naturalPos: 'FWD', nat: 'JAM', age: 22, ovr: 78, price: 21.0, club: 'Ipswich Town' },
-      { id: 'mkt_13', name: 'Mads Hermansen', naturalPos: 'GK', nat: 'DEN', age: 26, ovr: 79, price: 16.0, club: 'Leicester City' },
-      { id: 'mkt_14', name: 'Sam Szmodics', naturalPos: 'FWD', nat: 'IRL', age: 31, ovr: 77, price: 12.0, club: 'Ipswich Town' },
-      { id: 'mkt_15', name: 'Hayden Hackney', naturalPos: 'MID', nat: 'SCO', age: 24, ovr: 77, price: 14.5, club: 'Middlesbrough' }
+      { id: 'mkt_13', name: 'Hayden Hackney', naturalPos: 'MID', nat: 'SCO', age: 24, ovr: 78, price: 16.5, club: 'Middlesbrough' }
     ];
 
     const SURNAMES = ['Smith', 'Johnson', 'Williams', 'Brown', 'Jones', 'Miller', 'Davis', 'Wilson', 'Anderson', 'Taylor', 'Thomas', 'Moore', 'Jackson', 'Martin', 'Lee', 'White', 'Harris', 'Clark', 'Lewis', 'Robinson', 'Walker', 'Young', 'Allen', 'King', 'Wright', 'Scott', 'Torres', 'Hill', 'Green', 'Adams', 'Baker', 'Hall', 'Campbell', 'Mitchell', 'Carter', 'Roberts', 'Phillips', 'Evans', 'Turner', 'Parker', 'Collins', 'Edwards', 'Stewart', 'Morris', 'Murphy', 'Cook', 'Rogers', 'Morgan', 'Peterson', 'Cooper', 'Reed', 'Bailey', 'Bell', 'Kelly', 'Howard', 'Ward', 'Cox', 'Richardson', 'Watson', 'Brooks', 'Wood', 'James', 'Bennett', 'Gray', 'Hughes', 'Price', 'Sanders', 'Patel', 'Myers', 'Long', 'Ross', 'Foster', 'Powell', 'Jenkins', 'Perry', 'Russell', 'Sullivan'];
@@ -1425,7 +1465,7 @@
     const NATIONS = ['ENG', 'ENG', 'ENG', 'SCO', 'WAL', 'IRL', 'NIR', 'FRA', 'ESP', 'GER', 'NED', 'POR', 'BRA', 'ARG'];
 
     function generateProceduralSquad(club) {
-      const tierBaseRating = [78, 71, 65, 60][club.div] || 65;
+      const tierBaseRating = [79, 72, 65, 60][club.div] || 65;
       const squadLayout = [
         { naturalPos: 'GK', role: 'SK-De', starter: true },
         { naturalPos: 'DEF', role: 'WB-At', starter: true },
@@ -1454,7 +1494,7 @@
         const age = 19 + Math.floor(Math.random() * 15);
         const ratingVariance = (idx < 11) ? (Math.floor(Math.random() * 5) - 2) : (Math.floor(Math.random() * 6) - 4);
         const ovr = Math.max(52, Math.min(92, tierBaseRating + ratingVariance));
-        const val = Math.max(0.5, Number(((ovr - 50) * 0.7).toFixed(1)));
+        const val = Math.max(0.5, Number(((ovr - 50) * 0.75).toFixed(1)));
 
         return {
           id: `${club.id.toLowerCase()}_${idx + 1}`,
@@ -1476,14 +1516,11 @@
     let selectedPlayerSwapId = null;
     let matchSimInterval = null;
     let animFrameId = null;
-    let wizardChosenClubId = 'ARS';
+    let wizardChosenClubId = 'NEW'; // Defaults to Newcastle United as in screenshot!
     let simSpeedMultiplier = 1;
-
-    // DEADLINE DAY STATE
-    let deadlineHour = 12; // 12 hours countdown (11am to 11pm)
+    let deadlineHour = 12;
     let pendingAIBid = null;
 
-    // PENALTY SHOOTOUT STATE
     let shootoutState = {
       active: false,
       match: null,
@@ -1497,7 +1534,6 @@
       round: 1
     };
 
-    // 2D CANVAS MATCH ENGINE DATA
     let pitchEngine = {
       canvas: null,
       ctx: null,
@@ -1506,8 +1542,8 @@
       homePlayers: [],
       awayPlayers: [],
       ball: { x: 400, y: 240, vx: 0, vy: 0, targetX: 400, targetY: 240 },
-      homeColor: '#ef4444',
-      awayColor: '#2563eb',
+      homeColor: '#334155',
+      awayColor: '#ef4444',
       homeScore: 0,
       awayScore: 0,
       currentMinute: 0
@@ -1530,7 +1566,7 @@
     }
 
     function openCareerSetupWizard() {
-      wizardChosenClubId = 'ARS';
+      wizardChosenClubId = 'NEW';
       filterWizardClubs(0);
       document.getElementById('careerSetupModal').style.display = 'flex';
     }
@@ -1578,11 +1614,11 @@
       }
     }
 
-    function setupFreshState(managerName = 'Manager', clubId = 'ARS') {
+    function setupFreshState(managerName = 'Manager', clubId = 'NEW') {
       state = {
         seasonYear: 2026,
         currentWeek: 1,
-        totalWeeks: 46, // Standard 46 weeks across the English football pyramid
+        totalWeeks: 38,
         userClubId: clubId,
         currentFormation: '4-3-3',
         audioEnabled: true,
@@ -1593,15 +1629,11 @@
         marketPlayers: JSON.parse(JSON.stringify(TRANSFER_SCOUT_POOL)),
         standings: {},
         newsFeed: [],
-        cups: {
-          faCupRound: 3,
-          faCupAlive: true,
-          carabaoRound: 1,
-          carabaoAlive: true
-        },
+        cups: { faCupRound: 3, faCupAlive: true, carabaoRound: 1, carabaoAlive: true },
         manager: {
           name: managerName,
-          confidence: 82,
+          confidence: 85,
+          fansApproval: 82, // NEW Fans Approval
           matches: 0,
           wins: 0,
           draws: 0,
@@ -1631,7 +1663,9 @@
       }
 
       state.clubs.forEach(c => {
-        if (c.id === 'SOU') {
+        if (c.id === 'NEW') {
+          c.players = JSON.parse(JSON.stringify(NEW_REAL_ROSTER));
+        } else if (c.id === 'SOU') {
           c.players = JSON.parse(JSON.stringify(SOU_REAL_ROSTER));
         } else {
           c.players = generateProceduralSquad(c);
@@ -1646,11 +1680,13 @@
       if (!state) return;
       state.clubs.forEach(c => {
         if (!c.players || c.players.length < 18) {
-          c.players = (c.id === 'SOU') ? JSON.parse(JSON.stringify(SOU_REAL_ROSTER)) : generateProceduralSquad(c);
+          if (c.id === 'NEW') c.players = JSON.parse(JSON.stringify(NEW_REAL_ROSTER));
+          else if (c.id === 'SOU') c.players = JSON.parse(JSON.stringify(SOU_REAL_ROSTER));
+          else c.players = generateProceduralSquad(c);
         }
         c.players.forEach(p => {
           if (!p.naturalPos) p.naturalPos = p.pos || 'MID';
-          if (!p.val) p.val = Math.max(0.5, Number(((p.ovr - 50) * 0.7).toFixed(1)));
+          if (!p.val) p.val = Math.max(0.5, Number(((p.ovr - 50) * 0.75).toFixed(1)));
           if (p.inj === undefined) p.inj = 0;
           if (p.con === undefined) p.con = 100;
         });
@@ -1659,13 +1695,9 @@
           c.players.forEach((p, idx) => p.starter = (idx < 11));
         }
       });
-      if (!state.cups) {
-        state.cups = { faCupRound: 3, faCupAlive: true, carabaoRound: 1, carabaoAlive: true };
-      }
-      if (!state.marketPlayers) {
-        state.marketPlayers = JSON.parse(JSON.stringify(TRANSFER_SCOUT_POOL));
-      }
-      if (state.totalWeeks !== 46) state.totalWeeks = 46;
+      if (state.manager.fansApproval === undefined) state.manager.fansApproval = 82;
+      if (!state.cups) state.cups = { faCupRound: 3, faCupAlive: true, carabaoRound: 1, carabaoAlive: true };
+      if (!state.marketPlayers) state.marketPlayers = JSON.parse(JSON.stringify(TRANSFER_SCOUT_POOL));
     }
 
     function saveGame() {
@@ -1677,7 +1709,6 @@
       return state.clubs.find(c => c.id === state.userClubId) || state.clubs[0];
     }
 
-    /* TIER-ACCURATE LEAGUE CALENDAR (38 PREMIER LEAGUE VS 46 EFL) */
     function generateTrueRoundRobinFixtures() {
       state.fixtures = [];
       const divSchedules = {};
@@ -1690,23 +1721,12 @@
       for (let w = 1; w <= state.totalWeeks; w++) {
         const weekIndex = w - 1;
         const weekMatches = [];
-
-        // Check if this week is designated for Cup matches (e.g. Weeks 7, 15, 23, 31, 39, 45)
-        const isCupWeek = [7, 15, 23, 31, 39, 45].includes(w);
+        const isCupWeek = [7, 15, 23, 31].includes(w);
 
         for (let div = 0; div <= 3; div++) {
           const schedule = divSchedules[div];
-
-          // Premier League only has 38 league matches -> 8 weeks are Cup ties or rest weeks!
-          if (div === 0 && isCupWeek) {
-            continue; // Premier League teams rest or play domestic cups!
-          }
-
-          // Map league fixture index properly
-          let mappedIndex = (div === 0) ? (w - 1 - [7, 15, 23, 31, 39, 45].filter(x => x < w).length) : weekIndex;
-
-          if (schedule && schedule[mappedIndex]) {
-            schedule[mappedIndex].forEach(m => {
+          if (schedule && schedule[weekIndex]) {
+            schedule[weekIndex].forEach(m => {
               weekMatches.push({
                 div: div,
                 type: 'LEAGUE',
@@ -1720,11 +1740,9 @@
           }
         }
 
-        // Add Domestic Cup fixture if Cup Week!
         if (isCupWeek) {
-          const cupName = (w <= 23) ? 'Carabao Cup' : 'The FA Cup';
+          const cupName = (w <= 15) ? 'Carabao Cup' : 'The FA Cup';
           const userClub = getCurrentUserClub();
-          // Pick a random domestic opponent for user club
           const eligibleOpponents = state.clubs.filter(c => c.id !== userClub.id);
           const opp = eligibleOpponents[Math.floor(Math.random() * eligibleOpponents.length)];
 
@@ -1763,23 +1781,22 @@
       }
 
       const secondLeg = rounds.map(r => r.map(m => ({ home: m.away, away: m.home })));
-      return [...rounds, ...secondLeg];
+      return [...rounds, ...secondLeg].slice(0, 38);
     }
 
     function computeClubAttributes(club) {
       const starters = club.players.filter(p => p.starter);
-      if (starters.length === 0) return { att: 70, mid: 70, def: 70, ovr: 70 };
+      if (starters.length === 0) return { att: 75, mid: 75, def: 75, ovr: 75 };
 
       const defs = starters.filter(p => p.naturalPos === 'DEF' || p.naturalPos === 'GK');
       const mids = starters.filter(p => p.naturalPos === 'MID');
       const fwds = starters.filter(p => p.naturalPos === 'FWD');
 
-      // Player performance scales directly with their fitness condition (tired = lower output)
       const avg = (arr, fallback) => arr.length ? Math.round(arr.reduce((s, x) => s + (x.ovr * (x.inj > 0 ? 0.6 : (x.con / 100))), 0) / arr.length) : fallback;
 
-      const baseDef = avg(defs, 70);
-      const baseMid = avg(mids, 70);
-      const baseAtt = avg(fwds, 70);
+      const baseDef = avg(defs, 75);
+      const baseMid = avg(mids, 75);
+      const baseAtt = avg(fwds, 75);
       const overall = Math.round((baseDef + baseMid + baseAtt) / 3);
 
       return { att: baseAtt, mid: baseMid, def: baseDef, ovr: overall };
@@ -1798,7 +1815,7 @@
 
       saveGame();
       renderTactics();
-      updateBannerStats();
+      updateHeaderClubDisplay();
       playSound('click');
     }
 
@@ -1807,7 +1824,6 @@
       const template = FORMATIONS[state.currentFormation] || FORMATIONS['4-3-3'];
       
       club.players.forEach(p => p.starter = false);
-      // Fittest and highest rated uninjured players get picked first
       const pool = [...club.players].sort((a, b) => {
         if (a.inj !== b.inj) return a.inj - b.inj;
         return (b.ovr * (b.con / 100)) - (a.ovr * (a.con / 100));
@@ -1835,7 +1851,7 @@
       cancelPlayerSwap();
       saveGame();
       renderTactics();
-      updateBannerStats();
+      updateHeaderClubDisplay();
       playSound('whistle');
     }
 
@@ -1881,7 +1897,7 @@
       cancelPlayerSwap();
       saveGame();
       renderTactics();
-      updateBannerStats();
+      updateHeaderClubDisplay();
       playSound('whistle');
     }
 
@@ -1934,7 +1950,6 @@
         const isSelected = (selectedPlayerSwapId === p.id);
         const templateEntry = template[idx];
         const assignedPos = templateEntry ? templateEntry.role : p.naturalPos;
-
         const conColor = p.con > 80 ? '#10b981' : (p.con > 65 ? '#f59e0b' : '#ef4444');
 
         const tr = document.createElement('tr');
@@ -1995,44 +2010,33 @@
       });
     }
 
-    /* =====================================================================
-       FATIGUE, STAMINA & INJURY SYSTEM (POST-MATCH APPLIED)
-       ===================================================================== */
     function applySquadFatigueAndRecovery() {
       const club = getCurrentUserClub();
       const medBonus = (state.medicalFacilityLevel || 1) * 3;
 
       club.players.forEach(p => {
-        // Healing injured players
         if (p.inj > 0) {
           p.inj--;
           if (p.inj === 0) {
-            addNewsStory('Medical Update', `FITNESS: ${p.name} Returns from Injury`, `${p.name} has resumed first-team training following a successful rehabilitation program.`, false);
+            addNewsStory('Medical Update', `FITNESS: ${p.name} Returns from Injury`, `${p.name} has resumed training.`, false);
           }
         }
 
         if (p.starter) {
-          // Playing 90 mins drains between 12% and 18% condition
           const drain = 12 + Math.floor(Math.random() * 7);
           p.con = Math.max(45, p.con - drain);
 
-          // Overplayed players with low stamina risk injuries
           if (p.con < 65 && Math.random() < 0.22 && p.inj === 0) {
             p.inj = 1 + Math.floor(Math.random() * 3);
-            addNewsStory('Injury Blow', `INJURY: ${p.name} Sidelined for ${p.inj} Weeks!`, `${p.name} picked up a muscle strain during matchday duty and faces ${p.inj} weeks out.`, true);
+            addNewsStory('Injury Blow', `INJURY: ${p.name} Sidelined for ${p.inj} Weeks!`, `${p.name} picked up a knock during matchday.`, true);
           }
         } else {
-          // Benched / reserve players recover condition
           p.con = Math.min(100, p.con + 14 + medBonus);
         }
       });
     }
 
-    /* =====================================================================
-       TRANSFER DEADLINE DAY ENGINE (HOURLY TICKER & AI OFFERS)
-       ===================================================================== */
     function checkDeadlineDayTrigger() {
-      // Triggered at Week 4 (End of August) and Week 22 (End of January)
       if (state.currentWeek === 4 || state.currentWeek === 22) {
         openDeadlineDay();
         return true;
@@ -2041,7 +2045,7 @@
     }
 
     function openDeadlineDay() {
-      deadlineHour = 12; // 12 hours remaining (11:00 AM)
+      deadlineHour = 12;
       updateDeadlineModalUI();
       document.getElementById('deadlineModal').style.display = 'flex';
       playSound('whistle');
@@ -2057,7 +2061,7 @@
 
       if (pendingAIBid) {
         offerHeadline.innerText = `🚨 Formal Bid Received: £${pendingAIBid.fee.toFixed(1)}M from ${pendingAIBid.buyer}`;
-        offerDetails.innerHTML = `<b>${pendingAIBid.buyer}</b> have tabled an official deadline day offer of <b>£${pendingAIBid.fee.toFixed(1)}M</b> for your star player <b>${pendingAIBid.player.name}</b>.`;
+        offerDetails.innerHTML = `<b>${pendingAIBid.buyer}</b> have tabled an official deadline day offer of <b>£${pendingAIBid.fee.toFixed(1)}M</b> for <b>${pendingAIBid.player.name}</b>.`;
         actionBtns.style.display = 'flex';
         actionBtns.innerHTML = `
           <button class="btn-swap-pill" style="background:#10b981; color:#fff;" onclick="acceptDeadlineBid()">Accept Offer (£${pendingAIBid.fee.toFixed(1)}M)</button>
@@ -2065,7 +2069,7 @@
         `;
       } else {
         offerHeadline.innerText = "Transfer Market Monitoring";
-        offerDetails.innerText = "No official bids on the fax machine right now. Advance the clock to scout deals or listen to rival inquiries.";
+        offerDetails.innerText = "No bids right now. Advance the clock to scout deals or listen to rival inquiries.";
         actionBtns.style.display = 'none';
       }
     }
@@ -2074,7 +2078,6 @@
       deadlineHour--;
       const club = getCurrentUserClub();
 
-      // 40% chance an AI club submits a panic bid for one of your players
       if (Math.random() < 0.45 && !pendingAIBid) {
         const targetPlayer = club.players[Math.floor(Math.random() * club.players.length)];
         const aiClubs = state.clubs.filter(c => c.id !== club.id);
@@ -2090,7 +2093,6 @@
         closeDeadlineDay();
         return;
       }
-
       updateDeadlineModalUI();
     }
 
@@ -2104,7 +2106,9 @@
       const idx = club.players.findIndex(x => x.id === p.id);
       if (idx !== -1) club.players.splice(idx, 1);
 
-      addNewsStory('Deadline Day Done Deal', `DEADLINE DAY MOVE: ${p.name} Joins ${pendingAIBid.buyer} for £${fee.toFixed(1)}M!`, `In a dramatic late deadline day switch, ${p.name} has completed a transfer from ${club.name} to ${pendingAIBid.buyer}.`, true);
+      state.manager.fansApproval = Math.max(20, state.manager.fansApproval - 2);
+
+      addNewsStory('Deadline Day Done Deal', `DEADLINE DAY MOVE: ${p.name} Joins ${pendingAIBid.buyer} for £${fee.toFixed(1)}M!`, `${p.name} has completed a transfer from ${club.name} to ${pendingAIBid.buyer}.`, true);
       alert(`Deal finalized! ${p.name} joins ${pendingAIBid.buyer}. £${fee.toFixed(1)}M added to budget.`);
       
       pendingAIBid = null;
@@ -2115,7 +2119,7 @@
 
     function rejectDeadlineBid() {
       if (!pendingAIBid) return;
-      alert(`You rejected the offer for ${pendingAIBid.player.name}. The player remains at ${getCurrentUserClub().name}.`);
+      alert(`Offer rejected for ${pendingAIBid.player.name}. The player remains at ${getCurrentUserClub().name}.`);
       pendingAIBid = null;
       updateDeadlineModalUI();
     }
@@ -2123,14 +2127,11 @@
     function closeDeadlineDay() {
       pendingAIBid = null;
       document.getElementById('deadlineModal').style.display = 'none';
-      addNewsStory('Window Closed', 'TRANSFER WINDOW SLAMS SHUT!', 'The transfer deadline has officially passed. Squads are locked in until the next window opens.', true);
+      addNewsStory('Window Closed', 'TRANSFER WINDOW SLAMS SHUT!', 'The transfer deadline has passed. Squads are locked in.', true);
       saveGame();
       renderAll();
     }
 
-    /* =====================================================================
-       INTERACTIVE PENALTY SHOOTOUT SUDDEN-DEATH ENGINE
-       ===================================================================== */
     function launchPenaltyShootout(match, homeClub, awayClub) {
       shootoutState = {
         active: true,
@@ -2161,8 +2162,6 @@
     function takeShootoutTurn() {
       const isHome = (shootoutState.turn === 'home');
       const team = isHome ? shootoutState.homeClub : shootoutState.awayClub;
-      
-      // 78% conversion probability
       const scored = Math.random() < 0.78;
 
       if (isHome) {
@@ -2176,7 +2175,6 @@
         shootoutState.round++;
       }
 
-      // Update Pips
       updateShootoutPips();
       document.getElementById('penHomeScore').innerText = shootoutState.homeScore;
       document.getElementById('penAwayScore').innerText = shootoutState.awayScore;
@@ -2189,14 +2187,11 @@
         document.getElementById('penKickStatusText').innerHTML = `❌ <b style="color:#ef4444;">SAVED / MISSED!</b> ${team.name} fail to score!`;
       }
 
-      // Check for winner (best of 5, then sudden death)
       const hKicks = shootoutState.homeKicks.length;
       const aKicks = shootoutState.awayKicks.length;
 
       if (hKicks >= 5 && aKicks >= 5 && hKicks === aKicks) {
-        if (shootoutState.homeScore !== shootoutState.awayScore) {
-          concludeShootout();
-        }
+        if (shootoutState.homeScore !== shootoutState.awayScore) concludeShootout();
       } else if (hKicks <= 5 && aKicks <= 5) {
         const hRemaining = 5 - hKicks;
         const aRemaining = 5 - aKicks;
@@ -2232,7 +2227,7 @@
 
       const m = shootoutState.match;
       m.played = true;
-      m.homeGoals = homeWon ? (m.homeGoals + 1) : m.homeGoals; // Mark decider
+      m.homeGoals = homeWon ? (m.homeGoals + 1) : m.homeGoals;
 
       const feed = document.getElementById('commentaryFeed');
       if (feed) {
@@ -2248,16 +2243,9 @@
       }, 1400);
     }
 
-    /* =====================================================================
-       ADVANCE WEEK & MULTI-LEAGUE FIXTURE PROGRESSION
-       ===================================================================== */
     function advanceMasterWeek() {
       if (!state) return;
-
-      // Check if this week is transfer deadline day
-      if (checkDeadlineDayTrigger()) {
-        return;
-      }
+      if (checkDeadlineDayTrigger()) return;
 
       if (state.currentWeek >= state.totalWeeks) {
         showEndSeasonGala();
@@ -2305,7 +2293,6 @@
           if (m.type === 'LEAGUE') {
             updateLeagueTableRecord(m.div, m.home, m.away, homeScore, awayScore);
           } else if (m.type === 'CUP') {
-            // Domestic cup gate receipt split 50/50
             const gateReceipt = Number(((homeClub.cap * 0.000035) / 2).toFixed(2));
             homeClub.budget += gateReceipt;
             awayClub.budget += gateReceipt;
@@ -2331,11 +2318,11 @@
         const oppScore = isHome ? userMatch.awayGoals : userMatch.homeGoals;
 
         if (myScore > oppScore) {
-          addNewsStory('Match Reaction', `Victory: ${userClub.name} Triumph Over ${oppClub.name} (${myScore}-${oppScore})`, `${userClub.name} delivered a confident display to secure victory.`, false);
+          addNewsStory('Match Reaction', `Victory: ${userClub.name} Triumph Over ${oppClub.name} (${myScore}-${oppScore})`, `${userClub.name} delivered a confident performance to earn victory.`, false);
         } else if (myScore < oppScore) {
-          addNewsStory('Defeat Reaction', `Setback: ${userClub.name} Fall to ${oppClub.name} (${myScore}-${oppScore})`, `Questions were asked after ${userClub.name} slipped to defeat against ${oppClub.name}.`, false);
+          addNewsStory('Defeat Reaction', `Setback: ${userClub.name} Fall to ${oppClub.name} (${myScore}-${oppScore})`, `Supporters questioned tactics following defeat to ${oppClub.name}.`, false);
         } else {
-          addNewsStory('Match Reaction', `Points Shared: ${userClub.name} Draw Against ${oppClub.name} (${myScore}-${oppScore})`, `Neither side could find a late winner in a tight, grueling contest.`, false);
+          addNewsStory('Match Reaction', `Points Shared: ${userClub.name} Draw Against ${oppClub.name} (${myScore}-${oppScore})`, `Both sides settled for a draw in an intense encounter.`, false);
         }
       }
     }
@@ -2348,11 +2335,14 @@
       if (userGoals > oppGoals) {
         state.manager.wins++;
         state.manager.confidence = Math.min(99, state.manager.confidence + 3);
+        state.manager.fansApproval = Math.min(99, state.manager.fansApproval + (userGoals >= 3 ? 4 : 2));
       } else if (userGoals === oppGoals) {
         state.manager.draws++;
+        state.manager.fansApproval = Math.max(20, state.manager.fansApproval - 1);
       } else {
         state.manager.losses++;
         state.manager.confidence = Math.max(25, state.manager.confidence - 4);
+        state.manager.fansApproval = Math.max(20, state.manager.fansApproval - 4);
       }
     }
 
@@ -2406,8 +2396,8 @@
 
     function setup2DPlayers(homeClub, awayClub) {
       initPitchCanvas();
-      pitchEngine.homeColor = homeClub.col || '#ef4444';
-      pitchEngine.awayColor = (awayClub.col && awayClub.col !== homeClub.col) ? awayClub.col : '#2563eb';
+      pitchEngine.homeColor = homeClub.col || '#334155';
+      pitchEngine.awayColor = (awayClub.col && awayClub.col !== homeClub.col) ? awayClub.col : '#ef4444';
       if (pitchEngine.awayColor === pitchEngine.homeColor) pitchEngine.awayColor = '#38bdf8';
 
       const hSlots = [
@@ -2624,7 +2614,7 @@
             aScore++;
             pitchEngine.ball.targetX = 18;
             pitchEngine.ball.targetY = pitchEngine.h / 2 + (Math.random() * 24 - 12);
-            feed.innerHTML = `<div class="comm-line goal">⚽ ${min}' GOAL! ${awayClub.name} score on the break! (${hScore}-${aScore})</div>` + feed.innerHTML;
+            feed.innerHTML = `<div class="comm-line goal">⚽ ${min}' GOAL! ${awayClub.name} score on the counter! (${hScore}-${aScore})</div>` + feed.innerHTML;
             playSound('goal');
           }
           document.getElementById('sbScore').innerText = `${hScore} - ${aScore}`;
@@ -2638,7 +2628,6 @@
           userMatch.homeGoals = hScore;
           userMatch.awayGoals = aScore;
 
-          // If Cup Match is tied at 90 minutes -> SUDDEN DEATH PENALTY SHOOTOUT!
           if (userMatch.type === 'CUP' && hScore === aScore) {
             document.getElementById('sbMinute').innerText = `AET / PENS`;
             feed.innerHTML = `<div class="comm-line pen">🏁 90' Full-time whistle blows tied at ${hScore}-${aScore}! Proceeding to Penalty Shootout!</div>` + feed.innerHTML;
@@ -2668,9 +2657,6 @@
       runSimTick();
     }
 
-    /* =====================================================================
-       STANDINGS TABLES & ACCOLADES
-       ===================================================================== */
     function renderStandingsTable(divIndex) {
       state.activeStandingsTab = divIndex;
       for (let i = 0; i <= 3; i++) {
@@ -2729,6 +2715,7 @@
       if (Math.random() > 0.45 && state.manager.confidence > 75) {
         state.manager.motmAwards++;
         state.manager.confidence = Math.min(99, state.manager.confidence + 5);
+        state.manager.fansApproval = Math.min(99, state.manager.fansApproval + 4);
         addNewsStory('Award Winner', `OFFICIAL: ${state.manager.name} Named Manager of the Month!`, `Following an impressive run with ${userClub.name}, ${state.manager.name} has picked up the trophy.`, true);
         alert(`🏆 ACCOLADE: Congratulations ${state.manager.name}! You won MANAGER OF THE MONTH for ${userClub.name}!`);
         playSound('cheer');
@@ -2884,9 +2871,16 @@
       if (tabId === 'honours') renderHonours();
     }
 
-    function updateBannerStats() {
+    /* UPDATES CONSOLIDATED HEADER CLUB DATA & RATINGS */
+    function updateHeaderClubDisplay() {
       const club = getCurrentUserClub();
       const stats = computeClubAttributes(club);
+
+      document.getElementById('headerBadge').innerText = club.id;
+      document.getElementById('headerBadge').style.background = club.col || '#334155';
+      document.getElementById('headerClubName').innerText = club.name;
+      document.getElementById('headerStadium').innerText = `${club.stadium} • Capacity: ${(club.cap + (state.stadiumCapacityBonus || 0)).toLocaleString()}`;
+
       document.getElementById('statAttack').innerText = stats.att;
       document.getElementById('statMidfield').innerText = stats.mid;
       document.getElementById('statDefence').innerText = stats.def;
@@ -2901,9 +2895,9 @@
       document.getElementById('headerWeek').innerText = `Wk ${state.currentWeek} / ${state.totalWeeks}`;
       document.getElementById('headerSeasonTag').innerText = `${state.seasonYear}/${(state.seasonYear + 1).toString().slice(-2)} Career • English Pyramid`;
       document.getElementById('headerConfidence').innerText = `${state.manager.confidence}%`;
+      document.getElementById('headerFansApproval').innerText = `${state.manager.fansApproval || 82}%`;
       document.getElementById('headerBudget').innerText = `£${club.budget.toFixed(1)}M`;
 
-      // Update advance button if Deadline Day
       const advBtn = document.getElementById('btnAdvanceMaster');
       const advTxt = document.getElementById('btnAdvanceText');
       if (state.currentWeek === 4 || state.currentWeek === 22) {
@@ -2914,12 +2908,7 @@
         advTxt.innerText = 'ADVANCE WEEK';
       }
 
-      document.getElementById('bannerBadge').innerText = club.id;
-      document.getElementById('bannerBadge').style.background = club.col || '#e11d48';
-      document.getElementById('bannerClubName').innerText = club.name;
-      document.getElementById('bannerStadium').innerText = `${club.stadium} • Capacity: ${(club.cap + (state.stadiumCapacityBonus || 0)).toLocaleString()}`;
-
-      updateBannerStats();
+      updateHeaderClubDisplay();
       renderTactics();
       renderStandingsTable(club.div);
       renderMatchdayView();
@@ -2972,7 +2961,6 @@
     }
 
     function renderCupsTab() {
-      const club = getCurrentUserClub();
       const weekData = state.fixtures.find(f => f.week === state.currentWeek);
       const cupMatch = weekData ? weekData.matches.find(m => m.type === 'CUP') : null;
 
@@ -2983,7 +2971,7 @@
         display.innerHTML = `
           <div style="font-weight:800; font-size:1rem; color:var(--accent); margin-bottom:6px;">${cupMatch.cupName} Tie</div>
           <div style="font-size:0.95rem;"><b>${h.name}</b> vs <b>${a.name}</b></div>
-          <div style="font-size:0.75rem; color:var(--text-muted); margin-top:6px;">Knockout match. Penalties after 90 minutes if scores are level. Gate receipts split 50/50.</div>
+          <div style="font-size:0.75rem; color:var(--text-muted); margin-top:6px;">Knockout match. Penalties after 90 minutes if level. Gate receipts split 50/50.</div>
         `;
       } else {
         display.innerText = "No domestic cup fixtures scheduled for this matchweek.";
@@ -2991,12 +2979,11 @@
     }
 
     function renderFacilities() {
-      const club = getCurrentUserClub();
       const container = document.getElementById('facilitiesList');
       const medLvl = state.medicalFacilityLevel || 1;
       container.innerHTML = `
         <div style="background:var(--bg-panel); padding:14px; border-radius:8px;">
-          <h4>🏟️ North Stand Expansion</h4>
+          <h4>🏟️ Stand Expansion</h4>
           <p style="font-size:0.72rem; color:var(--text-muted); margin:4px 0;">Add 2,500 seats to boost gate revenue.</p>
           <button class="btn-swap-pill" onclick="upgradeStand(2500, 4.0)">Expand (£4.0M)</button>
         </div>
@@ -3011,14 +2998,14 @@
     function upgradeMedicalCentre() {
       const club = getCurrentUserClub();
       if (club.budget < 2.5) {
-        alert("Insufficient transfer budget for medical upgrade (£2.5M required).");
+        alert("Insufficient budget for medical upgrade (£2.5M required).");
         return;
       }
       club.budget -= 2.5;
       state.medicalFacilityLevel = (state.medicalFacilityLevel || 1) + 1;
       saveGame();
       renderAll();
-      alert(`Medical Centre upgraded to Level ${state.medicalFacilityLevel}! Squad recovery speed increased.`);
+      alert(`Medical Centre upgraded to Level ${state.medicalFacilityLevel}!`);
     }
 
     function upgradeStand(seats, cost) {
@@ -3042,6 +3029,7 @@
         <p><b>Record:</b> ${state.manager.wins}W - ${state.manager.draws}D - ${state.manager.losses}L</p>
         <p><b>Win Rate:</b> ${state.manager.matches ? Math.round((state.manager.wins / state.manager.matches) * 100) : 0}%</p>
         <p><b>Board Confidence:</b> <span style="color:#34d399; font-weight:800;">${state.manager.confidence}%</span></p>
+        <p><b>Fans Approval:</b> <span style="color:#38bdf8; font-weight:800;">${state.manager.fansApproval || 82}%</span></p>
       `;
     }
 
@@ -3079,7 +3067,7 @@
           tag: 'Tactics Briefing',
           breaking: false,
           headline: `${state.manager.name} Outlines Vision at ${getCurrentUserClub().name}`,
-          body: `Supporters look forward to seeing how the gaffer sets up. Tactical discipline and squad depth will be vital over the grueling calendar.`,
+          body: `Supporters look forward to seeing how the gaffer sets up over 38 matchweeks.`,
           time: 'Week 1'
         }
       ];
@@ -3173,7 +3161,6 @@
       if (pIdx === -1) return;
 
       const player = state.marketPlayers[pIdx];
-
       if (club.budget < player.price) {
         alert("Insufficient transfer budget.");
         return;
@@ -3198,8 +3185,9 @@
         };
 
         club.players.push(newPlayer);
-        addNewsStory('Transfer Done Deal', `DONE DEAL: ${club.name} Confirm £${player.price.toFixed(1)}M Swoop for ${player.name}!`, `${club.name} have announced the capture of ${player.name} from ${player.club}.`, true);
+        state.manager.fansApproval = Math.min(99, state.manager.fansApproval + 3);
 
+        addNewsStory('Transfer Done Deal', `DONE DEAL: ${club.name} Confirm £${player.price.toFixed(1)}M Swoop for ${player.name}!`, `${club.name} have announced the capture of ${player.name} from ${player.club}.`, true);
         saveGame();
         renderAll();
         renderTransfers();
@@ -3228,8 +3216,9 @@
           if (nextInLine) nextInLine.starter = true;
         }
 
-        addNewsStory('Player Departure', `DEPARTURE: ${player.name} Leaves ${club.name} in £${player.val.toFixed(1)}M Deal`, `${club.name} have sanctioned the departure of ${player.name} for £${player.val.toFixed(1)}M.`, false);
+        state.manager.fansApproval = Math.max(20, state.manager.fansApproval - 2);
 
+        addNewsStory('Player Departure', `DEPARTURE: ${player.name} Leaves ${club.name} in £${player.val.toFixed(1)}M Deal`, `${club.name} sanctioned the departure of ${player.name} for £${player.val.toFixed(1)}M.`, false);
         saveGame();
         renderAll();
         renderTransfers();
