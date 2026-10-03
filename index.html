@@ -35,7 +35,7 @@
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; user-select: none; }
     body { background-color: var(--bg-dark); color: var(--text-main); min-height: 100vh; display: flex; flex-direction: column; overflow-x: hidden; }
 
-    /* CONSOLIDATED TOP HEADER */
+    /* CONSOLIDATED HEADER */
     header {
       background: linear-gradient(180deg, #151d2d 0%, #0d131f 100%);
       border-bottom: 2px solid var(--border);
@@ -63,7 +63,6 @@
     .brand-titles h1 { font-size: 0.95rem; font-weight: 800; color: #fff; }
     .brand-titles p { font-size: 0.68rem; color: var(--text-muted); font-weight: 600; }
 
-    /* HEADER CLUB CHIP */
     .header-club-chip {
       display: flex;
       align-items: center;
@@ -102,7 +101,6 @@
     .header-club-text h2 { font-size: 0.92rem; font-weight: 800; color: #fff; line-height: 1.1; }
     .header-club-text p { font-size: 0.65rem; color: var(--text-muted); }
 
-    /* HEADER RATINGS 4-PACK */
     .header-ratings-cluster {
       display: flex;
       gap: 6px;
@@ -115,7 +113,6 @@
     .hdr-stat .val { font-size: 0.95rem; font-weight: 900; color: #fff; line-height: 1; }
     .hdr-stat .lbl { font-size: 0.56rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase; margin-top: 2px; }
 
-    /* HEADER METRICS */
     .header-metrics { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
     .metric-pill {
       background: var(--bg-panel);
@@ -605,6 +602,57 @@
     .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
     .modal-header h2 { font-size: 1.2rem; font-weight: 900; }
     .modal-close { background: none; border: none; color: #fff; font-size: 1.3rem; cursor: pointer; }
+
+    /* ROCK-SOLID RESULT MODAL SCOREBOARD GRID (NO VERTICAL SPLIT BUG) */
+    .result-modal-scoreboard {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      align-items: center;
+      gap: 16px;
+      padding: 18px 14px;
+      background: linear-gradient(180deg, #151d2d 0%, #0d121c 100%);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      margin-bottom: 14px;
+    }
+    .result-team {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      text-align: center;
+    }
+    .result-team-name {
+      font-size: 0.95rem;
+      font-weight: 800;
+      color: #fff;
+      line-height: 1.2;
+    }
+    .result-score-center {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      min-width: 90px;
+    }
+    .result-score-digits {
+      font-size: 2.3rem;
+      font-weight: 900;
+      color: var(--gold);
+      letter-spacing: 3px;
+      line-height: 1;
+      font-variant-numeric: tabular-nums;
+    }
+    .result-ft-badge {
+      background: var(--bg-panel);
+      color: var(--accent);
+      border: 1px solid var(--border);
+      font-size: 0.65rem;
+      font-weight: 800;
+      padding: 2px 8px;
+      border-radius: 4px;
+      letter-spacing: 0.5px;
+    }
 
     .wizard-input-box {
       background: var(--bg-panel);
@@ -1130,12 +1178,16 @@
     </main>
   </div>
 
-  <!-- MATCH RESULT NOTIFICATION MODAL -->
+  <!-- FIXED MATCH RESULT NOTIFICATION MODAL WITH BROADCAST SCOREBOARD -->
   <div id="resultSummaryModal" class="modal-backdrop" style="display: none; z-index: 1550;">
     <div class="modal-window" style="width: 520px; text-align: center;">
-      <h3 style="color: var(--accent); font-size: 0.85rem; text-transform: uppercase; margin-bottom: 10px;">Full Time Result</h3>
-      <div id="modalScoreDisplay" style="font-size: 1.8rem; font-weight: 900; margin-bottom: 12px;"></div>
+      <h3 style="color: var(--accent); font-size: 0.82rem; text-transform: uppercase; margin-bottom: 12px; letter-spacing: 0.5px;">Full Time Result</h3>
+      
+      <!-- INJECTED BROADCAST SCOREBOARD -->
+      <div id="modalScoreDisplay"></div>
+      
       <div id="modalHighlightsFeed" style="font-size: 0.8rem; line-height: 1.5; color: var(--text-muted); background: var(--bg-panel); padding: 12px; border-radius: 8px; margin-bottom: 16px; max-height: 150px; overflow-y: auto;"></div>
+      
       <button class="btn-advance-master" style="width: 100%; justify-content: center; background: #10b981; color: #fff;" onclick="dismissResultModal()">
         CONTINUE TO NEXT WEEK ⏩
       </button>
@@ -1267,9 +1319,9 @@
   </footer>
 
   <script>
-    const STORAGE_KEY = 'FLM_CAREER_V2026_REALBADGES_FIXED';
+    const STORAGE_KEY = 'FLM_CAREER_V2026_RESULTMODAL_FIXED';
 
-    /* FOTMOB ACCREDITED BADGE IDS FOR ALL 92 CLUBS */
+    /* CLUB BADGE IDS */
     const CLUB_BADGE_IDS = {
       'ARS': 9825, 'AVL': 10252, 'BOU': 8678, 'BRE': 9937, 'BHA': 10204, 'CHE': 8455,
       'COV': 8669, 'CRY': 9826, 'EVE': 8668, 'FUL': 9879, 'HUL': 8667, 'IPS': 9423,
@@ -1305,6 +1357,7 @@
       `;
     }
 
+    /* FORMATION TEMPLATES */
     const FORMATIONS = {
       '4-3-3': [
         { role: 'GK', duty: 'SK-De', x: 50, y: 88, posType: 'GK' },
@@ -1476,7 +1529,7 @@
       { id: 'BRO', name: 'Bromley', div: 3, budget: 1.0, stadium: 'Hayes Lane', cap: 5110, col: '#ffffff' }
     ];
 
-    /* AUTHENTIC 2026 NEWCASTLE & SOUTHAMPTON SQUADS */
+    /* REAL SQUADS: NEWCASTLE & SOUTHAMPTON */
     const NEW_REAL_ROSTER = [
       { id: 'new_1', name: 'Nick Pope', naturalPos: 'GK', nat: 'ENG', age: 34, ovr: 83, con: 98, role: 'SK-De', starter: true, val: 18.0, inj: 0 },
       { id: 'new_2', name: 'Tino Livramento', naturalPos: 'DEF', nat: 'ENG', age: 23, ovr: 81, con: 96, role: 'WB-At', starter: true, val: 32.0, inj: 0 },
@@ -2330,9 +2383,7 @@
       }, 1400);
     }
 
-    /* =====================================================================
-       2-STEP ADVANCE WEEK WITH GUARANTEED FULL-TIME RESULT DISPLAY
-       ===================================================================== */
+    /* 2-STEP ADVANCE WEEK WITH PROPER SCOREBOARD MODAL */
     function handleMasterAdvanceClick() {
       if (!state) return;
       if (checkDeadlineDayTrigger()) return;
@@ -2345,7 +2396,7 @@
       const weekData = state.fixtures.find(f => f.week === state.currentWeek);
       const userMatch = weekData ? weekData.matches.find(m => m.home === state.userClubId || m.away === state.userClubId) : null;
 
-      // STEP 1: If current week's match has NOT been played yet -> SIMULATE & SHOW RESULT!
+      // STEP 1: If current week match has NOT been played yet -> SIMULATE & SHOW CLEAN RESULT!
       if (userMatch && !userMatch.played) {
         clearInterval(matchSimInterval);
         cancelAnimationFrame(animFrameId);
@@ -2354,14 +2405,12 @@
         applySquadFatigueAndRecovery();
         generateWeeklyNewsStory();
 
-        // Update UI to FULL TIME state right in front of user
         renderMatchdayView();
         renderStandingsTable(getCurrentUserClub().div);
 
-        // Pop up result summary
+        // Show the properly formatted 3-column scoreboard modal
         showResultModal(userMatch);
 
-        // Update header button to "CONTINUE"
         const advBtn = document.getElementById('btnAdvanceMaster');
         const advTxt = document.getElementById('btnAdvanceText');
         advBtn.className = 'btn-advance-master btn-continue-mode';
@@ -2381,6 +2430,7 @@
       playSound('click');
     }
 
+    /* FIXED RESULT MODAL FUNCTION - GUARENTEED 3-COLUMN BROADCAST DISPLAY */
     function showResultModal(m) {
       const h = state.clubs.find(c => c.id === m.home);
       const a = state.clubs.find(c => c.id === m.away);
@@ -2389,15 +2439,35 @@
       const feedDisp = document.getElementById('modalHighlightsFeed');
 
       scoreDisp.innerHTML = `
-        <div style="display:flex; justify-content:center; align-items:center; gap:16px;">
-          <div style="display:flex; align-items:center; gap:8px;">${createBadgeHtml(h.id, 28)} <span>${h.name}</span></div>
-          <span style="color:var(--gold);">${m.homeGoals} - ${m.awayGoals}</span>
-          <div style="display:flex; align-items:center; gap:8px;"><span>${a.name}</span> ${createBadgeHtml(a.id, 28)}</div>
+        <div class="result-modal-scoreboard">
+          <div class="result-team home">
+            ${createBadgeHtml(h.id, 46)}
+            <div class="result-team-name">${h.name}</div>
+          </div>
+          <div class="result-score-center">
+            <div class="result-score-digits">${m.homeGoals} - ${m.awayGoals}</div>
+            <div class="result-ft-badge">FULL TIME</div>
+          </div>
+          <div class="result-team away">
+            ${createBadgeHtml(a.id, 46)}
+            <div class="result-team-name">${a.name}</div>
+          </div>
         </div>
       `;
 
+      let impactText = '';
+      if (m.home === state.userClubId) {
+        if (m.homeGoals > m.awayGoals) impactText = 'Great win! The home supporters are delighted.';
+        else if (m.homeGoals === m.awayGoals) impactText = 'Points shared on home turf.';
+        else impactText = 'Tough loss on home turf.';
+      } else {
+        if (m.awayGoals > m.homeGoals) impactText = 'Brilliant away victory! Fans are singing on the road.';
+        else if (m.awayGoals === m.homeGoals) impactText = 'Resilient point picked up on the road.';
+        else impactText = 'Away defeat. Tactical adjustments needed for the next match.';
+      }
+
       feedDisp.innerHTML = `
-        <p><b>Result Impact:</b> ${m.homeGoals > m.awayGoals ? (m.home === state.userClubId ? 'Great win! Fans are delighted.' : 'Defeat. Need to bounce back next match.') : (m.homeGoals === m.awayGoals ? 'Hard fought draw.' : (m.away === state.userClubId ? 'Brilliant away win!' : 'Tough loss on home turf.'))}</p>
+        <p><b>Result Impact:</b> ${impactText}</p>
         <p style="margin-top:6px; color:#cbd5e1;">All matches in your division have now concluded. Click continue to plan for next week.</p>
       `;
 
@@ -2406,7 +2476,7 @@
 
     function dismissResultModal() {
       document.getElementById('resultSummaryModal').style.display = 'none';
-      handleMasterAdvanceClick(); // Proceeds directly to next week
+      handleMasterAdvanceClick();
     }
 
     function simulateCurrentWeekFixtures() {
@@ -2460,7 +2530,7 @@
         const oppScore = isHome ? userMatch.awayGoals : userMatch.homeGoals;
 
         if (myScore > oppScore) {
-          addNewsStory('Match Reaction', `Victory: ${userClub.name} Triumph Over ${oppClub.name} (${myScore}-${oppScore})`, `${userClub.name} delivered a confident display to secure victory.`, false);
+          addNewsStory('Match Reaction', `Victory: ${userClub.name} Triumph Over ${oppClub.name} (${myScore}-${oppScore})`, `${userClub.name} delivered a confident performance to earn victory.`, false);
         } else if (myScore < oppScore) {
           addNewsStory('Defeat Reaction', `Setback: ${userClub.name} Fall to ${oppClub.name} (${myScore}-${oppScore})`, `Supporters questioned tactics following defeat to ${oppClub.name}.`, false);
         } else {
@@ -2781,7 +2851,6 @@
           }
           recordUserMatchResult(userMatch.home === userClub.id, hScore, aScore);
 
-          // Update header button to Continue
           const advBtn = document.getElementById('btnAdvanceMaster');
           const advTxt = document.getElementById('btnAdvanceText');
           advBtn.className = 'btn-advance-master btn-continue-mode';
@@ -3270,7 +3339,6 @@
       });
     }
 
-    /* TRANSFER MARKET WITH REAL BADGES & ADVANCED FILTERS */
     function initMarketFilterDropdowns() {
       const nationSel = document.getElementById('filterMarketNation');
       if (!nationSel) return;
@@ -3570,6 +3638,7 @@
       }
     }
 
+    /* WEB AUDIO */
     let audioCtx = null;
     function playSound(type) {
       if (!state || !state.audioEnabled) return;
