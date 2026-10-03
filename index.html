@@ -35,7 +35,7 @@
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; user-select: none; }
     body { background-color: var(--bg-dark); color: var(--text-main); min-height: 100vh; display: flex; flex-direction: column; overflow-x: hidden; }
 
-    /* HEADER */
+    /* CONSOLIDATED TOP HEADER */
     header {
       background: linear-gradient(180deg, #151d2d 0%, #0d131f 100%);
       border-bottom: 2px solid var(--border);
@@ -47,7 +47,7 @@
       top: 0;
       z-index: 100;
       box-shadow: 0 4px 20px rgba(0,0,0,0.5);
-      gap: 12px;
+      gap: 10px;
       flex-wrap: wrap;
     }
     .brand-group { display: flex; align-items: center; gap: 8px; }
@@ -63,31 +63,46 @@
     .brand-titles h1 { font-size: 0.95rem; font-weight: 800; color: #fff; }
     .brand-titles p { font-size: 0.68rem; color: var(--text-muted); font-weight: 600; }
 
+    /* HEADER CLUB CHIP */
     .header-club-chip {
       display: flex;
       align-items: center;
       gap: 10px;
       background: var(--bg-panel);
       border: 1px solid var(--border);
-      padding: 5px 12px;
+      padding: 4px 12px;
       border-radius: 8px;
     }
-    .header-badge-box {
+    .badge-icon-wrap {
       width: 34px;
       height: 34px;
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .badge-icon-img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+    .badge-fallback {
+      width: 100%;
+      height: 100%;
       border-radius: 6px;
       background: #334155;
       color: #fff;
       font-weight: 900;
-      font-size: 0.8rem;
+      font-size: 0.72rem;
       display: flex;
       align-items: center;
       justify-content: center;
-      letter-spacing: 0.5px;
     }
     .header-club-text h2 { font-size: 0.92rem; font-weight: 800; color: #fff; line-height: 1.1; }
     .header-club-text p { font-size: 0.65rem; color: var(--text-muted); }
 
+    /* HEADER RATINGS 4-PACK */
     .header-ratings-cluster {
       display: flex;
       gap: 6px;
@@ -100,6 +115,7 @@
     .hdr-stat .val { font-size: 0.95rem; font-weight: 900; color: #fff; line-height: 1; }
     .hdr-stat .lbl { font-size: 0.56rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase; margin-top: 2px; }
 
+    /* HEADER METRICS */
     .header-metrics { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
     .metric-pill {
       background: var(--bg-panel);
@@ -130,6 +146,11 @@
       transition: all 0.2s;
     }
     .btn-advance-master:active { transform: scale(0.97); }
+    .btn-continue-mode {
+      background: linear-gradient(135deg, #10b981 0%, #059669 100%) !important;
+      color: #fff !important;
+      box-shadow: 0 0 18px rgba(16, 185, 129, 0.5) !important;
+    }
     .btn-deadline-mode {
       background: linear-gradient(135deg, #ef4444 0%, #b91c1c 100%) !important;
       color: #fff !important;
@@ -139,7 +160,7 @@
     .btn-icon { background: var(--bg-panel); border: 1px solid var(--border); color: #fff; padding: 6px 10px; border-radius: 6px; cursor: pointer; }
 
     /* LAYOUT */
-    .app-container { display: flex; flex: 1; min-height: calc(100vh - 75px); }
+    .app-container { display: flex; flex: 1; min-height: calc(100vh - 65px); }
 
     nav.sidebar {
       width: 220px;
@@ -171,7 +192,7 @@
     }
     .nav-item span.icon { font-size: 1.05rem; }
 
-    main.viewport { flex: 1; padding: 16px; overflow-y: auto; background: var(--bg-dark); }
+    main.viewport { flex: 1; padding: 14px; overflow-y: auto; background: var(--bg-dark); }
 
     /* TACTICS */
     .tactics-container { display: grid; grid-template-columns: 460px 1fr; gap: 16px; }
@@ -433,6 +454,7 @@
       align-items: center;
       text-align: center;
     }
+    .sb-team { display: flex; flex-direction: column; align-items: center; gap: 4px; }
     .sb-team h2 { font-size: 1.15rem; font-weight: 900; }
     .sb-team p { font-size: 0.72rem; color: var(--text-muted); }
     .sb-score { font-size: 2.3rem; font-weight: 900; color: #fff; letter-spacing: 3px; }
@@ -493,16 +515,19 @@
     .grounds-grid-container { display: flex; flex-direction: column; gap: 7px; }
     .grounds-match-row {
       display: grid;
-      grid-template-columns: 1fr 36px 1fr;
+      grid-template-columns: 1fr 40px 1fr;
       align-items: center;
       background: var(--bg-panel);
-      padding: 7px 10px;
+      padding: 6px 10px;
       border-radius: 6px;
       font-size: 0.78rem;
       border: 1px solid rgba(255, 255, 255, 0.03);
     }
     .grounds-match-row .team-home {
-      text-align: right;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 6px;
       font-weight: 700;
       white-space: nowrap;
       overflow: hidden;
@@ -519,7 +544,10 @@
       font-size: 0.72rem;
     }
     .grounds-match-row .team-away {
-      text-align: left;
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      gap: 6px;
       font-weight: 700;
       white-space: nowrap;
       overflow: hidden;
@@ -600,6 +628,9 @@
       border-radius: 8px;
       cursor: pointer;
       transition: all 0.15s;
+      display: flex;
+      align-items: center;
+      gap: 12px;
     }
     .club-select-card:hover { border-color: var(--text-muted); }
     .club-select-card.selected { border-color: var(--accent); background: rgba(0, 210, 255, 0.12); }
@@ -706,16 +737,16 @@
       <button class="btn-icon" onclick="promptNewCareer()" title="Start New Career">🆕</button>
     </div>
 
-    <!-- ACTIVE CLUB CHIP IN HEADER -->
+    <!-- ACTIVE CLUB CHIP WITH REAL BADGE -->
     <div class="header-club-chip">
-      <div class="header-badge-box" id="headerBadge">NEW</div>
+      <div class="badge-icon-wrap" id="headerBadgeWrap"></div>
       <div class="header-club-text">
         <h2 id="headerClubName">Newcastle United</h2>
         <p id="headerStadium">St James' Park • Capacity: 52,305</p>
       </div>
     </div>
 
-    <!-- TEAM RATINGS 4-PACK IN HEADER -->
+    <!-- TEAM RATINGS 4-PACK -->
     <div class="header-ratings-cluster">
       <div class="hdr-stat"><span class="val" id="statAttack">75</span><span class="lbl">ATTACK</span></div>
       <div class="hdr-stat"><span class="val" id="statMidfield">75</span><span class="lbl">MIDFIELD</span></div>
@@ -723,7 +754,7 @@
       <div class="hdr-stat"><span class="val" id="statOvr">75</span><span class="lbl">RATING</span></div>
     </div>
 
-    <!-- METRIC PILLS WITH FANS APPROVAL -->
+    <!-- METRIC PILLS & ADVANCE BUTTON -->
     <div class="header-metrics">
       <div class="metric-pill">
         <span class="label">Division</span>
@@ -746,7 +777,7 @@
         <span class="val" id="headerBudget">£50.0M</span>
       </div>
       
-      <button class="btn-advance-master" id="btnAdvanceMaster" onclick="advanceMasterWeek()">
+      <button class="btn-advance-master" id="btnAdvanceMaster" onclick="handleMasterAdvanceClick()">
         <span>⏩</span> <span id="btnAdvanceText">ADVANCE WEEK</span>
       </button>
     </div>
@@ -878,12 +909,13 @@
         </div>
       </div>
 
-      <!-- MATCHDAY TAB WITH 2D CANVAS ENGINE -->
+      <!-- MATCHDAY TAB -->
       <div id="tab-matchday" class="tab-pane" style="display: none;">
         <div class="matchday-grid">
           <div class="broadcast-card">
             <div class="scoreboard-box">
               <div class="sb-team">
+                <div class="badge-icon-wrap" id="sbHomeBadgeWrap" style="width: 42px; height: 42px;"></div>
                 <h2 id="sbHomeName">Newcastle United</h2>
                 <p id="sbHomeRole">HOME</p>
               </div>
@@ -892,6 +924,7 @@
                 <span class="sb-minute" id="sbMinute">PRE-MATCH</span>
               </div>
               <div class="sb-team">
+                <div class="badge-icon-wrap" id="sbAwayBadgeWrap" style="width: 42px; height: 42px;"></div>
                 <h2 id="sbAwayName">Brentford</h2>
                 <p id="sbAwayRole">AWAY</p>
               </div>
@@ -915,10 +948,11 @@
 
             <h4 style="font-size: 0.85rem; text-transform: uppercase; color: var(--text-muted);">Match Commentary</h4>
             <div class="commentary-box" id="commentaryFeed">
-              <div class="comm-line">Teams have emerged onto the pitch. Click "Start Match" to kick off!</div>
+              <div class="comm-line">Teams have emerged onto the pitch. Click "Start Match" or "Advance Week" to simulate!</div>
             </div>
           </div>
 
+          <!-- AROUND THE GROUNDS PINNED GRID WITH REAL BADGES -->
           <div class="standings-card">
             <h3 style="font-size: 0.92rem; font-weight: 800; margin-bottom: 12px; letter-spacing: 0.5px;">Around The Grounds</h3>
             <div id="aroundGroundsList" class="grounds-grid-container"></div>
@@ -966,7 +1000,7 @@
         </div>
       </div>
 
-      <!-- ADVANCED FILTERABLE & SORTABLE TRANSFER MARKET TAB -->
+      <!-- TRANSFER MARKET TAB -->
       <div id="tab-transfers" class="tab-pane" style="display: none;">
         <div class="standings-card">
           <div class="section-title-strip" style="margin-bottom: 12px;">
@@ -974,7 +1008,6 @@
             <span class="count" id="marketBudgetDisplay">Available: £50.0M</span>
           </div>
           
-          <!-- DYNAMIC FILTER BAR -->
           <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 14px; align-items: center; background: var(--bg-panel); padding: 10px; border-radius: 8px; border: 1px solid var(--border);">
             <input type="text" id="marketSearchInput" placeholder="🔍 Search player name..." class="tactics-select" style="min-width: 170px;" oninput="renderTransfers()">
 
@@ -1006,7 +1039,6 @@
             <button class="btn-swap-pill" onclick="resetMarketFilters()" style="padding: 7px 12px; background: #334155;">Reset</button>
           </div>
 
-          <!-- SORTABLE PLAYERS TABLE -->
           <table class="fm-table" id="marketTable">
             <thead>
               <tr>
@@ -1096,6 +1128,18 @@
         </div>
       </div>
     </main>
+  </div>
+
+  <!-- MATCH RESULT NOTIFICATION MODAL -->
+  <div id="resultSummaryModal" class="modal-backdrop" style="display: none; z-index: 1550;">
+    <div class="modal-window" style="width: 520px; text-align: center;">
+      <h3 style="color: var(--accent); font-size: 0.85rem; text-transform: uppercase; margin-bottom: 10px;">Full Time Result</h3>
+      <div id="modalScoreDisplay" style="font-size: 1.8rem; font-weight: 900; margin-bottom: 12px;"></div>
+      <div id="modalHighlightsFeed" style="font-size: 0.8rem; line-height: 1.5; color: var(--text-muted); background: var(--bg-panel); padding: 12px; border-radius: 8px; margin-bottom: 16px; max-height: 150px; overflow-y: auto;"></div>
+      <button class="btn-advance-master" style="width: 100%; justify-content: center; background: #10b981; color: #fff;" onclick="dismissResultModal()">
+        CONTINUE TO NEXT WEEK ⏩
+      </button>
+    </div>
   </div>
 
   <!-- DEADLINE DAY TICKER MODAL -->
@@ -1223,7 +1267,43 @@
   </footer>
 
   <script>
-    const STORAGE_KEY = 'FLM_CAREER_V2026_FINAL_SORTABLE';
+    const STORAGE_KEY = 'FLM_CAREER_V2026_REALBADGES_FIXED';
+
+    /* FOTMOB ACCREDITED BADGE IDS FOR ALL 92 CLUBS */
+    const CLUB_BADGE_IDS = {
+      'ARS': 9825, 'AVL': 10252, 'BOU': 8678, 'BRE': 9937, 'BHA': 10204, 'CHE': 8455,
+      'COV': 8669, 'CRY': 9826, 'EVE': 8668, 'FUL': 9879, 'HUL': 8667, 'IPS': 9423,
+      'LEE': 8463, 'LIV': 8650, 'MCI': 8456, 'MUN': 10260, 'NEW': 10261, 'NFO': 10203,
+      'SUN': 8472, 'TOT': 8586, 'WHU': 8654, 'WOL': 8602, 'BUR': 8191, 'SOU': 8466,
+      'LEI': 8197, 'SHU': 8657, 'MID': 8659, 'NOR': 9850, 'WBA': 8655, 'WAT': 9817,
+      'BLA': 8658, 'BRC': 8427, 'DER': 8653, 'MIL': 10004, 'POR': 8462, 'PNE': 8411,
+      'QPR': 10170, 'STO': 10194, 'SWA': 10003, 'BIR': 8651, 'WRX': 9843, 'CHA': 8652,
+      'OXF': 8670, 'SHW': 10172, 'LUT': 8344, 'PLY': 8412, 'CAR': 8342, 'BOL': 8559,
+      'HUD': 9796, 'PET': 8672, 'BAR': 8283, 'REA': 9798, 'ROT': 8284, 'WIG': 8528,
+      'BKP': 8484, 'STK': 8660, 'LIN': 8430, 'WYC': 8674, 'LEY': 8343, 'BRR': 8428,
+      'MAN': 8431, 'STE': 8433, 'EXE': 9844, 'NOR1': 8432, 'BUR1': 8347, 'CAM': 9845,
+      'SHR': 8434, 'CRA': 8435, 'BRA': 8429, 'CHF': 8436, 'MKD': 8437, 'NOT': 9851,
+      'DON': 8438, 'POV': 8439, 'GIL': 8440, 'WAL': 8441, 'SAL': 8442, 'SWI': 8443,
+      'WIM': 8444, 'CAR1': 8445, 'COL': 8446, 'CRE': 8447, 'FLE': 8448, 'TRA': 8449,
+      'GRI': 8450, 'CHE1': 8451, 'ACC': 8452, 'BAR1': 8453, 'NEW1': 8454, 'HAR': 8457,
+      'MOR': 8458, 'BRO': 8459
+    };
+
+    function getBadgeUrl(clubId) {
+      const id = CLUB_BADGE_IDS[clubId] || 9825;
+      return `https://images.fotmob.com/image_resources/logo/teamlogo/${id}.png`;
+    }
+
+    function createBadgeHtml(clubId, size = 32) {
+      const club = CLUBS_DATABASE.find(c => c.id === clubId) || { id: clubId, col: '#334155' };
+      const url = getBadgeUrl(clubId);
+      return `
+        <div class="badge-icon-wrap" style="width: ${size}px; height: ${size}px;">
+          <img src="${url}" alt="${clubId}" class="badge-icon-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
+          <div class="badge-fallback" style="background:${club.col || '#334155'}; display:none;">${clubId.substring(0,3)}</div>
+        </div>
+      `;
+    }
 
     const FORMATIONS = {
       '4-3-3': [
@@ -1293,7 +1373,7 @@
       ]
     };
 
-    /* OFFICIAL 2026/27 SEASON LEAGUE CLUBS */
+    /* OFFICIAL 2026/27 SEASON LEAGUE CATALOGUE */
     const CLUBS_DATABASE = [
       // PREMIER LEAGUE (20 Clubs)
       { id: 'ARS', name: 'Arsenal', div: 0, budget: 65, stadium: 'Emirates Stadium', cap: 60704, col: '#ef4444' },
@@ -1396,7 +1476,7 @@
       { id: 'BRO', name: 'Bromley', div: 3, budget: 1.0, stadium: 'Hayes Lane', cap: 5110, col: '#ffffff' }
     ];
 
-    /* REAL SQUADS: NEWCASTLE & SOUTHAMPTON */
+    /* AUTHENTIC 2026 NEWCASTLE & SOUTHAMPTON SQUADS */
     const NEW_REAL_ROSTER = [
       { id: 'new_1', name: 'Nick Pope', naturalPos: 'GK', nat: 'ENG', age: 34, ovr: 83, con: 98, role: 'SK-De', starter: true, val: 18.0, inj: 0 },
       { id: 'new_2', name: 'Tino Livramento', naturalPos: 'DEF', nat: 'ENG', age: 23, ovr: 81, con: 96, role: 'WB-At', starter: true, val: 32.0, inj: 0 },
@@ -1406,7 +1486,7 @@
       { id: 'new_6', name: 'Sandro Tonali', naturalPos: 'MID', nat: 'ITA', age: 26, ovr: 84, con: 98, role: 'DLP-De', starter: true, val: 48.0, inj: 0 },
       { id: 'new_7', name: 'Bruno Guimarães', naturalPos: 'MID', nat: 'BRA', age: 28, ovr: 86, con: 97, role: 'MEZ-At', starter: true, val: 65.0, inj: 0 },
       { id: 'new_8', name: 'Joelinton', naturalPos: 'MID', nat: 'BRA', age: 30, ovr: 82, con: 95, role: 'BBM-Su', starter: true, val: 28.0, inj: 0 },
-      { id: 'new_9', name: 'Anthony Elanga', naturalPos: 'FWD', nat: 'SWE', age: 24, ovr: 80, con: 97, role: 'IF-At', starter: true, val: 30.0, inj: 0 },
+      { id: 'new_9', name: 'Anthony Gordon', naturalPos: 'FWD', nat: 'ENG', age: 25, ovr: 83, con: 97, role: 'IF-At', starter: true, val: 48.0, inj: 0 },
       { id: 'new_10', name: 'Harvey Barnes', naturalPos: 'FWD', nat: 'ENG', age: 28, ovr: 81, con: 96, role: 'IW-At', starter: true, val: 32.0, inj: 0 },
       { id: 'new_11', name: 'Alexander Isak', naturalPos: 'FWD', nat: 'SWE', age: 27, ovr: 87, con: 98, role: 'AF-At', starter: true, val: 75.0, inj: 0 },
       { id: 'new_12', name: 'Aaron Ramsdale', naturalPos: 'GK', nat: 'ENG', age: 28, ovr: 81, con: 100, role: 'GK-De', starter: false, val: 22.0, inj: 0 },
@@ -1516,7 +1596,6 @@
     let deadlineHour = 12;
     let pendingAIBid = null;
 
-    // TRANSFER MARKET SORT STATE
     let marketSortKey = 'ovr';
     let marketSortAsc = false;
 
@@ -1590,9 +1669,12 @@
         };
 
         card.innerHTML = `
-          <div style="font-weight:800; font-size:0.85rem;">${c.name}</div>
-          <div style="font-size:0.7rem; color:var(--text-muted);">${c.stadium}</div>
-          <div style="font-size:0.72rem; color:var(--accent);">Budget: £${c.budget}M</div>
+          ${createBadgeHtml(c.id, 32)}
+          <div>
+            <div style="font-weight:800; font-size:0.85rem;">${c.name}</div>
+            <div style="font-size:0.7rem; color:var(--text-muted);">${c.stadium}</div>
+            <div style="font-size:0.72rem; color:var(--accent);">Budget: £${c.budget}M</div>
+          </div>
         `;
         grid.appendChild(card);
       });
@@ -1631,7 +1713,7 @@
         standings: {},
         newsFeed: [],
         cups: { faCupRound: 3, faCupAlive: true, carabaoRound: 1, carabaoAlive: true },
-        deadlineDaysCompleted: {}, // KEY FIX: Tracks when deadline days have ended so week advance never hangs!
+        deadlineDaysCompleted: {},
         manager: {
           name: managerName,
           confidence: 85,
@@ -2035,7 +2117,7 @@
       });
     }
 
-    /* DEADLINE DAY LOGIC WITH PERMANENT SKIP/COMPLETION FIX */
+    /* DEADLINE DAY LOGIC */
     function checkDeadlineDayTrigger() {
       const isDeadlineWeek = (state.currentWeek === 4 || state.currentWeek === 22);
       if (isDeadlineWeek && !state.deadlineDaysCompleted?.[state.currentWeek]) {
@@ -2125,10 +2207,9 @@
       updateDeadlineModalUI();
     }
 
-    /* FIX: Closes deadline day AND marks it complete so advance week moves forward! */
     function closeDeadlineDay() {
       if (!state.deadlineDaysCompleted) state.deadlineDaysCompleted = {};
-      state.deadlineDaysCompleted[state.currentWeek] = true; // Permanently unlocks current week!
+      state.deadlineDaysCompleted[state.currentWeek] = true;
       pendingAIBid = null;
       document.getElementById('deadlineModal').style.display = 'none';
 
@@ -2249,10 +2330,11 @@
       }, 1400);
     }
 
-    function advanceMasterWeek() {
+    /* =====================================================================
+       2-STEP ADVANCE WEEK WITH GUARANTEED FULL-TIME RESULT DISPLAY
+       ===================================================================== */
+    function handleMasterAdvanceClick() {
       if (!state) return;
-
-      // Checks if deadline day needs to trigger
       if (checkDeadlineDayTrigger()) return;
 
       if (state.currentWeek >= state.totalWeeks) {
@@ -2260,19 +2342,71 @@
         return;
       }
 
-      clearInterval(matchSimInterval);
-      cancelAnimationFrame(animFrameId);
+      const weekData = state.fixtures.find(f => f.week === state.currentWeek);
+      const userMatch = weekData ? weekData.matches.find(m => m.home === state.userClubId || m.away === state.userClubId) : null;
 
-      simulateCurrentWeekFixtures();
-      applySquadFatigueAndRecovery();
-      generateWeeklyNewsStory();
+      // STEP 1: If current week's match has NOT been played yet -> SIMULATE & SHOW RESULT!
+      if (userMatch && !userMatch.played) {
+        clearInterval(matchSimInterval);
+        cancelAnimationFrame(animFrameId);
+
+        simulateCurrentWeekFixtures();
+        applySquadFatigueAndRecovery();
+        generateWeeklyNewsStory();
+
+        // Update UI to FULL TIME state right in front of user
+        renderMatchdayView();
+        renderStandingsTable(getCurrentUserClub().div);
+
+        // Pop up result summary
+        showResultModal(userMatch);
+
+        // Update header button to "CONTINUE"
+        const advBtn = document.getElementById('btnAdvanceMaster');
+        const advTxt = document.getElementById('btnAdvanceText');
+        advBtn.className = 'btn-advance-master btn-continue-mode';
+        advTxt.innerText = `CONTINUE TO WK ${state.currentWeek + 1}`;
+
+        saveGame();
+        playSound('whistle');
+        return;
+      }
+
+      // STEP 2: Match is played, user clicks to advance to the next week!
       state.currentWeek++;
-
       if (state.currentWeek % 4 === 0) evaluateManagerOfMonth();
 
       saveGame();
       renderAll();
-      playSound('whistle');
+      playSound('click');
+    }
+
+    function showResultModal(m) {
+      const h = state.clubs.find(c => c.id === m.home);
+      const a = state.clubs.find(c => c.id === m.away);
+      const modal = document.getElementById('resultSummaryModal');
+      const scoreDisp = document.getElementById('modalScoreDisplay');
+      const feedDisp = document.getElementById('modalHighlightsFeed');
+
+      scoreDisp.innerHTML = `
+        <div style="display:flex; justify-content:center; align-items:center; gap:16px;">
+          <div style="display:flex; align-items:center; gap:8px;">${createBadgeHtml(h.id, 28)} <span>${h.name}</span></div>
+          <span style="color:var(--gold);">${m.homeGoals} - ${m.awayGoals}</span>
+          <div style="display:flex; align-items:center; gap:8px;"><span>${a.name}</span> ${createBadgeHtml(a.id, 28)}</div>
+        </div>
+      `;
+
+      feedDisp.innerHTML = `
+        <p><b>Result Impact:</b> ${m.homeGoals > m.awayGoals ? (m.home === state.userClubId ? 'Great win! Fans are delighted.' : 'Defeat. Need to bounce back next match.') : (m.homeGoals === m.awayGoals ? 'Hard fought draw.' : (m.away === state.userClubId ? 'Brilliant away win!' : 'Tough loss on home turf.'))}</p>
+        <p style="margin-top:6px; color:#cbd5e1;">All matches in your division have now concluded. Click continue to plan for next week.</p>
+      `;
+
+      modal.style.display = 'flex';
+    }
+
+    function dismissResultModal() {
+      document.getElementById('resultSummaryModal').style.display = 'none';
+      handleMasterAdvanceClick(); // Proceeds directly to next week
     }
 
     function simulateCurrentWeekFixtures() {
@@ -2326,7 +2460,7 @@
         const oppScore = isHome ? userMatch.awayGoals : userMatch.homeGoals;
 
         if (myScore > oppScore) {
-          addNewsStory('Match Reaction', `Victory: ${userClub.name} Triumph Over ${oppClub.name} (${myScore}-${oppScore})`, `${userClub.name} delivered a confident performance to earn victory.`, false);
+          addNewsStory('Match Reaction', `Victory: ${userClub.name} Triumph Over ${oppClub.name} (${myScore}-${oppScore})`, `${userClub.name} delivered a confident display to secure victory.`, false);
         } else if (myScore < oppScore) {
           addNewsStory('Defeat Reaction', `Setback: ${userClub.name} Fall to ${oppClub.name} (${myScore}-${oppScore})`, `Supporters questioned tactics following defeat to ${oppClub.name}.`, false);
         } else {
@@ -2388,7 +2522,7 @@
       }
     }
 
-    /* 2D CANVAS MATCH ENGINE */
+    /* 2D CANVAS ENGINE */
     function initPitchCanvas() {
       const canvas = document.getElementById('matchPitchCanvas');
       if (!canvas) return;
@@ -2647,6 +2781,12 @@
           }
           recordUserMatchResult(userMatch.home === userClub.id, hScore, aScore);
 
+          // Update header button to Continue
+          const advBtn = document.getElementById('btnAdvanceMaster');
+          const advTxt = document.getElementById('btnAdvanceText');
+          advBtn.className = 'btn-advance-master btn-continue-mode';
+          advTxt.innerText = `CONTINUE TO WK ${state.currentWeek + 1}`;
+
           saveGame();
           renderStandingsTable(userClub.div);
           playSound('whistle');
@@ -2701,7 +2841,10 @@
 
         tr.innerHTML = `
           <td><b>${pos}</b></td>
-          <td><b>${r.name}</b> ${isUser ? '⭐' : ''}</td>
+          <td style="display:flex; align-items:center; gap:8px;">
+            ${createBadgeHtml(r.id, 20)}
+            <b>${r.name}</b> ${isUser ? '⭐' : ''}
+          </td>
           <td>${r.played}</td>
           <td>${r.won}</td>
           <td>${r.drawn}</td>
@@ -2836,7 +2979,7 @@
       const clubs = state.clubs.filter(c => c.div === divIndex);
       clubs.forEach(c => {
         const card = document.createElement('div');
-        card.style.cssText = 'background:var(--bg-panel); padding:8px 10px; border-radius:8px; cursor:pointer; border:1px solid var(--border);';
+        card.style.cssText = 'background:var(--bg-panel); padding:8px 10px; border-radius:8px; cursor:pointer; border:1px solid var(--border); display:flex; align-items:center; gap:10px;';
         card.onclick = () => {
           state.userClubId = c.id;
           closeClubSelectorModal();
@@ -2847,9 +2990,12 @@
         };
 
         card.innerHTML = `
-          <div style="font-weight:800; font-size:0.85rem;">${c.name}</div>
-          <div style="font-size:0.72rem; color:var(--text-muted);">${c.stadium}</div>
-          <div style="font-size:0.72rem; color:var(--accent);">Budget: £${c.budget}M</div>
+          ${createBadgeHtml(c.id, 30)}
+          <div>
+            <div style="font-weight:800; font-size:0.85rem;">${c.name}</div>
+            <div style="font-size:0.72rem; color:var(--text-muted);">${c.stadium}</div>
+            <div style="font-size:0.72rem; color:var(--accent);">Budget: £${c.budget}M</div>
+          </div>
         `;
         grid.appendChild(card);
       });
@@ -2879,8 +3025,7 @@
       const club = getCurrentUserClub();
       const stats = computeClubAttributes(club);
 
-      document.getElementById('headerBadge').innerText = club.id;
-      document.getElementById('headerBadge').style.background = club.col || '#334155';
+      document.getElementById('headerBadgeWrap').innerHTML = createBadgeHtml(club.id, 34);
       document.getElementById('headerClubName').innerText = club.name;
       document.getElementById('headerStadium').innerText = `${club.stadium} • Capacity: ${(club.cap + (state.stadiumCapacityBonus || 0)).toLocaleString()}`;
 
@@ -2901,14 +3046,20 @@
       document.getElementById('headerFansApproval').innerText = `${state.manager.fansApproval || 82}%`;
       document.getElementById('headerBudget').innerText = `£${club.budget.toFixed(1)}M`;
 
+      const weekData = state.fixtures.find(f => f.week === state.currentWeek);
+      const userMatch = weekData ? weekData.matches.find(m => m.home === state.userClubId || m.away === state.userClubId) : null;
       const isDeadlineWeek = (state.currentWeek === 4 || state.currentWeek === 22);
       const isDeadlineActive = isDeadlineWeek && !state.deadlineDaysCompleted?.[state.currentWeek];
+      
       const advBtn = document.getElementById('btnAdvanceMaster');
       const advTxt = document.getElementById('btnAdvanceText');
 
       if (isDeadlineActive) {
         advBtn.className = 'btn-advance-master btn-deadline-mode';
         advTxt.innerText = 'DEADLINE DAY';
+      } else if (userMatch && userMatch.played) {
+        advBtn.className = 'btn-advance-master btn-continue-mode';
+        advTxt.innerText = `CONTINUE TO WK ${state.currentWeek + 1}`;
       } else {
         advBtn.className = 'btn-advance-master';
         advTxt.innerText = 'ADVANCE WEEK';
@@ -2928,6 +3079,8 @@
       if (userMatch) {
         const hClub = state.clubs.find(c => c.id === userMatch.home);
         const aClub = state.clubs.find(c => c.id === userMatch.away);
+        document.getElementById('sbHomeBadgeWrap').innerHTML = createBadgeHtml(hClub.id, 40);
+        document.getElementById('sbAwayBadgeWrap').innerHTML = createBadgeHtml(aClub.id, 40);
         document.getElementById('sbHomeName').innerText = hClub.name;
         document.getElementById('sbAwayName').innerText = aClub.name;
         document.getElementById('sbScore').innerText = userMatch.played ? `${userMatch.homeGoals} - ${userMatch.awayGoals}` : '0 - 0';
@@ -2939,7 +3092,7 @@
         if (!userMatch.played) {
           const feed = document.getElementById('commentaryFeed');
           const compTag = userMatch.type === 'CUP' ? `[${userMatch.cupName}]` : `[League]`;
-          if (feed) feed.innerHTML = `<div class="comm-line">Week ${state.currentWeek} ${compTag}: ${hClub.name} vs ${aClub.name}. Click "Start Match" to begin!</div>`;
+          if (feed) feed.innerHTML = `<div class="comm-line">Week ${state.currentWeek} ${compTag}: ${hClub.name} vs ${aClub.name}. Click "Start Match" or "Advance Week" to simulate!</div>`;
         }
 
         setup2DPlayers(hClub, aClub);
@@ -2956,9 +3109,15 @@
             const row = document.createElement('div');
             row.className = 'grounds-match-row';
             row.innerHTML = `
-              <div class="team-home">${h.name}</div>
+              <div class="team-home">
+                <span>${h.name}</span>
+                ${createBadgeHtml(h.id, 18)}
+              </div>
               <div class="match-vs-box">${m.played ? `${m.homeGoals}-${m.awayGoals}` : 'v'}</div>
-              <div class="team-away">${a.name}</div>
+              <div class="team-away">
+                ${createBadgeHtml(a.id, 18)}
+                <span>${a.name}</span>
+              </div>
             `;
             groundsList.appendChild(row);
           });
@@ -2976,7 +3135,9 @@
         const a = state.clubs.find(c => c.id === cupMatch.away);
         display.innerHTML = `
           <div style="font-weight:800; font-size:1rem; color:var(--accent); margin-bottom:6px;">${cupMatch.cupName} Tie</div>
-          <div style="font-size:0.95rem;"><b>${h.name}</b> vs <b>${a.name}</b></div>
+          <div style="display:flex; align-items:center; gap:8px; font-size:0.95rem;">
+            ${createBadgeHtml(h.id, 24)} <b>${h.name}</b> vs <b>${a.name}</b> ${createBadgeHtml(a.id, 24)}
+          </div>
           <div style="font-size:0.75rem; color:var(--text-muted); margin-top:6px;">Knockout match. Penalties after 90 minutes if level. Gate receipts split 50/50.</div>
         `;
       } else {
@@ -3109,9 +3270,7 @@
       });
     }
 
-    /* =====================================================================
-       ENHANCED FILTERABLE & SORTABLE TRANSFER MARKET ENGINE
-       ===================================================================== */
+    /* TRANSFER MARKET WITH REAL BADGES & ADVANCED FILTERS */
     function initMarketFilterDropdowns() {
       const nationSel = document.getElementById('filterMarketNation');
       if (!nationSel) return;
@@ -3155,7 +3314,7 @@
         marketSortAsc = !marketSortAsc;
       } else {
         marketSortKey = key;
-        marketSortAsc = (key === 'name' || key === 'clubName'); // strings default asc, numbers default desc
+        marketSortAsc = (key === 'name' || key === 'clubName');
       }
       renderTransfers();
     }
@@ -3177,7 +3336,6 @@
       const userClub = getCurrentUserClub();
       const list = [];
 
-      // 1. Add Scouted & Foreign pool targets
       state.marketPlayers.forEach(p => {
         list.push({
           id: p.id,
@@ -3190,12 +3348,10 @@
           clubName: p.club || 'Free / Foreign',
           clubId: 'SCOUT',
           div: -1,
-          isScoutPool: true,
-          originalObj: p
+          isScoutPool: true
         });
       });
 
-      // 2. Add players from all other 91 clubs in the game!
       state.clubs.forEach(c => {
         if (c.id === userClub.id) return;
         c.players.forEach(p => {
@@ -3210,9 +3366,7 @@
             clubName: c.name,
             clubId: c.id,
             div: c.div,
-            isScoutPool: false,
-            sellingClub: c,
-            originalObj: p
+            isScoutPool: false
           });
         });
       });
@@ -3233,7 +3387,6 @@
 
       let pool = getAllMarketAvailablePlayers();
 
-      // Apply Filters
       if (searchQ) pool = pool.filter(p => p.name.toLowerCase().includes(searchQ));
       if (fLeague !== 'ALL') {
         if (fLeague === 'SCOUT') pool = pool.filter(p => p.isScoutPool);
@@ -3243,7 +3396,6 @@
       if (fPos !== 'ALL') pool = pool.filter(p => p.naturalPos === fPos);
       if (fNat !== 'ALL') pool = pool.filter(p => p.nat === fNat);
 
-      // Apply Sort
       pool.sort((a, b) => {
         let valA = a[marketSortKey];
         let valB = b[marketSortKey];
@@ -3253,7 +3405,6 @@
         return marketSortAsc ? (valA - valB) : (valB - valA);
       });
 
-      // Render Display
       const tbody = document.getElementById('transferMarketBody');
       tbody.innerHTML = '';
 
@@ -3276,7 +3427,10 @@
           <td>${p.age}</td>
           <td><b style="color:var(--gold);">${p.ovr}</b></td>
           <td><b>£${p.price.toFixed(1)}M</b></td>
-          <td>${p.clubName}</td>
+          <td style="display:flex; align-items:center; gap:6px;">
+            ${p.clubId !== 'SCOUT' ? createBadgeHtml(p.clubId, 18) : ''}
+            <span>${p.clubName}</span>
+          </td>
           <td>
             <button class="btn-swap-pill" style="${canAfford ? 'background:#059669; color:#fff;' : 'opacity:0.4;'}" onclick="executeBuyPlayer('${p.id}', ${p.isScoutPool}, '${p.clubId}')">
               ${canAfford ? 'Sign' : 'No Funds'}
@@ -3286,7 +3440,6 @@
         tbody.appendChild(tr);
       });
 
-      // Render Squad For Sale
       const sellBody = document.getElementById('squadSellListBody');
       sellBody.innerHTML = '';
 
@@ -3348,7 +3501,6 @@
           playSound('cheer');
         }
       } else {
-        // Buying from rival English club
         const sellerClub = state.clubs.find(c => c.id === sellerClubId);
         if (!sellerClub) return;
         const pIdx = sellerClub.players.findIndex(x => x.id === playerId);
@@ -3418,7 +3570,6 @@
       }
     }
 
-    /* WEB AUDIO EFFECTS */
     let audioCtx = null;
     function playSound(type) {
       if (!state || !state.audioEnabled) return;
