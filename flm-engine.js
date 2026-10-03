@@ -1,4 +1,11 @@
-/* Football League Manager - game engine. Load BEFORE the inline <script> in your HTML. */
+/* Football League Manager - game engine. Load this file before the audio script block. */
+(function () {
+  const s = document.createElement('style');
+  s.textContent = '.matchday-grid>*,.broadcast-card>*,.canvas-container{min-width:0;max-width:100%}' +
+    '#matchPitchCanvas{height:auto!important;aspect-ratio:800/480}' +
+    '.sub-chips-row{max-width:100%;overflow-x:auto}.commentary-box{min-height:160px}';
+  document.head.appendChild(s);
+})();
 const STORAGE_KEY = 'FLM_CAREER_2026_V2';
 let state = null, selectedPlayerSwapId = null, wizardChosenClubId = 'NEW', activeContractTarget = null,
   deadlineHour = 12, pendingAIBid = null, shootoutState = null, simSpeedMultiplier = 1,
@@ -64,7 +71,7 @@ function createBadgeHtml(id, size = 30) {
 }
 function computeClubAttributes(club) {
   const st = club.players.filter(p => p.starter);
-  const avg = (arr, fb) => arr.length ? Math.round(arr.reduce((s, x) => s + x.ovr * (x.inj > 0 ? 0.6 : x.con / 100), 0) / arr.length) : fb;
+  const avg = (arr, fb) => arr.length ? Math.round(arr.reduce((s, x) => s + x.ovr * (x.inj > 0 ? 0.6 : 0.8 + 0.2 * x.con / 100), 0) / arr.length) : fb;
   const d = avg(st.filter(p => p.naturalPos === 'DEF' || p.naturalPos === 'GK'), 60), m = avg(st.filter(p => p.naturalPos === 'MID'), 60), a = avg(st.filter(p => p.naturalPos === 'FWD'), 60);
   return { att: a, mid: m, def: d, ovr: Math.round((a + m + d) / 3) };
 }
@@ -214,13 +221,13 @@ function finalizeWeek() {
 }
 function applyWeeklyFinancesAndFatigue() {
   const club = getCurrentUserClub(), med = (state.medicalFacilityLevel || 1) * 3;
-  club.budget = Math.max(0, +(club.budget - computeClubWeeklyWageBill(club) * 0.5).toFixed(2));
+  club.budget = Math.max(0, +(club.budget - computeClubWeeklyWageBill(club) * 0.4 + [0.5, 0.2, 0.08, 0.03][club.div]).toFixed(2));
   club.players.forEach(p => {
     if (p.inj > 0) { p.inj--; if (!p.inj) addNewsStory('Medical Update', `${p.name} returns from injury`, `${p.name} has resumed training.`, false); }
     if (p.starter) {
-      p.con = Math.max(45, p.con - R(10, 18));
-      if (p.con < 65 && Math.random() < 0.22 && !p.inj) { p.inj = R(1, 3); addNewsStory('Injury Blow', `INJURY: ${p.name} out for ${p.inj} weeks`, 'A muscle strain.', true); }
-    } else p.con = Math.min(100, p.con + 14 + med);
+      p.con = Math.max(55, p.con - R(4, 9));
+      if (p.con < 70 && Math.random() < 0.12 && !p.inj) { p.inj = R(1, 3); addNewsStory('Injury Blow', `INJURY: ${p.name} out for ${p.inj} weeks`, 'A muscle strain.', true); }
+    } else p.con = Math.min(100, p.con + 20 + med);
   });
 }
 function generateWeeklyNewsStory() {
