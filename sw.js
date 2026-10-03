@@ -1,4 +1,4 @@
-const CACHE_NAME = 'flm-cache-v4';
+const CACHE_NAME = 'flm-cache-v5';
 const ASSETS_TO_CACHE = [
   './',
   './index.html',
