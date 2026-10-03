@@ -70,7 +70,7 @@ const SQUAD_ORDER = ['GK', 'DEF', 'DEF', 'DEF', 'DEF', 'MID', 'MID', 'MID', 'FWD
 function mkPlayer(pos, base, i, cid) {
   const ovr = Math.max(40, Math.min(92, base + R(-6, 7)));
   return { id: `${cid}_${i}_${R(0, 99999)}`, name: pick(FIRSTNAMES) + ' ' + pick(SURNAMES), naturalPos: pos, nat: Math.random() < 0.7 ? 'ENG' : pick(NATS), age: R(18, 35), ovr, con: 100,
-    role: ROLE[pos], starter: i < 11, val: Math.max(0.3, +((ovr - 50) * 0.75).toFixed(1)), wage: Math.max(0.01, +((ovr - 45) * 0.003).toFixed(3)), contract: R(1, 5), morale: 'Good', goals: 0, cleanSheets: 0, inj: 0 };
+    role: ROLE[pos], starter: i < 11, val: Math.max(0.3, +((ovr - 50) * 0.75).toFixed(1)), wage: Math.max(0.01, +((ovr - 45) * 0.003).toFixed(3)), contract: R(1, 5), morale: 'Good', goals: 0, cleanSheets: 0, inj: 0, yellows: 0, susp: 0 };
 }
 function generateProceduralSquad(c) {
   const real = typeof REAL_SQUADS !== 'undefined' && REAL_SQUADS[c.name];
@@ -219,6 +219,35 @@ function applyResult(m, hg, ag, scorersDone) {
   }
   if (ag === 0) { const g = h.players.find(p => p.starter && p.naturalPos === 'GK'); if (g) g.cleanSheets++; }
   if (hg === 0) { const g = a.players.find(p => p.starter && p.naturalPos === 'GK'); if (g) g.cleanSheets++; }
+
+  // Apply disciplinary consequences for bookings recorded during the match
+  if (matchLiveState) {
+    // Red cards = 1-match ban
+    if (matchLiveState.reds && matchLiveState.reds.length) {
+      matchLiveState.reds.forEach(pid => {
+        const p = [...h.players, ...a.players].find(x => x.id === pid);
+        if (p) {
+          p.susp = 1;
+          addNewsStory('Discipline', `SUSPENSION: ${p.name} banned for 1 match`, 'Sent off in the previous fixture.', true);
+        }
+      });
+    }
+
+    // Yellow card accumulation (every 5 yellows = 1-match ban)
+    if (matchLiveState.yellows) {
+      Object.keys(matchLiveState.yellows).forEach(pid => {
+        const p = [...h.players, ...a.players].find(x => x.id === pid);
+        if (p) {
+          p.yellows = (p.yellows || 0) + 1;
+          if (p.yellows % 5 === 0) {
+            p.susp = 1;
+            addNewsStory('Discipline', `SUSPENSION: ${p.name} reaches 5 yellow cards`, 'Serves an automatic 1-match ban.', true);
+          }
+        }
+      });
+    }
+  }
+
   if (m.type === 'LEAGUE') updateLeagueTableRecord(m.div, m.home, m.away, hg, ag);
   else { const gate = +(h.cap * 0.000035 / 2).toFixed(2); h.budget += gate; a.budget += gate; }
   if (m.home === state.userClubId || m.away === state.userClubId) recordUserMatchResult(m.home === state.userClubId, hg, ag);
@@ -263,6 +292,12 @@ function applyWeeklyFinancesAndFatigue() {
   club.budget = Math.max(0, +(club.budget - computeClubWeeklyWageBill(club) * 0.4 + [0.5, 0.2, 0.08, 0.03][club.div]).toFixed(2));
   club.players.forEach(p => {
     if (p.inj > 0) { p.inj--; if (!p.inj) addNewsStory('Medical Update', `${p.name} returns from injury`, `${p.name} has resumed training.`, false); }
+    if (p.susp > 0) {
+      p.susp--;
+      if (p.susp === 0) {
+        addNewsStory('Discipline', `${p.name} has served suspension`, 'Eligible for team selection again.', false);
+      }
+    }
     if (p.starter) {
       p.con = Math.max(55, p.con - R(4, 9));
       if (p.con < 70 && Math.random() < 0.12 && !p.inj) { p.inj = R(1, 3); addNewsStory('Injury Blow', `INJURY: ${p.name} out for ${p.inj} weeks`, 'A muscle strain.', true); }
@@ -383,8 +418,8 @@ function changeFormation(f) { if (!FORMATIONS[f]) return; state.currentFormation
 function autoPickBestXI() {
   const club = getCurrentUserClub(), tpl = FORMATIONS[state.currentFormation] || FORMATIONS['4-3-3'];
   club.players.forEach(p => p.starter = false);
-  const pool = [...club.players].sort((a, b) => (a.inj > 0) - (b.inj > 0) || b.ovr * b.con - a.ovr * a.con), picked = [];
-  tpl.forEach(slot => { let i = pool.findIndex(p => p.naturalPos === slot.posType); if (i < 0) i = 0; picked.push(pool.splice(i, 1)[0]); });
+  const pool = [...club.players].sort((a, b) => ((a.inj > 0 || a.susp > 0) - (b.inj > 0 || b.susp > 0)) || b.ovr * b.con - a.ovr * a.con), picked = [];
+  tpl.forEach(slot => { let i = pool.findIndex(p => p.naturalPos === slot.posType && !p.susp && !p.inj); if (i < 0) i = 0; picked.push(pool.splice(i, 1)[0]); });
   picked.forEach((p, i) => { p.starter = true; p.role = tpl[i].duty; });
   club.players = [...picked, ...pool]; cancelPlayerSwap(); saveGame(); renderTactics(); updateHeaderClubDisplay(); playSound('whistle');
 }
@@ -422,13 +457,15 @@ function renderTactics() {
   st.forEach((p, i) => {
     const t = tpl[i] || { x: 50, y: 50, role: TAG[p.naturalPos], duty: p.role }, n = document.createElement('div');
     n.className = `pitch-node ${selectedPlayerSwapId === p.id ? 'selected-for-swap' : ''}`; n.style.left = t.x + '%'; n.style.top = t.y + '%'; n.onclick = () => handlePlayerSelect(p.id);
-    n.innerHTML = `<div class="pitch-kit">${i + 1}<div class="pitch-role-tag">${t.role}</div></div><div class="pitch-name-card"><div class="p-name">${p.name.split(' ').pop()} ${p.inj > 0 ? '🚑' : ''}</div><div class="p-role">${p.ovr} • ${p.con}%</div></div>`; nodes.appendChild(n);
+    n.innerHTML = `<div class="pitch-kit">${i + 1}<div class="pitch-role-tag">${t.role}</div></div><div class="pitch-name-card"><div class="p-name">${p.name.split(' ').pop()} ${p.inj > 0 ? '🚑' : ''}${p.susp > 0 ? '🟥' : ''}</div><div class="p-role">${p.ovr} • ${p.con}%</div></div>`; nodes.appendChild(n);
   });
   const mor = m => m === 'Superb' ? '😄 <span style="color:#10b981">Superb</span>' : m === 'Good' ? '🙂 <span style="color:#38bdf8">Good</span>' : m === 'Fair' ? '😐 <span style="color:#f59e0b">Fair</span>' : '😠 <span style="color:#ef4444">Unhappy</span>';
   const row = (p, tag, cls) => {
     const sel = selectedPlayerSwapId === p.id, cc = p.con > 80 ? '#10b981' : p.con > 65 ? '#f59e0b' : '#ef4444', tr = document.createElement('tr');
     tr.className = `fm-row ${sel ? 'selected-for-swap' : ''}`; tr.onclick = e => { if (e.target.tagName !== 'BUTTON') handlePlayerSelect(p.id); };
-    tr.innerHTML = `<td><span class="badge-pick ${cls}">${tag}</span></td><td><span class="role-badge">${p.role}</span></td><td><b>${p.name}</b>${p.inj > 0 ? `<span class="injury-badge">INJ ${p.inj}w</span>` : ''}</td><td>${p.age}</td><td><b style="color:var(--gold)">${p.ovr}</b></td>
+    tr.innerHTML = `<td><span class="badge-pick ${cls}">${tag}</span></td><td><span class="role-badge">${p.role}</span></td>
+      <td><b>${p.name}</b>${p.inj > 0 ? `<span class="injury-badge">INJ ${p.inj}w</span>` : ''}${p.susp > 0 ? `<span class="suspension-badge">SUSP ${p.susp}m</span>` : ''}</td>
+      <td>${p.age}</td><td><b style="color:var(--gold)">${p.ovr}</b></td>
       <td><div class="condition-bar"><div class="condition-fill" style="width:${p.con}%;background:${cc}"></div></div><span style="font-size:.72rem;font-weight:800;color:${cc}">${p.con}%</span></td><td>${mor(p.morale)}</td>
       <td style="color:${p.contract <= 1 ? '#ef4444' : '#fff'};font-weight:800">${p.contract} yr</td><td>£${Math.round(p.wage * 1000)}k/w</td>
       <td style="display:flex;gap:4px"><button class="btn-swap-pill" onclick="handlePlayerSelect('${p.id}')">${sel ? 'Cancel' : 'Swap ⇅'}</button><button class="btn-swap-pill" style="background:#334155" onclick="openContractModal('${p.id}')">📝</button></td>`;
