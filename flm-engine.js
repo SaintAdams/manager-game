@@ -636,7 +636,19 @@ function renderTransfers() {
   const club = getCurrentUserClub(); $('marketBudgetDisplay').innerText = `Available: £${club.budget.toFixed(1)}M`;
   ['name', 'naturalPos', 'nat', 'age', 'ovr', 'price', 'clubName'].forEach(k => { const e = $(`sort_${k}`); if (e) e.innerText = marketSortKey === k ? (marketSortAsc ? ' ▲' : ' ▼') : ''; });
   const q = $('marketSearchInput').value.toLowerCase().trim(), fl = $('filterMarketLeague').value, ft = $('filterMarketTeam').value, fp = $('filterMarketPos').value, fn = $('filterMarketNation').value;
-  let pool = state.marketPlayers.map(p => ({ id: p.id, name: p.name, naturalPos: p.naturalPos, nat: p.nat, age: p.age, ovr: p.ovr, price: p.price, clubName: p.club, clubId: 'SCOUT', div: -1, scout: true }));
+  let pool = state.marketPlayers.map(p => ({
+  id: p.id,
+  name: p.name,
+  naturalPos: p.naturalPos,
+  nat: p.nat,
+  age: p.age,
+  ovr: p.ovr,
+  price: p.price,
+  clubName: p.club || (p.price === 0 ? 'Free Agent' : 'Foreign Club'),
+  clubId: 'SCOUT',
+  div: -1,
+  scout: true
+}));
   state.clubs.forEach(c => { if (c.id !== club.id) c.players.forEach(p => pool.push({ id: p.id, name: p.name, naturalPos: p.naturalPos, nat: p.nat, age: p.age, ovr: p.ovr, price: +(p.val * 1.15).toFixed(1), clubName: c.name, clubId: c.id, div: c.div, scout: false })); });
   if (q) pool = pool.filter(p => p.name.toLowerCase().includes(q)); if (fl === 'SCOUT') pool = pool.filter(p => p.scout); else if (fl !== 'ALL') pool = pool.filter(p => p.div === +fl);
   if (ft !== 'ALL') pool = pool.filter(p => p.clubId === ft); if (fp !== 'ALL') pool = pool.filter(p => p.naturalPos === fp); if (fn !== 'ALL') pool = pool.filter(p => p.nat === fn);
@@ -677,13 +689,86 @@ function showEndSeasonGala() {
 }
 function closeEosModal() { $('endSeasonModal').style.display = 'none'; }
 function executeNextSeasonTransition() {
-  closeEosModal(); const s = sortedDivs(), move = {};
-  for (let d = 0; d <= 2; d++) { s[d].slice(-3).forEach(r => move[r.id] = d + 1); s[d + 1].slice(0, 3).forEach(r => move[r.id] = d); }
-  state.clubs.forEach(c => { if (move[c.id] !== undefined) c.div = move[c.id]; });
-  state.seasonYear++; state.currentWeek = 1; state.deadlineDaysCompleted = {}; state.youthIntakeCompleted = false; state.cups = { carabaoAlive: true, faAlive: true };
-  state.clubs.forEach(c => c.players.forEach(p => { p.age++; p.con = 100; p.inj = 0; p.goals = 0; p.cleanSheets = 0; p.contract = Math.max(1, p.contract - 1); if (p.age < 23) p.ovr += R(0, 2); else if (p.age > 31) p.ovr -= R(0, 2); p.val = Math.max(0.3, +((p.ovr - 50) * 0.75).toFixed(1)); }));
-  buildStandings(); generateTrueRoundRobinFixtures(); generateInitialNews(); generateYouthIntake(false); saveGame(); renderAll();
-  alert(`Welcome to the ${state.seasonYear}/${String(state.seasonYear + 1).slice(-2)} season!`);
+  closeEosModal();
+  const s = sortedDivs(), move = {};
+  for (let d = 0; d <= 2; d++) {
+    s[d].slice(-3).forEach(r => move[r.id] = d + 1);
+    s[d + 1].slice(0, 3).forEach(r => move[r.id] = d);
+  }
+  state.clubs.forEach(c => {
+    if (move[c.id] !== undefined) c.div = move[c.id];
+  });
+
+  state.seasonYear++;
+  state.currentWeek = 1;
+  state.deadlineDaysCompleted = {};
+  state.youthIntakeCompleted = false;
+  state.cups = { carabaoAlive: true, faAlive: true };
+
+  let userReleasedCount = 0;
+
+  // Age players, decrement contracts, and handle free agency
+  state.clubs.forEach(c => {
+    const retainedPlayers = [];
+
+    c.players.forEach(p => {
+      p.age++;
+      p.con = 100;
+      p.inj = 0;
+      p.goals = 0;
+      p.cleanSheets = 0;
+      p.contract--; // Decrement contract year
+
+      // Attribute aging curve
+      if (p.age < 23) p.ovr += R(0, 2);
+      else if (p.age > 31) p.ovr -= R(0, 2);
+      p.val = Math.max(0.3, +((p.ovr - 50) * 0.75).toFixed(1));
+
+      // Check for contract expiry
+      if (p.contract <= 0) {
+        // Player is now a Free Agent! Add them to the transfer pool with £0 fee
+        state.marketPlayers.push({
+          id: p.id,
+          name: p.name,
+          naturalPos: p.naturalPos,
+          nat: p.nat,
+          age: p.age,
+          ovr: p.ovr,
+          price: 0.0, // Free agent fee!
+          club: 'Free Agent',
+          wage: p.wage,
+          contract: 2
+        });
+
+        if (c.id === state.userClubId) {
+          userReleasedCount++;
+        }
+      } else {
+        retainedPlayers.push(p);
+      }
+    });
+
+    c.players = retainedPlayers;
+
+    // Safety net: ensure club always maintains at least 15 players
+    while (c.players.length < 16) {
+      c.players.push(mkPlayer(SQUAD_ORDER[c.players.length % SQUAD_ORDER.length], c.str - 4, c.players.length, c.id));
+    }
+    fixStarters(c);
+  });
+
+  buildStandings();
+  generateTrueRoundRobinFixtures();
+  generateInitialNews();
+  generateYouthIntake(false);
+  saveGame();
+  renderAll();
+
+  if (userReleasedCount > 0) {
+    addNewsStory('Contract Expiry', `${userReleasedCount} player(s) released as Free Agents`, 'Their contracts ran out and they departed the club.', false);
+  }
+
+  alert(`Welcome to the ${state.seasonYear}/${String(state.seasonYear + 1).slice(-2)} season!${userReleasedCount > 0 ? `\n\n📢 Note: ${userReleasedCount} player(s) left on a free transfer after their contracts expired.` : ''}`);
 }
 
 /* ---------- master render ---------- */
