@@ -13,368 +13,105 @@
 
   <style>
     :root {
-      --bg-dark: #0a0e17;
-      --bg-card: #121824;
-      --bg-panel: #182030;
-      --bg-panel-hover: #1e283d;
-      --border: #243048;
-      --accent: #00d2ff;
-      --fm-green: #10b981;
-      --fm-amber: #f59e0b;
-      --fm-red: #ef4444;
-      --gold: #fbc02d;
-      --purple: #a855f7;
-      --text-main: #f1f5f9;
-      --text-muted: #94a3b8;
-      --pitch-grass-1: #235d31;
-      --pitch-grass-2: #1b4926;
+      --bg-dark: #0a0e17; --bg-card: #121824; --bg-panel: #182030; --bg-panel-hover: #1e283d;
+      --border: #243048; --accent: #00d2ff; --fm-green: #10b981; --fm-amber: #f59e0b;
+      --fm-red: #ef4444; --gold: #fbc02d; --purple: #a855f7; --text-main: #f1f5f9; --text-muted: #94a3b8;
+      --pitch-grass-1: #235d31; --pitch-grass-2: #1b4926;
     }
-
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; user-select: none; }
     body { background-color: var(--bg-dark); color: var(--text-main); min-height: 100vh; display: flex; flex-direction: column; overflow-x: hidden; }
 
-    /* HEADER */
     header {
       background: linear-gradient(180deg, #151d2d 0%, #0d131f 100%);
       border-bottom: 2px solid var(--border);
-      padding: 8px 16px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      position: sticky;
-      top: 0;
-      z-index: 100;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.5);
-      gap: 10px;
-      flex-wrap: wrap;
+      padding: 8px 16px; display: flex; justify-content: space-between; align-items: center;
+      position: sticky; top: 0; z-index: 100; box-shadow: 0 4px 20px rgba(0,0,0,0.5); gap: 10px; flex-wrap: wrap;
     }
     .brand-group { display: flex; align-items: center; gap: 8px; }
-    .brand-logo {
-      background: linear-gradient(135deg, var(--accent) 0%, #0072ff 100%);
-      color: #000;
-      font-weight: 900;
-      font-size: 1rem;
-      padding: 5px 9px;
-      border-radius: 6px;
-      letter-spacing: 1px;
-    }
+    .brand-logo { background: linear-gradient(135deg, var(--accent) 0%, #0072ff 100%); color: #000; font-weight: 900; font-size: 1rem; padding: 5px 9px; border-radius: 6px; }
     .brand-titles h1 { font-size: 0.95rem; font-weight: 800; color: #fff; }
     .brand-titles p { font-size: 0.68rem; color: var(--text-muted); font-weight: 600; }
 
-    .header-club-chip {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      background: var(--bg-panel);
-      border: 1px solid var(--border);
-      padding: 4px 12px;
-      border-radius: 8px;
-    }
-    .badge-icon-wrap {
-      width: 34px;
-      height: 34px;
-      position: relative;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
-    }
+    .header-club-chip { display: flex; align-items: center; gap: 10px; background: var(--bg-panel); border: 1px solid var(--border); padding: 4px 12px; border-radius: 8px; }
+    .badge-icon-wrap { width: 34px; height: 34px; position: relative; display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; }
     .badge-icon-img { width: 100%; height: 100%; object-fit: contain; }
-    .badge-fallback {
-      width: 100%; height: 100%; border-radius: 6px; background: #334155; color: #fff;
-      font-weight: 900; font-size: 0.72rem; display: flex; align-items: center; justify-content: center;
-    }
+    .badge-fallback { width: 100%; height: 100%; border-radius: 6px; background: #334155; color: #fff; font-weight: 900; font-size: 0.72rem; display: flex; align-items: center; justify-content: center; }
     .header-club-text h2 { font-size: 0.92rem; font-weight: 800; color: #fff; line-height: 1.1; }
     .header-club-text p { font-size: 0.65rem; color: var(--text-muted); }
 
-    .header-ratings-cluster {
-      display: flex;
-      gap: 6px;
-      background: var(--bg-panel);
-      border: 1px solid var(--border);
-      padding: 4px 8px;
-      border-radius: 8px;
-    }
+    .header-ratings-cluster { display: flex; gap: 6px; background: var(--bg-panel); border: 1px solid var(--border); padding: 4px 8px; border-radius: 8px; }
     .hdr-stat { display: flex; flex-direction: column; align-items: center; min-width: 44px; }
     .hdr-stat .val { font-size: 0.95rem; font-weight: 900; color: #fff; line-height: 1; }
     .hdr-stat .lbl { font-size: 0.56rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase; margin-top: 2px; }
 
     .header-metrics { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
-    .metric-pill {
-      background: var(--bg-panel);
-      border: 1px solid var(--border);
-      padding: 5px 10px;
-      border-radius: 8px;
-      font-size: 0.72rem;
-      display: flex;
-      flex-direction: column;
-      align-items: flex-start;
-    }
+    .metric-pill { background: var(--bg-panel); border: 1px solid var(--border); padding: 5px 10px; border-radius: 8px; font-size: 0.72rem; display: flex; flex-direction: column; align-items: flex-start; }
     .metric-pill span.label { font-size: 0.6rem; color: var(--text-muted); text-transform: uppercase; font-weight: 700; }
     .metric-pill span.val { font-weight: 800; color: #fff; }
 
     .btn-advance-master {
       background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
-      color: #000;
-      font-weight: 900;
-      font-size: 0.88rem;
-      padding: 8px 14px;
-      border-radius: 8px;
-      border: none;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      box-shadow: 0 0 15px rgba(245, 158, 11, 0.4);
-      transition: all 0.2s;
+      color: #000; font-weight: 900; font-size: 0.88rem; padding: 8px 14px;
+      border-radius: 8px; border: none; cursor: pointer; display: flex; align-items: center; gap: 6px;
+      box-shadow: 0 0 15px rgba(245, 158, 11, 0.4); transition: all 0.2s;
     }
     .btn-advance-master:active { transform: scale(0.97); }
-    .btn-continue-mode {
-      background: linear-gradient(135deg, #10b981 0%, #059669 100%) !important;
-      color: #fff !important;
-      box-shadow: 0 0 18px rgba(16, 185, 129, 0.5) !important;
-    }
-    .btn-deadline-mode {
-      background: linear-gradient(135deg, #ef4444 0%, #b91c1c 100%) !important;
-      color: #fff !important;
-      box-shadow: 0 0 20px rgba(239, 68, 68, 0.6) !important;
-      animation: pulse 1s infinite alternate;
-    }
+    .btn-continue-mode { background: linear-gradient(135deg, #10b981 0%, #059669 100%) !important; color: #fff !important; box-shadow: 0 0 18px rgba(16, 185, 129, 0.5) !important; }
+    .btn-deadline-mode { background: linear-gradient(135deg, #ef4444 0%, #b91c1c 100%) !important; color: #fff !important; animation: pulse 1s infinite alternate; }
     .btn-icon { background: var(--bg-panel); border: 1px solid var(--border); color: #fff; padding: 6px 10px; border-radius: 6px; cursor: pointer; }
 
-    /* LAYOUT */
     .app-container { display: flex; flex: 1; min-height: calc(100vh - 65px); }
-
-    nav.sidebar {
-      width: 220px;
-      background: #0d121c;
-      border-right: 1px solid var(--border);
-      padding: 14px 10px;
-      display: flex;
-      flex-direction: column;
-      gap: 5px;
-    }
+    nav.sidebar { width: 220px; background: #0d121c; border-right: 1px solid var(--border); padding: 14px 10px; display: flex; flex-direction: column; gap: 5px; }
     .nav-label { font-size: 0.65rem; font-weight: 800; color: #475569; text-transform: uppercase; padding: 6px 10px 2px; }
     .nav-item {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding: 9px 12px;
-      color: #94a3b8;
-      border-radius: 8px;
-      font-size: 0.84rem;
-      font-weight: 700;
-      cursor: pointer;
-      transition: all 0.15s;
+      display: flex; align-items: center; gap: 10px; padding: 9px 12px; color: #94a3b8;
+      border-radius: 8px; font-size: 0.84rem; font-weight: 700; cursor: pointer; transition: all 0.15s;
     }
     .nav-item:hover { background: var(--bg-panel); color: #fff; }
-    .nav-item.active {
-      background: linear-gradient(90deg, rgba(0, 210, 255, 0.15) 0%, rgba(0, 210, 255, 0.03) 100%);
-      color: var(--accent);
-      border-left: 3px solid var(--accent);
-    }
-    .nav-item span.icon { font-size: 1.05rem; }
+    .nav-item.active { background: linear-gradient(90deg, rgba(0, 210, 255, 0.15) 0%, rgba(0, 210, 255, 0.03) 100%); color: var(--accent); border-left: 3px solid var(--accent); }
 
     main.viewport { flex: 1; padding: 14px; overflow-y: auto; background: var(--bg-dark); }
 
-    /* TACTICS */
     .tactics-container { display: grid; grid-template-columns: 460px 1fr; gap: 16px; }
-    .pitch-card {
-      background: var(--bg-card);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 12px;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
-    .tactics-toolbar {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 8px;
-    }
-    .tactics-select {
-      background: var(--bg-panel);
-      color: #fff;
-      border: 1px solid var(--border);
-      padding: 7px 10px;
-      border-radius: 6px;
-      font-weight: 700;
-      font-size: 0.8rem;
-      outline: none;
-    }
-    .btn-auto-pick {
-      background: linear-gradient(135deg, #059669 0%, #047857 100%);
-      color: #fff;
-      border: none;
-      padding: 7px 12px;
-      border-radius: 6px;
-      font-weight: 800;
-      font-size: 0.78rem;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      gap: 5px;
-    }
+    .pitch-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; padding: 12px; display: flex; flex-direction: column; gap: 10px; }
+    .tactics-toolbar { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+    .tactics-select { background: var(--bg-panel); color: #fff; border: 1px solid var(--border); padding: 7px 10px; border-radius: 6px; font-weight: 700; font-size: 0.8rem; outline: none; }
+    .btn-auto-pick { background: linear-gradient(135deg, #059669 0%, #047857 100%); color: #fff; border: none; padding: 7px 12px; border-radius: 6px; font-weight: 800; font-size: 0.78rem; cursor: pointer; display: flex; align-items: center; gap: 5px; }
 
     .football-pitch {
-      width: 100%;
-      height: 480px;
-      background: repeating-linear-gradient(
-        0deg,
-        var(--pitch-grass-1),
-        var(--pitch-grass-1) 48px,
-        var(--pitch-grass-2) 48px,
-        var(--pitch-grass-2) 96px
-      );
-      border: 2px solid rgba(255, 255, 255, 0.7);
-      border-radius: 8px;
-      position: relative;
-      overflow: hidden;
-      box-shadow: inset 0 0 30px rgba(0,0,0,0.6);
+      width: 100%; height: 480px;
+      background: repeating-linear-gradient(0deg, var(--pitch-grass-1), var(--pitch-grass-1) 48px, var(--pitch-grass-2) 48px, var(--pitch-grass-2) 96px);
+      border: 2px solid rgba(255, 255, 255, 0.7); border-radius: 8px; position: relative; overflow: hidden; box-shadow: inset 0 0 30px rgba(0,0,0,0.6);
     }
     .pitch-line-half { position: absolute; top: 50%; left: 0; right: 0; height: 2px; background: rgba(255, 255, 255, 0.65); transform: translateY(-50%); }
-    .pitch-circle-center {
-      position: absolute; top: 50%; left: 50%; width: 90px; height: 90px;
-      border: 2px solid rgba(255, 255, 255, 0.65); border-radius: 50%; transform: translate(-50%, -50%);
-    }
+    .pitch-circle-center { position: absolute; top: 50%; left: 50%; width: 90px; height: 90px; border: 2px solid rgba(255, 255, 255, 0.65); border-radius: 50%; transform: translate(-50%, -50%); }
     .pitch-spot-center { position: absolute; top: 50%; left: 50%; width: 6px; height: 6px; background: #fff; border-radius: 50%; transform: translate(-50%, -50%); }
-    .penalty-box-top {
-      position: absolute; top: 0; left: 50%; width: 180px; height: 75px;
-      border: 2px solid rgba(255, 255, 255, 0.65); border-top: none; transform: translateX(-50%);
-    }
-    .six-yard-top {
-      position: absolute; top: 0; left: 50%; width: 90px; height: 30px;
-      border: 2px solid rgba(255, 255, 255, 0.65); border-top: none; transform: translateX(-50%);
-    }
-    .penalty-box-bottom {
-      position: absolute; bottom: 0; left: 50%; width: 180px; height: 75px;
-      border: 2px solid rgba(255, 255, 255, 0.65); border-bottom: none; transform: translateX(-50%);
-    }
-    .six-yard-bottom {
-      position: absolute; bottom: 0; left: 50%; width: 90px; height: 30px;
-      border: 2px solid rgba(255, 255, 255, 0.65); border-bottom: none; transform: translateX(-50%);
-    }
+    .penalty-box-top { position: absolute; top: 0; left: 50%; width: 180px; height: 75px; border: 2px solid rgba(255, 255, 255, 0.65); border-top: none; transform: translateX(-50%); }
+    .six-yard-top { position: absolute; top: 0; left: 50%; width: 90px; height: 30px; border: 2px solid rgba(255, 255, 255, 0.65); border-top: none; transform: translateX(-50%); }
+    .penalty-box-bottom { position: absolute; bottom: 0; left: 50%; width: 180px; height: 75px; border: 2px solid rgba(255, 255, 255, 0.65); border-bottom: none; transform: translateX(-50%); }
+    .six-yard-bottom { position: absolute; bottom: 0; left: 50%; width: 90px; height: 30px; border: 2px solid rgba(255, 255, 255, 0.65); border-bottom: none; transform: translateX(-50%); }
 
-    .pitch-node {
-      position: absolute;
-      transform: translate(-50%, -50%);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      cursor: pointer;
-      z-index: 10;
-      transition: transform 0.15s ease;
-      width: 66px;
-    }
+    .pitch-node { position: absolute; transform: translate(-50%, -50%); display: flex; flex-direction: column; align-items: center; cursor: pointer; z-index: 10; transition: transform 0.15s ease; width: 66px; }
     .pitch-node:active { transform: translate(-50%, -50%) scale(1.1); }
-    .pitch-node.selected-for-swap {
-      transform: translate(-50%, -50%) scale(1.15);
-      z-index: 30;
-      filter: drop-shadow(0 0 8px #f59e0b);
-    }
-    .pitch-kit {
-      width: 34px;
-      height: 34px;
-      background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
-      border: 2px solid #fff;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: 900;
-      font-size: 0.85rem;
-      color: #fff;
-      box-shadow: 0 3px 6px rgba(0,0,0,0.6);
-      position: relative;
-    }
+    .pitch-node.selected-for-swap { transform: translate(-50%, -50%) scale(1.15); z-index: 30; filter: drop-shadow(0 0 8px #f59e0b); }
+    .pitch-kit { width: 34px; height: 34px; background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); border: 2px solid #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 0.85rem; color: #fff; box-shadow: 0 3px 6px rgba(0,0,0,0.6); position: relative; }
     .pitch-node.selected-for-swap .pitch-kit { border-color: #f59e0b; background: #d97706; }
-    .pitch-role-tag {
-      position: absolute;
-      bottom: -6px;
-      background: #0284c7;
-      color: #fff;
-      font-size: 0.58rem;
-      font-weight: 800;
-      padding: 1px 3px;
-      border-radius: 3px;
-      line-height: 1;
-      text-transform: uppercase;
-    }
-    .pitch-name-card {
-      margin-top: 4px;
-      background: rgba(15, 23, 42, 0.9);
-      border: 1px solid rgba(255, 255, 255, 0.2);
-      border-radius: 4px;
-      padding: 2px 4px;
-      text-align: center;
-      width: 100%;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
+    .pitch-role-tag { position: absolute; bottom: -6px; background: #0284c7; color: #fff; font-size: 0.58rem; font-weight: 800; padding: 1px 3px; border-radius: 3px; text-transform: uppercase; }
+    .pitch-name-card { margin-top: 4px; background: rgba(15, 23, 42, 0.9); border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 4px; padding: 2px 4px; text-align: center; width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .pitch-name-card .p-name { font-size: 0.68rem; font-weight: 800; color: #fff; }
     .pitch-name-card .p-role { font-size: 0.58rem; font-weight: 700; color: #38bdf8; }
 
-    .swap-status-bar {
-      background: linear-gradient(90deg, #b45309 0%, #d97706 100%);
-      color: #fff;
-      padding: 8px 12px;
-      border-radius: 8px;
-      font-size: 0.78rem;
-      font-weight: 800;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 12px;
-      animation: pulse 1.5s infinite;
-    }
-    @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.85; } }
-    .swap-status-bar button {
-      background: rgba(0,0,0,0.3); border: 1px solid #fff; color: #fff;
-      padding: 3px 8px; border-radius: 4px; cursor: pointer; font-size: 0.72rem; font-weight: 700;
-    }
+    .swap-status-bar { background: linear-gradient(90deg, #b45309 0%, #d97706 100%); color: #fff; padding: 8px 12px; border-radius: 8px; font-size: 0.78rem; font-weight: 800; display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+    .swap-status-bar button { background: rgba(0,0,0,0.3); border: 1px solid #fff; color: #fff; padding: 3px 8px; border-radius: 4px; cursor: pointer; font-size: 0.72rem; }
 
-    .squad-roster-card {
-      background: var(--bg-card);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 14px;
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-      overflow-x: auto;
-      -webkit-overflow-scrolling: touch;
-    }
-    .section-title-strip {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      border-bottom: 1px solid var(--border);
-      padding-bottom: 6px;
-    }
+    .squad-roster-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; padding: 14px; display: flex; flex-direction: column; gap: 12px; overflow-x: auto; }
+    .section-title-strip { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); padding-bottom: 6px; }
     .section-title-strip h3 { font-size: 0.9rem; font-weight: 800; text-transform: uppercase; color: var(--text-main); }
     .section-title-strip span.count { font-size: 0.72rem; color: var(--text-muted); font-weight: 700; }
 
     table.fm-table { width: 100%; border-collapse: collapse; font-size: 0.78rem; text-align: left; }
-    table.fm-table th {
-      background: var(--bg-panel);
-      color: var(--text-muted);
-      font-size: 0.65rem;
-      font-weight: 800;
-      text-transform: uppercase;
-      padding: 7px 8px;
-      border-bottom: 2px solid var(--border);
-      white-space: nowrap;
-    }
-    table.fm-table td {
-      padding: 7px 8px;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-      vertical-align: middle;
-      font-weight: 600;
-      white-space: nowrap;
-    }
+    table.fm-table th { background: var(--bg-panel); color: var(--text-muted); font-size: 0.65rem; font-weight: 800; text-transform: uppercase; padding: 7px 8px; border-bottom: 2px solid var(--border); white-space: nowrap; }
+    table.fm-table td { padding: 7px 8px; border-bottom: 1px solid rgba(255, 255, 255, 0.05); vertical-align: middle; font-weight: 600; white-space: nowrap; }
     table.fm-table tr.fm-row { cursor: pointer; transition: background 0.15s; }
     table.fm-table tr.fm-row:hover { background: var(--bg-panel-hover); }
     table.fm-table tr.fm-row.selected-for-swap { background: rgba(245, 158, 11, 0.2) !important; outline: 1px solid #f59e0b; }
@@ -382,39 +119,23 @@
     .badge-pick { display: inline-block; padding: 2px 5px; border-radius: 4px; font-size: 0.65rem; font-weight: 800; text-align: center; }
     .pick-starter { background: rgba(16, 185, 129, 0.2); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.4); }
     .pick-sub { background: rgba(245, 158, 11, 0.2); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.4); }
-
     .role-badge { background: #0369a1; color: #fff; font-size: 0.62rem; font-weight: 800; padding: 2px 5px; border-radius: 4px; }
     .injury-badge { background: #ef4444; color: #fff; font-size: 0.6rem; font-weight: 900; padding: 1px 4px; border-radius: 4px; margin-left: 4px; }
 
-    .btn-swap-pill {
-      background: var(--bg-panel); color: var(--text-main); border: 1px solid var(--border);
-      padding: 4px 8px; border-radius: 4px; font-size: 0.7rem; font-weight: 700; cursor: pointer;
-    }
+    .btn-swap-pill { background: var(--bg-panel); color: var(--text-main); border: 1px solid var(--border); padding: 4px 8px; border-radius: 4px; font-size: 0.7rem; font-weight: 700; cursor: pointer; }
     .btn-swap-pill:active { background: var(--accent); color: #000; }
-    .btn-sell-pill {
-      background: rgba(239, 68, 68, 0.2); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.4);
-      padding: 4px 8px; border-radius: 4px; font-size: 0.7rem; font-weight: 700; cursor: pointer;
-    }
-    .btn-sell-pill:active { background: #ef4444; color: #fff; }
+    .btn-sell-pill { background: rgba(239, 68, 68, 0.2); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.4); padding: 4px 8px; border-radius: 4px; font-size: 0.7rem; font-weight: 700; cursor: pointer; }
 
     .condition-bar { width: 34px; height: 6px; background: #334155; border-radius: 3px; overflow: hidden; display: inline-block; vertical-align: middle; margin-right: 4px; }
     .condition-fill { height: 100%; border-radius: 3px; }
 
-    /* MATCHDAY & TIMELINE */
+    /* MATCHDAY */
     .matchday-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 16px; align-items: start; }
-    .broadcast-card {
-      background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; padding: 16px;
-      display: flex; flex-direction: column; gap: 12px;
-    }
+    .broadcast-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; padding: 16px; display: flex; flex-direction: column; gap: 12px; }
     .scoreboard-box {
       background: linear-gradient(180deg, #151d2c 0%, #0c121d 100%);
-      border: 2px solid var(--border);
-      border-radius: 12px;
-      padding: 14px;
-      display: flex;
-      justify-content: space-around;
-      align-items: center;
-      text-align: center;
+      border: 2px solid var(--border); border-radius: 12px; padding: 14px;
+      display: flex; justify-content: space-around; align-items: center; text-align: center;
     }
     .sb-team { display: flex; flex-direction: column; align-items: center; gap: 4px; }
     .sb-team h2 { font-size: 1.15rem; font-weight: 900; }
@@ -422,295 +143,97 @@
     .sb-score { font-size: 2.3rem; font-weight: 900; color: #fff; letter-spacing: 3px; }
     .sb-minute { background: var(--bg-panel); padding: 4px 8px; border-radius: 6px; font-weight: 800; font-size: 0.8rem; color: var(--accent); }
 
-    /* TIMELINE BAR */
-    .match-timeline-bar {
-      background: #090e18;
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 6px 12px;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      overflow-x: auto;
-      white-space: nowrap;
-      min-height: 38px;
-    }
-    .timeline-event-item {
-      display: inline-flex;
-      align-items: center;
-      gap: 5px;
-      background: var(--bg-panel);
-      padding: 3px 8px;
-      border-radius: 6px;
-      font-size: 0.74rem;
-      font-weight: 800;
-      border-left: 3px solid var(--accent);
-    }
+    .match-timeline-bar { background: #090e18; border: 1px solid var(--border); border-radius: 8px; padding: 6px 12px; display: flex; align-items: center; gap: 10px; overflow-x: auto; white-space: nowrap; min-height: 38px; }
+    .timeline-event-item { display: inline-flex; align-items: center; gap: 5px; background: var(--bg-panel); padding: 3px 8px; border-radius: 6px; font-size: 0.74rem; font-weight: 800; border-left: 3px solid var(--accent); }
     .timeline-event-item.goal { border-left-color: #10b981; color: #34d399; }
     .timeline-event-item.sub { border-left-color: #38bdf8; color: #7dd3fc; }
 
-    /* TOUCHLINE SHOUTS BAR */
-    .shouts-bar {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      background: var(--bg-panel);
-      padding: 8px 12px;
-      border-radius: 8px;
-      border: 1px solid var(--border);
-      flex-wrap: wrap;
-    }
-    .btn-shout {
-      background: var(--bg-dark);
-      border: 1px solid var(--border);
-      color: #fff;
-      padding: 5px 10px;
-      border-radius: 6px;
-      font-size: 0.72rem;
-      font-weight: 800;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
-      transition: all 0.15s;
-    }
+    .shouts-bar { display: flex; align-items: center; gap: 6px; background: var(--bg-panel); padding: 8px 12px; border-radius: 8px; border: 1px solid var(--border); flex-wrap: wrap; }
+    .btn-shout { background: var(--bg-dark); border: 1px solid var(--border); color: #fff; padding: 5px 10px; border-radius: 6px; font-size: 0.72rem; font-weight: 800; cursor: pointer; }
     .btn-shout:hover { border-color: var(--accent); }
 
-    .canvas-container {
-      width: 100%;
-      background: #090e18;
-      border: 2px solid var(--border);
-      border-radius: 10px;
-      position: relative;
-      overflow: hidden;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
-    #matchPitchCanvas {
-      width: 100%;
-      height: 440px;
-      background: #173f22;
-      display: block;
-    }
-    .sim-controls-bar {
-      width: 100%;
-      background: var(--bg-panel);
-      border-top: 1px solid var(--border);
-      padding: 8px 12px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 10px;
-      flex-wrap: wrap;
-    }
+    .canvas-container { width: 100%; background: #090e18; border: 2px solid var(--border); border-radius: 10px; position: relative; overflow: hidden; display: flex; flex-direction: column; align-items: center; }
+    #matchPitchCanvas { width: 100%; height: 440px; background: #173f22; display: block; }
+    .sim-controls-bar { width: 100%; background: var(--bg-panel); border-top: 1px solid var(--border); padding: 8px 12px; display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; }
     .speed-btn-group { display: flex; gap: 6px; }
-    .btn-speed {
-      background: var(--bg-dark);
-      border: 1px solid var(--border);
-      color: var(--text-muted);
-      padding: 5px 10px;
-      border-radius: 6px;
-      font-size: 0.72rem;
-      font-weight: 800;
-      cursor: pointer;
-    }
+    .btn-speed { background: var(--bg-dark); border: 1px solid var(--border); color: var(--text-muted); padding: 5px 10px; border-radius: 6px; font-size: 0.72rem; font-weight: 800; cursor: pointer; }
     .btn-speed.active { background: var(--accent); color: #000; border-color: var(--accent); }
 
-    /* IN-MATCH SUB DRAWER */
-    .in-match-sub-drawer {
-      background: var(--bg-panel);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 10px;
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-    }
-    .in-match-sub-title {
-      font-size: 0.75rem;
-      font-weight: 800;
-      color: var(--accent);
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
+    .in-match-sub-drawer { background: var(--bg-panel); border: 1px solid var(--border); border-radius: 8px; padding: 10px; display: flex; flex-direction: column; gap: 6px; }
+    .in-match-sub-title { font-size: 0.75rem; font-weight: 800; color: var(--accent); display: flex; justify-content: space-between; align-items: center; }
     .sub-chips-row { display: flex; gap: 6px; overflow-x: auto; padding-top: 4px; }
-    .sub-chip {
-      background: var(--bg-dark);
-      border: 1px solid var(--border);
-      padding: 4px 8px;
-      border-radius: 6px;
-      font-size: 0.72rem;
-      cursor: pointer;
-      white-space: nowrap;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
+    .sub-chip { background: var(--bg-dark); border: 1px solid var(--border); padding: 4px 8px; border-radius: 6px; font-size: 0.72rem; cursor: pointer; white-space: nowrap; display: flex; align-items: center; gap: 6px; }
     .sub-chip:hover { border-color: var(--fm-green); }
 
-    .commentary-box {
-      background: #090d14; border: 1px solid var(--border); border-radius: 8px; height: 160px;
-      overflow-y: auto; padding: 10px; display: flex; flex-direction: column; gap: 6px;
-      -webkit-overflow-scrolling: touch;
-    }
+    .commentary-box { background: #090d14; border: 1px solid var(--border); border-radius: 8px; height: 160px; overflow-y: auto; padding: 10px; display: flex; flex-direction: column; gap: 6px; }
     .comm-line { font-size: 0.78rem; padding: 5px 8px; border-radius: 6px; background: var(--bg-panel); border-left: 3px solid var(--accent); }
     .comm-line.goal { border-left-color: #10b981; background: rgba(16, 185, 129, 0.15); font-weight: 800; color: #34d399; }
     .comm-line.pen { border-left-color: var(--purple); background: rgba(168, 85, 247, 0.15); font-weight: 800; color: #c084fc; }
 
-    /* AROUND THE GROUNDS */
-    .standings-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; padding: 14px; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+    .standings-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; padding: 14px; overflow-x: auto; }
     .grounds-grid-container { display: flex; flex-direction: column; gap: 7px; }
     .grounds-match-row {
-      display: grid;
-      grid-template-columns: 1fr 40px 1fr;
-      align-items: center;
-      background: var(--bg-panel);
-      padding: 6px 10px;
-      border-radius: 6px;
-      font-size: 0.78rem;
-      border: 1px solid rgba(255, 255, 255, 0.03);
+      display: grid; grid-template-columns: 1fr 40px 1fr; align-items: center;
+      background: var(--bg-panel); padding: 6px 10px; border-radius: 6px; font-size: 0.78rem; border: 1px solid rgba(255, 255, 255, 0.03);
     }
-    .grounds-match-row .team-home {
-      display: flex; align-items: center; justify-content: flex-end; gap: 6px;
-      font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding-right: 6px;
-    }
-    .grounds-match-row .match-vs-box {
-      text-align: center; font-weight: 900; color: var(--accent);
-      background: rgba(0, 0, 0, 0.35); border-radius: 4px; padding: 2px 0; font-size: 0.72rem;
-    }
-    .grounds-match-row .team-away {
-      display: flex; align-items: center; justify-content: flex-start; gap: 6px;
-      font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding-left: 6px;
-    }
+    .grounds-match-row .team-home { display: flex; align-items: center; justify-content: flex-end; gap: 6px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding-right: 6px; }
+    .grounds-match-row .match-vs-box { text-align: center; font-weight: 900; color: var(--accent); background: rgba(0, 0, 0, 0.35); border-radius: 4px; padding: 2px 0; font-size: 0.72rem; }
+    .grounds-match-row .team-away { display: flex; align-items: center; justify-content: flex-start; gap: 6px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding-left: 6px; }
 
     .league-tabs { display: flex; gap: 8px; margin-bottom: 12px; overflow-x: auto; padding-bottom: 4px; }
-    .league-tab-btn {
-      background: var(--bg-panel); color: var(--text-muted); border: 1px solid var(--border);
-      padding: 6px 12px; border-radius: 8px; font-weight: 800; font-size: 0.75rem; cursor: pointer; white-space: nowrap;
-    }
+    .league-tab-btn { background: var(--bg-panel); color: var(--text-muted); border: 1px solid var(--border); padding: 6px 12px; border-radius: 8px; font-weight: 800; font-size: 0.75rem; cursor: pointer; white-space: nowrap; }
     .league-tab-btn.active { background: var(--accent); color: #000; border-color: var(--accent); }
 
-    .zone-ucl { border-left: 4px solid #3b82f6 !important; }
-    .zone-promo { border-left: 4px solid #10b981 !important; }
-    .zone-playoff { border-left: 4px solid #06b6d4 !important; }
-    .zone-relegation { border-left: 4px solid #ef4444 !important; }
-
-    /* ACADEMY CARDS */
     .prospect-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 12px; margin-top: 10px; }
-    .prospect-card {
-      background: var(--bg-panel);
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 14px;
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-      position: relative;
-    }
-    .prospect-tag {
-      position: absolute; top: 12px; right: 12px;
-      background: rgba(16, 185, 129, 0.2); color: #34d399; font-size: 0.65rem; font-weight: 800;
-      padding: 2px 6px; border-radius: 4px;
-    }
+    .prospect-card { background: var(--bg-panel); border: 1px solid var(--border); border-radius: 10px; padding: 14px; display: flex; flex-direction: column; gap: 6px; position: relative; }
+    .prospect-tag { position: absolute; top: 12px; right: 12px; background: rgba(16, 185, 129, 0.2); color: #34d399; font-size: 0.65rem; font-weight: 800; padding: 2px 6px; border-radius: 4px; }
 
     .news-grid { display: flex; flex-direction: column; gap: 12px; }
-    .news-card {
-      background: var(--bg-panel); border: 1px solid var(--border); border-radius: 10px;
-      padding: 14px 16px; display: flex; flex-direction: column; gap: 5px;
-    }
-    .news-card.breaking {
-      border-left: 4px solid #f59e0b;
-      background: linear-gradient(90deg, rgba(245, 158, 11, 0.08) 0%, var(--bg-panel) 100%);
-    }
+    .news-card { background: var(--bg-panel); border: 1px solid var(--border); border-radius: 10px; padding: 14px 16px; display: flex; flex-direction: column; gap: 5px; }
+    .news-card.breaking { border-left: 4px solid #f59e0b; background: linear-gradient(90deg, rgba(245, 158, 11, 0.08) 0%, var(--bg-panel) 100%); }
+    .news-tag { font-size: 0.65rem; font-weight: 800; color: var(--accent); text-transform: uppercase; }
+    .news-headline { font-size: 0.95rem; font-weight: 800; color: #fff; }
+    .news-body { font-size: 0.8rem; color: #cbd5e1; line-height: 1.4; }
+    .news-time { font-size: 0.68rem; color: var(--text-muted); font-weight: 600; }
 
-    /* MODAL BASE */
-    .modal-backdrop {
-      position: fixed; inset: 0; background: rgba(0,0,0,0.88);
-      display: flex; align-items: center; justify-content: center; z-index: 1000; padding: 12px;
-    }
-    .modal-window {
-      background: var(--bg-card); border: 2px solid var(--border); border-radius: 16px;
-      width: 600px; max-width: 100%; max-height: 85vh; overflow-y: auto; padding: 20px;
-      box-shadow: 0 10px 40px rgba(0,0,0,0.8);
-      -webkit-overflow-scrolling: touch;
-    }
+    .modal-backdrop { position: fixed; inset: 0; background: rgba(0,0,0,0.88); display: flex; align-items: center; justify-content: center; z-index: 1000; padding: 12px; }
+    .modal-window { background: var(--bg-card); border: 2px solid var(--border); border-radius: 16px; width: 600px; max-width: 100%; max-height: 85vh; overflow-y: auto; padding: 20px; box-shadow: 0 10px 40px rgba(0,0,0,0.8); }
     .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
     .modal-header h2 { font-size: 1.2rem; font-weight: 900; }
     .modal-close { background: none; border: none; color: #fff; font-size: 1.3rem; cursor: pointer; }
 
-    /* STRICT 3-COLUMN BROADCAST RESULT SCOREBOARD (NEVER COLLAPSES OR SPLITS) */
+    /* 3-COLUMN BROADCAST RESULT MODAL SCOREBOARD */
     .result-modal-scoreboard {
-      display: grid;
-      grid-template-columns: 1fr auto 1fr;
-      align-items: center;
-      gap: 16px;
-      padding: 18px 14px;
-      background: linear-gradient(180deg, #151d2d 0%, #0d121c 100%);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      margin-bottom: 14px;
+      display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 16px;
+      padding: 18px 14px; background: linear-gradient(180deg, #151d2d 0%, #0d121c 100%);
+      border: 1px solid var(--border); border-radius: 12px; margin-bottom: 14px;
     }
     .result-team { display: flex; flex-direction: column; align-items: center; gap: 6px; text-align: center; }
     .result-team-name { font-size: 0.95rem; font-weight: 800; color: #fff; line-height: 1.2; }
     .result-score-center { display: flex; flex-direction: column; align-items: center; gap: 6px; min-width: 90px; }
-    .result-score-digits { font-size: 2.3rem; font-weight: 900; color: var(--gold); letter-spacing: 3px; line-height: 1; font-variant-numeric: tabular-nums; }
-    .result-ft-badge {
-      background: var(--bg-panel); color: var(--accent); border: 1px solid var(--border);
-      font-size: 0.65rem; font-weight: 800; padding: 2px 8px; border-radius: 4px; letter-spacing: 0.5px;
-    }
+    .result-score-digits { font-size: 2.3rem; font-weight: 900; color: var(--gold); letter-spacing: 3px; line-height: 1; }
+    .result-ft-badge { background: var(--bg-panel); color: var(--accent); border: 1px solid var(--border); font-size: 0.65rem; font-weight: 800; padding: 2px 8px; border-radius: 4px; }
 
-    .wizard-input-box {
-      background: var(--bg-panel); border: 1px solid var(--border); color: #fff;
-      font-size: 0.9rem; padding: 10px 14px; border-radius: 8px; width: 100%; outline: none;
-      font-weight: 700; margin-top: 4px; margin-bottom: 14px;
-    }
-    .wizard-input-box:focus { border-color: var(--accent); }
-
-    .club-select-card {
-      background: var(--bg-panel); border: 2px solid var(--border); padding: 10px 12px;
-      border-radius: 8px; cursor: pointer; transition: all 0.15s; display: flex; align-items: center; gap: 12px;
-    }
+    .wizard-input-box { background: var(--bg-panel); border: 1px solid var(--border); color: #fff; font-size: 0.9rem; padding: 10px 14px; border-radius: 8px; width: 100%; outline: none; font-weight: 700; margin: 4px 0 14px; }
+    .club-select-card { background: var(--bg-panel); border: 2px solid var(--border); padding: 10px 12px; border-radius: 8px; cursor: pointer; display: flex; align-items: center; gap: 12px; }
     .club-select-card:hover { border-color: var(--text-muted); }
     .club-select-card.selected { border-color: var(--accent); background: rgba(0, 210, 255, 0.12); }
 
-    /* PENALTY SHOOTOUT */
-    .shootout-grid {
-      display: grid; grid-template-columns: 1fr 1fr; gap: 16px; background: #0d131f;
-      padding: 16px; border-radius: 10px; border: 1px solid var(--border); margin: 14px 0;
-    }
+    .shootout-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; background: #0d131f; padding: 16px; border-radius: 10px; border: 1px solid var(--border); margin: 14px 0; }
     .shootout-scorecard { text-align: center; }
-    .shootout-scorecard h3 { font-size: 1rem; color: #fff; margin-bottom: 6px; }
     .pen-pips { display: flex; gap: 6px; justify-content: center; margin-top: 8px; }
     .pen-pip { width: 18px; height: 18px; border-radius: 50%; background: #334155; border: 1px solid #475569; }
     .pen-pip.scored { background: #10b981; border-color: #059669; }
     .pen-pip.missed { background: #ef4444; border-color: #b91c1c; }
 
-    footer {
-      background: #080c14; border-top: 1px solid var(--border); padding: 10px 16px;
-      text-align: center; font-size: 0.75rem; font-weight: 700; color: #64748b;
-    }
+    footer { background: #080c14; border-top: 1px solid var(--border); padding: 10px 16px; text-align: center; font-size: 0.75rem; font-weight: 700; color: #64748b; }
 
     @media (max-width: 900px) {
       header { flex-direction: column; align-items: stretch; gap: 8px; padding: 8px 12px; }
-      .brand-group { justify-content: space-between; width: 100%; }
-      .header-club-chip, .header-ratings-cluster { width: 100%; justify-content: space-between; }
-      .header-metrics { width: 100%; display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
-      .metric-pill { min-width: 0; padding: 4px 6px; }
-      .btn-advance-master { grid-column: span 3; width: 100%; justify-content: center; padding: 10px; font-size: 0.92rem; }
       .app-container { flex-direction: column; }
-      nav.sidebar {
-        width: 100%; border-right: none; border-bottom: 1px solid var(--border); flex-direction: row;
-        overflow-x: auto; white-space: nowrap; padding: 8px 10px; gap: 6px; scrollbar-width: none; -webkit-overflow-scrolling: touch;
-      }
-      nav.sidebar::-webkit-scrollbar { display: none; }
-      .nav-label { display: none; }
-      .nav-item { padding: 8px 14px; font-size: 0.8rem; border-radius: 20px; background: var(--bg-panel); border-left: none !important; }
-      .nav-item.active { background: var(--accent); color: #000; }
+      nav.sidebar { width: 100%; border-right: none; border-bottom: 1px solid var(--border); flex-direction: row; overflow-x: auto; white-space: nowrap; padding: 8px 10px; gap: 6px; }
       main.viewport { padding: 12px; }
       .tactics-container { grid-template-columns: 1fr; }
-      .football-pitch { height: 420px; }
       .matchday-grid { grid-template-columns: 1fr; }
       #matchPitchCanvas { height: 260px; }
       #modalClubsGrid, #wizardClubsGrid { grid-template-columns: 1fr !important; }
@@ -784,45 +307,23 @@
   <div class="app-container">
     <nav class="sidebar">
       <div class="nav-label">Squad Management</div>
-      <div class="nav-item active" onclick="switchTab('tactics')" id="nav-tactics">
-        <span class="icon">👕</span> Tactics
-      </div>
-      <div class="nav-item" onclick="switchTab('matchday')" id="nav-matchday">
-        <span class="icon">⏱️</span> Matchday
-      </div>
+      <div class="nav-item active" onclick="switchTab('tactics')" id="nav-tactics"><span class="icon">👕</span> Tactics</div>
+      <div class="nav-item" onclick="switchTab('matchday')" id="nav-matchday"><span class="icon">⏱️</span> Matchday</div>
 
       <div class="nav-label">Competitions & Market</div>
-      <div class="nav-item" onclick="switchTab('cups')" id="nav-cups">
-        <span class="icon">🏆</span> Cups
-      </div>
-      <div class="nav-item" onclick="switchTab('news')" id="nav-news">
-        <span class="icon">📰</span> News
-      </div>
-      <div class="nav-item" onclick="switchTab('transfers')" id="nav-transfers">
-        <span class="icon">🔄</span> Market
-      </div>
+      <div class="nav-item" onclick="switchTab('cups')" id="nav-cups"><span class="icon">🏆</span> Cups</div>
+      <div class="nav-item" onclick="switchTab('news')" id="nav-news"><span class="icon">📰</span> News</div>
+      <div class="nav-item" onclick="switchTab('transfers')" id="nav-transfers"><span class="icon">🔄</span> Market</div>
 
       <div class="nav-label">Club Operations</div>
-      <div class="nav-item" onclick="switchTab('standings')" id="nav-standings">
-        <span class="icon">📊</span> Tables & Stats
-      </div>
-      <div class="nav-item" onclick="switchTab('academy')" id="nav-academy">
-        <span class="icon">🌱</span> Academy
-      </div>
-      <div class="nav-item" onclick="switchTab('facilities')" id="nav-facilities">
-        <span class="icon">🏟️</span> Ground
-      </div>
+      <div class="nav-item" onclick="switchTab('standings')" id="nav-standings"><span class="icon">📊</span> Tables & Stats</div>
+      <div class="nav-item" onclick="switchTab('academy')" id="nav-academy"><span class="icon">🌱</span> Academy</div>
+      <div class="nav-item" onclick="switchTab('facilities')" id="nav-facilities"><span class="icon">🏟️</span> Ground</div>
 
       <div class="nav-label">Management Office</div>
-      <div class="nav-item" onclick="switchTab('manager')" id="nav-manager">
-        <span class="icon">📋</span> Office
-      </div>
-      <div class="nav-item" onclick="switchTab('honours')" id="nav-honours">
-        <span class="icon">🎖️</span> Honours
-      </div>
-      <div class="nav-item" onclick="openClubSelectorModal()" id="nav-switch">
-        <span class="icon">🔀</span> Club
-      </div>
+      <div class="nav-item" onclick="switchTab('manager')" id="nav-manager"><span class="icon">📋</span> Office</div>
+      <div class="nav-item" onclick="switchTab('honours')" id="nav-honours"><span class="icon">🎖️</span> Honours</div>
+      <div class="nav-item" onclick="openClubSelectorModal()" id="nav-switch"><span class="icon">🔀</span> Club</div>
     </nav>
 
     <main class="viewport" id="mainViewport">
@@ -844,9 +345,7 @@
                 <option value="3-5-2">3-5-2 (Counter)</option>
               </select>
 
-              <button class="btn-auto-pick" onclick="autoPickBestXI()">
-                ⚡ Auto-Pick XI
-              </button>
+              <button class="btn-auto-pick" onclick="autoPickBestXI()">⚡ Auto-Pick XI</button>
             </div>
 
             <div class="football-pitch" id="pitchSurface">
@@ -857,12 +356,11 @@
               <div class="six-yard-top"></div>
               <div class="penalty-box-bottom"></div>
               <div class="six-yard-bottom"></div>
-
               <div id="pitchNodesWrapper"></div>
             </div>
             
             <p style="font-size: 0.72rem; color: var(--text-muted); text-align: center;">
-              💡 <b>Tap any player on the pitch or table</b> to swap positions. Rotate starters to recover fatigue and manage morale!
+              💡 <b>Tap any player on the pitch or table</b> to swap positions. Rotate starters to manage fatigue and morale!
             </p>
           </div>
 
@@ -916,7 +414,7 @@
         </div>
       </div>
 
-      <!-- MATCHDAY TAB WITH TIMELINE & IN-MATCH SUBS -->
+      <!-- MATCHDAY TAB -->
       <div id="tab-matchday" class="tab-pane" style="display: none;">
         <div class="matchday-grid">
           <div class="broadcast-card">
@@ -937,12 +435,10 @@
               </div>
             </div>
 
-            <!-- TIMELINE BAR -->
             <div class="match-timeline-bar" id="matchTimelineBar">
               <span style="font-size: 0.72rem; color: var(--text-muted);">Match timeline will record goals, bookings, and substitutions here.</span>
             </div>
 
-            <!-- TOUCHLINE SHOUTS -->
             <div class="shouts-bar">
               <span style="font-size: 0.7rem; font-weight: 800; color: var(--accent); margin-right: 4px;">📢 SHOUTS:</span>
               <button class="btn-shout" onclick="triggerTouchlineShout('DEMAND_MORE')">🔥 Demand More</button>
@@ -968,7 +464,6 @@
               </div>
             </div>
 
-            <!-- IN-MATCH LIVE SUBS -->
             <div class="in-match-sub-drawer" id="inMatchSubDrawer">
               <div class="in-match-sub-title">
                 <span>🔄 TACTICAL SUBSTITUTIONS (REMAINING: <span id="subsRemainingText">5</span>)</span>
@@ -1106,7 +601,7 @@
         </div>
       </div>
 
-      <!-- LEAGUE TABLES & PLAYER STATS TAB -->
+      <!-- LEAGUE TABLES & STATS TAB -->
       <div id="tab-standings" class="tab-pane" style="display: none;">
         <div class="standings-card">
           <div class="league-tabs">
@@ -1211,11 +706,8 @@
   <div id="resultSummaryModal" class="modal-backdrop" style="display: none; z-index: 1550;">
     <div class="modal-window" style="width: 520px; text-align: center;">
       <h3 style="color: var(--accent); font-size: 0.82rem; text-transform: uppercase; margin-bottom: 12px; letter-spacing: 0.5px;">Full Time Result</h3>
-      
       <div id="modalScoreDisplay"></div>
-      
       <div id="modalHighlightsFeed" style="font-size: 0.8rem; line-height: 1.5; color: var(--text-muted); background: var(--bg-panel); padding: 12px; border-radius: 8px; margin-bottom: 16px; max-height: 150px; overflow-y: auto;"></div>
-      
       <button class="btn-advance-master" style="width: 100%; justify-content: center; background: #10b981; color: #fff;" onclick="dismissResultModal()">
         CONTINUE TO NEXT WEEK ⏩
       </button>
@@ -1237,16 +729,14 @@
     </div>
   </div>
 
-  <!-- DEADLINE DAY TICKER MODAL -->
+  <!-- DEADLINE DAY MODAL -->
   <div id="deadlineModal" class="modal-backdrop" style="display: none; z-index: 1500;">
     <div class="modal-window" style="width: 650px; border-color: #ef4444;">
       <div class="modal-header">
         <h2 style="color: #ef4444;">🚨 TRANSFER DEADLINE DAY LIVE</h2>
         <span id="deadlineClockDisplay" style="font-weight: 900; font-size: 1.1rem; color: #f59e0b;">11:00 AM (12h Remaining)</span>
       </div>
-      <p style="font-size: 0.82rem; color: var(--text-muted); margin-bottom: 14px;">
-        The transfer window shuts tonight! Rival clubs are circling for last-minute signings.
-      </p>
+      <p style="font-size: 0.82rem; color: var(--text-muted); margin-bottom: 14px;">The transfer window shuts tonight! Rival clubs are circling for last-minute signings.</p>
 
       <div id="deadlineOfferBox" style="background:var(--bg-panel); border:1px solid var(--border); border-radius:10px; padding:16px; margin-bottom:16px;">
         <h4 id="deadlineOfferHeadline" style="font-size:1rem; color:#fff; margin-bottom:6px;">Incoming Transfer Enquiries</h4>
@@ -1255,12 +745,8 @@
       </div>
 
       <div style="display: flex; gap: 10px;">
-        <button class="btn-advance-master" style="flex:1; justify-content:center; background:#ef4444; color:#fff;" onclick="advanceDeadlineHour()">
-          ⏳ ADVANCE 1 HOUR
-        </button>
-        <button class="btn-advance-master" style="justify-content:center;" onclick="closeDeadlineDay()">
-          🏁 SKIP TO WINDOW CLOSE
-        </button>
+        <button class="btn-advance-master" style="flex:1; justify-content:center; background:#ef4444; color:#fff;" onclick="advanceDeadlineHour()">⏳ ADVANCE 1 HOUR</button>
+        <button class="btn-advance-master" style="justify-content:center;" onclick="closeDeadlineDay()">🏁 SKIP TO WINDOW CLOSE</button>
       </div>
     </div>
   </div>
@@ -1268,48 +754,31 @@
   <!-- PENALTY SHOOTOUT MODAL -->
   <div id="shootoutModal" class="modal-backdrop" style="display: none; z-index: 1600;">
     <div class="modal-window" style="width: 600px; border-color: var(--purple);">
-      <div class="modal-header">
-        <h2 style="color: #c084fc;">🎯 SUDDEN DEATH PENALTY SHOOTOUT</h2>
-      </div>
-
+      <div class="modal-header"><h2 style="color: #c084fc;">🎯 SUDDEN DEATH PENALTY SHOOTOUT</h2></div>
       <div class="shootout-grid">
         <div class="shootout-scorecard">
           <h3 id="penHomeTeamName">Home Team</h3>
           <div style="font-size: 2.2rem; font-weight: 900; color: #fff;" id="penHomeScore">0</div>
           <div class="pen-pips" id="penHomePips"></div>
         </div>
-
         <div class="shootout-scorecard">
           <h3 id="penAwayTeamName">Away Team</h3>
           <div style="font-size: 2.2rem; font-weight: 900; color: #fff;" id="penAwayScore">0</div>
           <div class="pen-pips" id="penAwayPips"></div>
         </div>
       </div>
-
-      <p id="penKickStatusText" style="text-align:center; font-weight:800; font-size:0.9rem; margin-bottom:16px; color:#38bdf8;">
-        Penalty 1: Preparing to shoot...
-      </p>
-
-      <button class="btn-advance-master" style="width: 100%; justify-content: center; background:var(--purple); color:#fff;" id="btnTakePenalty" onclick="takeShootoutTurn()">
-        ⚽ TAKE PENALTY KICK
-      </button>
+      <p id="penKickStatusText" style="text-align:center; font-weight:800; font-size:0.9rem; margin-bottom:16px; color:#38bdf8;">Penalty 1: Preparing to shoot...</p>
+      <button class="btn-advance-master" style="width: 100%; justify-content: center; background:var(--purple); color:#fff;" id="btnTakePenalty" onclick="takeShootoutTurn()">⚽ TAKE PENALTY KICK</button>
     </div>
   </div>
 
   <!-- CAREER SETUP WIZARD MODAL -->
   <div id="careerSetupModal" class="modal-backdrop" style="display: none; z-index: 2000;">
     <div class="modal-window" style="width: 650px;">
-      <div class="modal-header">
-        <h2>⚽ Create Your Managerial Career</h2>
-      </div>
-
-      <p style="font-size: 0.82rem; color: var(--text-muted); margin-bottom: 14px;">
-        Welcome to Football League Manager. Configure your profile and select your starting club.
-      </p>
-
+      <div class="modal-header"><h2>⚽ Create Your Managerial Career</h2></div>
+      <p style="font-size: 0.82rem; color: var(--text-muted); margin-bottom: 14px;">Welcome to Football League Manager. Configure your profile and select your starting club.</p>
       <label style="font-size: 0.75rem; text-transform: uppercase; font-weight: 800; color: var(--text-muted);">Manager Full Name</label>
       <input type="text" class="wizard-input-box" id="wizardNameInput" placeholder="Enter your full name..." value="Manager">
-
       <label style="font-size: 0.75rem; text-transform: uppercase; font-weight: 800; color: var(--text-muted);">Select Your Club</label>
       <div class="league-tabs" style="margin-top: 6px;">
         <button class="league-tab-btn active" onclick="filterWizardClubs(0)" id="wTab0">Premier League (20)</button>
@@ -1317,36 +786,24 @@
         <button class="league-tab-btn" onclick="filterWizardClubs(2)" id="wTab2">League One (24)</button>
         <button class="league-tab-btn" onclick="filterWizardClubs(3)" id="wTab3">League Two (24)</button>
       </div>
-
       <div id="wizardClubsGrid" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; max-height: 250px; overflow-y: auto; margin-bottom: 18px;"></div>
-
-      <button class="btn-advance-master" style="width: 100%; justify-content: center; padding: 12px;" onclick="confirmNewCareerSetup()">
-        🚀 BEGIN MANAGERIAL CAREER
-      </button>
+      <button class="btn-advance-master" style="width: 100%; justify-content: center; padding: 12px;" onclick="confirmNewCareerSetup()">🚀 BEGIN MANAGERIAL CAREER</button>
     </div>
   </div>
 
   <!-- END OF SEASON MODAL -->
   <div id="endSeasonModal" class="modal-backdrop" style="display: none;">
     <div class="modal-window">
-      <div class="modal-header">
-        <h2 id="eosTitle">🏆 End of Season Review</h2>
-        <button class="modal-close" onclick="closeEosModal()">✕</button>
-      </div>
+      <div class="modal-header"><h2 id="eosTitle">🏆 End of Season Review</h2><button class="modal-close" onclick="closeEosModal()">✕</button></div>
       <div id="eosSummaryContent" style="font-size: 0.82rem; line-height: 1.5; margin-bottom: 16px;"></div>
-      <button class="btn-advance-master" style="width: 100%; justify-content: center;" onclick="executeNextSeasonTransition()">
-        🎉 COMMENCE NEXT SEASON
-      </button>
+      <button class="btn-advance-master" style="width: 100%; justify-content: center;" onclick="executeNextSeasonTransition()">🎉 COMMENCE NEXT SEASON</button>
     </div>
   </div>
 
   <!-- CLUB SELECTOR MODAL -->
   <div id="clubSelectorModal" class="modal-backdrop" style="display: none;">
     <div class="modal-window">
-      <div class="modal-header">
-        <h2>Choose Your Club</h2>
-        <button class="modal-close" onclick="closeClubSelectorModal()">✕</button>
-      </div>
+      <div class="modal-header"><h2>Choose Your Club</h2><button class="modal-close" onclick="closeClubSelectorModal()">✕</button></div>
       <div class="league-tabs">
         <button class="league-tab-btn active" onclick="filterModalClubs(0)" id="mTab0">Premier League</button>
         <button class="league-tab-btn" onclick="filterModalClubs(1)" id="mTab1">Championship</button>
@@ -1357,26 +814,31 @@
     </div>
   </div>
 
-  <footer>
-    Created by Jason Adams &amp; Jonathan Brewer - Football League Manager
-  </footer>
+  <footer>Created by Jason Adams &amp; Jonathan Brewer - Football League Manager</footer>
 
+  <!-- SCRIPT ENGINE IN FULL -->
   <script>
-    /* GAME ENGINE & LOGIC RESTORED IN FULL */
     function initGame() {
       const saved = localStorage.getItem(STORAGE_KEY);
       if (saved) {
         try {
           state = JSON.parse(saved);
+          if (!state || !state.clubs || state.clubs.length < 20 || !state.manager) throw new Error("Invalid state");
           ensureAllSquadsHydrated();
           if (!state.newsFeed || state.newsFeed.length === 0) generateInitialNews();
           initMarketFilterDropdowns();
           renderAll();
         } catch(e) {
-          openCareerSetupWizard();
+          setupFreshState('Manager', 'NEW');
+          saveGame();
+          initMarketFilterDropdowns();
+          renderAll();
         }
       } else {
-        openCareerSetupWizard();
+        setupFreshState('Manager', 'NEW');
+        saveGame();
+        initMarketFilterDropdowns();
+        renderAll();
       }
     }
 
@@ -1391,19 +853,13 @@
         const btn = document.getElementById(`wTab${i}`);
         if (btn) btn.className = `league-tab-btn ${i === divIndex ? 'active' : ''}`;
       }
-
       const grid = document.getElementById('wizardClubsGrid');
       grid.innerHTML = '';
-
       const clubs = CLUBS_DATABASE.filter(c => c.div === divIndex);
       clubs.forEach(c => {
         const card = document.createElement('div');
         card.className = `club-select-card ${c.id === wizardChosenClubId ? 'selected' : ''}`;
-        card.onclick = () => {
-          wizardChosenClubId = c.id;
-          filterWizardClubs(divIndex);
-        };
-
+        card.onclick = () => { wizardChosenClubId = c.id; filterWizardClubs(divIndex); };
         card.innerHTML = `
           ${createBadgeHtml(c.id, 32)}
           <div>
@@ -1469,20 +925,9 @@
       };
 
       for (let div = 0; div <= 3; div++) {
-        state.standings[div] = state.clubs
-          .filter(c => c.div === div)
-          .map(c => ({
-            id: c.id,
-            name: c.name,
-            played: 0,
-            won: 0,
-            drawn: 0,
-            lost: 0,
-            gf: 0,
-            ga: 0,
-            gd: 0,
-            pts: 0
-          }));
+        state.standings[div] = state.clubs.filter(c => c.div === div).map(c => ({
+          id: c.id, name: c.name, played: 0, won: 0, drawn: 0, lost: 0, gf: 0, ga: 0, gd: 0, pts: 0
+        }));
       }
 
       state.clubs.forEach(c => {
@@ -1504,7 +949,7 @@
           else if (c.id === 'SOU') c.players = JSON.parse(JSON.stringify(SOU_REAL_ROSTER));
           else c.players = generateProceduralSquad(c);
         }
-        c.players.forEach(p => {
+        c.players.forEach((p, idx) => {
           if (!p.naturalPos) p.naturalPos = p.pos || 'MID';
           if (!p.val) p.val = Math.max(0.5, Number(((p.ovr - 50) * 0.75).toFixed(1)));
           if (p.wage === undefined) p.wage = Math.max(0.01, Number(((p.ovr - 45) * 0.003).toFixed(3)));
@@ -1514,11 +959,8 @@
           if (p.cleanSheets === undefined) p.cleanSheets = 0;
           if (p.inj === undefined) p.inj = 0;
           if (p.con === undefined) p.con = 100;
+          if (p.starter === undefined) p.starter = (idx < 11);
         });
-        const startersCount = c.players.filter(p => p.starter).length;
-        if (startersCount !== 11) {
-          c.players.forEach((p, idx) => p.starter = (idx < 11));
-        }
       });
       if (state.manager.fansApproval === undefined) state.manager.fansApproval = 82;
       if (!state.cups) state.cups = { faCupRound: 3, faCupAlive: true, carabaoRound: 1, carabaoAlive: true };
@@ -1539,54 +981,34 @@
     function generateTrueRoundRobinFixtures() {
       state.fixtures = [];
       const divSchedules = {};
-
       for (let div = 0; div <= 3; div++) {
         const teamIds = state.clubs.filter(c => c.div === div).map(c => c.id);
         divSchedules[div] = buildRoundRobinSchedule(teamIds);
       }
-
       for (let w = 1; w <= state.totalWeeks; w++) {
         const weekIndex = w - 1;
         const weekMatches = [];
         const isCupWeek = [7, 15, 23, 31].includes(w);
-
         for (let div = 0; div <= 3; div++) {
           const schedule = divSchedules[div];
           if (schedule && schedule[weekIndex]) {
             schedule[weekIndex].forEach(m => {
-              weekMatches.push({
-                div: div,
-                type: 'LEAGUE',
-                home: m.home,
-                away: m.away,
-                homeGoals: null,
-                awayGoals: null,
-                played: false,
-                scorers: []
-              });
+              weekMatches.push({ div: div, type: 'LEAGUE', home: m.home, away: m.away, homeGoals: null, awayGoals: null, played: false, scorers: [] });
             });
           }
         }
-
         if (isCupWeek) {
           const cupName = (w <= 15) ? 'Carabao Cup' : 'The FA Cup';
           const userClub = getCurrentUserClub();
-          const eligibleOpponents = state.clubs.filter(c => c.id !== userClub.id);
-          const opp = eligibleOpponents[Math.floor(Math.random() * eligibleOpponents.length)];
-
+          const eligible = state.clubs.filter(c => c.id !== userClub.id);
+          const opp = eligible[Math.floor(Math.random() * eligible.length)];
           weekMatches.unshift({
-            div: -1,
-            type: 'CUP',
-            cupName: cupName,
+            div: -1, type: 'CUP', cupName: cupName,
             home: Math.random() > 0.5 ? userClub.id : opp.id,
             away: Math.random() > 0.5 ? opp.id : userClub.id,
-            homeGoals: null,
-            awayGoals: null,
-            played: false,
-            scorers: []
+            homeGoals: null, awayGoals: null, played: false, scorers: []
           });
         }
-
         state.fixtures.push({ week: w, matches: weekMatches });
       }
     }
@@ -1595,20 +1017,17 @@
       const n = teamsList.length;
       const teams = [...teamsList];
       const rounds = [];
-
       for (let r = 0; r < n - 1; r++) {
-        const roundPairings = [];
+        const pairings = [];
         for (let i = 0; i < n / 2; i++) {
-          const home = teams[i];
-          const away = teams[n - 1 - i];
-          if (i === 0 && r % 2 === 1) roundPairings.push({ home: away, away: home });
-          else roundPairings.push({ home: home, away: away });
+          const home = teams[i], away = teams[n - 1 - i];
+          if (i === 0 && r % 2 === 1) pairings.push({ home: away, away: home });
+          else pairings.push({ home: home, away: away });
         }
-        rounds.push(roundPairings);
+        rounds.push(pairings);
         const last = teams.pop();
         teams.splice(1, 0, last);
       }
-
       const secondLeg = rounds.map(r => r.map(m => ({ home: m.away, away: m.home })));
       return [...rounds, ...secondLeg].slice(0, 38);
     }
@@ -1616,19 +1035,12 @@
     function computeClubAttributes(club) {
       const starters = club.players.filter(p => p.starter);
       if (starters.length === 0) return { att: 75, mid: 75, def: 75, ovr: 75 };
-
       const defs = starters.filter(p => p.naturalPos === 'DEF' || p.naturalPos === 'GK');
       const mids = starters.filter(p => p.naturalPos === 'MID');
       const fwds = starters.filter(p => p.naturalPos === 'FWD');
-
-      const avg = (arr, fallback) => arr.length ? Math.round(arr.reduce((s, x) => s + (x.ovr * (x.inj > 0 ? 0.6 : (x.con / 100))), 0) / arr.length) : fallback;
-
-      const baseDef = avg(defs, 75);
-      const baseMid = avg(mids, 75);
-      const baseAtt = avg(fwds, 75);
-      const overall = Math.round((baseDef + baseMid + baseAtt) / 3);
-
-      return { att: baseAtt, mid: baseMid, def: baseDef, ovr: overall };
+      const avg = (arr, fb) => arr.length ? Math.round(arr.reduce((s, x) => s + (x.ovr * (x.inj > 0 ? 0.6 : (x.con / 100))), 0) / arr.length) : fb;
+      const baseDef = avg(defs, 75), baseMid = avg(mids, 75), baseAtt = avg(fwds, 75);
+      return { att: baseAtt, mid: baseMid, def: baseDef, ovr: Math.round((baseDef + baseMid + baseAtt) / 3) };
     }
 
     function computeClubWeeklyWageBill(club) {
@@ -1642,11 +1054,7 @@
       const club = getCurrentUserClub();
       const template = FORMATIONS[newForm];
       const starters = club.players.filter(p => p.starter);
-
-      starters.forEach((p, idx) => {
-        if (template[idx]) p.role = template[idx].duty;
-      });
-
+      starters.forEach((p, idx) => { if (template[idx]) p.role = template[idx].duty; });
       saveGame();
       renderTactics();
       updateHeaderClubDisplay();
@@ -1656,32 +1064,27 @@
     function autoPickBestXI() {
       const club = getCurrentUserClub();
       const template = FORMATIONS[state.currentFormation] || FORMATIONS['4-3-3'];
-      
       club.players.forEach(p => p.starter = false);
       const pool = [...club.players].sort((a, b) => {
         if (a.inj !== b.inj) return a.inj - b.inj;
         return (b.ovr * (b.con / 100)) - (a.ovr * (a.con / 100));
       });
       const picked = [];
-
       const gkIndex = pool.findIndex(p => p.naturalPos === 'GK');
       if (gkIndex !== -1) picked.push(pool.splice(gkIndex, 1)[0]);
       else picked.push(pool.shift());
 
       for (let i = 1; i < 11; i++) {
         const needed = template[i] ? template[i].posType : 'MID';
-        const matchIdx = pool.findIndex(p => p.naturalPos === needed);
-        if (matchIdx !== -1) picked.push(pool.splice(matchIdx, 1)[0]);
+        const mIdx = pool.findIndex(p => p.naturalPos === needed);
+        if (mIdx !== -1) picked.push(pool.splice(mIdx, 1)[0]);
         else picked.push(pool.shift());
       }
-
       picked.forEach((p, idx) => {
         p.starter = true;
         if (template[idx]) p.role = template[idx].duty;
       });
-
       club.players = [...picked, ...pool];
-
       cancelPlayerSwap();
       saveGame();
       renderTactics();
@@ -1691,7 +1094,6 @@
 
     function handlePlayerSelect(playerId) {
       const club = getCurrentUserClub();
-
       if (!selectedPlayerSwapId) {
         selectedPlayerSwapId = playerId;
         const p = club.players.find(x => x.id === playerId);
@@ -1703,31 +1105,16 @@
         playSound('click');
         return;
       }
-
-      if (selectedPlayerSwapId === playerId) {
-        cancelPlayerSwap();
-        return;
-      }
-
+      if (selectedPlayerSwapId === playerId) { cancelPlayerSwap(); return; }
       const p1Index = club.players.findIndex(x => x.id === selectedPlayerSwapId);
       const p2Index = club.players.findIndex(x => x.id === playerId);
-
       if (p1Index !== -1 && p2Index !== -1) {
-        const p1 = club.players[p1Index];
-        const p2 = club.players[p2Index];
-
-        const tempStarter = p1.starter;
-        p1.starter = p2.starter;
-        p2.starter = tempStarter;
-
-        const tempRole = p1.role;
-        p1.role = p2.role;
-        p2.role = tempRole;
-
+        const p1 = club.players[p1Index], p2 = club.players[p2Index];
+        const tempStarter = p1.starter; p1.starter = p2.starter; p2.starter = tempStarter;
+        const tempRole = p1.role; p1.role = p2.role; p2.role = tempRole;
         club.players[p1Index] = p2;
         club.players[p2Index] = p1;
       }
-
       cancelPlayerSwap();
       saveGame();
       renderTactics();
@@ -1744,37 +1131,25 @@
     function renderTactics() {
       const club = getCurrentUserClub();
       ensureAllSquadsHydrated();
-
       const starters = club.players.filter(p => p.starter);
       const bench = club.players.filter(p => !p.starter);
       const template = FORMATIONS[state.currentFormation] || FORMATIONS['4-3-3'];
 
-      const pitchNodesWrapper = document.getElementById('pitchNodesWrapper');
-      pitchNodesWrapper.innerHTML = '';
-
+      const pitchNodes = document.getElementById('pitchNodesWrapper');
+      pitchNodes.innerHTML = '';
       starters.forEach((p, idx) => {
         const coords = template[idx] || { x: 50, y: 50, role: p.naturalPos, duty: p.role };
         const isSelected = (selectedPlayerSwapId === p.id);
-
         const node = document.createElement('div');
         node.className = `pitch-node ${isSelected ? 'selected-for-swap' : ''}`;
-        node.style.left = `${coords.x}%`;
-        node.style.top = `${coords.y}%`;
+        node.style.left = `${coords.x}%`; node.style.top = `${coords.y}%`;
         node.onclick = () => handlePlayerSelect(p.id);
-
         const surname = p.name.split(' ').pop();
-
         node.innerHTML = `
-          <div class="pitch-kit">
-            ${idx + 1}
-            <div class="pitch-role-tag">${coords.role || p.naturalPos}</div>
-          </div>
-          <div class="pitch-name-card">
-            <div class="p-name">${surname} ${p.inj > 0 ? '🚑' : ''}</div>
-            <div class="p-role">${coords.duty || p.role} • ${p.con}%</div>
-          </div>
+          <div class="pitch-kit">${idx + 1}<div class="pitch-role-tag">${coords.role || p.naturalPos}</div></div>
+          <div class="pitch-name-card"><div class="p-name">${surname} ${p.inj > 0 ? '🚑' : ''}</div><div class="p-role">${coords.duty || p.role} • ${p.con}%</div></div>
         `;
-        pitchNodesWrapper.appendChild(node);
+        pitchNodes.appendChild(node);
       });
 
       const getMoraleIcon = (m) => {
@@ -1784,32 +1159,24 @@
         return '😠 <span style="color:#ef4444;">Unhappy</span>';
       };
 
-      const startersBody = document.getElementById('startersTableBody');
-      startersBody.innerHTML = '';
-
+      const sBody = document.getElementById('startersTableBody');
+      sBody.innerHTML = '';
       starters.forEach((p, idx) => {
         const isSelected = (selectedPlayerSwapId === p.id);
-        const templateEntry = template[idx];
-        const assignedPos = templateEntry ? templateEntry.role : p.naturalPos;
+        const tEntry = template[idx];
+        const assignedPos = tEntry ? tEntry.role : p.naturalPos;
         const conColor = p.con > 80 ? '#10b981' : (p.con > 65 ? '#f59e0b' : '#ef4444');
-
         const tr = document.createElement('tr');
         tr.className = `fm-row ${isSelected ? 'selected-for-swap' : ''}`;
-        tr.onclick = (e) => {
-          if (!e.target.classList.contains('btn-swap-pill')) handlePlayerSelect(p.id);
-        };
-
+        tr.onclick = (e) => { if (!e.target.classList.contains('btn-swap-pill')) handlePlayerSelect(p.id); };
         tr.innerHTML = `
           <td><span class="badge-pick pick-starter">${assignedPos}</span></td>
           <td><span class="role-badge">${p.role}</span></td>
           <td><b>${p.name}</b> ${p.inj > 0 ? `<span class="injury-badge">INJ (${p.inj}w)</span>` : ''}</td>
           <td>${p.age}</td>
           <td><b style="color:var(--gold);">${p.ovr}</b></td>
-          <td>
-            <div class="condition-bar"><div class="condition-fill" style="width:${p.con}%; background:${conColor};"></div></div>
-            <span style="font-size:0.72rem; font-weight:800; color:${conColor};">${p.con}%</span>
-          </td>
-          <td><span class="morale-badge">${getMoraleIcon(p.morale)}</span></td>
+          <td><div class="condition-bar"><div class="condition-fill" style="width:${p.con}%; background:${conColor};"></div></div><span style="font-size:0.72rem; font-weight:800; color:${conColor};">${p.con}%</span></td>
+          <td>${getMoraleIcon(p.morale)}</td>
           <td><span style="color:${p.contract <= 1 ? '#ef4444' : '#fff'}; font-weight:800;">${p.contract} yr${p.contract > 1 ? 's' : ''}</span></td>
           <td>£${Math.round(p.wage * 1000)}k/w</td>
           <td style="display:flex; gap:4px;">
@@ -1817,33 +1184,25 @@
             <button class="btn-swap-pill" style="background:#334155;" onclick="openContractModal('${p.id}')">📝 Contract</button>
           </td>
         `;
-        startersBody.appendChild(tr);
+        sBody.appendChild(tr);
       });
 
-      const benchBody = document.getElementById('benchTableBody');
-      benchBody.innerHTML = '';
-
+      const bBody = document.getElementById('benchTableBody');
+      bBody.innerHTML = '';
       bench.forEach((p, idx) => {
         const isSelected = (selectedPlayerSwapId === p.id);
         const conColor = p.con > 80 ? '#38bdf8' : (p.con > 65 ? '#f59e0b' : '#ef4444');
-
         const tr = document.createElement('tr');
         tr.className = `fm-row ${isSelected ? 'selected-for-swap' : ''}`;
-        tr.onclick = (e) => {
-          if (!e.target.classList.contains('btn-swap-pill')) handlePlayerSelect(p.id);
-        };
-
+        tr.onclick = (e) => { if (!e.target.classList.contains('btn-swap-pill')) handlePlayerSelect(p.id); };
         tr.innerHTML = `
           <td><span class="badge-pick pick-sub">S${idx + 1}</span></td>
           <td><span class="role-badge" style="background:#475569;">${p.role}</span></td>
           <td><b>${p.name}</b> ${p.inj > 0 ? `<span class="injury-badge">INJ (${p.inj}w)</span>` : ''}</td>
           <td>${p.age}</td>
           <td><b style="color:var(--gold);">${p.ovr}</b></td>
-          <td>
-            <div class="condition-bar"><div class="condition-fill" style="width:${p.con}%; background:${conColor};"></div></div>
-            <span style="font-size:0.72rem; font-weight:800; color:${conColor};">${p.con}%</span>
-          </td>
-          <td><span class="morale-badge">${getMoraleIcon(p.morale)}</span></td>
+          <td><div class="condition-bar"><div class="condition-fill" style="width:${p.con}%; background:${conColor};"></div></div><span style="font-size:0.72rem; font-weight:800; color:${conColor};">${p.con}%</span></td>
+          <td>${getMoraleIcon(p.morale)}</td>
           <td><span style="color:${p.contract <= 1 ? '#ef4444' : '#fff'}; font-weight:800;">${p.contract} yr${p.contract > 1 ? 's' : ''}</span></td>
           <td>£${Math.round(p.wage * 1000)}k/w</td>
           <td style="display:flex; gap:4px;">
@@ -1851,7 +1210,7 @@
             <button class="btn-swap-pill" style="background:#334155;" onclick="openContractModal('${p.id}')">📝 Contract</button>
           </td>
         `;
-        benchBody.appendChild(tr);
+        bBody.appendChild(tr);
       });
     }
 
@@ -1860,26 +1219,22 @@
       const p = club.players.find(x => x.id === playerId);
       if (!p) return;
       activeContractTarget = p;
-
       const details = document.getElementById('contractModalDetails');
       details.innerHTML = `
         <p><b>Player:</b> ${p.name} (${p.naturalPos} • OVR ${p.ovr})</p>
         <p><b>Current Contract:</b> ${p.contract} Year(s) remaining</p>
         <p><b>Current Wage:</b> £${Math.round(p.wage * 1000)}k / week</p>
-        <p style="margin-top:8px; color:var(--text-muted);">Offering an extension guarantees player commitment, boosts morale to Superb, and prevents free transfer departures.</p>
+        <p style="margin-top:8px; color:var(--text-muted);">Offering an extension guarantees player commitment, boosts morale to Superb, and prevents departures.</p>
       `;
-
       document.getElementById('contractModal').style.display = 'flex';
     }
 
     function confirmContractOffer(years) {
       if (!activeContractTarget) return;
-      const p = activeContractTarget;
-      p.contract += years;
-      p.wage = Number((p.wage * 1.1).toFixed(3));
-      p.morale = 'Superb';
-
-      alert(`Success! ${p.name} has signed a ${years}-year contract extension.`);
+      activeContractTarget.contract += years;
+      activeContractTarget.wage = Number((activeContractTarget.wage * 1.1).toFixed(3));
+      activeContractTarget.morale = 'Superb';
+      alert(`Success! ${activeContractTarget.name} has signed a ${years}-year contract extension.`);
       closeContractModal();
       saveGame();
       renderAll();
@@ -1894,20 +1249,10 @@
     function triggerTouchlineShout(shoutType) {
       matchLiveState.activeShout = shoutType;
       matchLiveState.shoutExpireMin = pitchEngine.currentMinute + 12;
-
-      const badge = document.getElementById('activeShoutBadge');
-      const labels = {
-        'DEMAND_MORE': '🔥 Active: Demand More (+Pressing)',
-        'TIGHTEN_UP': '🛡️ Active: Tighten Up (+Defending)',
-        'PUSH_FORWARD': '⚡ Active: Push Forward (+Attacking)',
-        'WASTE_TIME': '⏱️ Active: Waste Time (Possession)'
-      };
-      badge.innerText = labels[shoutType] || '';
-
+      const labels = { 'DEMAND_MORE': '🔥 Demand More', 'TIGHTEN_UP': '🛡️ Tighten Up', 'PUSH_FORWARD': '⚡ Push Forward', 'WASTE_TIME': '⏱️ Waste Time' };
+      document.getElementById('activeShoutBadge').innerText = labels[shoutType] || '';
       const feed = document.getElementById('commentaryFeed');
-      if (feed) {
-        feed.innerHTML = `<div class="comm-line" style="border-left-color:#f59e0b; color:#fbbf24;">📢 Manager Shouts: ${labels[shoutType]}</div>` + feed.innerHTML;
-      }
+      if (feed) feed.innerHTML = `<div class="comm-line" style="border-left-color:#f59e0b; color:#fbbf24;">📢 Manager Shouts: ${labels[shoutType]}</div>` + feed.innerHTML;
       playSound('whistle');
     }
 
@@ -1917,7 +1262,6 @@
       const container = document.getElementById('benchSubChipsList');
       if (!container) return;
       container.innerHTML = '';
-
       bench.forEach(p => {
         const chip = document.createElement('div');
         chip.className = 'sub-chip';
@@ -1928,31 +1272,17 @@
     }
 
     function makeLiveMatchSub(subPlayerId) {
-      if (matchLiveState.subsUsed >= matchLiveState.maxSubs) {
-        alert("Maximum 5 substitutions already used this match!");
-        return;
-      }
-
+      if (matchLiveState.subsUsed >= matchLiveState.maxSubs) { alert("Maximum 5 substitutions already used this match!"); return; }
       const club = getCurrentUserClub();
       const subIn = club.players.find(x => x.id === subPlayerId);
       const starters = club.players.filter(p => p.starter).sort((a,b) => a.con - b.con);
       const subOut = starters[0];
-
       if (!subIn || !subOut) return;
 
-      subIn.starter = true;
-      subOut.starter = false;
-      subIn.role = subOut.role;
+      subIn.starter = true; subOut.starter = false; subIn.role = subOut.role;
       matchLiveState.subsUsed++;
-
       document.getElementById('subsRemainingText').innerText = matchLiveState.maxSubs - matchLiveState.subsUsed;
       addTimelineEvent('sub', `🔄 ${pitchEngine.currentMinute}' SUB: ${subIn.name} on for ${subOut.name}`);
-
-      const feed = document.getElementById('commentaryFeed');
-      if (feed) {
-        feed.innerHTML = `<div class="comm-line" style="border-left-color:#38bdf8; color:#7dd3fc;">🔄 ${pitchEngine.currentMinute}' SUB: ${subIn.name} replaces tired ${subOut.name}</div>` + feed.innerHTML;
-      }
-
       populateInMatchSubChips();
       setup2DPlayers(state.clubs.find(c => c.id === pitchEngine.homeClubId), state.clubs.find(c => c.id === pitchEngine.awayClubId));
       playSound('click');
@@ -1974,32 +1304,21 @@
       const acadLvl = state.academyFacilityLevel || 1;
       const count = 3 + Math.floor(Math.random() * 3);
       const prospects = [];
-
       for (let i = 0; i < count; i++) {
         const fn = FIRSTNAMES[Math.floor(Math.random() * FIRSTNAMES.length)];
         const sn = SURNAMES[Math.floor(Math.random() * SURNAMES.length)];
         const pos = ['GK', 'DEF', 'MID', 'FWD'][Math.floor(Math.random() * 4)];
         const baseOvr = 58 + (acadLvl * 2) + Math.floor(Math.random() * 6);
-        const pot = Math.min(94, baseOvr + 16 + Math.floor(Math.random() * 10));
-
         prospects.push({
-          id: `youth_${Date.now()}_${i}`,
-          name: `${fn} ${sn}`,
-          naturalPos: pos,
-          nat: 'ENG',
-          age: 16 + Math.floor(Math.random() * 2),
-          ovr: baseOvr,
-          potential: pot,
-          wage: 0.005,
-          contract: 3,
-          signed: false
+          id: `youth_${Date.now()}_${i}`, name: `${fn} ${sn}`, naturalPos: pos, nat: 'ENG',
+          age: 16 + Math.floor(Math.random() * 2), ovr: baseOvr, potential: Math.min(94, baseOvr + 16 + Math.floor(Math.random() * 10)),
+          wage: 0.005, contract: 3, signed: false
         });
       }
-
       state.youthProspects = prospects;
       if (forceSpring) {
         state.youthIntakeCompleted = true;
-        addNewsStory('Academy Day', `🌱 YOUTH INTAKE: New Golden Generation at ${club.name}!`, `The academy has unveiled ${count} fresh prospects following spring trials. Check the Academy tab to inspect potential stars.`, true);
+        addNewsStory('Academy Day', `🌱 YOUTH INTAKE: New Golden Generation at ${club.name}!`, `The academy has unveiled ${count} fresh prospects following spring trials. Inspect them under the Academy tab.`, true);
       }
     }
 
@@ -2007,24 +1326,19 @@
       const container = document.getElementById('academyProspectsGrid');
       if (!container) return;
       container.innerHTML = '';
-
       const statusTag = document.getElementById('academyIntakeStatusTag');
-      if (statusTag) {
-        statusTag.innerText = state.currentWeek >= 30 ? 'Spring Intake Active' : `Next Intake: Week 30 (Wk ${state.currentWeek}/38)`;
-      }
-
+      if (statusTag) statusTag.innerText = state.currentWeek >= 30 ? 'Spring Intake Active' : `Next Intake: Week 30 (Wk ${state.currentWeek}/38)`;
       if (!state.youthProspects || state.youthProspects.length === 0) {
         container.innerHTML = '<p style="color:var(--text-muted); font-size:0.8rem;">No active prospects in trials. Next intake arrives Week 30.</p>';
         return;
       }
-
       state.youthProspects.forEach(p => {
         const card = document.createElement('div');
         card.className = 'prospect-card';
         card.innerHTML = `
           <div class="prospect-tag">${p.potential >= 88 ? '⭐ Wonderkid' : 'Prospect'}</div>
           <div style="font-weight:900; font-size:0.95rem; color:#fff;">${p.name}</div>
-          <div style="font-size:0.75rem; color:var(--text-muted);">${p.naturalPos} • ${p.age} years old • ${p.nat}</div>
+          <div style="font-size:0.75rem; color:var(--text-muted);">${p.naturalPos} • ${p.age} yrs • ${p.nat}</div>
           <div style="display:flex; justify-content:space-between; margin-top:6px; font-size:0.8rem;">
             <span>Current: <b style="color:var(--gold);">${p.ovr}</b></span>
             <span>Potential: <b style="color:#10b981;">${p.potential}+</b></span>
@@ -2040,29 +1354,14 @@
     function signAcademyProspect(prospectId) {
       const p = state.youthProspects.find(x => x.id === prospectId);
       if (!p || p.signed) return;
-
       const club = getCurrentUserClub();
       p.signed = true;
-
       club.players.push({
-        id: p.id,
-        name: p.name,
-        naturalPos: p.naturalPos,
-        nat: p.nat,
-        age: p.age,
-        ovr: p.ovr,
-        con: 100,
+        id: p.id, name: p.name, naturalPos: p.naturalPos, nat: p.nat, age: p.age, ovr: p.ovr, con: 100,
         role: p.naturalPos === 'GK' ? 'GK-De' : (p.naturalPos === 'DEF' ? 'CD-De' : (p.naturalPos === 'MID' ? 'CM-At' : 'AF-At')),
-        starter: false,
-        val: Number(((p.ovr - 45) * 0.8).toFixed(1)),
-        wage: p.wage,
-        contract: p.contract,
-        morale: 'Superb',
-        goals: 0,
-        cleanSheets: 0,
-        inj: 0
+        starter: false, val: Number(((p.ovr - 45) * 0.8).toFixed(1)), wage: p.wage, contract: p.contract,
+        morale: 'Superb', goals: 0, cleanSheets: 0, inj: 0
       });
-
       alert(`Signed! ${p.name} is now registered in your first team squad.`);
       saveGame();
       renderAll();
@@ -2073,7 +1372,6 @@
     function applyWeeklyFinancesAndFatigue() {
       const club = getCurrentUserClub();
       const medBonus = (state.medicalFacilityLevel || 1) * 3;
-
       const wageBill = computeClubWeeklyWageBill(club);
       club.budget = Math.max(0, Number((club.budget - (wageBill / 1000)).toFixed(2)));
 
@@ -2082,14 +1380,11 @@
           p.inj--;
           if (p.inj === 0) addNewsStory('Medical Update', `FITNESS: ${p.name} Returns from Injury`, `${p.name} has resumed training.`, false);
         }
-
         if (p.starter) {
-          const drain = 12 + Math.floor(Math.random() * 7);
-          p.con = Math.max(45, p.con - drain);
-
+          p.con = Math.max(45, p.con - (12 + Math.floor(Math.random() * 7)));
           if (p.con < 65 && Math.random() < 0.22 && p.inj === 0) {
             p.inj = 1 + Math.floor(Math.random() * 3);
-            addNewsStory('Injury Blow', `INJURY: ${p.name} Sidelined for ${p.inj} Weeks!`, `${p.name} suffered a muscle strain during matchday.`, true);
+            addNewsStory('Injury Blow', `INJURY: ${p.name} Sidelined for ${p.inj} Weeks!`, `${p.name} suffered a muscle strain.`, true);
           }
           if (p.morale === 'Fair') p.morale = 'Good';
         } else {
@@ -2122,63 +1417,49 @@
     function updateDeadlineModalUI() {
       const timeStr = `${11 + (12 - deadlineHour)}:00 ${deadlineHour > 1 ? 'PM' : 'AM'}`;
       document.getElementById('deadlineClockDisplay').innerText = `${timeStr} (${deadlineHour}h Remaining)`;
-      
-      const offerHeadline = document.getElementById('deadlineOfferHeadline');
-      const offerDetails = document.getElementById('deadlineOfferDetails');
-      const actionBtns = document.getElementById('deadlineActionButtons');
-
+      const oHeadline = document.getElementById('deadlineOfferHeadline');
+      const oDetails = document.getElementById('deadlineOfferDetails');
+      const aBtns = document.getElementById('deadlineActionButtons');
       if (pendingAIBid) {
-        offerHeadline.innerText = `🚨 Formal Bid Received: £${pendingAIBid.fee.toFixed(1)}M from ${pendingAIBid.buyer}`;
-        offerDetails.innerHTML = `<b>${pendingAIBid.buyer}</b> have tabled an official deadline day offer of <b>£${pendingAIBid.fee.toFixed(1)}M</b> for <b>${pendingAIBid.player.name}</b>.`;
-        actionBtns.style.display = 'flex';
-        actionBtns.innerHTML = `
+        oHeadline.innerText = `🚨 Formal Bid Received: £${pendingAIBid.fee.toFixed(1)}M from ${pendingAIBid.buyer}`;
+        oDetails.innerHTML = `<b>${pendingAIBid.buyer}</b> have tabled an official deadline day offer of <b>£${pendingAIBid.fee.toFixed(1)}M</b> for <b>${pendingAIBid.player.name}</b>.`;
+        aBtns.style.display = 'flex';
+        aBtns.innerHTML = `
           <button class="btn-swap-pill" style="background:#10b981; color:#fff;" onclick="acceptDeadlineBid()">Accept Offer (£${pendingAIBid.fee.toFixed(1)}M)</button>
           <button class="btn-swap-pill" style="background:#ef4444; color:#fff;" onclick="rejectDeadlineBid()">Reject Offer</button>
         `;
       } else {
-        offerHeadline.innerText = "Transfer Market Monitoring";
-        offerDetails.innerText = "No bids right now. Advance the clock to scout deals or listen to rival inquiries.";
-        actionBtns.style.display = 'none';
+        oHeadline.innerText = "Transfer Market Monitoring";
+        oDetails.innerText = "No bids right now. Advance the clock to scout deals or listen to rival inquiries.";
+        aBtns.style.display = 'none';
       }
     }
 
     function advanceDeadlineHour() {
       deadlineHour--;
       const club = getCurrentUserClub();
-
       if (Math.random() < 0.45 && !pendingAIBid) {
-        const targetPlayer = club.players[Math.floor(Math.random() * club.players.length)];
+        const target = club.players[Math.floor(Math.random() * club.players.length)];
         const aiClubs = state.clubs.filter(c => c.id !== club.id);
-        const buyerClub = aiClubs[Math.floor(Math.random() * aiClubs.length)];
-        const markup = 1.15 + (Math.random() * 0.35);
-        const offeredFee = Number((targetPlayer.val * markup).toFixed(1));
-
-        pendingAIBid = { player: targetPlayer, buyer: buyerClub.name, fee: offeredFee };
+        const buyer = aiClubs[Math.floor(Math.random() * aiClubs.length)];
+        const offeredFee = Number((target.val * (1.15 + Math.random() * 0.35)).toFixed(1));
+        pendingAIBid = { player: target, buyer: buyer.name, fee: offeredFee };
         playSound('click');
       }
-
-      if (deadlineHour <= 0) {
-        closeDeadlineDay();
-        return;
-      }
+      if (deadlineHour <= 0) { closeDeadlineDay(); return; }
       updateDeadlineModalUI();
     }
 
     function acceptDeadlineBid() {
       if (!pendingAIBid) return;
       const club = getCurrentUserClub();
-      const p = pendingAIBid.player;
-      const fee = pendingAIBid.fee;
-
+      const p = pendingAIBid.player, fee = pendingAIBid.fee;
       club.budget += fee;
       const idx = club.players.findIndex(x => x.id === p.id);
       if (idx !== -1) club.players.splice(idx, 1);
-
       state.manager.fansApproval = Math.max(20, state.manager.fansApproval - 2);
-
       addNewsStory('Deadline Day Done Deal', `DEADLINE DAY MOVE: ${p.name} Joins ${pendingAIBid.buyer} for £${fee.toFixed(1)}M!`, `${p.name} has completed a transfer from ${club.name} to ${pendingAIBid.buyer}.`, true);
       alert(`Deal finalized! ${p.name} joins ${pendingAIBid.buyer}. £${fee.toFixed(1)}M added to budget.`);
-      
       pendingAIBid = null;
       saveGame();
       renderAll();
@@ -2197,8 +1478,7 @@
       state.deadlineDaysCompleted[state.currentWeek] = true;
       pendingAIBid = null;
       document.getElementById('deadlineModal').style.display = 'none';
-
-      addNewsStory('Window Closed', 'TRANSFER WINDOW SLAMS SHUT!', 'The transfer deadline has officially passed. Squads are locked in until the next window opens.', true);
+      addNewsStory('Window Closed', 'TRANSFER WINDOW SLAMS SHUT!', 'The transfer deadline has officially passed. Squads are locked in.', true);
       saveGame();
       renderAll();
       alert("The Transfer Window has closed! You can now click ADVANCE WEEK to progress.");
@@ -2206,18 +1486,9 @@
 
     function launchPenaltyShootout(match, homeClub, awayClub) {
       shootoutState = {
-        active: true,
-        match: match,
-        homeClub: homeClub,
-        awayClub: awayClub,
-        homeScore: 0,
-        awayScore: 0,
-        homeKicks: [],
-        awayKicks: [],
-        turn: 'home',
-        round: 1
+        active: true, match: match, homeClub: homeClub, awayClub: awayClub,
+        homeScore: 0, awayScore: 0, homeKicks: [], awayKicks: [], turn: 'home', round: 1
       };
-
       document.getElementById('penHomeTeamName').innerText = homeClub.name;
       document.getElementById('penAwayTeamName').innerText = awayClub.name;
       document.getElementById('penHomeScore').innerText = '0';
@@ -2226,7 +1497,6 @@
       document.getElementById('penAwayPips').innerHTML = '';
       document.getElementById('penKickStatusText').innerText = `Round 1: ${homeClub.name} to take first!`;
       document.getElementById('btnTakePenalty').disabled = false;
-
       document.getElementById('shootoutModal').style.display = 'flex';
       playSound('whistle');
     }
@@ -2235,7 +1505,6 @@
       const isHome = (shootoutState.turn === 'home');
       const team = isHome ? shootoutState.homeClub : shootoutState.awayClub;
       const scored = Math.random() < 0.78;
-
       if (isHome) {
         shootoutState.homeKicks.push(scored);
         if (scored) shootoutState.homeScore++;
@@ -2246,84 +1515,55 @@
         shootoutState.turn = 'home';
         shootoutState.round++;
       }
-
       updateShootoutPips();
       document.getElementById('penHomeScore').innerText = shootoutState.homeScore;
       document.getElementById('penAwayScore').innerText = shootoutState.awayScore;
-
       if (scored) {
         playSound('goal');
-        document.getElementById('penKickStatusText').innerHTML = `⚽ <b style="color:#10b981;">SCORED!</b> ${team.name} convert their penalty!`;
+        document.getElementById('penKickStatusText').innerHTML = `⚽ <b style="color:#10b981;">SCORED!</b> ${team.name} convert penalty!`;
       } else {
         playSound('click');
         document.getElementById('penKickStatusText').innerHTML = `❌ <b style="color:#ef4444;">SAVED / MISSED!</b> ${team.name} fail to score!`;
       }
-
-      const hKicks = shootoutState.homeKicks.length;
-      const aKicks = shootoutState.awayKicks.length;
-
+      const hKicks = shootoutState.homeKicks.length, aKicks = shootoutState.awayKicks.length;
       if (hKicks >= 5 && aKicks >= 5 && hKicks === aKicks) {
         if (shootoutState.homeScore !== shootoutState.awayScore) concludeShootout();
       } else if (hKicks <= 5 && aKicks <= 5) {
-        const hRemaining = 5 - hKicks;
-        const aRemaining = 5 - aKicks;
-        if (shootoutState.homeScore > shootoutState.awayScore + aRemaining ||
-            shootoutState.awayScore > shootoutState.homeScore + hRemaining) {
+        const hRemaining = 5 - hKicks, aRemaining = 5 - aKicks;
+        if (shootoutState.homeScore > shootoutState.awayScore + aRemaining || shootoutState.awayScore > shootoutState.homeScore + hRemaining) {
           concludeShootout();
         }
       }
     }
 
     function updateShootoutPips() {
-      const hContainer = document.getElementById('penHomePips');
-      const aContainer = document.getElementById('penAwayPips');
-      hContainer.innerHTML = '';
-      aContainer.innerHTML = '';
-
-      shootoutState.homeKicks.forEach(res => {
-        const pip = document.createElement('div');
-        pip.className = `pen-pip ${res ? 'scored' : 'missed'}`;
-        hContainer.appendChild(pip);
-      });
-      shootoutState.awayKicks.forEach(res => {
-        const pip = document.createElement('div');
-        pip.className = `pen-pip ${res ? 'scored' : 'missed'}`;
-        aContainer.appendChild(pip);
-      });
+      const hC = document.getElementById('penHomePips'), aC = document.getElementById('penAwayPips');
+      hC.innerHTML = ''; aC.innerHTML = '';
+      shootoutState.homeKicks.forEach(res => { const p = document.createElement('div'); p.className = `pen-pip ${res ? 'scored' : 'missed'}`; hC.appendChild(p); });
+      shootoutState.awayKicks.forEach(res => { const p = document.createElement('div'); p.className = `pen-pip ${res ? 'scored' : 'missed'}`; aC.appendChild(p); });
     }
 
     function concludeShootout() {
       document.getElementById('btnTakePenalty').disabled = true;
       const homeWon = shootoutState.homeScore > shootoutState.awayScore;
       const winner = homeWon ? shootoutState.homeClub : shootoutState.awayClub;
-
-      const m = shootoutState.match;
-      m.played = true;
-      m.homeGoals = homeWon ? (m.homeGoals + 1) : m.homeGoals;
-
+      shootoutState.match.played = true;
+      shootoutState.match.homeGoals = homeWon ? (shootoutState.match.homeGoals + 1) : shootoutState.match.homeGoals;
       const feed = document.getElementById('commentaryFeed');
-      if (feed) {
-        feed.innerHTML = `<div class="comm-line pen">🏆 ${winner.name} WIN ON PENALTIES (${shootoutState.homeScore} - ${shootoutState.awayScore})!</div>` + feed.innerHTML;
-      }
-
+      if (feed) feed.innerHTML = `<div class="comm-line pen">🏆 ${winner.name} WIN ON PENALTIES (${shootoutState.homeScore} - ${shootoutState.awayScore})!</div>` + feed.innerHTML;
       playSound('cheer');
       setTimeout(() => {
         document.getElementById('shootoutModal').style.display = 'none';
-        alert(`🏆 SHOOTOUT RESULT: ${winner.name} advance to the next round (${shootoutState.homeScore} - ${shootoutState.awayScore} pens)!`);
+        alert(`🏆 SHOOTOUT: ${winner.name} advance to the next round (${shootoutState.homeScore} - ${shootoutState.awayScore} pens)!`);
         saveGame();
         renderAll();
       }, 1400);
     }
 
-    /* 2-STEP ADVANCE WITH RESULT MODAL */
     function handleMasterAdvanceClick() {
       if (!state) return;
       if (checkDeadlineDayTrigger()) return;
-
-      if (state.currentWeek >= state.totalWeeks) {
-        showEndSeasonGala();
-        return;
-      }
+      if (state.currentWeek >= state.totalWeeks) { showEndSeasonGala(); return; }
 
       const weekData = state.fixtures.find(f => f.week === state.currentWeek);
       const userMatch = weekData ? weekData.matches.find(m => m.home === state.userClubId || m.away === state.userClubId) : null;
@@ -2331,15 +1571,10 @@
       if (userMatch && !userMatch.played) {
         clearInterval(matchSimInterval);
         cancelAnimationFrame(animFrameId);
-
         simulateCurrentWeekFixtures();
         applyWeeklyFinancesAndFatigue();
         generateWeeklyNewsStory();
-
-        if (state.currentWeek === 30 && !state.youthIntakeCompleted) {
-          generateYouthIntake(true);
-        }
-
+        if (state.currentWeek === 30 && !state.youthIntakeCompleted) generateYouthIntake(true);
         renderMatchdayView();
         renderStandingsTable(getCurrentUserClub().div);
         showResultModal(userMatch);
@@ -2348,7 +1583,6 @@
         const advTxt = document.getElementById('btnAdvanceText');
         advBtn.className = 'btn-advance-master btn-continue-mode';
         advTxt.innerText = `CONTINUE TO WK ${state.currentWeek + 1}`;
-
         saveGame();
         playSound('whistle');
         return;
@@ -2357,17 +1591,14 @@
       state.currentWeek++;
       matchLiveState = { activeShout: null, shoutExpireMin: 0, subsUsed: 0, maxSubs: 5, timelineEvents: [] };
       document.getElementById('activeShoutBadge').innerText = '';
-
       if (state.currentWeek % 4 === 0) evaluateManagerOfMonth();
-
       saveGame();
       renderAll();
       playSound('click');
     }
 
     function showResultModal(m) {
-      const h = state.clubs.find(c => c.id === m.home);
-      const a = state.clubs.find(c => c.id === m.away);
+      const h = state.clubs.find(c => c.id === m.home), a = state.clubs.find(c => c.id === m.away);
       const modal = document.getElementById('resultSummaryModal');
       const scoreDisp = document.getElementById('modalScoreDisplay');
       const feedDisp = document.getElementById('modalHighlightsFeed');
@@ -2404,7 +1635,6 @@
         <p><b>Result Impact:</b> ${impactText}</p>
         <p style="margin-top:6px; color:#cbd5e1;">All matches in your division have concluded. Click continue to prepare for the next round.</p>
       `;
-
       modal.style.display = 'flex';
     }
 
@@ -2420,14 +1650,11 @@
 
       weekData.matches.forEach(m => {
         if (m.played) return;
-
         const homeClub = state.clubs.find(c => c.id === m.home);
         const awayClub = state.clubs.find(c => c.id === m.away);
-
         if (homeClub && awayClub) {
           const homeStats = computeClubAttributes(homeClub);
           const awayStats = computeClubAttributes(awayClub);
-
           const diff = (homeStats.att + homeStats.mid + 4) - (awayStats.def + awayStats.mid);
           let homeScore = Math.max(0, Math.floor(Math.random() * 3) + (diff > 4 ? 1 : 0));
           let awayScore = Math.max(0, Math.floor(Math.random() * 3) + (diff < -4 ? 1 : 0));
@@ -2442,36 +1669,23 @@
           };
 
           for (let i = 0; i < homeScore; i++) {
-            const sc = pickScorer(homeClub);
-            sc.goals = (sc.goals || 0) + 1;
+            const sc = pickScorer(homeClub); sc.goals = (sc.goals || 0) + 1;
             m.scorers.push({ team: homeClub.name, player: sc.name, min: 10 + Math.floor(Math.random() * 80) });
           }
           for (let i = 0; i < awayScore; i++) {
-            const sc = pickScorer(awayClub);
-            sc.goals = (sc.goals || 0) + 1;
+            const sc = pickScorer(awayClub); sc.goals = (sc.goals || 0) + 1;
             m.scorers.push({ team: awayClub.name, player: sc.name, min: 10 + Math.floor(Math.random() * 80) });
           }
 
-          if (awayScore === 0) {
-            const gk = homeClub.players.find(p => p.starter && p.naturalPos === 'GK');
-            if (gk) gk.cleanSheets = (gk.cleanSheets || 0) + 1;
-          }
-          if (homeScore === 0) {
-            const gk = awayClub.players.find(p => p.starter && p.naturalPos === 'GK');
-            if (gk) gk.cleanSheets = (gk.cleanSheets || 0) + 1;
-          }
+          if (awayScore === 0) { const gk = homeClub.players.find(p => p.starter && p.naturalPos === 'GK'); if (gk) gk.cleanSheets = (gk.cleanSheets || 0) + 1; }
+          if (homeScore === 0) { const gk = awayClub.players.find(p => p.starter && p.naturalPos === 'GK'); if (gk) gk.cleanSheets = (gk.cleanSheets || 0) + 1; }
 
-          if (m.type === 'LEAGUE') {
-            updateLeagueTableRecord(m.div, m.home, m.away, homeScore, awayScore);
-          } else if (m.type === 'CUP') {
-            const gateReceipt = Number(((homeClub.cap * 0.000035) / 2).toFixed(2));
-            homeClub.budget += gateReceipt;
-            awayClub.budget += gateReceipt;
+          if (m.type === 'LEAGUE') updateLeagueTableRecord(m.div, m.home, m.away, homeScore, awayScore);
+          else if (m.type === 'CUP') {
+            const gate = Number(((homeClub.cap * 0.000035) / 2).toFixed(2));
+            homeClub.budget += gate; awayClub.budget += gate;
           }
-
-          if (m.home === userClub.id || m.away === userClub.id) {
-            recordUserMatchResult(m.home === userClub.id, homeScore, awayScore);
-          }
+          if (m.home === userClub.id || m.away === userClub.id) recordUserMatchResult(m.home === userClub.id, homeScore, awayScore);
         }
       });
     }
@@ -2480,28 +1694,20 @@
       const userClub = getCurrentUserClub();
       const weekData = state.fixtures.find(f => f.week === state.currentWeek);
       const userMatch = weekData ? weekData.matches.find(m => m.home === userClub.id || m.away === userClub.id) : null;
-
       if (userMatch && userMatch.played) {
         const isHome = (userMatch.home === userClub.id);
         const oppId = isHome ? userMatch.away : userMatch.home;
         const oppClub = state.clubs.find(c => c.id === oppId);
         const myScore = isHome ? userMatch.homeGoals : userMatch.awayGoals;
         const oppScore = isHome ? userMatch.awayGoals : userMatch.homeGoals;
-
-        if (myScore > oppScore) {
-          addNewsStory('Match Reaction', `Victory: ${userClub.name} Triumph Over ${oppClub.name} (${myScore}-${oppScore})`, `${userClub.name} delivered a confident display to secure victory.`, false);
-        } else if (myScore < oppScore) {
-          addNewsStory('Defeat Reaction', `Setback: ${userClub.name} Fall to ${oppClub.name} (${myScore}-${oppScore})`, `Supporters questioned tactics following defeat to ${oppClub.name}.`, false);
-        } else {
-          addNewsStory('Match Reaction', `Points Shared: ${userClub.name} Draw Against ${oppClub.name} (${myScore}-${oppScore})`, `Both sides settled for a draw in an intense encounter.`, false);
-        }
+        if (myScore > oppScore) addNewsStory('Match Reaction', `Victory: ${userClub.name} Triumph Over ${oppClub.name} (${myScore}-${oppScore})`, `${userClub.name} delivered a confident display.`, false);
+        else if (myScore < oppScore) addNewsStory('Defeat Reaction', `Setback: ${userClub.name} Fall to ${oppClub.name} (${myScore}-${oppScore})`, `Supporters questioned tactics following defeat.`, false);
+        else addNewsStory('Match Reaction', `Points Shared: ${userClub.name} Draw Against ${oppClub.name} (${myScore}-${oppScore})`, `Both sides settled for a point in an intense match.`, false);
       }
     }
 
     function recordUserMatchResult(isHome, hg, ag) {
-      const userGoals = isHome ? hg : ag;
-      const oppGoals = isHome ? ag : hg;
-
+      const userGoals = isHome ? hg : ag, oppGoals = isHome ? ag : hg;
       state.manager.matches++;
       if (userGoals > oppGoals) {
         state.manager.wins++;
@@ -2520,47 +1726,24 @@
     function updateLeagueTableRecord(div, homeId, awayId, hg, ag) {
       const table = state.standings[div];
       if (!table) return;
-
-      const hRow = table.find(r => r.id === homeId);
-      const aRow = table.find(r => r.id === awayId);
-
+      const hRow = table.find(r => r.id === homeId), aRow = table.find(r => r.id === awayId);
       if (hRow && aRow) {
-        hRow.played++;
-        aRow.played++;
-        hRow.gf += hg;
-        hRow.ga += ag;
-        hRow.gd = hRow.gf - hRow.ga;
-        aRow.gf += ag;
-        aRow.ga += hg;
-        aRow.gd = aRow.gf - aRow.ga;
-
-        if (hg > ag) {
-          hRow.won++;
-          hRow.pts += 3;
-          aRow.lost++;
-        } else if (hg === ag) {
-          hRow.drawn++;
-          hRow.pts += 1;
-          aRow.drawn++;
-          aRow.pts += 1;
-        } else {
-          aRow.won++;
-          aRow.pts += 3;
-          hRow.lost++;
-        }
+        hRow.played++; aRow.played++;
+        hRow.gf += hg; hRow.ga += ag; hRow.gd = hRow.gf - hRow.ga;
+        aRow.gf += ag; aRow.ga += hg; aRow.gd = aRow.gf - aRow.ga;
+        if (hg > ag) { hRow.won++; hRow.pts += 3; aRow.lost++; }
+        else if (hg === ag) { hRow.drawn++; hRow.pts += 1; aRow.drawn++; aRow.pts += 1; }
+        else { aRow.won++; aRow.pts += 3; hRow.lost++; }
       }
     }
 
-    /* 2D CANVAS ENGINE */
     function initPitchCanvas() {
       const canvas = document.getElementById('matchPitchCanvas');
       if (!canvas) return;
       pitchEngine.canvas = canvas;
       pitchEngine.ctx = canvas.getContext('2d');
-      pitchEngine.w = 800;
-      pitchEngine.h = 480;
-      canvas.width = 800;
-      canvas.height = 480;
+      pitchEngine.w = 800; pitchEngine.h = 480;
+      canvas.width = 800; canvas.height = 480;
     }
 
     function setup2DPlayers(homeClub, awayClub) {
@@ -2577,7 +1760,6 @@
         { x: 235, y: 110 }, { x: 225, y: 240 }, { x: 235, y: 370 },
         { x: 335, y: 95 }, { x: 350, y: 240 }, { x: 335, y: 385 }
       ];
-
       const aSlots = [
         { x: 750, y: 240 },
         { x: 670, y: 75 }, { x: 675, y: 180 }, { x: 675, y: 300 }, { x: 670, y: 405 },
@@ -2585,26 +1767,8 @@
         { x: 465, y: 95 }, { x: 450, y: 240 }, { x: 465, y: 385 }
       ];
 
-      pitchEngine.homePlayers = hSlots.map((s, idx) => ({
-        id: `h_${idx}`,
-        num: idx + 1,
-        baseX: s.x,
-        baseY: s.y,
-        x: s.x,
-        y: s.y,
-        color: pitchEngine.homeColor
-      }));
-
-      pitchEngine.awayPlayers = aSlots.map((s, idx) => ({
-        id: `a_${idx}`,
-        num: idx + 1,
-        baseX: s.x,
-        baseY: s.y,
-        x: s.x,
-        y: s.y,
-        color: pitchEngine.awayColor
-      }));
-
+      pitchEngine.homePlayers = hSlots.map((s, idx) => ({ id: `h_${idx}`, num: idx + 1, baseX: s.x, baseY: s.y, x: s.x, y: s.y, color: pitchEngine.homeColor }));
+      pitchEngine.awayPlayers = aSlots.map((s, idx) => ({ id: `a_${idx}`, num: idx + 1, baseX: s.x, baseY: s.y, x: s.x, y: s.y, color: pitchEngine.awayColor }));
       pitchEngine.ball = { x: 400, y: 240, vx: 0, vy: 0, targetX: 400, targetY: 240 };
       draw2DPitch();
     }
@@ -2612,99 +1776,47 @@
     function draw2DPitch() {
       const { ctx, w, h } = pitchEngine;
       if (!ctx) return;
-
-      ctx.fillStyle = '#235d31';
-      ctx.fillRect(0, 0, w, h);
-
+      ctx.fillStyle = '#235d31'; ctx.fillRect(0, 0, w, h);
       ctx.fillStyle = '#1b4926';
       const stripeW = w / 10;
-      for (let i = 0; i < 10; i += 2) {
-        ctx.fillRect(i * stripeW, 0, stripeW, h);
-      }
+      for (let i = 0; i < 10; i += 2) ctx.fillRect(i * stripeW, 0, stripeW, h);
 
-      ctx.strokeStyle = 'rgba(255, 255, 255, 0.75)';
-      ctx.lineWidth = 2.5;
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.75)'; ctx.lineWidth = 2.5;
       ctx.strokeRect(16, 16, w - 32, h - 32);
+      ctx.beginPath(); ctx.moveTo(w / 2, 16); ctx.lineTo(w / 2, h - 16); ctx.stroke();
+      ctx.beginPath(); ctx.arc(w / 2, h / 2, 65, 0, Math.PI * 2); ctx.stroke();
+      ctx.fillStyle = '#ffffff'; ctx.beginPath(); ctx.arc(w / 2, h / 2, 4, 0, Math.PI * 2); ctx.fill();
 
-      ctx.beginPath();
-      ctx.moveTo(w / 2, 16);
-      ctx.lineTo(w / 2, h - 16);
-      ctx.stroke();
-
-      ctx.beginPath();
-      ctx.arc(w / 2, h / 2, 65, 0, Math.PI * 2);
-      ctx.stroke();
-
-      ctx.fillStyle = '#ffffff';
-      ctx.beginPath();
-      ctx.arc(w / 2, h / 2, 4, 0, Math.PI * 2);
-      ctx.fill();
-
-      ctx.strokeRect(16, h / 2 - 105, 115, 210);
-      ctx.strokeRect(16, h / 2 - 50, 42, 100);
-
-      ctx.strokeRect(w - 16 - 115, h / 2 - 105, 115, 210);
-      ctx.strokeRect(w - 16 - 42, h / 2 - 50, 42, 100);
-
-      ctx.fillStyle = 'rgba(255, 255, 255, 0.25)';
-      ctx.fillRect(8, h / 2 - 35, 8, 70);
-      ctx.fillRect(w - 16, h / 2 - 35, 8, 70);
+      ctx.strokeRect(16, h / 2 - 105, 115, 210); ctx.strokeRect(16, h / 2 - 50, 42, 100);
+      ctx.strokeRect(w - 16 - 115, h / 2 - 105, 115, 210); ctx.strokeRect(w - 16 - 42, h / 2 - 50, 42, 100);
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.25)'; ctx.fillRect(8, h / 2 - 35, 8, 70); ctx.fillRect(w - 16, h / 2 - 35, 8, 70);
 
       pitchEngine.homePlayers.forEach(p => drawPlayerDot(p.x, p.y, p.color, p.num));
       pitchEngine.awayPlayers.forEach(p => drawPlayerDot(p.x, p.y, p.color, p.num));
 
       const b = pitchEngine.ball;
-      ctx.fillStyle = 'rgba(0, 0, 0, 0.45)';
-      ctx.beginPath();
-      ctx.arc(b.x + 3, b.y + 3, 5, 0, Math.PI * 2);
-      ctx.fill();
-
-      ctx.fillStyle = '#ffffff';
-      ctx.beginPath();
-      ctx.arc(b.x, b.y, 5.5, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.strokeStyle = '#000000';
-      ctx.lineWidth = 1.2;
-      ctx.stroke();
+      ctx.fillStyle = 'rgba(0, 0, 0, 0.45)'; ctx.beginPath(); ctx.arc(b.x + 3, b.y + 3, 5, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = '#ffffff'; ctx.beginPath(); ctx.arc(b.x, b.y, 5.5, 0, Math.PI * 2); ctx.fill();
+      ctx.strokeStyle = '#000000'; ctx.lineWidth = 1.2; ctx.stroke();
     }
 
     function drawPlayerDot(x, y, color, num) {
       const ctx = pitchEngine.ctx;
-      ctx.fillStyle = '#ffffff';
-      ctx.beginPath();
-      ctx.arc(x, y, 9.5, 0, Math.PI * 2);
-      ctx.fill();
-
-      ctx.fillStyle = color;
-      ctx.beginPath();
-      ctx.arc(x, y, 7.8, 0, Math.PI * 2);
-      ctx.fill();
-
-      ctx.fillStyle = '#ffffff';
-      ctx.font = 'bold 8px sans-serif';
-      ctx.textAlign = 'center';
-      ctx.textBaseline = 'middle';
-      ctx.fillText(num, x, y + 0.5);
+      ctx.fillStyle = '#ffffff'; ctx.beginPath(); ctx.arc(x, y, 9.5, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = color; ctx.beginPath(); ctx.arc(x, y, 7.8, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = '#ffffff'; ctx.font = 'bold 8px sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText(num, x, y + 0.5);
     }
 
     function update2DPitchPhysics() {
       const b = pitchEngine.ball;
-      b.x += (b.targetX - b.x) * 0.15;
-      b.y += (b.targetY - b.y) * 0.15;
-
+      b.x += (b.targetX - b.x) * 0.15; b.y += (b.targetY - b.y) * 0.15;
       [...pitchEngine.homePlayers, ...pitchEngine.awayPlayers].forEach(p => {
-        const dx = b.x - p.baseX;
-        const dy = b.y - p.baseY;
+        const dx = b.x - p.baseX, dy = b.y - p.baseY;
         const dist = Math.sqrt(dx * dx + dy * dy);
-
         const influence = Math.min(38, dist * 0.28);
-        const targetX = p.baseX + (dx / (dist || 1)) * influence;
-        const targetY = p.baseY + (dy / (dist || 1)) * influence;
-
-        p.x += (targetX - p.x) * 0.1;
-        p.y += (targetY - p.y) * 0.1;
+        p.x += (p.baseX + (dx / (dist || 1)) * influence - p.x) * 0.1;
+        p.y += (p.baseY + (dy / (dist || 1)) * influence - p.y) * 0.1;
       });
-
       draw2DPitch();
     }
 
@@ -2714,50 +1826,31 @@
       document.getElementById('spd3').className = `btn-speed ${speed === 3 ? 'active' : ''}`;
     }
 
-    function triggerInstantSim() {
-      simSpeedMultiplier = 25;
-    }
+    function triggerInstantSim() { simSpeedMultiplier = 25; }
 
     function startMatchdaySim() {
       const userClub = getCurrentUserClub();
       const weekData = state.fixtures.find(f => f.week === state.currentWeek);
       const userMatch = weekData ? weekData.matches.find(m => m.home === userClub.id || m.away === userClub.id) : null;
-
-      if (!userMatch) {
-        alert("No fixture scheduled for your club this week.");
-        return;
-      }
-
-      if (userMatch.played) {
-        alert("Match already completed this week.");
-        return;
-      }
+      if (!userMatch || userMatch.played) return;
 
       const btn = document.getElementById('btnStartMatch');
       btn.disabled = true;
-
       const homeClub = state.clubs.find(c => c.id === userMatch.home);
       const awayClub = state.clubs.find(c => c.id === userMatch.away);
       const homeStats = computeClubAttributes(homeClub);
       const awayStats = computeClubAttributes(awayClub);
-
       const feed = document.getElementById('commentaryFeed');
       feed.innerHTML = '';
       document.getElementById('matchTimelineBar').innerHTML = '';
       matchLiveState.timelineEvents = [];
 
-      let min = 0;
-      let hScore = 0;
-      let aScore = 0;
-
-      clearInterval(matchSimInterval);
-      cancelAnimationFrame(animFrameId);
+      let min = 0, hScore = 0, aScore = 0;
+      clearInterval(matchSimInterval); cancelAnimationFrame(animFrameId);
 
       function animLoop() {
         update2DPitchPhysics();
-        if (min < 90) {
-          animFrameId = requestAnimationFrame(animLoop);
-        }
+        if (min < 90) animFrameId = requestAnimationFrame(animLoop);
       }
       animLoop();
 
@@ -2765,15 +1858,12 @@
         min += 2;
         pitchEngine.currentMinute = min;
         document.getElementById('sbMinute').innerText = `${min}'`;
-
         if (matchLiveState.activeShout && min >= matchLiveState.shoutExpireMin) {
           matchLiveState.activeShout = null;
           document.getElementById('activeShoutBadge').innerText = '';
         }
-
         if (min % 4 === 0) {
-          const isHomePos = Math.random() > 0.5;
-          pitchEngine.ball.targetX = isHomePos ? (300 + Math.random() * 360) : (140 + Math.random() * 360);
+          pitchEngine.ball.targetX = (Math.random() > 0.5) ? (300 + Math.random() * 360) : (140 + Math.random() * 360);
           pitchEngine.ball.targetY = 60 + Math.random() * 360;
           playSound('click');
         }
@@ -2782,29 +1872,22 @@
         let awayMod = (matchLiveState.activeShout === 'TIGHTEN_UP') ? -3 : 0;
 
         if (Math.random() < 0.16) {
-          const scoringHome = (Math.random() * (homeStats.att + 4 + homeMod) > Math.random() * (awayStats.def + awayMod));
-          if (scoringHome) {
+          if (Math.random() * (homeStats.att + 4 + homeMod) > Math.random() * (awayStats.def + awayMod)) {
             hScore++;
-            pitchEngine.ball.targetX = pitchEngine.w - 18;
-            pitchEngine.ball.targetY = pitchEngine.h / 2 + (Math.random() * 24 - 12);
-            
+            pitchEngine.ball.targetX = pitchEngine.w - 18; pitchEngine.ball.targetY = pitchEngine.h / 2;
             const outfield = homeClub.players.filter(p => p.starter && p.naturalPos !== 'GK');
             const scorer = outfield[Math.floor(Math.random() * outfield.length)] || homeClub.players[0];
             scorer.goals = (scorer.goals || 0) + 1;
-
-            feed.innerHTML = `<div class="comm-line goal">⚽ ${min}' GOAL! ${homeClub.name} find the net! (${scorer.name}) [${hScore}-${aScore}]</div>` + feed.innerHTML;
+            feed.innerHTML = `<div class="comm-line goal">⚽ ${min}' GOAL! ${homeClub.name} strike! (${scorer.name}) [${hScore}-${aScore}]</div>` + feed.innerHTML;
             addTimelineEvent('goal', `⚽ ${min}' ${scorer.name.split(' ').pop()} (${homeClub.id})`);
             playSound('goal');
           } else {
             aScore++;
-            pitchEngine.ball.targetX = 18;
-            pitchEngine.ball.targetY = pitchEngine.h / 2 + (Math.random() * 24 - 12);
-
+            pitchEngine.ball.targetX = 18; pitchEngine.ball.targetY = pitchEngine.h / 2;
             const outfield = awayClub.players.filter(p => p.starter && p.naturalPos !== 'GK');
             const scorer = outfield[Math.floor(Math.random() * outfield.length)] || awayClub.players[0];
             scorer.goals = (scorer.goals || 0) + 1;
-
-            feed.innerHTML = `<div class="comm-line goal">⚽ ${min}' GOAL! ${awayClub.name} score on the break! (${scorer.name}) [${hScore}-${aScore}]</div>` + feed.innerHTML;
+            feed.innerHTML = `<div class="comm-line goal">⚽ ${min}' GOAL! ${awayClub.name} strike! (${scorer.name}) [${hScore}-${aScore}]</div>` + feed.innerHTML;
             addTimelineEvent('goal', `⚽ ${min}' ${scorer.name.split(' ').pop()} (${awayClub.id})`);
             playSound('goal');
           }
@@ -2812,44 +1895,33 @@
         }
 
         if (min >= 90) {
-          clearInterval(matchSimInterval);
-          cancelAnimationFrame(animFrameId);
+          clearInterval(matchSimInterval); cancelAnimationFrame(animFrameId);
           btn.disabled = false;
-
-          userMatch.homeGoals = hScore;
-          userMatch.awayGoals = aScore;
+          userMatch.homeGoals = hScore; userMatch.awayGoals = aScore;
 
           if (userMatch.type === 'CUP' && hScore === aScore) {
             document.getElementById('sbMinute').innerText = `AET / PENS`;
-            feed.innerHTML = `<div class="comm-line pen">🏁 90' Full-time tied at ${hScore}-${aScore}! Proceeding to Penalty Shootout!</div>` + feed.innerHTML;
+            feed.innerHTML = `<div class="comm-line pen">🏁 90' Full-time tied at ${hScore}-${aScore}! Proceeding to Shootout!</div>` + feed.innerHTML;
             launchPenaltyShootout(userMatch, homeClub, awayClub);
             return;
           }
-
           document.getElementById('sbMinute').innerText = `FULL TIME`;
           feed.innerHTML = `<div class="comm-line" style="font-weight:800;">🏁 90' Full-time! Final score: ${homeClub.name} ${hScore} - ${aScore} ${awayClub.name}.</div>` + feed.innerHTML;
-
           userMatch.played = true;
-          if (userMatch.type === 'LEAGUE') {
-            updateLeagueTableRecord(userMatch.div, userMatch.home, userMatch.away, hScore, aScore);
-          }
+          if (userMatch.type === 'LEAGUE') updateLeagueTableRecord(userMatch.div, userMatch.home, userMatch.away, hScore, aScore);
           recordUserMatchResult(userMatch.home === userClub.id, hScore, aScore);
 
           const advBtn = document.getElementById('btnAdvanceMaster');
           const advTxt = document.getElementById('btnAdvanceText');
           advBtn.className = 'btn-advance-master btn-continue-mode';
           advTxt.innerText = `CONTINUE TO WK ${state.currentWeek + 1}`;
-
           saveGame();
           renderStandingsTable(userClub.div);
           playSound('whistle');
           return;
         }
-
-        const delay = Math.max(12, 120 / simSpeedMultiplier);
-        matchSimInterval = setTimeout(runSimTick, delay);
+        matchSimInterval = setTimeout(runSimTick, Math.max(12, 120 / simSpeedMultiplier));
       }
-
       runSimTick();
     }
 
@@ -2859,93 +1931,52 @@
         const btn = document.getElementById(`tabTier${i}`);
         if (btn) btn.className = `league-tab-btn ${i === divIndex ? 'active' : ''}`;
       }
-
       const tableBody = document.getElementById('leagueTableBody');
       tableBody.innerHTML = '';
-
-      const rows = [...(state.standings[divIndex] || [])];
-      rows.sort((a, b) => (b.pts - a.pts) || (b.gd - a.gd) || (b.gf - a.gf));
-
+      const rows = [...(state.standings[divIndex] || [])].sort((a, b) => (b.pts - a.pts) || (b.gd - a.gd) || (b.gf - a.gf));
       rows.forEach((r, idx) => {
         const pos = idx + 1;
         let zoneClass = '';
-
-        if (divIndex === 0) {
-          if (pos <= 4) zoneClass = 'zone-ucl';
-          else if (pos >= 18) zoneClass = 'zone-relegation';
-        } else if (divIndex === 1) {
-          if (pos <= 2) zoneClass = 'zone-promo';
-          else if (pos <= 6) zoneClass = 'zone-playoff';
-          else if (pos >= 22) zoneClass = 'zone-relegation';
-        } else if (divIndex === 2) {
-          if (pos <= 2) zoneClass = 'zone-promo';
-          else if (pos <= 6) zoneClass = 'zone-playoff';
-          else if (pos >= 21) zoneClass = 'zone-relegation';
-        } else if (divIndex === 3) {
-          if (pos <= 3) zoneClass = 'zone-promo';
-          else if (pos <= 7) zoneClass = 'zone-playoff';
-          else if (pos >= 23) zoneClass = 'zone-relegation';
-        }
-
+        if (divIndex === 0) { if (pos <= 4) zoneClass = 'zone-ucl'; else if (pos >= 18) zoneClass = 'zone-relegation'; }
+        else if (divIndex === 1) { if (pos <= 2) zoneClass = 'zone-promo'; else if (pos <= 6) zoneClass = 'zone-playoff'; else if (pos >= 22) zoneClass = 'zone-relegation'; }
+        else if (divIndex === 2) { if (pos <= 2) zoneClass = 'zone-promo'; else if (pos <= 6) zoneClass = 'zone-playoff'; else if (pos >= 21) zoneClass = 'zone-relegation'; }
+        else if (divIndex === 3) { if (pos <= 3) zoneClass = 'zone-promo'; else if (pos <= 7) zoneClass = 'zone-playoff'; else if (pos >= 23) zoneClass = 'zone-relegation'; }
         const isUser = (r.id === state.userClubId);
         const tr = document.createElement('tr');
         tr.className = `fm-row ${zoneClass}`;
         if (isUser) tr.style.background = 'rgba(0, 210, 255, 0.15)';
-
         tr.innerHTML = `
           <td><b>${pos}</b></td>
-          <td style="display:flex; align-items:center; gap:8px;">
-            ${createBadgeHtml(r.id, 20)}
-            <b>${r.name}</b> ${isUser ? '⭐' : ''}
-          </td>
-          <td>${r.played}</td>
-          <td>${r.won}</td>
-          <td>${r.drawn}</td>
-          <td>${r.lost}</td>
-          <td>${r.gd > 0 ? '+' + r.gd : r.gd}</td>
-          <td><b style="color:#fff;">${r.pts}</b></td>
+          <td style="display:flex; align-items:center; gap:8px;">${createBadgeHtml(r.id, 20)} <b>${r.name}</b> ${isUser ? '⭐' : ''}</td>
+          <td>${r.played}</td><td>${r.won}</td><td>${r.drawn}</td><td>${r.lost}</td>
+          <td>${r.gd > 0 ? '+' + r.gd : r.gd}</td><td><b style="color:#fff;">${r.pts}</b></td>
         `;
         tableBody.appendChild(tr);
       });
-
       renderPlayerStatsLeaderboard(divIndex);
     }
 
     function renderPlayerStatsLeaderboard(divIndex) {
       const divClubs = state.clubs.filter(c => c.div === divIndex);
       const allPlayers = [];
-      divClubs.forEach(c => {
-        c.players.forEach(p => {
-          allPlayers.push({ ...p, clubName: c.name, clubId: c.id });
-        });
-      });
-
+      divClubs.forEach(c => { c.players.forEach(p => { allPlayers.push({ ...p, clubName: c.name, clubId: c.id }); }); });
       const topScorers = [...allPlayers].sort((a,b) => (b.goals || 0) - (a.goals || 0)).slice(0, 5);
       const gbBody = document.getElementById('goldenBootBody');
       if (gbBody) {
         gbBody.innerHTML = '';
         topScorers.forEach(p => {
           const row = document.createElement('tr');
-          row.innerHTML = `
-            <td><b>${p.name}</b> (${p.naturalPos})</td>
-            <td style="display:flex; align-items:center; gap:4px;">${createBadgeHtml(p.clubId, 16)} <span>${p.clubName}</span></td>
-            <td><b style="color:var(--gold);">${p.goals || 0}</b></td>
-          `;
+          row.innerHTML = `<td><b>${p.name}</b> (${p.naturalPos})</td><td style="display:flex; align-items:center; gap:4px;">${createBadgeHtml(p.clubId, 16)} <span>${p.clubName}</span></td><td><b style="color:var(--gold);">${p.goals || 0}</b></td>`;
           gbBody.appendChild(row);
         });
       }
-
       const topKeepers = [...allPlayers].filter(p => p.naturalPos === 'GK').sort((a,b) => (b.cleanSheets || 0) - (a.cleanSheets || 0)).slice(0, 5);
       const ggBody = document.getElementById('goldenGloveBody');
       if (ggBody) {
         ggBody.innerHTML = '';
         topKeepers.forEach(p => {
           const row = document.createElement('tr');
-          row.innerHTML = `
-            <td><b>${p.name}</b></td>
-            <td style="display:flex; align-items:center; gap:4px;">${createBadgeHtml(p.clubId, 16)} <span>${p.clubName}</span></td>
-            <td><b style="color:#38bdf8;">${p.cleanSheets || 0}</b></td>
-          `;
+          row.innerHTML = `<td><b>${p.name}</b></td><td style="display:flex; align-items:center; gap:4px;">${createBadgeHtml(p.clubId, 16)} <span>${p.clubName}</span></td><td><b style="color:#38bdf8;">${p.cleanSheets || 0}</b></td>`;
           ggBody.appendChild(row);
         });
       }
@@ -2966,12 +1997,8 @@
     function showEndSeasonGala() {
       const modal = document.getElementById('endSeasonModal');
       const content = document.getElementById('eosSummaryContent');
-
       const sorted = {};
-      for (let d = 0; d <= 3; d++) {
-        sorted[d] = [...state.standings[d]].sort((a,b) => (b.pts - a.pts) || (b.gd - a.gd));
-      }
-
+      for (let d = 0; d <= 3; d++) sorted[d] = [...state.standings[d]].sort((a,b) => (b.pts - a.pts) || (b.gd - a.gd));
       content.innerHTML = `
         <div style="background:var(--bg-panel); padding:12px; border-radius:8px; margin-bottom:10px;">
           <h3 style="color:var(--gold); margin-bottom:4px;">👑 Champions Crowned</h3>
@@ -2986,70 +2013,33 @@
           <p><b>Relegated to Champ:</b> ${sorted[0][17].name}, ${sorted[0][18].name}, ${sorted[0][19].name}</p>
         </div>
       `;
-
       modal.style.display = 'flex';
       playSound('cheer');
     }
 
-    function closeEosModal() {
-      document.getElementById('endSeasonModal').style.display = 'none';
-    }
+    function closeEosModal() { document.getElementById('endSeasonModal').style.display = 'none'; }
 
     function executeNextSeasonTransition() {
       closeEosModal();
-
       const sorted = {};
-      for (let d = 0; d <= 3; d++) {
-        sorted[d] = [...state.standings[d]].sort((a,b) => (b.pts - a.pts) || (b.gd - a.gd));
-      }
+      for (let d = 0; d <= 3; d++) sorted[d] = [...state.standings[d]].sort((a,b) => (b.pts - a.pts) || (b.gd - a.gd));
+      [sorted[0][17].id, sorted[0][18].id, sorted[0][19].id].forEach(id => { const c = state.clubs.find(x => x.id === id); if (c) c.div = 1; });
+      [sorted[1][0].id, sorted[1][1].id, sorted[1][2].id].forEach(id => { const c = state.clubs.find(x => x.id === id); if (c) c.div = 0; });
 
-      const premRelegated = [sorted[0][17].id, sorted[0][18].id, sorted[0][19].id];
-      const champPromoted = [sorted[1][0].id, sorted[1][1].id, sorted[1][2].id];
-
-      premRelegated.forEach(id => {
-        const c = state.clubs.find(x => x.id === id);
-        if (c) c.div = 1;
-      });
-      champPromoted.forEach(id => {
-        const c = state.clubs.find(x => x.id === id);
-        if (c) c.div = 0;
-      });
-
-      state.seasonYear++;
-      state.currentWeek = 1;
-      state.deadlineDaysCompleted = {};
-      state.youthIntakeCompleted = false;
-
+      state.seasonYear++; state.currentWeek = 1; state.deadlineDaysCompleted = {}; state.youthIntakeCompleted = false;
       state.clubs.forEach(c => {
         c.players.forEach(p => {
-          p.age += 1;
-          p.con = 100;
-          p.inj = 0;
-          p.goals = 0;
-          p.cleanSheets = 0;
+          p.age += 1; p.con = 100; p.inj = 0; p.goals = 0; p.cleanSheets = 0;
           p.contract = Math.max(1, (p.contract || 2) - 1);
           if (p.age < 23) p.ovr += Math.floor(Math.random() * 3);
           else if (p.age > 33) p.ovr -= Math.floor(Math.random() * 2);
         });
       });
-
       for (let div = 0; div <= 3; div++) {
-        state.standings[div] = state.clubs
-          .filter(c => c.div === div)
-          .map(c => ({
-            id: c.id,
-            name: c.name,
-            played: 0,
-            won: 0,
-            drawn: 0,
-            lost: 0,
-            gf: 0,
-            ga: 0,
-            gd: 0,
-            pts: 0
-          }));
+        state.standings[div] = state.clubs.filter(c => c.div === div).map(c => ({
+          id: c.id, name: c.name, played: 0, won: 0, drawn: 0, lost: 0, gf: 0, ga: 0, gd: 0, pts: 0
+        }));
       }
-
       generateTrueRoundRobinFixtures();
       generateInitialNews();
       generateYouthIntake(false);
@@ -3058,37 +2048,21 @@
       alert(`🎉 Welcome to the ${state.seasonYear}/${(state.seasonYear + 1).toString().slice(-2)} Season!`);
     }
 
-    function openClubSelectorModal() {
-      filterModalClubs(0);
-      document.getElementById('clubSelectorModal').style.display = 'flex';
-    }
-
-    function closeClubSelectorModal() {
-      document.getElementById('clubSelectorModal').style.display = 'none';
-    }
+    function openClubSelectorModal() { filterModalClubs(0); document.getElementById('clubSelectorModal').style.display = 'flex'; }
+    function closeClubSelectorModal() { document.getElementById('clubSelectorModal').style.display = 'none'; }
 
     function filterModalClubs(divIndex) {
       for (let i = 0; i <= 3; i++) {
         const btn = document.getElementById(`mTab${i}`);
         if (btn) btn.className = `league-tab-btn ${i === divIndex ? 'active' : ''}`;
       }
-
       const grid = document.getElementById('modalClubsGrid');
       grid.innerHTML = '';
-
       const clubs = state.clubs.filter(c => c.div === divIndex);
       clubs.forEach(c => {
         const card = document.createElement('div');
         card.style.cssText = 'background:var(--bg-panel); padding:8px 10px; border-radius:8px; cursor:pointer; border:1px solid var(--border); display:flex; align-items:center; gap:10px;';
-        card.onclick = () => {
-          state.userClubId = c.id;
-          closeClubSelectorModal();
-          ensureAllSquadsHydrated();
-          saveGame();
-          renderAll();
-          playSound('whistle');
-        };
-
+        card.onclick = () => { state.userClubId = c.id; closeClubSelectorModal(); ensureAllSquadsHydrated(); saveGame(); renderAll(); playSound('whistle'); };
         card.innerHTML = `
           ${createBadgeHtml(c.id, 30)}
           <div>
@@ -3109,28 +2083,25 @@
         if (pane) pane.style.display = (t === tabId) ? 'block' : 'none';
         if (nav) nav.className = `nav-item ${t === tabId ? 'active' : ''}`;
       });
-
       if (tabId === 'tactics') renderTactics();
-      if (tabId === 'news') renderNewsFeed();
-      if (tabId === 'cups') renderCupsTab();
-      if (tabId === 'transfers') renderTransfers();
-      if (tabId === 'standings') renderStandingsTable(state.activeStandingsTab);
-      if (tabId === 'academy') renderAcademyTab();
-      if (tabId === 'matchday') renderMatchdayView();
-      if (tabId === 'facilities') renderFacilities();
-      if (tabId === 'manager') renderManagerOffice();
-      if (tabId === 'honours') renderHonours();
+      else if (tabId === 'news') renderNewsFeed();
+      else if (tabId === 'cups') renderCupsTab();
+      else if (tabId === 'transfers') renderTransfers();
+      else if (tabId === 'standings') renderStandingsTable(state.activeStandingsTab);
+      else if (tabId === 'academy') renderAcademyTab();
+      else if (tabId === 'matchday') renderMatchdayView();
+      else if (tabId === 'facilities') renderFacilities();
+      else if (tabId === 'manager') renderManagerOffice();
+      else if (tabId === 'honours') renderHonours();
     }
 
     function updateHeaderClubDisplay() {
       const club = getCurrentUserClub();
       const stats = computeClubAttributes(club);
       const wageBill = computeClubWeeklyWageBill(club);
-
       document.getElementById('headerBadgeWrap').innerHTML = createBadgeHtml(club.id, 34);
       document.getElementById('headerClubName').innerText = club.name;
       document.getElementById('headerStadium').innerText = `${club.stadium} • Capacity: ${(club.cap + (state.stadiumCapacityBonus || 0)).toLocaleString()}`;
-
       document.getElementById('statAttack').innerText = stats.att;
       document.getElementById('statMidfield').innerText = stats.mid;
       document.getElementById('statDefence').innerText = stats.def;
@@ -3141,7 +2112,6 @@
     function renderAll() {
       const club = getCurrentUserClub();
       const divNames = ['Premier League', 'Championship', 'League One', 'League Two'];
-
       document.getElementById('headerDivName').innerText = divNames[club.div];
       document.getElementById('headerWeek').innerText = `Wk ${state.currentWeek} / ${state.totalWeeks}`;
       document.getElementById('headerSeasonTag').innerText = `${state.seasonYear}/${(state.seasonYear + 1).toString().slice(-2)} Career • English Pyramid`;
@@ -3153,20 +2123,12 @@
       const userMatch = weekData ? weekData.matches.find(m => m.home === state.userClubId || m.away === state.userClubId) : null;
       const isDeadlineWeek = (state.currentWeek === 4 || state.currentWeek === 22);
       const isDeadlineActive = isDeadlineWeek && !state.deadlineDaysCompleted?.[state.currentWeek];
-      
       const advBtn = document.getElementById('btnAdvanceMaster');
       const advTxt = document.getElementById('btnAdvanceText');
 
-      if (isDeadlineActive) {
-        advBtn.className = 'btn-advance-master btn-deadline-mode';
-        advTxt.innerText = 'DEADLINE DAY';
-      } else if (userMatch && userMatch.played) {
-        advBtn.className = 'btn-advance-master btn-continue-mode';
-        advTxt.innerText = `CONTINUE TO WK ${state.currentWeek + 1}`;
-      } else {
-        advBtn.className = 'btn-advance-master';
-        advTxt.innerText = 'ADVANCE WEEK';
-      }
+      if (isDeadlineActive) { advBtn.className = 'btn-advance-master btn-deadline-mode'; advTxt.innerText = 'DEADLINE DAY'; }
+      else if (userMatch && userMatch.played) { advBtn.className = 'btn-advance-master btn-continue-mode'; advTxt.innerText = `CONTINUE TO WK ${state.currentWeek + 1}`; }
+      else { advBtn.className = 'btn-advance-master'; advTxt.innerText = 'ADVANCE WEEK'; }
 
       updateHeaderClubDisplay();
       renderTactics();
@@ -3178,7 +2140,6 @@
       const club = getCurrentUserClub();
       const weekData = state.fixtures.find(f => f.week === state.currentWeek);
       const userMatch = weekData ? weekData.matches.find(m => m.home === club.id || m.away === club.id) : null;
-
       if (userMatch) {
         const hClub = state.clubs.find(c => c.id === userMatch.home);
         const aClub = state.clubs.find(c => c.id === userMatch.away);
@@ -3188,16 +2149,13 @@
         document.getElementById('sbAwayName').innerText = aClub.name;
         document.getElementById('sbScore').innerText = userMatch.played ? `${userMatch.homeGoals} - ${userMatch.awayGoals}` : '0 - 0';
         document.getElementById('sbMinute').innerText = userMatch.played ? 'FULL TIME' : 'PRE-MATCH';
-
         const btn = document.getElementById('btnStartMatch');
         if (btn) btn.disabled = userMatch.played;
-
         if (!userMatch.played) {
           const feed = document.getElementById('commentaryFeed');
           const compTag = userMatch.type === 'CUP' ? `[${userMatch.cupName}]` : `[League]`;
           if (feed) feed.innerHTML = `<div class="comm-line">Week ${state.currentWeek} ${compTag}: ${hClub.name} vs ${aClub.name}. Click "Start Match" or "Advance Week" to simulate!</div>`;
         }
-
         setup2DPlayers(hClub, aClub);
         populateInMatchSubChips();
       }
@@ -3208,15 +2166,10 @@
         if (weekData) {
           const divMatches = weekData.matches.filter(m => m.div === club.div || m.type === 'CUP');
           divMatches.forEach(m => {
-            const h = state.clubs.find(c => c.id === m.home);
-            const a = state.clubs.find(c => c.id === m.away);
+            const h = state.clubs.find(c => c.id === m.home), a = state.clubs.find(c => c.id === m.away);
             const row = document.createElement('div');
             row.className = 'grounds-match-row';
-            row.innerHTML = `
-              <div class="team-home"><span>${h.name}</span> ${createBadgeHtml(h.id, 18)}</div>
-              <div class="match-vs-box">${m.played ? `${m.homeGoals}-${m.awayGoals}` : 'v'}</div>
-              <div class="team-away">${createBadgeHtml(a.id, 18)} <span>${a.name}</span></div>
-            `;
+            row.innerHTML = `<div class="team-home"><span>${h.name}</span> ${createBadgeHtml(h.id, 18)}</div><div class="match-vs-box">${m.played ? `${m.homeGoals}-${m.awayGoals}` : 'v'}</div><div class="team-away">${createBadgeHtml(a.id, 18)} <span>${a.name}</span></div>`;
             groundsList.appendChild(row);
           });
         }
@@ -3226,27 +2179,21 @@
     function renderCupsTab() {
       const weekData = state.fixtures.find(f => f.week === state.currentWeek);
       const cupMatch = weekData ? weekData.matches.find(m => m.type === 'CUP') : null;
-
       const display = document.getElementById('cupFixtureDisplay');
+      if (!display) return;
       if (cupMatch) {
-        const h = state.clubs.find(c => c.id === cupMatch.home);
-        const a = state.clubs.find(c => c.id === cupMatch.away);
+        const h = state.clubs.find(c => c.id === cupMatch.home), a = state.clubs.find(c => c.id === cupMatch.away);
         display.innerHTML = `
           <div style="font-weight:800; font-size:1rem; color:var(--accent); margin-bottom:6px;">${cupMatch.cupName} Tie</div>
-          <div style="display:flex; align-items:center; gap:8px; font-size:0.95rem;">
-            ${createBadgeHtml(h.id, 24)} <b>${h.name}</b> vs <b>${a.name}</b> ${createBadgeHtml(a.id, 24)}
-          </div>
-          <div style="font-size:0.75rem; color:var(--text-muted); margin-top:6px;">Knockout match. Penalties after 90 minutes if level. Gate receipts split 50/50.</div>
+          <div style="display:flex; align-items:center; gap:8px; font-size:0.95rem;">${createBadgeHtml(h.id, 24)} <b>${h.name}</b> vs <b>${a.name}</b> ${createBadgeHtml(a.id, 24)}</div>
+          <div style="font-size:0.75rem; color:var(--text-muted); margin-top:6px;">Knockout match. Penalties after 90 mins if level. Gate receipts split 50/50.</div>
         `;
-      } else {
-        display.innerText = "No domestic cup fixtures scheduled for this matchweek.";
-      }
+      } else display.innerText = "No domestic cup fixtures scheduled for this matchweek.";
     }
 
     function renderFacilities() {
       const container = document.getElementById('facilitiesList');
-      const medLvl = state.medicalFacilityLevel || 1;
-      const acadLvl = state.academyFacilityLevel || 1;
+      const medLvl = state.medicalFacilityLevel || 1, acadLvl = state.academyFacilityLevel || 1;
       container.innerHTML = `
         <div style="background:var(--bg-panel); padding:14px; border-radius:8px;">
           <h4>🏟️ Stand Expansion</h4>
@@ -3269,31 +2216,22 @@
     function upgradeMedicalCentre() {
       const club = getCurrentUserClub();
       if (club.budget < 2.5) { alert("Insufficient budget (£2.5M required)."); return; }
-      club.budget -= 2.5;
-      state.medicalFacilityLevel = (state.medicalFacilityLevel || 1) + 1;
-      saveGame();
-      renderAll();
-      alert(`Medical Centre upgraded to Level ${state.medicalFacilityLevel}!`);
+      club.budget -= 2.5; state.medicalFacilityLevel = (state.medicalFacilityLevel || 1) + 1;
+      saveGame(); renderAll(); alert(`Medical Centre upgraded to Level ${state.medicalFacilityLevel}!`);
     }
 
     function upgradeAcademyFacility() {
       const club = getCurrentUserClub();
       if (club.budget < 3.0) { alert("Insufficient budget (£3.0M required)."); return; }
-      club.budget -= 3.0;
-      state.academyFacilityLevel = (state.academyFacilityLevel || 1) + 1;
-      saveGame();
-      renderAll();
-      alert(`Youth Academy upgraded to Level ${state.academyFacilityLevel}!`);
+      club.budget -= 3.0; state.academyFacilityLevel = (state.academyFacilityLevel || 1) + 1;
+      saveGame(); renderAll(); alert(`Youth Academy upgraded to Level ${state.academyFacilityLevel}!`);
     }
 
     function upgradeStand(seats, cost) {
       const club = getCurrentUserClub();
       if (club.budget < cost) { alert("Insufficient transfer budget."); return; }
-      club.budget -= cost;
-      state.stadiumCapacityBonus = (state.stadiumCapacityBonus || 0) + seats;
-      saveGame();
-      renderAll();
-      alert(`Expansion complete! Added ${seats.toLocaleString()} seats.`);
+      club.budget -= cost; state.stadiumCapacityBonus = (state.stadiumCapacityBonus || 0) + seats;
+      saveGame(); renderAll(); alert(`Expansion complete! Added ${seats.toLocaleString()} seats.`);
     }
 
     function renderManagerOffice() {
@@ -3316,7 +2254,7 @@
       honours.innerHTML = `
         <div style="background:var(--bg-panel); padding:14px; border-radius:8px; text-align:center; min-width:120px;">
           <div style="font-size:1.8rem;">🏅</div>
-          <div style="font-weight:800; font-size:1rem; color:var(--gold);">${state.manager.motmAwards}</div>
+          <div style="font-weight:800; font-size:1rem; color:var(--gold);">${state.manager.motmAwards || 0}</div>
           <div style="font-size:0.72rem; color:var(--text-muted);">Manager of Month</div>
         </div>
         <div style="background:var(--bg-panel); padding:14px; border-radius:8px; text-align:center; min-width:120px;">
@@ -3335,48 +2273,29 @@
     function generateInitialNews() {
       state.newsFeed = [
         {
-          tag: 'Season Kick-Off',
-          breaking: true,
-          headline: `New Season Underway: 92 Clubs Battle For Glory`,
-          body: `The 2026/27 campaign officially begins across the English Football Pyramid. Managers face pressure as boards demand results.`,
-          time: 'Week 1'
+          tag: 'Season Kick-Off', breaking: true, headline: `New Season Underway: 92 Clubs Battle For Glory`,
+          body: `The 2026/27 campaign officially begins across the English Football Pyramid. Managers face pressure as boards demand results.`, time: 'Week 1'
         },
         {
-          tag: 'Tactics Briefing',
-          breaking: false,
-          headline: `${state.manager.name} Outlines Vision at ${getCurrentUserClub().name}`,
-          body: `Supporters look forward to seeing how the gaffer sets up over 38 matchweeks.`,
-          time: 'Week 1'
+          tag: 'Tactics Briefing', breaking: false, headline: `${state.manager.name} Outlines Vision at ${getCurrentUserClub().name}`,
+          body: `Supporters look forward to seeing how the gaffer sets up over 38 matchweeks.`, time: 'Week 1'
         }
       ];
     }
 
     function addNewsStory(tag, headline, body, breaking = false) {
-      state.newsFeed.unshift({
-        tag: tag,
-        headline: headline,
-        body: body,
-        breaking: breaking,
-        time: `Week ${state.currentWeek}`
-      });
+      state.newsFeed.unshift({ tag, headline, body, breaking, time: `Week ${state.currentWeek}` });
       if (state.newsFeed.length > 25) state.newsFeed.pop();
     }
 
     function renderNewsFeed() {
       const feed = document.getElementById('newsFeedList');
+      if (!feed) return;
       feed.innerHTML = '';
-
       state.newsFeed.forEach(n => {
         const card = document.createElement('div');
         card.className = `news-card ${n.breaking ? 'breaking' : ''}`;
-        card.innerHTML = `
-          <div style="display:flex; justify-content:space-between; align-items:center;">
-            <span class="news-tag">${n.tag}</span>
-            <span class="news-time">${n.time}</span>
-          </div>
-          <div class="news-headline">${n.headline}</div>
-          <div class="news-body">${n.body}</div>
-        `;
+        card.innerHTML = `<div style="display:flex; justify-content:space-between; align-items:center;"><span class="news-tag">${n.tag}</span><span class="news-time">${n.time}</span></div><div class="news-headline">${n.headline}</div><div class="news-body">${n.body}</div>`;
         feed.appendChild(card);
       });
     }
@@ -3393,21 +2312,10 @@
       const lVal = document.getElementById('filterMarketLeague').value;
       const teamSel = document.getElementById('filterMarketTeam');
       if (!teamSel) return;
-
       teamSel.innerHTML = '<option value="ALL">All Teams</option>';
-      if (lVal === 'ALL' || lVal === 'SCOUT') {
-        renderTransfers();
-        return;
-      }
-
-      const divNum = parseInt(lVal);
-      const divClubs = state.clubs.filter(c => c.div === divNum && c.id !== state.userClubId);
-      divClubs.forEach(c => {
-        const opt = document.createElement('option');
-        opt.value = c.id;
-        opt.innerText = c.name;
-        teamSel.appendChild(opt);
-      });
+      if (lVal === 'ALL' || lVal === 'SCOUT') { renderTransfers(); return; }
+      const divClubs = state.clubs.filter(c => c.div === parseInt(lVal) && c.id !== state.userClubId);
+      divClubs.forEach(c => { const opt = document.createElement('option'); opt.value = c.id; opt.innerText = c.name; teamSel.appendChild(opt); });
       renderTransfers();
     }
 
@@ -3420,12 +2328,8 @@
     }
 
     function toggleMarketSort(key) {
-      if (marketSortKey === key) {
-        marketSortAsc = !marketSortAsc;
-      } else {
-        marketSortKey = key;
-        marketSortAsc = (key === 'name' || key === 'clubName');
-      }
+      if (marketSortKey === key) marketSortAsc = !marketSortAsc;
+      else { marketSortKey = key; marketSortAsc = (key === 'name' || key === 'clubName'); }
       renderTransfers();
     }
 
@@ -3433,54 +2337,23 @@
       ['name', 'naturalPos', 'nat', 'age', 'ovr', 'price', 'clubName'].forEach(k => {
         const el = document.getElementById(`sort_${k}`);
         if (!el) return;
-        if (marketSortKey === k) {
-          el.innerText = marketSortAsc ? ' ▲' : ' ▼';
-          el.style.color = 'var(--accent)';
-        } else {
-          el.innerText = '';
-        }
+        el.innerText = (marketSortKey === k) ? (marketSortAsc ? ' ▲' : ' ▼') : '';
+        if (marketSortKey === k) el.style.color = 'var(--accent)';
       });
     }
 
     function getAllMarketAvailablePlayers() {
       const userClub = getCurrentUserClub();
       const list = [];
-
       state.marketPlayers.forEach(p => {
-        list.push({
-          id: p.id,
-          name: p.name,
-          naturalPos: p.naturalPos,
-          nat: p.nat,
-          age: p.age,
-          ovr: p.ovr,
-          price: p.price,
-          clubName: p.club || 'Free / Foreign',
-          clubId: 'SCOUT',
-          div: -1,
-          isScoutPool: true
-        });
+        list.push({ id: p.id, name: p.name, naturalPos: p.naturalPos, nat: p.nat, age: p.age, ovr: p.ovr, price: p.price, clubName: p.club || 'Free / Foreign', clubId: 'SCOUT', div: -1, isScoutPool: true });
       });
-
       state.clubs.forEach(c => {
         if (c.id === userClub.id) return;
         c.players.forEach(p => {
-          list.push({
-            id: p.id,
-            name: p.name,
-            naturalPos: p.naturalPos,
-            nat: p.nat,
-            age: p.age,
-            ovr: p.ovr,
-            price: Number((p.val * 1.15).toFixed(1)),
-            clubName: c.name,
-            clubId: c.id,
-            div: c.div,
-            isScoutPool: false
-          });
+          list.push({ id: p.id, name: p.name, naturalPos: p.naturalPos, nat: p.nat, age: p.age, ovr: p.ovr, price: Number((p.val * 1.15).toFixed(1)), clubName: c.name, clubId: c.id, div: c.div, isScoutPool: false });
         });
       });
-
       return list;
     }
 
@@ -3496,35 +2369,22 @@
       const fNat = document.getElementById('filterMarketNation')?.value || 'ALL';
 
       let pool = getAllMarketAvailablePlayers();
-
       if (searchQ) pool = pool.filter(p => p.name.toLowerCase().includes(searchQ));
-      if (fLeague !== 'ALL') {
-        if (fLeague === 'SCOUT') pool = pool.filter(p => p.isScoutPool);
-        else pool = pool.filter(p => p.div === parseInt(fLeague));
-      }
+      if (fLeague !== 'ALL') { if (fLeague === 'SCOUT') pool = pool.filter(p => p.isScoutPool); else pool = pool.filter(p => p.div === parseInt(fLeague)); }
       if (fTeam !== 'ALL') pool = pool.filter(p => p.clubId === fTeam);
       if (fPos !== 'ALL') pool = pool.filter(p => p.naturalPos === fPos);
       if (fNat !== 'ALL') pool = pool.filter(p => p.nat === fNat);
 
       pool.sort((a, b) => {
-        let valA = a[marketSortKey];
-        let valB = b[marketSortKey];
-        if (typeof valA === 'string') {
-          return marketSortAsc ? valA.localeCompare(valB) : valB.localeCompare(valA);
-        }
+        let valA = a[marketSortKey], valB = b[marketSortKey];
+        if (typeof valA === 'string') return marketSortAsc ? valA.localeCompare(valB) : valB.localeCompare(valA);
         return marketSortAsc ? (valA - valB) : (valB - valA);
       });
 
       const tbody = document.getElementById('transferMarketBody');
       tbody.innerHTML = '';
-
-      const countNote = document.getElementById('marketCountNote');
-      const maxDisplay = 100;
-      const displayItems = pool.slice(0, maxDisplay);
-
-      if (countNote) {
-        countNote.innerText = `Displaying ${displayItems.length} of ${pool.length} matches. Use filters or click column headers to sort.`;
-      }
+      const displayItems = pool.slice(0, 100);
+      document.getElementById('marketCountNote').innerText = `Displaying ${displayItems.length} of ${pool.length} matches. Click headers to sort.`;
 
       displayItems.forEach(p => {
         const canAfford = club.budget >= p.price;
@@ -3537,10 +2397,7 @@
           <td>${p.age}</td>
           <td><b style="color:var(--gold);">${p.ovr}</b></td>
           <td><b>£${p.price.toFixed(1)}M</b></td>
-          <td style="display:flex; align-items:center; gap:6px;">
-            ${p.clubId !== 'SCOUT' ? createBadgeHtml(p.clubId, 18) : ''}
-            <span>${p.clubName}</span>
-          </td>
+          <td style="display:flex; align-items:center; gap:6px;">${p.clubId !== 'SCOUT' ? createBadgeHtml(p.clubId, 18) : ''} <span>${p.clubName}</span></td>
           <td>
             <button class="btn-swap-pill" style="${canAfford ? 'background:#059669; color:#fff;' : 'opacity:0.4;'}" onclick="executeBuyPlayer('${p.id}', ${p.isScoutPool}, '${p.clubId}')">
               ${canAfford ? 'Sign' : 'No Funds'}
@@ -3552,7 +2409,6 @@
 
       const sellBody = document.getElementById('squadSellListBody');
       sellBody.innerHTML = '';
-
       club.players.forEach(p => {
         const tr = document.createElement('tr');
         tr.className = 'fm-row';
@@ -3562,11 +2418,7 @@
           <td>${p.age}</td>
           <td><b style="color:var(--gold);">${p.ovr}</b></td>
           <td><b style="color:#34d399;">£${p.val.toFixed(1)}M</b></td>
-          <td>
-            <button class="btn-sell-pill" onclick="sellSquadPlayer('${p.id}')">
-              Sell
-            </button>
-          </td>
+          <td><button class="btn-sell-pill" onclick="sellSquadPlayer('${p.id}')">Sell</button></td>
         `;
         sellBody.appendChild(tr);
       });
@@ -3574,166 +2426,86 @@
 
     function executeBuyPlayer(playerId, isScoutPool, sellerClubId) {
       const userClub = getCurrentUserClub();
-
       if (isScoutPool) {
         const pIdx = state.marketPlayers.findIndex(x => x.id === playerId);
         if (pIdx === -1) return;
         const target = state.marketPlayers[pIdx];
-
-        if (userClub.budget < target.price) {
-          alert("Insufficient transfer budget.");
-          return;
-        }
-
+        if (userClub.budget < target.price) { alert("Insufficient transfer budget."); return; }
         if (confirm(`Sign ${target.name} from ${target.club} for £${target.price.toFixed(1)}M?`)) {
           userClub.budget -= target.price;
           state.marketPlayers.splice(pIdx, 1);
-
           userClub.players.push({
-            id: `trans_${Date.now()}_${Math.floor(Math.random() * 999)}`,
-            name: target.name,
-            naturalPos: target.naturalPos,
-            nat: target.nat,
-            age: target.age,
-            ovr: target.ovr,
-            con: 100,
-            role: target.naturalPos === 'GK' ? 'GK-De' : (target.naturalPos === 'DEF' ? 'CD-De' : (target.naturalPos === 'MID' ? 'CM-At' : 'AF-At')),
-            starter: false,
-            val: target.price,
-            wage: target.wage || 0.05,
-            contract: target.contract || 3,
-            morale: 'Superb',
-            goals: 0,
-            cleanSheets: 0,
-            inj: 0
+            id: `trans_${Date.now()}_${Math.floor(Math.random() * 999)}`, name: target.name, naturalPos: target.naturalPos,
+            nat: target.nat, age: target.age, ovr: target.ovr, con: 100, role: target.naturalPos === 'GK' ? 'GK-De' : (target.naturalPos === 'DEF' ? 'CD-De' : 'CM-At'),
+            starter: false, val: target.price, wage: target.wage || 0.05, contract: target.contract || 3, morale: 'Superb', goals: 0, cleanSheets: 0, inj: 0
           });
-
           state.manager.fansApproval = Math.min(99, state.manager.fansApproval + 3);
-          addNewsStory('Transfer Done Deal', `DONE DEAL: ${userClub.name} Confirm £${target.price.toFixed(1)}M Signing of ${target.name}!`, `${userClub.name} have officially completed the signing of ${target.name}.`, true);
-          saveGame();
-          renderAll();
-          renderTransfers();
-          playSound('cheer');
+          addNewsStory('Transfer Done Deal', `DONE DEAL: ${userClub.name} Confirm £${target.price.toFixed(1)}M Signing of ${target.name}!`, `${userClub.name} have officially completed the signing.`, true);
+          saveGame(); renderAll(); renderTransfers(); playSound('cheer');
         }
       } else {
-        const sellerClub = state.clubs.find(c => c.id === sellerClubId);
-        if (!sellerClub) return;
-        const pIdx = sellerClub.players.findIndex(x => x.id === playerId);
+        const seller = state.clubs.find(c => c.id === sellerClubId);
+        if (!seller) return;
+        const pIdx = seller.players.findIndex(x => x.id === playerId);
         if (pIdx === -1) return;
-        const target = sellerClub.players[pIdx];
+        const target = seller.players[pIdx];
         const fee = Number((target.val * 1.15).toFixed(1));
+        if (userClub.budget < fee) { alert("Insufficient transfer budget."); return; }
+        if (seller.players.length <= 13) { alert(`${seller.name} refused your offer because their squad is too thin!`); return; }
 
-        if (userClub.budget < fee) {
-          alert("Insufficient transfer budget.");
-          return;
-        }
-
-        if (sellerClub.players.length <= 13) {
-          alert(`${sellerClub.name} refused your offer because their squad is too thin!`);
-          return;
-        }
-
-        if (confirm(`Buy ${target.name} from ${sellerClub.name} for £${fee.toFixed(1)}M?`)) {
-          userClub.budget -= fee;
-          sellerClub.budget += fee;
-
-          sellerClub.players.splice(pIdx, 1);
-          userClub.players.push({
-            ...target,
-            starter: false,
-            inj: 0,
-            con: 100,
-            morale: 'Superb'
-          });
-
+        if (confirm(`Buy ${target.name} from ${seller.name} for £${fee.toFixed(1)}M?`)) {
+          userClub.budget -= fee; seller.budget += fee;
+          seller.players.splice(pIdx, 1);
+          userClub.players.push({ ...target, starter: false, inj: 0, con: 100, morale: 'Superb' });
           state.manager.fansApproval = Math.min(99, state.manager.fansApproval + 3);
-          addNewsStory('Transfer Done Deal', `DONE DEAL: ${userClub.name} Raid ${sellerClub.name} for ${target.name} (£${fee}M)!`, `${target.name} has signed terms with ${userClub.name} in an agreed £${fee}M transaction.`, true);
-          saveGame();
-          renderAll();
-          renderTransfers();
-          playSound('cheer');
+          addNewsStory('Transfer Done Deal', `DONE DEAL: ${userClub.name} Raid ${seller.name} for ${target.name} (£${fee}M)!`, `${target.name} has signed terms with ${userClub.name}.`, true);
+          saveGame(); renderAll(); renderTransfers(); playSound('cheer');
         }
       }
     }
 
     function sellSquadPlayer(playerId) {
       const club = getCurrentUserClub();
-      if (club.players.length <= 13) {
-        alert("Squad size too small! Sign replacements first.");
-        return;
-      }
-
+      if (club.players.length <= 13) { alert("Squad size too small! Sign replacements first."); return; }
       const pIdx = club.players.findIndex(x => x.id === playerId);
       if (pIdx === -1) return;
       const player = club.players[pIdx];
-
       if (confirm(`Sell ${player.name} for £${player.val.toFixed(1)}M?`)) {
-        club.budget += player.val;
-        club.players.splice(pIdx, 1);
-
-        const startersCount = club.players.filter(p => p.starter).length;
-        if (startersCount < 11) {
-          const nextInLine = club.players.find(p => !p.starter);
-          if (nextInLine) nextInLine.starter = true;
-        }
-
+        club.budget += player.val; club.players.splice(pIdx, 1);
+        if (club.players.filter(p => p.starter).length < 11) { const next = club.players.find(p => !p.starter); if (next) next.starter = true; }
         state.manager.fansApproval = Math.max(20, state.manager.fansApproval - 2);
-        addNewsStory('Player Departure', `DEPARTURE: ${player.name} Leaves ${club.name} in £${player.val.toFixed(1)}M Deal`, `${club.name} sanctioned the departure of ${player.name} for £${player.val.toFixed(1)}M.`, false);
-        saveGame();
-        renderAll();
-        renderTransfers();
-        playSound('whistle');
+        addNewsStory('Player Departure', `DEPARTURE: ${player.name} Leaves ${club.name} in £${player.val.toFixed(1)}M Deal`, `${club.name} sanctioned departure for £${player.val.toFixed(1)}M.`, false);
+        saveGame(); renderAll(); renderTransfers(); playSound('whistle');
       }
     }
 
-    /* WEB AUDIO */
     let audioCtx = null;
     function playSound(type) {
       if (!state || !state.audioEnabled) return;
       try {
-        const AudioContextClass = window.AudioContext || window.webkitAudioContext;
-        if (!AudioContextClass) return;
-        if (!audioCtx) audioCtx = new AudioContextClass();
+        const AudioClass = window.AudioContext || window.webkitAudioContext;
+        if (!AudioClass) return;
+        if (!audioCtx) audioCtx = new AudioClass();
         if (audioCtx.state === 'suspended') audioCtx.resume();
-
-        const osc = audioCtx.createOscillator();
-        const gain = audioCtx.createGain();
-        osc.connect(gain);
-        gain.connect(audioCtx.destination);
-
+        const osc = audioCtx.createOscillator(), gain = audioCtx.createGain();
+        osc.connect(gain); gain.connect(audioCtx.destination);
         const now = audioCtx.currentTime;
-
         if (type === 'whistle') {
-          osc.type = 'triangle';
-          osc.frequency.setValueAtTime(2200, now);
-          osc.frequency.setValueAtTime(2600, now + 0.08);
-          gain.gain.setValueAtTime(0.2, now);
-          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.25);
-          osc.start(now);
-          osc.stop(now + 0.25);
+          osc.type = 'triangle'; osc.frequency.setValueAtTime(2200, now); osc.frequency.setValueAtTime(2600, now + 0.08);
+          gain.gain.setValueAtTime(0.2, now); gain.gain.exponentialRampToValueAtTime(0.001, now + 0.25);
+          osc.start(now); osc.stop(now + 0.25);
         } else if (type === 'goal') {
-          osc.type = 'sawtooth';
-          osc.frequency.setValueAtTime(140, now);
-          osc.frequency.exponentialRampToValueAtTime(40, now + 0.4);
-          gain.gain.setValueAtTime(0.3, now);
-          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.4);
-          osc.start(now);
-          osc.stop(now + 0.4);
+          osc.type = 'sawtooth'; osc.frequency.setValueAtTime(140, now); osc.frequency.exponentialRampToValueAtTime(40, now + 0.4);
+          gain.gain.setValueAtTime(0.3, now); gain.gain.exponentialRampToValueAtTime(0.001, now + 0.4);
+          osc.start(now); osc.stop(now + 0.4);
         } else if (type === 'click') {
-          osc.type = 'sine';
-          osc.frequency.setValueAtTime(600, now);
-          gain.gain.setValueAtTime(0.1, now);
-          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.05);
-          osc.start(now);
-          osc.stop(now + 0.05);
+          osc.type = 'sine'; osc.frequency.setValueAtTime(600, now);
+          gain.gain.setValueAtTime(0.1, now); gain.gain.exponentialRampToValueAtTime(0.001, now + 0.05);
+          osc.start(now); osc.stop(now + 0.05);
         } else if (type === 'cheer') {
-          osc.type = 'triangle';
-          osc.frequency.setValueAtTime(440, now);
-          osc.frequency.exponentialRampToValueAtTime(880, now + 0.5);
-          gain.gain.setValueAtTime(0.2, now);
-          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.5);
-          osc.start(now);
-          osc.stop(now + 0.5);
+          osc.type = 'triangle'; osc.frequency.setValueAtTime(440, now); osc.frequency.exponentialRampToValueAtTime(880, now + 0.5);
+          gain.gain.setValueAtTime(0.2, now); gain.gain.exponentialRampToValueAtTime(0.001, now + 0.5);
+          osc.start(now); osc.stop(now + 0.5);
         }
       } catch(e) {}
     }
@@ -3747,9 +2519,7 @@
 
     window.addEventListener('DOMContentLoaded', () => {
       initGame();
-      if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('./sw.js').catch(() => {});
-      }
+      if ('serviceWorker' in navigator) navigator.serviceWorker.register('./sw.js').catch(() => {});
     });
   </script>
 </body>
