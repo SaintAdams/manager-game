@@ -457,9 +457,14 @@
               <canvas id="matchPitchCanvas" width="800" height="480"></canvas>
               
               <div class="sim-controls-bar">
-                <button class="btn-advance-master" style="padding: 7px 14px; font-size: 0.82rem;" onclick="startMatchdaySim()" id="btnStartMatch">
-                  ▶️ START MATCH
-                </button>
+                <div style="display: flex; gap: 8px;">
+                  <button class="btn-advance-master" style="padding: 7px 14px; font-size: 0.82rem;" onclick="startMatchdaySim()" id="btnStartMatch">
+                    ▶️ START MATCH
+                  </button>
+                  <button class="btn-advance-master" style="padding: 7px 14px; font-size: 0.82rem; background: #334155; color: #fff; display: none;" onclick="toggleMatchPause()" id="btnPauseMatch">
+                    ⏸️ PAUSE
+                  </button>
+                </div>
 
                 <div class="speed-btn-group">
                   <button class="btn-speed active" id="spd1" onclick="setSimSpeed(1)">1x</button>
