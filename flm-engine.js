@@ -46,7 +46,7 @@ const TAG = { GK: 'GK', DEF: 'DF', MID: 'MF', FWD: 'FW' };
 const DIV_NAMES = ['Premier League', 'Championship', 'League One', 'League Two'];
 const CUP_WEEKS = { 7: ['Carabao Cup', 'carabao', false], 15: ['Carabao Cup', 'carabao', true], 23: ['The FA Cup', 'fa', false], 31: ['The FA Cup', 'fa', true] };
 
-const LEAGUES = ('Arsenal,Aston Villa,Bournemouth,Brentford,Brighton,Chelsea,Crystal Palace,Everton,Fulham,Leeds United,Liverpool,Manchester City,Manchester United,Newcastle United,Nottingham Forest,Sunderland,Tottenham,Coventry City,Ipswich Town,Hull City|' +
+const LEAGUES = ('Arsenal,Aston Villa,Bournemouth,Brentford,Brighton,Chelsea,Crystal Palace,Everton,Fulham,Leeds United,Liverpool,Manchester City,Manchester United,Newcastle United,Nottingham Forest,Sunderland,Tottenham,Coventry City,Ipsworth Town,Hull City|' +
   'Leicester City,Southampton,Burnley,Middlesbrough,West Brom,Norwich City,Sheffield United,West Ham,Watford,Wolves,Stoke City,Swansea City,Bristol City,Millwall,Preston,QPR,Blackburn,Derby County,Portsmouth,Oxford United,Sheffield Wednesday,Plymouth Argyle,Birmingham City,Charlton|' +
   'Wrexham,Bolton,Stockport,Leyton Orient,Huddersfield,Lincoln City,Reading,Wycombe,Barnsley,Peterborough,Blackpool,Rotherham,Cardiff City,Bradford City,Stevenage,Mansfield Town,Exeter City,Northampton,Burton Albion,Wigan,Luton Town,Port Vale,Doncaster,Crawley Town|' +
   'Notts County,Walsall,Chesterfield,Swindon,Gillingham,Salford City,Grimsby Town,Bromley,Crewe Alexandra,Colchester,Fleetwood,Tranmere,AFC Wimbledon,Barrow,Cheltenham,Harrogate,MK Dons,Accrington Stanley,Newport County,Bristol Rovers,Carlisle,Shrewsbury,Morecambe,Oldham Athletic').split('|').map(s => s.split(','));
@@ -221,9 +221,8 @@ function applyResult(m, hg, ag, scorersDone) {
   if (ag === 0) { const g = h.players.find(p => p.starter && p.naturalPos === 'GK'); if (g) g.cleanSheets++; }
   if (hg === 0) { const g = a.players.find(p => p.starter && p.naturalPos === 'GK'); if (g) g.cleanSheets++; }
 
-  // Apply disciplinary consequences for bookings recorded during the match
+  // Apply disciplinary records post-match
   if (matchLiveState) {
-    // Red cards = 1-match ban
     if (matchLiveState.reds && matchLiveState.reds.length) {
       matchLiveState.reds.forEach(pid => {
         const p = [...h.players, ...a.players].find(x => x.id === pid);
@@ -234,7 +233,6 @@ function applyResult(m, hg, ag, scorersDone) {
       });
     }
 
-    // Yellow card accumulation (every 5 yellows = 1-match ban)
     if (matchLiveState.yellows) {
       Object.keys(matchLiveState.yellows).forEach(pid => {
         const p = [...h.players, ...a.players].find(x => x.id === pid);
@@ -274,22 +272,16 @@ function cupOutcome(m) {
     addNewsStory('Silverware', `${uc} WIN THE ${m.cupName.toUpperCase()}!`, 'A trophy for the cabinet.', true); playSound('cheer');
   } else addNewsStory('Cup Progress', `${uc} through in the ${m.cupName}`, 'On to the next round.', false);
 }
-/* ---------- AI TRANSFER MARKET ACTIVITY ---------- */
-function simulateAITransfers() {
-  // Only trigger during transfer window weeks (Wk 1-4 Summer, Wk 20-22 Winter)
-  const isWindowOpen = (state.currentWeek >= 1 && state.currentWeek <= 4) || 
-                       (state.currentWeek >= 20 && state.currentWeek <= 22);
-  if (!isWindowOpen) return;
 
-  // 40% chance per week that an AI club makes a move
-  if (Math.random() > 0.40) return;
+/* ---------- AI CPU TRANSFER MARKET SIMULATION ---------- */
+function simulateAITransfers() {
+  const isWindowOpen = (state.currentWeek >= 1 && state.currentWeek <= 4) || (state.currentWeek >= 20 && state.currentWeek <= 22);
+  if (!isWindowOpen || Math.random() > 0.40) return;
 
   const aiClubs = state.clubs.filter(c => c.id !== state.userClubId && c.budget >= 2.0);
   if (!aiClubs.length) return;
-
   const buyer = pick(aiClubs);
 
-  // 1. Try to sign an unattached Free Agent first (budget-friendly)
   const freeAgents = state.marketPlayers.filter(p => p.price === 0);
   if (freeAgents.length && Math.random() < 0.5) {
     const target = pick(freeAgents);
@@ -321,12 +313,9 @@ function simulateAITransfers() {
     }
   }
 
-  // 2. Otherwise, buy from another AI club that has excess squad depth (> 18 players)
   const sellers = state.clubs.filter(c => c.id !== state.userClubId && c.id !== buyer.id && c.players.length > 18);
   if (!sellers.length) return;
-
   const seller = pick(sellers);
-  // Pick an outfield reserve or non-key player
   const sellable = seller.players.filter(p => !p.starter && p.naturalPos !== 'GK');
   if (!sellable.length) return;
 
@@ -354,11 +343,12 @@ function simulateAITransfers() {
         'Market Move',
         `${buyer.name} sign ${dealPlayer.name} from ${seller.name} (£${fee}M)`,
         'A permanent agreement has been reached between both clubs.',
-        fee >= 15.0 // Breaking news banner if it's a big-money deal!
+        fee >= 15.0
       );
     }
   }
 }
+
 function finalizeWeek() {
   const w = getWeek(); if (!w || w.done) return;
   ensureCupTie();
@@ -369,12 +359,13 @@ function finalizeWeek() {
   });
   const club = getCurrentUserClub(), lm = getActiveUserMatch();
   if (lm && lm.home === club.id) club.budget += +(((club.cap + state.stadiumCapacityBonus) * 0.00004)).toFixed(2);
-  applyWeeklyFinancesAndFatigue(); generateWeeklyNewsStory();applyWeeklyFinancesAndFatigue(); 
+  applyWeeklyFinancesAndFatigue();
   generateWeeklyNewsStory();
   simulateAITransfers();
   if (state.currentWeek === 30 && !state.youthIntakeCompleted) generateYouthIntake(true);
   w.done = true; saveGame();
 }
+
 function applyWeeklyFinancesAndFatigue() {
   const club = getCurrentUserClub(), med = (state.medicalFacilityLevel || 1) * 3;
   club.budget = Math.max(0, +(club.budget - computeClubWeeklyWageBill(club) * 0.4 + [0.5, 0.2, 0.08, 0.03][club.div]).toFixed(2));
@@ -392,6 +383,7 @@ function applyWeeklyFinancesAndFatigue() {
     } else p.con = Math.min(100, p.con + 20 + med);
   });
 }
+
 function generateWeeklyNewsStory() {
   const m = getActiveUserMatch(); if (!m || !m.played) return;
   const uc = getCurrentUserClub(), home = m.home === uc.id, opp = clubById(home ? m.away : m.home), my = home ? m.homeGoals : m.awayGoals, th = home ? m.awayGoals : m.homeGoals;
@@ -399,6 +391,7 @@ function generateWeeklyNewsStory() {
   else if (my < th) addNewsStory('Defeat Reaction', `Setback: ${uc.name} lose to ${opp.name} (${my}-${th})`, 'Supporters question the tactics.', false);
   else addNewsStory('Match Reaction', `Points shared: ${uc.name} ${my}-${th} ${opp.name}`, 'An intense draw.', false);
 }
+
 function evaluateManagerOfMonth() {
   if (Math.random() > 0.45 && state.manager.confidence > 75) {
     state.manager.motmAwards++; state.manager.confidence = Math.min(99, state.manager.confidence + 5);
@@ -422,15 +415,18 @@ function handleMasterAdvanceClick() {
   if (state.currentWeek % 4 === 0) evaluateManagerOfMonth();
   saveGame(); renderAll(); playSound('click');
 }
+
 function resetLiveState() {
   matchLiveState = { activeShout: null, shoutExpireMin: 0, subsUsed: 0, maxSubs: 5, pendingSubInId: null, isPaused: false, timelineEvents: [], yellows: {}, reds: [] };
   $('activeShoutBadge').innerText = '';
   $('subsRemainingText').innerText = 5;
-  if ($('btnPauseMatch')) {
-    $('btnPauseMatch').style.display = 'none';
-    $('btnPauseMatch').innerText = '⏸️ PAUSE';
+  const pauseBtn = $('btnPauseMatch');
+  if (pauseBtn) {
+    pauseBtn.style.display = 'none';
+    pauseBtn.innerText = '⏸️ PAUSE';
   }
 }
+
 function showResultModal(m) {
   const h = clubById(m.home), a = clubById(m.away), mine = m.home === state.userClubId ? m.homeGoals - m.awayGoals : m.awayGoals - m.homeGoals;
   $('modalScoreDisplay').innerHTML = `<div class="result-modal-scoreboard"><div class="result-team">${createBadgeHtml(h.id, 46)}<div class="result-team-name">${h.name}</div></div><div class="result-score-center"><div class="result-score-digits">${m.homeGoals} - ${m.awayGoals}</div><div class="result-ft-badge">FULL TIME</div></div><div class="result-team">${createBadgeHtml(a.id, 46)}<div class="result-team-name">${a.name}</div></div></div>`;
@@ -438,6 +434,7 @@ function showResultModal(m) {
   $('modalHighlightsFeed').innerHTML = `<p><b>${mine > 0 ? 'Great win!' : mine < 0 ? 'Tough defeat.' : 'Points shared.'}</b></p><p style="margin-top:6px">${sc ? 'Goals: ' + sc : 'No goals.'}</p>`;
   $('resultSummaryModal').style.display = 'flex'; playSound('whistle');
 }
+
 function dismissResultModal() { $('resultSummaryModal').style.display = 'none'; handleMasterAdvanceClick(); }
 
 /* ---------- shootout ---------- */
@@ -628,6 +625,7 @@ function draw2DPitch() {
   });
   const b = pitchEngine.ball; ctx.fillStyle = '#fff'; ctx.beginPath(); ctx.arc(b.x, b.y, 5.5, 0, 7); ctx.fill(); ctx.strokeStyle = '#000'; ctx.lineWidth = 1.2; ctx.stroke();
 }
+
 function update2DPitchPhysics() {
   const b = pitchEngine.ball; b.x += (b.targetX - b.x) * 0.15; b.y += (b.targetY - b.y) * 0.15;
   [...pitchEngine.homePlayers, ...pitchEngine.awayPlayers].forEach(p => {
@@ -635,17 +633,21 @@ function update2DPitchPhysics() {
     p.x += (p.baseX + dx / d * inf - p.x) * 0.1; p.y += (p.baseY + dy / d * inf - p.y) * 0.1;
   }); draw2DPitch();
 }
+
 function setSimSpeed(s) { simSpeedMultiplier = s; $('spd1').className = `btn-speed ${s === 1 ? 'active' : ''}`; $('spd3').className = `btn-speed ${s === 3 ? 'active' : ''}`; }
 function triggerInstantSim() { simSpeedMultiplier = 25; }
+
 function triggerTouchlineShout(t) {
   matchLiveState.activeShout = t; matchLiveState.shoutExpireMin = (pitchEngine.currentMinute || 0) + 12;
-  const L = { DEMAND_MORE: '🔥 Demand More', TIGHTEN_UP: '🛡️ Tighten Up', PUSH_FORWARD: '⚡ Push Forward', WASTE_TIME: '⏱️️ Waste Time' };
+  const L = { DEMAND_MORE: '🔥 Demand More', TIGHTEN_UP: '🛡️ Tighten Up', PUSH_FORWARD: '⚡ Push Forward', WASTE_TIME: '⏱ Waste Time' };
   $('activeShoutBadge').innerText = L[t] || ''; $('commentaryFeed').insertAdjacentHTML('afterbegin', `<div class="comm-line" style="border-left-color:#f59e0b">📢 Shout: ${L[t]}</div>`); playSound('whistle');
 }
+
 function addTimelineEvent(type, text) {
   matchLiveState.timelineEvents.push({ type, text }); const bar = $('matchTimelineBar'); if (matchLiveState.timelineEvents.length === 1) bar.innerHTML = '';
   const i = document.createElement('div'); i.className = `timeline-event-item ${type}`; i.innerText = text; bar.appendChild(i);
 }
+
 function cancelInMatchSub() {
   matchLiveState.pendingSubInId = null;
   populateInMatchSubChips();
@@ -653,11 +655,11 @@ function cancelInMatchSub() {
 
 function populateInMatchSubChips() {
   const container = $('benchSubChipsList');
+  if (!container) return;
   const titleElem = $('inMatchSubDrawer').querySelector('.in-match-sub-title');
   container.innerHTML = '';
   const club = getCurrentUserClub();
 
-  // If a sub has been chosen, show starters to choose who comes off
   if (matchLiveState.pendingSubInId) {
     const incomingPlayer = club.players.find(p => p.id === matchLiveState.pendingSubInId);
     titleElem.innerHTML = `<span>🔄 Subbing in: <b style="color:var(--gold)">${incomingPlayer ? incomingPlayer.name : ''}</b></span> <button class="btn-swap-pill" style="padding:2px 8px;font-size:0.68rem;" onclick="cancelInMatchSub()">Cancel</button>`;
@@ -676,7 +678,6 @@ function populateInMatchSubChips() {
     return;
   }
 
-  // Normal mode: Show available bench players
   const remaining = matchLiveState.maxSubs - matchLiveState.subsUsed;
   titleElem.innerHTML = `<span>🔄 TACTICAL SUBSTITUTIONS (REMAINING: <span id="subsRemainingText">${remaining}</span>)</span><span style="font-size: 0.68rem; color: var(--text-muted);">Tap a bench player to bring on</span>`;
 
@@ -685,7 +686,7 @@ function populateInMatchSubChips() {
     return;
   }
 
-  const bench = club.players.filter(p => !p.starter && !p.inj);
+  const bench = club.players.filter(p => !p.starter && !p.inj && !p.susp);
   if (!bench.length) {
     container.innerHTML = '<span style="font-size:0.75rem; color:var(--text-muted);">No fit bench players available.</span>';
     return;
@@ -715,7 +716,6 @@ function confirmLiveMatchSub(starterOutId) {
     return;
   }
 
-  // Swap starter statuses and roles
   inP.starter = true;
   outP.starter = false;
   inP.role = outP.role;
@@ -723,100 +723,10 @@ function confirmLiveMatchSub(starterOutId) {
   matchLiveState.pendingSubInId = null;
 
   addTimelineEvent('sub', `🔄 ${pitchEngine.currentMinute}' ${inP.name.split(' ').pop()} on for ${outP.name.split(' ').pop()}`);
-  $('commentaryFeed').insertAdjacentHTML('afterbegin', `<div class="comm-line" style="border-left-color:#38bdf8">🔄 ${pitchEngine.currentMinute}' Tactical Substitution: <b>${inP.name}</b> comes on to replace <b>${outP.name}</b>.</div>`);
+  $('commentaryFeed').insertAdjacentHTML('afterbegin', `<div class="comm-line" style="border-left-color:#38bdf8">🔄 ${pitchEngine.currentMinute}' Tactical Substitution: <b>${inP.name}</b> on for <b>${outP.name}</b>.</div>`);
 
-  // Refresh bench drawer and redraw pitch kits
   populateInMatchSubChips();
   const m = getActiveUserMatch();
-  if (m) setup2DPlayers(clubById(m.home), clubById(m.away));
-  playSound('click');
-}
-function cancelInMatchSub() {
-  matchLiveState.pendingSubInId = null;
-  populateInMatchSubChips();
-}
-
-function populateInMatchSubChips() {
-  const container = $('benchSubChipsList');
-  const titleElem = $('inMatchSubDrawer').querySelector('.in-match-sub-title');
-  container.innerHTML = '';
-  const club = getCurrentUserClub();
-
-  // If a sub has been chosen, show starters to choose who comes off
-  if (matchLiveState.pendingSubInId) {
-    const incomingPlayer = club.players.find(p => p.id === matchLiveState.pendingSubInId);
-    titleElem.innerHTML = `<span>🔄 Subbing in: <b style="color:var(--gold)">${incomingPlayer ? incomingPlayer.name : ''}</b></span> <button class="btn-swap-pill" style="padding:2px 8px;font-size:0.68rem;" onclick="cancelInMatchSub()">Cancel</button>`;
-
-    club.players.filter(p => p.starter).forEach(p => {
-      const isRed = matchLiveState.reds.includes(p.id);
-      const chip = document.createElement('div');
-      chip.className = 'sub-chip starter-chip';
-      chip.style.opacity = isRed ? '0.4' : '1';
-      chip.innerHTML = `<span>${p.name} (${p.naturalPos} • ${p.con}%)</span><b style="color:${isRed ? '#ef4444' : '#f87171'}">${isRed ? 'SENT OFF' : 'Sub Off ⬇'}</b>`;
-      if (!isRed) {
-        chip.onclick = () => confirmLiveMatchSub(p.id);
-      }
-      container.appendChild(chip);
-    });
-    return;
-  }
-
-  // Normal mode: Show available bench players
-  const remaining = matchLiveState.maxSubs - matchLiveState.subsUsed;
-  titleElem.innerHTML = `<span>🔄 TACTICAL SUBSTITUTIONS (REMAINING: <span id="subsRemainingText">${remaining}</span>)</span><span style="font-size: 0.68rem; color: var(--text-muted);">Tap a bench player to bring on</span>`;
-
-  if (remaining <= 0) {
-    container.innerHTML = '<span style="font-size:0.75rem; color:var(--text-muted);">All substitutions used for this match.</span>';
-    return;
-  }
-
-  const bench = club.players.filter(p => !p.starter && !p.inj);
-  if (!bench.length) {
-    container.innerHTML = '<span style="font-size:0.75rem; color:var(--text-muted);">No fit bench players available.</span>';
-    return;
-  }
-
-  bench.forEach(p => {
-    const chip = document.createElement('div');
-    chip.className = 'sub-chip';
-    chip.innerHTML = `<span>${p.name} (${p.naturalPos} • OVR ${p.ovr} • ${p.con}%)</span><b style="color:#10b981">Bring On ⬆</b>`;
-    chip.onclick = () => {
-      matchLiveState.pendingSubInId = p.id;
-      populateInMatchSubChips();
-    };
-    container.appendChild(chip);
-  });
-}
-
-function confirmLiveMatchSub(starterOutId) {
-  if (matchLiveState.subsUsed >= matchLiveState.maxSubs || !matchLiveState.pendingSubInId) return;
-
-  const club = getCurrentUserClub();
-  const inP = club.players.find(x => x.id === matchLiveState.pendingSubInId);
-  const outP = club.players.find(x => x.id === starterOutId);
-
-  if (!inP || !outP) {
-    cancelInMatchSub();
-    return;
-  }
-
-  // Swap starter statuses and roles
-  inP.starter = true;
-  outP.starter = false;
-  inP.role = outP.role;
-  matchLiveState.subsUsed++;
-  matchLiveState.pendingSubInId = null;
-
-  addTimelineEvent('sub', `🔄 ${pitchEngine.currentMinute}' ${inP.name.split(' ').pop()} on for ${outP.name.split(' ').pop()}`);
-  $('commentaryFeed').insertAdjacentHTML('afterbegin', `<div class="comm-line" style="border-left-color:#38bdf8">🔄 ${pitchEngine.currentMinute}' Tactical Substitution: <b>${inP.name}</b> comes on to replace <b>${outP.name}</b>.</div>`);
-
-  // Refresh bench drawer and redraw pitch kits
-  populateInMatchSubChips();
-  const m = getActiveUserMatch();
-  if (m) setup2DPlayers(clubById(m.home), clubById(m.away));
-  playSound('click');
-}
-// ... end of confirmLiveMatchSub() above ...
   if (m) setup2DPlayers(clubById(m.home), clubById(m.away));
   playSound('click');
 }
@@ -836,9 +746,6 @@ function toggleMatchPause() {
 
 function startMatchdaySim() {
   const m = getActiveUserMatch();
-  // ... rest of startMatchdaySim ...
-function startMatchdaySim() {
-  const m = getActiveUserMatch();
   if (!m || m.played) return;
   const btn = $('btnStartMatch');
   btn.disabled = true;
@@ -848,10 +755,18 @@ function startMatchdaySim() {
   matchLiveState.timelineEvents = [];
   matchLiveState.yellows = {};
   matchLiveState.reds = [];
+  matchLiveState.isPaused = false;
   m.scorers = [];
   let min = 0, hs = 0, as = 0;
   clearTimeout(matchSimInterval);
   cancelAnimationFrame(animFrameId);
+
+  const pauseBtn = $('btnPauseMatch');
+  if (pauseBtn) {
+    pauseBtn.style.display = 'inline-flex';
+    pauseBtn.innerText = '⏸️ PAUSE';
+    pauseBtn.style.background = '#334155';
+  }
 
   (function loop() {
     update2DPitchPhysics();
@@ -906,27 +821,13 @@ function startMatchdaySim() {
       populateInMatchSubChips();
     }
   };
-const pauseBtn = $('btnPauseMatch');
-  if (pauseBtn) {
-    pauseBtn.style.display = 'inline-flex';
-    pauseBtn.innerText = '⏸️ PAUSE';
-    pauseBtn.style.background = '#334155';
-  }
 
   function tick() {
-    // ...
-  function tick() {
-    function tick() {
-    // 1. IF PAUSED: Wait 0.2s and check again, do not advance the clock!
     if (matchLiveState.isPaused) {
       matchSimInterval = setTimeout(tick, 200);
       return;
     }
 
-    // 2. IF NOT PAUSED: Advance the game as normal
-    min += 2;
-    pitchEngine.currentMinute = min;
-    $('sbMinute').innerText = `${min}'`;
     min += 2;
     pitchEngine.currentMinute = min;
     $('sbMinute').innerText = `${min}'`;
@@ -978,11 +879,7 @@ const pauseBtn = $('btnPauseMatch');
     if (min >= 90) {
       cancelAnimationFrame(animFrameId);
       btn.disabled = false;
-      if (min >= 90) {
-      cancelAnimationFrame(animFrameId);
-      btn.disabled = false;
-      if ($('btnPauseMatch')) $('btnPauseMatch').style.display = 'none'; // <-- Hides button at Full Time
-      applyResult(m, hs, as, true);
+      if ($('btnPauseMatch'))$('btnPauseMatch').style.display = 'none';
       applyResult(m, hs, as, true);
       $('sbMinute').innerText = 'FULL TIME';
       feed.insertAdjacentHTML('afterbegin', `<div class="comm-line" style="font-weight:800">🏁 Full-time: ${h.name} ${hs}-${as} ${a.name}</div>`);
@@ -1022,6 +919,7 @@ function renderStandingsTable(div) {
   fill('goldenBootBody', [...all].sort((a, b) => b.goals - a.goals).slice(0, 5), 'goals', 'var(--gold)');
   fill('goldenGloveBody', all.filter(p => p.naturalPos === 'GK').sort((a, b) => b.cleanSheets - a.cleanSheets).slice(0, 5), 'cleanSheets', '#38bdf8');
 }
+
 function renderMatchdayView() {
   const m = getActiveUserMatch(), w = getWeek();
   if (m) {
@@ -1040,25 +938,30 @@ function renderMatchdayView() {
     r.innerHTML = `<div class="team-home"><span>${h.name}</span>${createBadgeHtml(h.id, 18)}</div><div class="match-vs-box">${x.played ? `${x.homeGoals}-${x.awayGoals}` : 'v'}</div><div class="team-away">${createBadgeHtml(a.id, 18)}<span>${a.name}</span></div>`; g.appendChild(r);
   });
 }
+
 function renderCupsTab() {
   ensureCupTie(); const c = userCupMatch(), d = $('cupFixtureDisplay');
   d.innerHTML = c ? `<div style="font-weight:800;color:var(--accent);margin-bottom:6px">${c.cupName}${c.final ? ' FINAL' : ''}</div><div style="display:flex;align-items:center;gap:8px">${createBadgeHtml(c.home, 24)}<b>${clubById(c.home).name}</b> vs <b>${clubById(c.away).name}</b>${createBadgeHtml(c.away, 24)}</div><div style="font-size:.75rem;color:var(--text-muted);margin-top:6px">${c.played ? `Result: ${c.homeGoals}-${c.awayGoals}` : 'Played when you advance the week. Penalties if level.'}</div>` :
     `No cup tie this week.<br><span style="color:var(--text-muted);font-size:.75rem">Carabao Cup: ${state.cups.carabaoAlive ? 'still in' : 'out'} • FA Cup: ${state.cups.faAlive ? 'still in' : 'out'} (ties in weeks 7, 15, 23, 31)</span>`;
 }
+
 function renderFacilities() {
   const med = state.medicalFacilityLevel || 1, ac = state.academyFacilityLevel || 1;
   $('facilitiesList').innerHTML = `<div style="background:var(--bg-panel);padding:14px;border-radius:8px"><h4>🏟️ Stand Expansion</h4><p style="font-size:.72rem;color:var(--text-muted);margin:4px 0">+2,500 seats, more gate revenue.</p><button class="btn-swap-pill" onclick="upgradeStand(2500,4.0)">Expand (£4.0M)</button></div>
   <div style="background:var(--bg-panel);padding:14px;border-radius:8px"><h4>🏥 Medical Centre (Lvl ${med})</h4><p style="font-size:.72rem;color:var(--text-muted);margin:4px 0">Bench recovery +${med * 3}% weekly.</p><button class="btn-swap-pill" onclick="upgradeMedicalCentre()">Upgrade (£2.5M)</button></div>
   <div style="background:var(--bg-panel);padding:14px;border-radius:8px"><h4>🌱 Youth Academy (Lvl ${ac})</h4><p style="font-size:.72rem;color:var(--text-muted);margin:4px 0">Better wonderkids each spring.</p><button class="btn-swap-pill" onclick="upgradeAcademyFacility()">Upgrade (£3.0M)</button></div>`;
 }
+
 function spend(cost) { const c = getCurrentUserClub(); if (c.budget < cost) { alert(`Insufficient budget (£${cost}M needed).`); return false; } c.budget -= cost; return true; }
 function upgradeMedicalCentre() { if (spend(2.5)) { state.medicalFacilityLevel++; saveGame(); renderAll(); renderFacilities(); } }
 function upgradeAcademyFacility() { if (spend(3.0)) { state.academyFacilityLevel++; saveGame(); renderAll(); renderFacilities(); } }
 function upgradeStand(s, c) { if (spend(c)) { state.stadiumCapacityBonus += s; saveGame(); renderAll(); renderFacilities(); } }
+
 function renderManagerOffice() {
   const m = state.manager, club = getCurrentUserClub();
   $('managerProfileSummary').innerHTML = `<p><b>Manager:</b> ${m.name}</p><p><b>Club:</b> ${club.name}</p><p><b>Record:</b> ${m.wins}W ${m.draws}D ${m.losses}L (${m.matches} played)</p><p><b>Win rate:</b> ${m.matches ? Math.round(m.wins / m.matches * 100) : 0}%</p><p><b>Weekly wages:</b> £${Math.round(computeClubWeeklyWageBill(club) * 1000).toLocaleString()}k</p><p><b>Board:</b> ${m.confidence}% • <b>Fans:</b> ${m.fansApproval}%</p>`;
 }
+
 function renderHonours() {
   const m = state.manager, box = (i, v, l) => `<div style="background:var(--bg-panel);padding:14px;border-radius:8px;text-align:center;min-width:120px"><div style="font-size:1.8rem">${i}</div><div style="font-weight:800;color:var(--gold)">${v || 0}</div><div style="font-size:.72rem;color:var(--text-muted)">${l}</div></div>`;
   $('honoursList').innerHTML = box('🏅', m.motmAwards, 'Manager of Month') + box('🏆', m.faCups, 'FA Cups') + box('🏆', m.carabaoCups, 'Carabao Cups');
@@ -1073,19 +976,22 @@ function renderNewsFeed() {
   const f = $('newsFeedList'); f.innerHTML = '';
   state.newsFeed.forEach(n => { const c = document.createElement('div'); c.className = `news-card ${n.breaking ? 'breaking' : ''}`; c.innerHTML = `<div style="display:flex;justify-content:space-between"><span style="font-size:.65rem;font-weight:800;color:var(--accent);text-transform:uppercase">${n.tag}</span><span style="font-size:.68rem;color:var(--text-muted)">${n.time}</span></div><div style="font-weight:800">${n.headline}</div><div style="font-size:.8rem;color:#cbd5e1">${n.body}</div>`; f.appendChild(c); });
 }
+
 function generateYouthIntake(announce) {
   const lvl = state.academyFacilityLevel || 1, n = R(3, 5);
   state.youthProspects = Array.from({ length: n }, (_, i) => { const pos = pick(['GK', 'DEF', 'MID', 'FWD']), ovr = 52 + lvl * 2 + R(0, 6); return { id: `youth_${Date.now()}_${i}`, name: pick(FIRSTNAMES) + ' ' + pick(SURNAMES), naturalPos: pos, nat: 'ENG', age: R(16, 17), ovr, potential: Math.min(94, ovr + 16 + R(0, 10)), wage: 0.005, contract: 3, signed: false }; });
   if (announce) { state.youthIntakeCompleted = true; addNewsStory('Academy Day', `Spring intake: ${n} new prospects at ${getCurrentUserClub().name}`, 'Inspect them in the Academy tab.', true); }
 }
+
 function renderAcademyTab() {
   const g = $('academyProspectsGrid'); g.innerHTML = '';$('academyIntakeStatusTag').innerText = state.youthIntakeCompleted ? 'Spring Intake Active' : `Next intake: Week 30 (now Wk ${state.currentWeek})`;
   if (!state.youthIntakeCompleted) { g.innerHTML = '<p style="color:var(--text-muted);font-size:.8rem">No prospects yet. The spring intake arrives in Week 30.</p>'; return; }
   state.youthProspects.forEach(p => { const c = document.createElement('div'); c.className = 'prospect-card'; c.innerHTML = `<div class="prospect-tag">${p.potential >= 88 ? '⭐ Wonderkid' : 'Prospect'}</div><div style="font-weight:900">${p.name}</div><div style="font-size:.75rem;color:var(--text-muted)">${p.naturalPos} • ${p.age} yrs</div><div style="display:flex;justify-content:space-between;font-size:.8rem"><span>Now <b style="color:var(--gold)">${p.ovr}</b></span><span>Potential <b style="color:#10b981">${p.potential}</b></span></div><button class="btn-swap-pill" style="margin-top:8px;background:${p.signed ? '#334155' : '#059669'};color:#fff" onclick="signAcademyProspect('${p.id}')">${p.signed ? 'Signed' : 'Sign (£5k/w)'}</button>`; g.appendChild(c); });
 }
+
 function signAcademyProspect(id) {
   const p = state.youthProspects.find(x => x.id === id); if (!p || p.signed) return; p.signed = true;
-  getCurrentUserClub().players.push({ id: p.id, name: p.name, naturalPos: p.naturalPos, nat: p.nat, age: p.age, ovr: p.ovr, con: 100, role: ROLE[p.naturalPos], starter: false, val: +((p.ovr - 45) * 0.8).toFixed(1), wage: p.wage, contract: p.contract, morale: 'Superb', goals: 0, cleanSheets: 0, inj: 0 });
+  getCurrentUserClub().players.push({ id: p.id, name: p.name, naturalPos: p.naturalPos, nat: p.nat, age: p.age, ovr: p.ovr, con: 100, role: ROLE[p.naturalPos], starter: false, val: +((p.ovr - 45) * 0.8).toFixed(1), wage: p.wage, contract: p.contract, morale: 'Superb', goals: 0, cleanSheets: 0, inj: 0, yellows: 0, susp: 0 });
   saveGame(); renderAll(); renderAcademyTab(); playSound('cheer');
 }
 
@@ -1125,13 +1031,14 @@ function renderTransfers() {
   $('transferMarketBody').innerHTML = shown.map(p => { const ok = club.budget >= p.price; return `<tr class="fm-row"><td><b>${p.name}</b></td><td><span class="role-badge">${p.naturalPos}</span></td><td>${p.nat}</td><td>${p.age}</td><td><b style="color:var(--gold)">${p.ovr}</b></td><td><b>£${p.price.toFixed(1)}M</b></td><td style="display:flex;align-items:center;gap:6px">${p.scout ? '' : createBadgeHtml(p.clubId, 18)}<span>${p.clubName}</span></td><td><button class="btn-swap-pill" style="${ok ? 'background:#059669;color:#fff' : 'opacity:.4'}" onclick="executeBuyPlayer('${p.id}',${p.scout},'${p.clubId}')">${ok ? 'Sign' : 'No funds'}</button></td></tr>`; }).join('');
   $('squadSellListBody').innerHTML = club.players.map(p => `<tr class="fm-row"><td><b>${p.name}</b>${p.starter ? ' <span style="font-size:.65rem;color:#10b981">[XI]</span>' : ''}</td><td><span class="role-badge" style="background:#475569">${p.naturalPos}</span></td><td>${p.age}</td><td><b style="color:var(--gold)">${p.ovr}</b></td><td><b style="color:#34d399">£${p.val.toFixed(1)}M</b></td><td><button class="btn-sell-pill" onclick="sellSquadPlayer('${p.id}')">Sell</button></td></tr>`).join('');
 }
+
 function executeBuyPlayer(id, scout, sellerId) {
   const club = getCurrentUserClub();
   if (scout) {
     const i = state.marketPlayers.findIndex(x => x.id === id); if (i < 0) return; const t = state.marketPlayers[i];
     if (club.budget < t.price) { alert('Insufficient budget.'); return; }
     if (!confirm(`Sign ${t.name} for £${t.price.toFixed(1)}M?`)) return; club.budget -= t.price; state.marketPlayers.splice(i, 1);
-    club.players.push({ id: 'trans_' + Date.now() + R(0, 999), name: t.name, naturalPos: t.naturalPos, nat: t.nat, age: t.age, ovr: t.ovr, con: 100, role: ROLE[t.naturalPos], starter: false, val: t.price, wage: t.wage || 0.05, contract: t.contract || 3, morale: 'Superb', goals: 0, cleanSheets: 0, inj: 0 });
+    club.players.push({ id: 'trans_' + Date.now() + R(0, 999), name: t.name, naturalPos: t.naturalPos, nat: t.nat, age: t.age, ovr: t.ovr, con: 100, role: ROLE[t.naturalPos], starter: false, val: t.price, wage: t.wage || 0.05, contract: t.contract || 3, morale: 'Superb', goals: 0, cleanSheets: 0, inj: 0, yellows: 0, susp: 0 });
     addNewsStory('Done Deal', `${club.name} sign ${t.name} (£${t.price.toFixed(1)}M)`, 'Signing confirmed.', true);
   } else {
     const s = clubById(sellerId); if (!s) return; const i = s.players.findIndex(x => x.id === id); if (i < 0) return; const t = s.players[i], fee = +(t.val * 1.15).toFixed(1);
@@ -1141,6 +1048,7 @@ function executeBuyPlayer(id, scout, sellerId) {
   }
   state.manager.fansApproval = Math.min(99, state.manager.fansApproval + 3); saveGame(); renderAll(); renderTransfers(); playSound('cheer');
 }
+
 function sellSquadPlayer(id) {
   const club = getCurrentUserClub(); if (club.players.length <= 16) { alert('Squad too small. Sign replacements first.'); return; }
   const i = club.players.findIndex(x => x.id === id); if (i < 0) return; const p = club.players[i];
@@ -1150,11 +1058,13 @@ function sellSquadPlayer(id) {
 
 /* ---------- season end ---------- */
 const sortedDivs = () => { const s = {}; for (let d = 0; d <= 3; d++) s[d] = [...state.standings[d]].sort((a, b) => b.pts - a.pts || b.gd - a.gd || b.gf - a.gf); return s; };
+
 function showEndSeasonGala() {
   const s = sortedDivs(), mv = d => `<p><b>Up from ${DIV_NAMES[d + 1]}:</b> ${s[d + 1].slice(0, 3).map(r => r.name).join(', ')}</p><p><b>Down from ${DIV_NAMES[d]}:</b> ${s[d].slice(-3).map(r => r.name).join(', ')}</p>`;
   $('eosSummaryContent').innerHTML = `<div style="background:var(--bg-panel);padding:12px;border-radius:8px;margin-bottom:10px"><h3 style="color:var(--gold)">👑 Champions</h3>${[0, 1, 2, 3].map(d => `<p><b>${DIV_NAMES[d]}:</b>${s[d][0].name}</p>`).join('')}</div><div style="background:var(--bg-panel);padding:12px;border-radius:8px"><h3 style="color:#38bdf8">📈 Movement</h3>${mv(0)}${mv(1)}${mv(2)}</div>`;
   $('endSeasonModal').style.display = 'flex'; playSound('cheer');
 }
+
 function closeEosModal() { $('endSeasonModal').style.display = 'none'; }
 
 function executeNextSeasonTransition() {
@@ -1241,6 +1151,7 @@ function updateHeaderClubDisplay() {
   $('headerBadgeWrap').innerHTML = createBadgeHtml(c.id, 34); $('headerClubName').innerText = c.name; $('headerStadium').innerText = `${c.stadium} • Capacity: ${(c.cap + (state.stadiumCapacityBonus || 0)).toLocaleString()}`;
   $('statAttack').innerText = s.att; $('statMidfield').innerText = s.mid; $('statDefence').innerText = s.def; $('statOvr').innerText = s.ovr; $('headerWageBill').innerText = `£${Math.round(computeClubWeeklyWageBill(c) * 1000).toLocaleString()}k/w`;
 }
+
 function renderAll() {
   const club = getCurrentUserClub(); ensureCupTie();
   $('headerDivName').innerText = DIV_NAMES[club.div];$('headerWeek').innerText = `Wk ${state.currentWeek} / ${state.totalWeeks}`;
@@ -1254,6 +1165,7 @@ function renderAll() {
   else { b.className = 'btn-advance-master'; t.innerText = 'ADVANCE WEEK'; }
   updateHeaderClubDisplay(); renderTactics(); renderStandingsTable(club.div); renderMatchdayView();
 }
+
 function switchTab(id) {
   ['tactics', 'matchday', 'cups', 'news', 'transfers', 'standings', 'academy', 'facilities', 'manager', 'honours'].forEach(t => { $(`tab-${t}`).style.display = t === id ? 'block' : 'none'; $(`nav-${t}`).className = `nav-item ${t === id ? 'active' : ''}`; });
   ({ tactics: renderTactics, news: renderNewsFeed, cups: renderCupsTab, transfers: renderTransfers, standings: () => renderStandingsTable(state.activeStandingsTab), academy: renderAcademyTab, matchday: renderMatchdayView, facilities: renderFacilities, manager: renderManagerOffice, honours: renderHonours })[id]();
