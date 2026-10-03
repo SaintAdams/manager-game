@@ -26,9 +26,9 @@
       --gold: #fbc02d;
       --text-main: #f1f5f9;
       --text-muted: #94a3b8;
-      --pitch-grass-1: #235c31;
-      --pitch-grass-2: #1e4e2a;
-      --pitch-line: rgba(255, 255, 255, 0.4);
+      --pitch-grass-1: #1f512b;
+      --pitch-grass-2: #194323;
+      --pitch-line: rgba(255, 255, 255, 0.5);
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; user-select: none; }
@@ -148,6 +148,7 @@
     .strip-stat .val { font-size: 1.15rem; font-weight: 900; color: #fff; }
     .strip-stat .lbl { font-size: 0.62rem; color: var(--text-muted); text-transform: uppercase; font-weight: 700; }
 
+    /* TACTICS */
     .tactics-container { display: grid; grid-template-columns: 460px 1fr; gap: 16px; }
 
     .pitch-card {
@@ -388,6 +389,7 @@
     .condition-bar { width: 38px; height: 5px; background: #334155; border-radius: 3px; overflow: hidden; display: inline-block; vertical-align: middle; margin-right: 4px; }
     .condition-fill { height: 100%; border-radius: 3px; }
 
+    /* MATCHDAY & 2D PITCH ENGINE */
     .matchday-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 16px; }
     .broadcast-card {
       background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; padding: 16px;
@@ -397,19 +399,61 @@
       background: linear-gradient(180deg, #151d2c 0%, #0c121d 100%);
       border: 2px solid var(--border);
       border-radius: 12px;
-      padding: 16px;
+      padding: 14px;
       display: flex;
       justify-content: space-around;
       align-items: center;
       text-align: center;
     }
-    .sb-team h2 { font-size: 1.2rem; font-weight: 900; }
-    .sb-team p { font-size: 0.75rem; color: var(--text-muted); }
-    .sb-score { font-size: 2.5rem; font-weight: 900; color: #fff; letter-spacing: 3px; }
+    .sb-team h2 { font-size: 1.15rem; font-weight: 900; }
+    .sb-team p { font-size: 0.72rem; color: var(--text-muted); }
+    .sb-score { font-size: 2.3rem; font-weight: 900; color: #fff; letter-spacing: 3px; }
     .sb-minute { background: var(--bg-panel); padding: 4px 8px; border-radius: 6px; font-weight: 800; font-size: 0.8rem; color: var(--accent); }
 
+    /* 2D CANVAS CONTAINER */
+    .canvas-container {
+      width: 100%;
+      background: #090e18;
+      border: 2px solid var(--border);
+      border-radius: 10px;
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    #matchPitchCanvas {
+      width: 100%;
+      height: 280px;
+      background: #173f22;
+      display: block;
+    }
+    .sim-controls-bar {
+      width: 100%;
+      background: var(--bg-panel);
+      border-top: 1px solid var(--border);
+      padding: 8px 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .speed-btn-group { display: flex; gap: 6px; }
+    .btn-speed {
+      background: var(--bg-dark);
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      padding: 5px 10px;
+      border-radius: 6px;
+      font-size: 0.72rem;
+      font-weight: 800;
+      cursor: pointer;
+    }
+    .btn-speed.active { background: var(--accent); color: #000; border-color: var(--accent); }
+
     .commentary-box {
-      background: #090d14; border: 1px solid var(--border); border-radius: 8px; height: 230px;
+      background: #090d14; border: 1px solid var(--border); border-radius: 8px; height: 180px;
       overflow-y: auto; padding: 10px; display: flex; flex-direction: column; gap: 6px;
       -webkit-overflow-scrolling: touch;
     }
@@ -448,7 +492,6 @@
     .news-body { font-size: 0.8rem; color: #cbd5e1; line-height: 1.4; }
     .news-time { font-size: 0.68rem; color: var(--text-muted); font-weight: 600; }
 
-    /* MODAL BASE */
     .modal-backdrop {
       position: fixed; inset: 0; background: rgba(0,0,0,0.88);
       display: flex; align-items: center; justify-content: center; z-index: 1000;
@@ -464,7 +507,6 @@
     .modal-header h2 { font-size: 1.2rem; font-weight: 900; }
     .modal-close { background: none; border: none; color: #fff; font-size: 1.3rem; cursor: pointer; }
 
-    /* WIZARD INPUTS */
     .wizard-input-box {
       background: var(--bg-panel);
       border: 1px solid var(--border);
@@ -572,6 +614,7 @@
       .sb-team h2 { font-size: 1rem; }
       .sb-score { font-size: 2rem; }
 
+      #matchPitchCanvas { height: 210px; }
       #modalClubsGrid, #wizardClubsGrid { grid-template-columns: 1fr !important; }
     }
   </style>
@@ -684,6 +727,7 @@
         </div>
       </div>
 
+      <!-- TACTICS TAB -->
       <div id="tab-tactics" class="tab-pane">
         <div id="swapNotificationBar" class="swap-status-bar" style="display: none;">
           <span id="swapNotificationText">🔄 SELECT PLAYER TO SWAP</span>
@@ -767,6 +811,7 @@
         </div>
       </div>
 
+      <!-- MATCHDAY TAB WITH 2D CANVAS ENGINE -->
       <div id="tab-matchday" class="tab-pane" style="display: none;">
         <div class="matchday-grid">
           <div class="broadcast-card">
@@ -785,13 +830,26 @@
               </div>
             </div>
 
-            <button class="btn-advance-master" style="width: 100%; justify-content: center;" onclick="startMatchdaySim()" id="btnStartMatch">
-              ▶️️ SIMULATE 90 MINUTES
-            </button>
+            <!-- 2D MATCH ENGINE CANVAS -->
+            <div class="canvas-container">
+              <canvas id="matchPitchCanvas" width="580" height="280"></canvas>
+              
+              <div class="sim-controls-bar">
+                <button class="btn-advance-master" style="padding: 7px 14px; font-size: 0.82rem;" onclick="startMatchdaySim()" id="btnStartMatch">
+                  ▶️ START MATCH
+                </button>
+
+                <div class="speed-btn-group">
+                  <button class="btn-speed active" id="spd1" onclick="setSimSpeed(1)">1x</button>
+                  <button class="btn-speed" id="spd3" onclick="setSimSpeed(3)">3x</button>
+                  <button class="btn-speed" id="spdInst" onclick="triggerInstantSim()">⚡ Instant</button>
+                </div>
+              </div>
+            </div>
 
             <h4 style="font-size: 0.85rem; text-transform: uppercase; color: var(--text-muted);">Match Commentary</h4>
             <div class="commentary-box" id="commentaryFeed">
-              <div class="comm-line">Teams have completed warmups and are emerging onto the pitch.</div>
+              <div class="comm-line">Teams have emerged from the tunnel. Click "Start Match" to kick off!</div>
             </div>
           </div>
 
@@ -802,6 +860,7 @@
         </div>
       </div>
 
+      <!-- NEWS HUB TAB -->
       <div id="tab-news" class="tab-pane" style="display: none;">
         <div class="standings-card">
           <div class="section-title-strip" style="margin-bottom: 14px;">
@@ -812,6 +871,7 @@
         </div>
       </div>
 
+      <!-- TRANSFER MARKET TAB -->
       <div id="tab-transfers" class="tab-pane" style="display: none;">
         <div class="standings-card">
           <div class="section-title-strip" style="margin-bottom: 12px;">
@@ -864,6 +924,7 @@
         </div>
       </div>
 
+      <!-- STANDINGS TAB -->
       <div id="tab-standings" class="tab-pane" style="display: none;">
         <div class="standings-card">
           <div class="league-tabs">
@@ -891,6 +952,7 @@
         </div>
       </div>
 
+      <!-- FACILITIES TAB -->
       <div id="tab-facilities" class="tab-pane" style="display: none;">
         <div class="standings-card">
           <h3 style="margin-bottom: 12px;">Ground Expansion &amp; Medical Facilities</h3>
@@ -898,6 +960,7 @@
         </div>
       </div>
 
+      <!-- MANAGER OFFICE TAB -->
       <div id="tab-manager" class="tab-pane" style="display: none;">
         <div class="standings-card">
           <h3 style="margin-bottom: 12px;">Manager Dossier &amp; Record</h3>
@@ -905,6 +968,7 @@
         </div>
       </div>
 
+      <!-- HONOURS TAB -->
       <div id="tab-honours" class="tab-pane" style="display: none;">
         <div class="standings-card">
           <h3 style="margin-bottom: 12px;">Trophy Room &amp; Accolades</h3>
@@ -914,7 +978,7 @@
     </main>
   </div>
 
-  <!-- CAREER SETUP WIZARD MODAL (FIRST TIME ONBOARDING) -->
+  <!-- CAREER SETUP WIZARD MODAL -->
   <div id="careerSetupModal" class="modal-backdrop" style="display: none; z-index: 2000;">
     <div class="modal-window" style="width: 650px;">
       <div class="modal-header">
@@ -980,7 +1044,7 @@
   </footer>
 
   <script>
-    const STORAGE_KEY = 'FLM_CAREER_V2026_MOBILE_V2';
+    const STORAGE_KEY = 'FLM_CAREER_V2026_MOBILE_V3';
 
     const FORMATIONS = {
       '4-3-3': [
@@ -1241,7 +1305,26 @@
     let state = null;
     let selectedPlayerSwapId = null;
     let matchSimInterval = null;
+    let animFrameId = null;
     let wizardChosenClubId = 'ARS';
+    let simSpeedMultiplier = 1;
+
+    // 2D CANVAS MATCH ENGINE DATA
+    let pitchEngine = {
+      canvas: null,
+      ctx: null,
+      w: 580,
+      h: 280,
+      homePlayers: [],
+      awayPlayers: [],
+      ball: { x: 290, y: 140, vx: 0, vy: 0, targetX: 290, targetY: 140 },
+      homeColor: '#ef4444',
+      awayColor: '#2563eb',
+      homeScore: 0,
+      awayScore: 0,
+      currentMinute: 0,
+      activeEvent: null
+    };
 
     function initGame() {
       const saved = localStorage.getItem(STORAGE_KEY);
@@ -1302,7 +1385,7 @@
     }
 
     function promptNewCareer() {
-      if (confirm("Start a completely new career? Any unsaved progress will be reset.")) {
+      if (confirm("Start a completely new career? Any current progress will be reset.")) {
         localStorage.removeItem(STORAGE_KEY);
         openCareerSetupWizard();
       }
@@ -1848,12 +1931,19 @@
       }
     }
 
+    /* =====================================================================
+       ADVANCE WEEK & FIXTURE ENGINE (WITH INSTANT MATCHDAY REFRESH)
+       ===================================================================== */
     function advanceMasterWeek() {
       if (!state) return;
       if (state.currentWeek >= state.totalWeeks) {
         showEndSeasonGala();
         return;
       }
+
+      // Stop any running 2D animation loop
+      clearInterval(matchSimInterval);
+      cancelAnimationFrame(animFrameId);
 
       simulateCurrentWeekFixtures();
       generateWeeklyNewsStory();
@@ -1862,6 +1952,7 @@
       if (state.currentWeek % 4 === 0) evaluateManagerOfMonth();
 
       saveGame();
+      // renderAll() now immediately updates Matchday tab to show next week's game!
       renderAll();
       playSound('whistle');
     }
@@ -1985,6 +2076,194 @@
       }
     }
 
+    /* =====================================================================
+       2D CANVAS MATCH ENGINE - RENDER & SIMULATION
+       ===================================================================== */
+    function initPitchCanvas() {
+      const canvas = document.getElementById('matchPitchCanvas');
+      if (!canvas) return;
+      pitchEngine.canvas = canvas;
+      pitchEngine.ctx = canvas.getContext('2d');
+      pitchEngine.w = canvas.width;
+      pitchEngine.h = canvas.height;
+    }
+
+    function setup2DPlayers(homeClub, awayClub) {
+      initPitchCanvas();
+      pitchEngine.homeColor = homeClub.col || '#ef4444';
+      pitchEngine.awayColor = (awayClub.col && awayClub.col !== homeClub.col) ? awayClub.col : '#2563eb';
+      if (pitchEngine.awayColor === pitchEngine.homeColor) pitchEngine.awayColor = '#38bdf8';
+
+      // 11 Home positions across left half (x: 20 to 270)
+      const hSlots = [
+        { x: 30, y: 140 }, // GK
+        { x: 80, y: 50 }, { x: 75, y: 105 }, { x: 75, y: 175 }, { x: 80, y: 230 }, // 4 DEF
+        { x: 155, y: 70 }, { x: 150, y: 140 }, { x: 155, y: 210 }, // 3 MID
+        { x: 235, y: 60 }, { x: 245, y: 140 }, { x: 235, y: 220 }  // 3 FWD
+      ];
+
+      // 11 Away positions across right half (x: 310 to 560)
+      const aSlots = [
+        { x: 550, y: 140 }, // GK
+        { x: 500, y: 50 }, { x: 505, y: 105 }, { x: 505, y: 175 }, { x: 500, y: 230 }, // 4 DEF
+        { x: 425, y: 70 }, { x: 430, y: 140 }, { x: 425, y: 210 }, // 3 MID
+        { x: 345, y: 60 }, { x: 335, y: 140 }, { x: 345, y: 220 }  // 3 FWD
+      ];
+
+      pitchEngine.homePlayers = hSlots.map((s, idx) => ({
+        id: `h_${idx}`,
+        num: idx + 1,
+        baseX: s.x,
+        baseY: s.y,
+        x: s.x,
+        y: s.y,
+        color: pitchEngine.homeColor
+      }));
+
+      pitchEngine.awayPlayers = aSlots.map((s, idx) => ({
+        id: `a_${idx}`,
+        num: idx + 1,
+        baseX: s.x,
+        baseY: s.y,
+        x: s.x,
+        y: s.y,
+        color: pitchEngine.awayColor
+      }));
+
+      pitchEngine.ball = { x: 290, y: 140, vx: 0, vy: 0, targetX: 290, targetY: 140 };
+      draw2DPitch();
+    }
+
+    function draw2DPitch() {
+      const { ctx, w, h } = pitchEngine;
+      if (!ctx) return;
+
+      // Pitch background
+      ctx.fillStyle = '#1b4a24';
+      ctx.fillRect(0, 0, w, h);
+
+      // Grass stripes
+      ctx.fillStyle = '#17401f';
+      const stripeW = w / 10;
+      for (let i = 0; i < 10; i += 2) {
+        ctx.fillRect(i * stripeW, 0, stripeW, h);
+      }
+
+      // Pitch boundary lines
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.6)';
+      ctx.lineWidth = 2;
+      ctx.strokeRect(10, 10, w - 20, h - 20);
+
+      // Halfway line & center circle
+      ctx.beginPath();
+      ctx.moveTo(w / 2, 10);
+      ctx.lineTo(w / 2, h - 10);
+      ctx.stroke();
+
+      ctx.beginPath();
+      ctx.arc(w / 2, h / 2, 45, 0, Math.PI * 2);
+      ctx.stroke();
+
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
+      ctx.beginPath();
+      ctx.arc(w / 2, h / 2, 3, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Penalty box Left
+      ctx.strokeRect(10, h / 2 - 55, 75, 110);
+      ctx.strokeRect(10, h / 2 - 25, 30, 50);
+
+      // Penalty box Right
+      ctx.strokeRect(w - 85, h / 2 - 55, 75, 110);
+      ctx.strokeRect(w - 40, h / 2 - 25, 30, 50);
+
+      // Goals
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.2)';
+      ctx.fillRect(4, h / 2 - 20, 6, 40);
+      ctx.fillRect(w - 10, h / 2 - 20, 6, 40);
+
+      // Draw Home Players (Dots)
+      pitchEngine.homePlayers.forEach(p => {
+        drawPlayerDot(p.x, p.y, p.color, p.num);
+      });
+
+      // Draw Away Players (Dots)
+      pitchEngine.awayPlayers.forEach(p => {
+        drawPlayerDot(p.x, p.y, p.color, p.num);
+      });
+
+      // Draw Ball with Shadow
+      const b = pitchEngine.ball;
+      ctx.fillStyle = 'rgba(0,0,0,0.4)';
+      ctx.beginPath();
+      ctx.arc(b.x + 2, b.y + 2, 4, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.fillStyle = '#ffffff';
+      ctx.beginPath();
+      ctx.arc(b.x, b.y, 4.5, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.strokeStyle = '#000';
+      ctx.lineWidth = 1;
+      ctx.stroke();
+    }
+
+    function drawPlayerDot(x, y, color, num) {
+      const ctx = pitchEngine.ctx;
+      // Outer border
+      ctx.fillStyle = '#ffffff';
+      ctx.beginPath();
+      ctx.arc(x, y, 7.5, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Team colored circle
+      ctx.fillStyle = color;
+      ctx.beginPath();
+      ctx.arc(x, y, 6, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Player Number
+      ctx.fillStyle = '#ffffff';
+      ctx.font = 'bold 6px sans-serif';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(num, x, y);
+    }
+
+    function update2DPitchPhysics() {
+      const b = pitchEngine.ball;
+      // Ball smoothly moves toward its target position
+      b.x += (b.targetX - b.x) * 0.15;
+      b.y += (b.targetY - b.y) * 0.15;
+
+      // Animate players drifting realistically toward the ball/shape
+      [...pitchEngine.homePlayers, ...pitchEngine.awayPlayers].forEach(p => {
+        const dx = b.x - p.baseX;
+        const dy = b.y - p.baseY;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+
+        // Players move dynamically towards the play area within tactical limits
+        const influence = Math.min(28, dist * 0.25);
+        const targetX = p.baseX + (dx / (dist || 1)) * influence;
+        const targetY = p.baseY + (dy / (dist || 1)) * influence;
+
+        p.x += (targetX - p.x) * 0.1;
+        p.y += (targetY - p.y) * 0.1;
+      });
+
+      draw2DPitch();
+    }
+
+    function setSimSpeed(speed) {
+      simSpeedMultiplier = speed;
+      document.getElementById('spd1').className = `btn-speed ${speed === 1 ? 'active' : ''}`;
+      document.getElementById('spd3').className = `btn-speed ${speed === 3 ? 'active' : ''}`;
+    }
+
+    function triggerInstantSim() {
+      simSpeedMultiplier = 20;
+    }
+
     function startMatchdaySim() {
       const userClub = getCurrentUserClub();
       const weekData = state.fixtures.find(f => f.week === state.currentWeek);
@@ -1996,7 +2275,7 @@
       }
 
       if (userMatch.played) {
-        alert("Match already played this week.");
+        alert("Match already completed this week.");
         return;
       }
 
@@ -2016,28 +2295,59 @@
       let aScore = 0;
 
       clearInterval(matchSimInterval);
-      matchSimInterval = setInterval(() => {
-        min += 5;
+      cancelAnimationFrame(animFrameId);
+
+      // Continuous 2D Canvas rendering loop
+      function animLoop() {
+        update2DPitchPhysics();
+        if (min < 90) {
+          animFrameId = requestAnimationFrame(animLoop);
+        }
+      }
+      animLoop();
+
+      // Tick intervals for match progression
+      function runSimTick() {
+        min += 2;
         document.getElementById('sbMinute').innerText = `${min}'`;
 
-        if (Math.random() < 0.28) {
+        // Ball movement highlights
+        if (min % 4 === 0) {
+          // Midfield play / pass
+          const isHomePos = Math.random() > 0.5;
+          const attackingLeft = isHomePos;
+          pitchEngine.ball.targetX = attackingLeft ? (200 + Math.random() * 260) : (120 + Math.random() * 260);
+          pitchEngine.ball.targetY = 40 + Math.random() * 200;
+          playSound('click');
+        }
+
+        // Scoring chance evaluation
+        if (Math.random() < 0.16) {
           const scoringHome = (Math.random() * (homeStats.att + 4) > Math.random() * awayStats.def);
           if (scoringHome) {
             hScore++;
-            feed.innerHTML = `<div class="comm-line goal">⚽ ${min}' GOAL! ${homeClub.name} score! (${hScore}-${aScore})</div>` + feed.innerHTML;
+            pitchEngine.ball.targetX = pitchEngine.w - 15; // Net on right
+            pitchEngine.ball.targetY = pitchEngine.h / 2 + (Math.random() * 20 - 10);
+            feed.innerHTML = `<div class="comm-line goal">⚽ ${min}' GOAL! ${homeClub.name} fire into the top corner! (${hScore}-${aScore})</div>` + feed.innerHTML;
             playSound('goal');
           } else {
             aScore++;
-            feed.innerHTML = `<div class="comm-line goal">⚽ ${min}' GOAL! ${awayClub.name} hit on the break! (${hScore}-${aScore})</div>` + feed.innerHTML;
+            pitchEngine.ball.targetX = 15; // Net on left
+            pitchEngine.ball.targetY = pitchEngine.h / 2 + (Math.random() * 20 - 10);
+            feed.innerHTML = `<div class="comm-line goal">⚽ ${min}' GOAL! ${awayClub.name} strike on the counter-attack! (${hScore}-${aScore})</div>` + feed.innerHTML;
             playSound('goal');
           }
           document.getElementById('sbScore').innerText = `${hScore} - ${aScore}`;
+        } else if (Math.random() < 0.10) {
+          // Save / shot wide
+          feed.innerHTML = `<div class="comm-line">🧤 ${min}' Magnificent diving save denies a certain goal!</div>` + feed.innerHTML;
         }
 
         if (min >= 90) {
           clearInterval(matchSimInterval);
+          cancelAnimationFrame(animFrameId);
           document.getElementById('sbMinute').innerText = `FULL TIME`;
-          feed.innerHTML = `<div class="comm-line" style="font-weight:800;">🏁 90' Full-time whistle blows! Final: ${homeClub.name} ${hScore} - ${aScore} ${awayClub.name}.</div>` + feed.innerHTML;
+          feed.innerHTML = `<div class="comm-line" style="font-weight:800;">🏁 90' Full-time! Final score: ${homeClub.name} ${hScore} - ${aScore} ${awayClub.name}.</div>` + feed.innerHTML;
           btn.disabled = false;
 
           userMatch.homeGoals = hScore;
@@ -2050,10 +2360,20 @@
           saveGame();
           renderStandingsTable(userClub.div);
           playSound('whistle');
+          return;
         }
-      }, 140);
+
+        // Adjust timer speed dynamically based on speed multiplier
+        const delay = Math.max(12, 120 / simSpeedMultiplier);
+        matchSimInterval = setTimeout(runSimTick, delay);
+      }
+
+      runSimTick();
     }
 
+    /* =====================================================================
+       STANDINGS TABLES & ACCOLADES
+       ===================================================================== */
     function renderStandingsTable(divIndex) {
       state.activeStandingsTab = divIndex;
       for (let i = 0; i <= 3; i++) {
@@ -2115,7 +2435,7 @@
         addNewsStory(
           'Award Winner',
           `OFFICIAL: ${state.manager.name} Named Manager of the Month!`,
-          `Following a fine run with ${userClub.name}, ${state.manager.name} has picked up the award.`,
+          `Following an impressive run with ${userClub.name}, ${state.manager.name} has picked up the trophy.`,
           true
         );
         alert(`🏆 ACCOLADE: Congratulations ${state.manager.name}! You won MANAGER OF THE MONTH for ${userClub.name}!`);
@@ -2134,7 +2454,7 @@
 
       content.innerHTML = `
         <div style="background:var(--bg-panel); padding:12px; border-radius:8px; margin-bottom:10px;">
-          <h3 style="color:var(--gold); margin-bottom:4px;">👑 Champions</h3>
+          <h3 style="color:var(--gold); margin-bottom:4px;">👑 Champions Crowned</h3>
           <p><b>Premier League:</b> ${sorted[0][0].name}</p>
           <p><b>Championship:</b> ${sorted[1][0].name}</p>
           <p><b>League One:</b> ${sorted[2][0].name}</p>
@@ -2279,6 +2599,7 @@
       document.getElementById('statOvr').innerText = stats.ovr;
     }
 
+    /* RENDER ALL ROUTINE - IMMEDIATELY CALLS MATCHDAY VIEW SO IT ALWAYS UPDATES */
     function renderAll() {
       const club = getCurrentUserClub();
       const divNames = ['Premier League', 'Championship', 'League One', 'League Two'];
@@ -2297,6 +2618,8 @@
       updateBannerStats();
       renderTactics();
       renderStandingsTable(club.div);
+      // Ensures the next fixture and 2D canvas always refresh immediately when advancing week!
+      renderMatchdayView();
     }
 
     function renderMatchdayView() {
@@ -2311,20 +2634,34 @@
         document.getElementById('sbAwayName').innerText = aClub.name;
         document.getElementById('sbScore').innerText = userMatch.played ? `${userMatch.homeGoals} - ${userMatch.awayGoals}` : '0 - 0';
         document.getElementById('sbMinute').innerText = userMatch.played ? 'FULL TIME' : 'PRE-MATCH';
+
+        const btn = document.getElementById('btnStartMatch');
+        if (btn) btn.disabled = userMatch.played;
+
+        // Reset commentary if match hasn't been played
+        if (!userMatch.played) {
+          const feed = document.getElementById('commentaryFeed');
+          if (feed) feed.innerHTML = `<div class="comm-line">Week ${state.currentWeek}: ${hClub.name} host ${aClub.name}. Click "Start Match" to begin!</div>`;
+        }
+
+        // Setup 2D Player positions for the new match fixture
+        setup2DPlayers(hClub, aClub);
       }
 
       const groundsList = document.getElementById('aroundGroundsList');
-      groundsList.innerHTML = '';
-      if (weekData) {
-        const divMatches = weekData.matches.filter(m => m.div === club.div);
-        divMatches.forEach(m => {
-          const h = state.clubs.find(c => c.id === m.home);
-          const a = state.clubs.find(c => c.id === m.away);
-          const line = document.createElement('div');
-          line.style.cssText = 'display:flex; justify-content:space-between; padding:5px 8px; background:var(--bg-panel); border-radius:6px;';
-          line.innerHTML = `<span>${h.name}</span> <b>${m.played ? `${m.homeGoals}-${m.awayGoals}` : 'v'}</b> <span>${a.name}</span>`;
-          groundsList.appendChild(line);
-        });
+      if (groundsList) {
+        groundsList.innerHTML = '';
+        if (weekData) {
+          const divMatches = weekData.matches.filter(m => m.div === club.div);
+          divMatches.forEach(m => {
+            const h = state.clubs.find(c => c.id === m.home);
+            const a = state.clubs.find(c => c.id === m.away);
+            const line = document.createElement('div');
+            line.style.cssText = 'display:flex; justify-content:space-between; padding:5px 8px; background:var(--bg-panel); border-radius:6px;';
+            line.innerHTML = `<span>${h.name}</span> <b>${m.played ? `${m.homeGoals}-${m.awayGoals}` : 'v'}</b> <span>${a.name}</span>`;
+            groundsList.appendChild(line);
+          });
+        }
       }
     }
 
