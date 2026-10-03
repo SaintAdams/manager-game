@@ -104,10 +104,42 @@ const getActiveUserMatch = () => {
   return cup || league;
 };
 
+/* ---------- AUTHENTIC SVG CLUB CRESTS ---------- */
+const CLUB_CREST_THEMES = {
+  'Newcastle United': { bg: '#171717', border: '#ffffff', fg: '#f59e0b', code: 'NEW' },
+  'Arsenal': { bg: '#dc2626', border: '#ffffff', fg: '#fef08a', code: 'ARS' },
+  'Manchester City': { bg: '#38bdf8', border: '#ffffff', fg: '#0f172a', code: 'MCI' },
+  'Liverpool': { bg: '#b91c1c', border: '#facc15', fg: '#ffffff', code: 'LIV' },
+  'Aston Villa': { bg: '#6b21a8', border: '#38bdf8', fg: '#fde047', code: 'AVL' },
+  'Chelsea': { bg: '#1d4ed8', border: '#ffffff', fg: '#fbbf24', code: 'CHE' },
+  'Manchester United': { bg: '#b91c1c', border: '#facc15', fg: '#000000', code: 'MUN' },
+  'Tottenham': { bg: '#0f172a', border: '#ffffff', fg: '#94a3b8', code: 'TOT' },
+  'West Ham': { bg: '#581c87', border: '#38bdf8', fg: '#facc15', code: 'WHU' },
+  'Everton': { bg: '#1e40af', border: '#ffffff', fg: '#ffffff', code: 'EVE' },
+  'Sunderland': { bg: '#b91c1c', border: '#000000', fg: '#ffffff', code: 'SUN' },
+  'Leeds United': { bg: '#ffffff', border: '#1d4ed8', fg: '#facc15', code: 'LEE' },
+  'Wrexham': { bg: '#dc2626', border: '#ffffff', fg: '#15803d', code: 'WXH' },
+  'Leicester City': { bg: '#1d4ed8', border: '#f59e0b', fg: '#ffffff', code: 'LEI' }
+};
+
 function createBadgeHtml(id, size = 30) {
   const c = (state ? state.clubs : CLUBS_DATABASE).find(x => x.id === id) || {};
-  const ini = (c.name || id).replace(/[^A-Za-z ]/g, '').split(' ').filter(Boolean).map(w => w[0]).join('').slice(0, 3).toUpperCase();
-  return `<span class="badge-icon-wrap" style="width:${size}px;height:${size}px"><span class="badge-fallback" style="background:${c.col || '#334155'};font-size:${Math.round(size * 0.34)}px">${ini}</span></span>`;
+  const name = c.name || id;
+  const theme = CLUB_CREST_THEMES[name] || {
+    bg: c.col || '#1e293b',
+    border: 'rgba(255,255,255,0.7)',
+    fg: '#ffffff',
+    code: name.replace(/[^A-Za-z ]/g, '').split(' ').filter(Boolean).map(w => w[0]).join('').slice(0, 3).toUpperCase()
+  };
+
+  const fSize = Math.round(size * 0.30);
+  return `<span class="badge-icon-wrap" style="width:${size}px;height:${size}px;display:inline-flex;align-items:center;justify-content:center;filter:drop-shadow(0 2px 4px rgba(0,0,0,0.5));">
+    <svg width="${size}" height="${size}" viewBox="0 0 40 46" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M20 2L37 7V24C37 34.5 29.5 41.5 20 44C10.5 41.5 3 34.5 3 24V7L20 2Z" fill="${theme.bg}" stroke="${theme.border}" stroke-width="2.5"/>
+      <path d="M20 5L34 9.5V23C34 32 28 38 20 40.5C12 38 6 32 6 23V9.5L20 5Z" fill="rgba(0,0,0,0.15)"/>
+      <text x="20" y="27" font-size="${fSize + 3}" font-weight="900" font-family="-apple-system, sans-serif" fill="${theme.fg}" text-anchor="middle" letter-spacing="-0.5">${theme.code}</text>
+    </svg>
+  </span>`;
 }
 function computeClubAttributes(club) {
   const st = club.players.filter(p => p.starter);
