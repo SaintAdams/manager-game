@@ -54,8 +54,18 @@ const LEAGUES = ('Arsenal,Aston Villa,Bournemouth,Brentford,Brighton,Chelsea,Cry
 const CLUBS_DATABASE = [];
 LEAGUES.forEach((names, div) => names.forEach(n => {
   const nu = n === 'Newcastle United'; let h = 0; for (const ch of n) h = (h * 31 + ch.charCodeAt(0)) % 360;
-  CLUBS_DATABASE.push({ id: nu ? 'NEW' : 'C' + CLUBS_DATABASE.length, name: n, div, stadium: nu ? "St James' Park" : n + ' Stadium',
-    cap: nu ? 52305 : [42000, 26000, 14000, 7000][div] + R(0, 8000), budget: [60, 20, 8, 3][div] + R(0, 10), col: `hsl(${h},60%,38%)`, str: [76, 66, 58, 52][div] + R(-4, 4) });
+  const managerName = (typeof REAL_MANAGERS !== 'undefined' && REAL_MANAGERS[n]) || (pick(FIRSTNAMES) + ' ' + pick(SURNAMES));
+  CLUBS_DATABASE.push({ 
+    id: nu ? 'NEW' : 'C' + CLUBS_DATABASE.length, 
+    name: n, 
+    div, 
+    manager: managerName,
+    stadium: nu ? "St James' Park" : n + ' Stadium',
+    cap: nu ? 52305 : [42000, 26000, 14000, 7000][div] + R(0, 8000), 
+    budget: [60, 20, 8, 3][div] + R(0, 10), 
+    col: `hsl(${h},60%,38%)`, 
+    str: [76, 66, 58, 52][div] + R(-4, 4) 
+  });
 }));
 
 const FORMATIONS = {};
@@ -76,13 +86,29 @@ function mkPlayer(pos, base, i, cid) {
 function generateProceduralSquad(c) {
   const real = typeof REAL_SQUADS !== 'undefined' && REAL_SQUADS[c.name];
   if (!real) return SQUAD_ORDER.map((pos, i) => mkPlayer(pos, c.str, i, c.id));
-  const all = real.map(([name, pos, ovr, age, nat], i) => Object.assign(mkPlayer(pos, ovr, i, c.id), { name, ovr, age: age || R(20, 32), nat: nat || 'ENG', starter: false,
-    val: Math.max(0.3, +((ovr - 50) * 0.75).toFixed(1)), wage: Math.max(0.01, +((ovr - 45) * 0.003).toFixed(3)) })).sort((a, b) => b.ovr - a.ovr);
+  
+  // Real player hydration
+  const all = real.map(([name, pos, ovr, age, nat], i) => Object.assign(mkPlayer(pos, ovr, i, c.id), { 
+    name, ovr, age: age || R(20, 32), nat: nat || 'ENG', starter: false,
+    val: Math.max(0.3, +((ovr - 50) * 0.75).toFixed(1)), 
+    wage: Math.max(0.01, +((ovr - 45) * 0.003).toFixed(3)) 
+  })).sort((a, b) => b.ovr - a.ovr);
+  
+  // Assemble a balanced starting XI by position
   const need = { GK: 1, DEF: 4, MID: 3, FWD: 3 }, xi = [];
-  Object.keys(need).forEach(pos => { for (let k = 0; k < need[pos]; k++) { const i = all.findIndex(p => p.naturalPos === pos); xi.push(i >= 0 ? all.splice(i, 1)[0] : mkPlayer(pos, c.str, 50 + xi.length, c.id)); } });
-  const squad = [...xi, ...all]; let i = squad.length;
-  while (squad.length < 22) squad.push(mkPlayer(SQUAD_ORDER[squad.length], c.str - 6, i++, c.id));
-  squad.forEach((p, j) => { p.starter = j < 11; }); return squad;
+  Object.keys(need).forEach(pos => { 
+    for (let k = 0; k < need[pos]; k++) { 
+      const i = all.findIndex(p => p.naturalPos === pos); 
+      xi.push(i >= 0 ? all.splice(i, 1)[0] : mkPlayer(pos, c.str, 50 + xi.length, c.id)); 
+    } 
+  });
+  
+  // Fill the remainder of the 22-man squad
+  const squad = [...xi, ...all]; 
+  let i = squad.length;
+  while (squad.length < 22) squad.push(mkPlayer(SQUAD_ORDER[squad.length % SQUAD_ORDER.length], c.str - 6, i++, c.id));
+  squad.forEach((p, j) => { p.starter = j < 11; }); 
+  return squad;
 }
 const TRANSFER_SCOUT_POOL = [];
 for (let i = 0; i < 40; i++) {
