@@ -82,7 +82,14 @@ const clubById = id => state.clubs.find(c => c.id === id);
 const getCurrentUserClub = () => state.clubs.find(c => c.id === state.userClubId) || state.clubs[0];
 const getWeek = w => state.fixtures[(w || state.currentWeek) - 1];
 const userLeagueMatch = () => { const w = getWeek(); return w ? w.matches.find(m => m.type === 'LEAGUE' && (m.home === state.userClubId || m.away === state.userClubId)) : null; };
-const userCupMatch = () => { const w = getWeek(); return w ? w.matches.find(m => m.type === 'CUP') : null; };
+const userCupMatch = () => { const w = getWeek(); return w ? w.matches.find(m => m.type === 'CUP' && (m.home === state.userClubId || m.away === state.userClubId)) : null; };
+const getActiveUserMatch = () => {
+  const cup = userCupMatch();
+  if (cup && !cup.played) return cup;
+  const league = userLeagueMatch();
+  if (league && !league.played) return league;
+  return cup || league;
+};
 function createBadgeHtml(id, size = 30) {
   const c = (state ? state.clubs : CLUBS_DATABASE).find(x => x.id === id) || {};
   const ini = (c.name || id).replace(/[^A-Za-z ]/g, '').split(' ').filter(Boolean).map(w => w[0]).join('').slice(0, 3).toUpperCase();
@@ -250,7 +257,7 @@ function applyWeeklyFinancesAndFatigue() {
   });
 }
 function generateWeeklyNewsStory() {
-  const m = userLeagueMatch(); if (!m || !m.played) return;
+  const m = getActiveUserMatch(); if (!m || m.played) return;
   const uc = getCurrentUserClub(), home = m.home === uc.id, opp = clubById(home ? m.away : m.home), my = home ? m.homeGoals : m.awayGoals, th = home ? m.awayGoals : m.homeGoals;
   if (my > th) addNewsStory('Match Reaction', `Victory: ${uc.name} beat ${opp.name} (${my}-${th})`, 'A confident display.', false);
   else if (my < th) addNewsStory('Defeat Reaction', `Setback: ${uc.name} lose to ${opp.name} (${my}-${th})`, 'Supporters question the tactics.', false);
@@ -267,7 +274,7 @@ function evaluateManagerOfMonth() {
 function handleMasterAdvanceClick() {
   if (!state || (shootoutState && shootoutState.active)) return;
   if (checkDeadlineDayTrigger()) return;
-  const lm = userLeagueMatch();
+  const lm = getActiveUserMatch();
   if (lm && !lm.played) {
     clearTimeout(matchSimInterval); cancelAnimationFrame(animFrameId); $('btnStartMatch').disabled = false;
     finalizeWeek(); renderAll();
@@ -416,12 +423,52 @@ function renderTactics() {
 
 /* ---------- matchday ---------- */
 function initPitchCanvas() { const c = $('matchPitchCanvas'); pitchEngine.ctx = c.getContext('2d'); c.width = 800; c.height = 480; }
+function getFormationCoords(formationKey, isAway = false) {
+  const tpl = FORMATIONS[formationKey] || FORMATIONS['4-3-3'];
+  const pitchW = 800;
+  const pitchH = 480;
+
+  return tpl.map((slot) => {
+    let normX = ((100 - slot.y) / 100) * (pitchW * 0.42) + 40;
+    let normY = (slot.x / 100) * (pitchH - 80) + 40;
+    if (isAway) normX = pitchW - normX;
+    return { x: Math.round(normX), y: Math.round(normY), role: slot.role };
+  });
+}
+
 function setup2DPlayers(h, a) {
-  initPitchCanvas(); pitchEngine.homeClubId = h.id; pitchEngine.awayClubId = a.id; pitchEngine.homeColor = h.col; pitchEngine.awayColor = a.col === h.col ? '#ef4444' : a.col;
-  const hs = [[50, 240], [130, 75], [125, 180], [125, 300], [130, 405], [235, 110], [225, 240], [235, 370], [335, 95], [350, 240], [335, 385]];
-  pitchEngine.homePlayers = hs.map(([x, y], i) => ({ num: i + 1, baseX: x, baseY: y, x, y, color: pitchEngine.homeColor }));
-  pitchEngine.awayPlayers = hs.map(([x, y], i) => ({ num: i + 1, baseX: 800 - x, baseY: y, x: 800 - x, y, color: pitchEngine.awayColor }));
-  pitchEngine.ball = { x: 400, y: 240, targetX: 400, targetY: 240 }; draw2DPitch();
+  initPitchCanvas();
+  pitchEngine.homeClubId = h.id;
+  pitchEngine.awayClubId = a.id;
+  pitchEngine.homeColor = h.col;
+  pitchEngine.awayColor = a.col === h.col ? '#ef4444' : a.col;
+
+  const homeFormation = (h.id === state.userClubId) ? state.currentFormation : '4-3-3';
+  const awayFormation = (a.id === state.userClubId) ? state.currentFormation : '4-2-3-1';
+
+  const homeCoords = getFormationCoords(homeFormation, false);
+  const awayCoords = getFormationCoords(awayFormation, true);
+
+  pitchEngine.homePlayers = homeCoords.map((pos, i) => ({
+    num: i + 1,
+    baseX: pos.x,
+    baseY: pos.y,
+    x: pos.x,
+    y: pos.y,
+    color: pitchEngine.homeColor
+  }));
+
+  pitchEngine.awayPlayers = awayCoords.map((pos, i) => ({
+    num: i + 1,
+    baseX: pos.x,
+    baseY: pos.y,
+    x: pos.x,
+    y: pos.y,
+    color: pitchEngine.awayColor
+  }));
+
+  pitchEngine.ball = { x: 400, y: 240, targetX: 400, targetY: 240 };
+  draw2DPitch();
 }
 function draw2DPitch() {
   const { ctx, w, h } = pitchEngine; if (!ctx) return;
@@ -511,7 +558,7 @@ function renderStandingsTable(div) {
   fill('goldenGloveBody', all.filter(p => p.naturalPos === 'GK').sort((a, b) => b.cleanSheets - a.cleanSheets).slice(0, 5), 'cleanSheets', '#38bdf8');
 }
 function renderMatchdayView() {
-  const m = userLeagueMatch(), w = getWeek();
+  const m = getActiveUserMatch(), w = getWeek();
   if (m) {
     const h = clubById(m.home), a = clubById(m.away);
     $('sbHomeBadgeWrap').innerHTML = createBadgeHtml(h.id, 40); $('sbAwayBadgeWrap').innerHTML = createBadgeHtml(a.id, 40); $('sbHomeName').innerText = h.name; $('sbAwayName').innerText = a.name;
@@ -651,7 +698,7 @@ function renderAll() {
   $('headerSeasonTag').innerText = `${state.seasonYear}/${String(state.seasonYear + 1).slice(-2)} Career • English Pyramid`;
   $('headerConfidence').innerText = `${state.manager.confidence}%`; $('headerFansApproval').innerText = `${state.manager.fansApproval}%`; $('headerBudget').innerText = `£${club.budget.toFixed(1)}M`;
   $('btnAudio').innerText = state.audioEnabled ? '🔊' : '🔇';
-  const lm = userLeagueMatch(), w = getWeek(), dl = (state.currentWeek === 4 || state.currentWeek === 22) && !state.deadlineDaysCompleted[state.currentWeek];
+  const lm = getActiveUserMatch(), w = getWeek(), dl = (state.currentWeek === 4 || state.currentWeek === 22) && !state.deadlineDaysCompleted[state.currentWeek];
   const b = $('btnAdvanceMaster'), t = $('btnAdvanceText');
   if (dl) { b.className = 'btn-advance-master btn-deadline-mode'; t.innerText = 'DEADLINE DAY'; }
   else if ((lm && lm.played) || (w && w.done)) { b.className = 'btn-advance-master btn-continue-mode'; t.innerText = state.currentWeek >= state.totalWeeks ? 'END SEASON' : `CONTINUE TO WK ${state.currentWeek + 1}`; }
