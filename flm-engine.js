@@ -26,7 +26,8 @@ let matchLiveState = {
   shoutExpireMin: 0,
   subsUsed: 0,
   maxSubs: 5,
-  pendingSubInID: [],
+  pendingSubInId: null,
+  isPaused: false,
   timelineEvents: [],
   yellows: {},
   reds: []
@@ -273,6 +274,91 @@ function cupOutcome(m) {
     addNewsStory('Silverware', `${uc} WIN THE ${m.cupName.toUpperCase()}!`, 'A trophy for the cabinet.', true); playSound('cheer');
   } else addNewsStory('Cup Progress', `${uc} through in the ${m.cupName}`, 'On to the next round.', false);
 }
+/* ---------- AI TRANSFER MARKET ACTIVITY ---------- */
+function simulateAITransfers() {
+  // Only trigger during transfer window weeks (Wk 1-4 Summer, Wk 20-22 Winter)
+  const isWindowOpen = (state.currentWeek >= 1 && state.currentWeek <= 4) || 
+                       (state.currentWeek >= 20 && state.currentWeek <= 22);
+  if (!isWindowOpen) return;
+
+  // 40% chance per week that an AI club makes a move
+  if (Math.random() > 0.40) return;
+
+  const aiClubs = state.clubs.filter(c => c.id !== state.userClubId && c.budget >= 2.0);
+  if (!aiClubs.length) return;
+
+  const buyer = pick(aiClubs);
+
+  // 1. Try to sign an unattached Free Agent first (budget-friendly)
+  const freeAgents = state.marketPlayers.filter(p => p.price === 0);
+  if (freeAgents.length && Math.random() < 0.5) {
+    const target = pick(freeAgents);
+    const targetIdx = state.marketPlayers.findIndex(p => p.id === target.id);
+    if (targetIdx >= 0) {
+      state.marketPlayers.splice(targetIdx, 1);
+      buyer.players.push({
+        id: 'trans_ai_' + Date.now() + R(0, 999),
+        name: target.name,
+        naturalPos: target.naturalPos,
+        nat: target.nat,
+        age: target.age,
+        ovr: target.ovr,
+        con: 100,
+        role: ROLE[target.naturalPos],
+        starter: false,
+        val: target.val || +((target.ovr - 45) * 0.8).toFixed(1),
+        wage: target.wage || 0.03,
+        contract: 2,
+        morale: 'Good',
+        goals: 0,
+        cleanSheets: 0,
+        inj: 0,
+        yellows: 0,
+        susp: 0
+      });
+      addNewsStory('Transfer News', `${buyer.name} sign free agent ${target.name}`, 'Bolstering squad depth on a free transfer.', false);
+      return;
+    }
+  }
+
+  // 2. Otherwise, buy from another AI club that has excess squad depth (> 18 players)
+  const sellers = state.clubs.filter(c => c.id !== state.userClubId && c.id !== buyer.id && c.players.length > 18);
+  if (!sellers.length) return;
+
+  const seller = pick(sellers);
+  // Pick an outfield reserve or non-key player
+  const sellable = seller.players.filter(p => !p.starter && p.naturalPos !== 'GK');
+  if (!sellable.length) return;
+
+  const dealPlayer = pick(sellable);
+  const fee = +(dealPlayer.val * 1.1).toFixed(1);
+
+  if (buyer.budget >= fee) {
+    buyer.budget = +(buyer.budget - fee).toFixed(1);
+    seller.budget = +(seller.budget + fee).toFixed(1);
+
+    const pIndex = seller.players.findIndex(p => p.id === dealPlayer.id);
+    if (pIndex >= 0) {
+      seller.players.splice(pIndex, 1);
+      fixStarters(seller);
+
+      buyer.players.push({
+        ...dealPlayer,
+        starter: false,
+        inj: 0,
+        con: 100,
+        morale: 'Good'
+      });
+
+      addNewsStory(
+        'Market Move',
+        `${buyer.name} sign ${dealPlayer.name} from ${seller.name} (£${fee}M)`,
+        'A permanent agreement has been reached between both clubs.',
+        fee >= 15.0 // Breaking news banner if it's a big-money deal!
+      );
+    }
+  }
+}
 function finalizeWeek() {
   const w = getWeek(); if (!w || w.done) return;
   ensureCupTie();
@@ -283,7 +369,9 @@ function finalizeWeek() {
   });
   const club = getCurrentUserClub(), lm = getActiveUserMatch();
   if (lm && lm.home === club.id) club.budget += +(((club.cap + state.stadiumCapacityBonus) * 0.00004)).toFixed(2);
-  applyWeeklyFinancesAndFatigue(); generateWeeklyNewsStory();
+  applyWeeklyFinancesAndFatigue(); generateWeeklyNewsStory();applyWeeklyFinancesAndFatigue(); 
+  generateWeeklyNewsStory();
+  simulateAITransfers();
   if (state.currentWeek === 30 && !state.youthIntakeCompleted) generateYouthIntake(true);
   w.done = true; saveGame();
 }
@@ -335,9 +423,13 @@ function handleMasterAdvanceClick() {
   saveGame(); renderAll(); playSound('click');
 }
 function resetLiveState() {
-  matchLiveState = { activeShout: null, shoutExpireMin: 0, subsUsed: 0, maxSubs: 5, pendingSubInId: [], timelineEvents: [], yellows: {}, reds: [] };
+  matchLiveState = { activeShout: null, shoutExpireMin: 0, subsUsed: 0, maxSubs: 5, pendingSubInId: null, isPaused: false, timelineEvents: [], yellows: {}, reds: [] };
   $('activeShoutBadge').innerText = '';
   $('subsRemainingText').innerText = 5;
+  if ($('btnPauseMatch')) {
+    $('btnPauseMatch').style.display = 'none';
+    $('btnPauseMatch').innerText = '⏸️ PAUSE';
+  }
 }
 function showResultModal(m) {
   const h = clubById(m.home), a = clubById(m.away), mine = m.home === state.userClubId ? m.homeGoals - m.awayGoals : m.awayGoals - m.homeGoals;
@@ -724,7 +816,27 @@ function confirmLiveMatchSub(starterOutId) {
   if (m) setup2DPlayers(clubById(m.home), clubById(m.away));
   playSound('click');
 }
+// ... end of confirmLiveMatchSub() above ...
+  if (m) setup2DPlayers(clubById(m.home), clubById(m.away));
+  playSound('click');
+}
 
+function toggleMatchPause() {
+  if (!matchLiveState) return;
+  matchLiveState.isPaused = !matchLiveState.isPaused;
+  const btn = $('btnPauseMatch');
+  if (btn) {
+    btn.innerText = matchLiveState.isPaused ? '▶️ RESUME' : '⏸️ PAUSE';
+    btn.style.background = matchLiveState.isPaused ? '#10b981' : '#334155';
+  }
+  if (!matchLiveState.isPaused) {
+    playSound('whistle');
+  }
+}
+
+function startMatchdaySim() {
+  const m = getActiveUserMatch();
+  // ... rest of startMatchdaySim ...
 function startMatchdaySim() {
   const m = getActiveUserMatch();
   if (!m || m.played) return;
@@ -794,8 +906,27 @@ function startMatchdaySim() {
       populateInMatchSubChips();
     }
   };
+const pauseBtn = $('btnPauseMatch');
+  if (pauseBtn) {
+    pauseBtn.style.display = 'inline-flex';
+    pauseBtn.innerText = '⏸️ PAUSE';
+    pauseBtn.style.background = '#334155';
+  }
 
   function tick() {
+    // ...
+  function tick() {
+    function tick() {
+    // 1. IF PAUSED: Wait 0.2s and check again, do not advance the clock!
+    if (matchLiveState.isPaused) {
+      matchSimInterval = setTimeout(tick, 200);
+      return;
+    }
+
+    // 2. IF NOT PAUSED: Advance the game as normal
+    min += 2;
+    pitchEngine.currentMinute = min;
+    $('sbMinute').innerText = `${min}'`;
     min += 2;
     pitchEngine.currentMinute = min;
     $('sbMinute').innerText = `${min}'`;
@@ -847,6 +978,11 @@ function startMatchdaySim() {
     if (min >= 90) {
       cancelAnimationFrame(animFrameId);
       btn.disabled = false;
+      if (min >= 90) {
+      cancelAnimationFrame(animFrameId);
+      btn.disabled = false;
+      if ($('btnPauseMatch')) $('btnPauseMatch').style.display = 'none'; // <-- Hides button at Full Time
+      applyResult(m, hs, as, true);
       applyResult(m, hs, as, true);
       $('sbMinute').innerText = 'FULL TIME';
       feed.insertAdjacentHTML('afterbegin', `<div class="comm-line" style="font-weight:800">🏁 Full-time: ${h.name} ${hs}-${as} ${a.name}</div>`);
