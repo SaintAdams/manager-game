@@ -12,7 +12,14 @@
     '.md-right{display:flex;flex-direction:column;gap:10px;min-width:0;min-height:0;height:100%}' +
     '.md-right .commentary-box{flex:1.3;min-height:0;height:auto}' +
     '.md-right .in-match-sub-drawer{max-height:32%;overflow-y:auto}.md-right .sub-chips-row{flex-wrap:wrap;overflow:visible}' +
-    '.md-right .standings-card{flex:1;min-height:0;overflow-y:auto}}';
+    '.md-right .standings-card{flex:1;min-height:0;overflow-y:auto}}' +
+    '.pitch-node{position:absolute;transform:translate(-50%,-50%);cursor:grab;display:flex;flex-direction:column;align-items:center;touch-action:none;transition:box-shadow 0.2s}' +
+    '.pitch-node.dragging{cursor:grabbing;z-index:99;opacity:0.95;transform:translate(-50%,-50%) scale(1.12)}' +
+    '.pitch-kit{width:36px;height:36px;border-radius:50%;background:#0284c7;border:2px solid #fff;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:0.85rem;position:relative;box-shadow:0 3px 6px rgba(0,0,0,0.4)}' +
+    '.pitch-role-tag{position:absolute;bottom:-6px;background:#0f172a;color:#38bdf8;font-size:0.6rem;padding:0 4px;border-radius:3px;font-weight:800;border:1px solid rgba(255,255,255,0.2)}' +
+    '.pitch-name-card{background:rgba(15,23,42,0.85);backdrop-filter:blur(4px);padding:2px 6px;border-radius:4px;margin-top:4px;text-align:center;border:1px solid rgba(255,255,255,0.15)}' +
+    '.pitch-name-card .p-name{font-size:0.68rem;font-weight:800;color:#fff;white-space:nowrap}' +
+    '.pitch-name-card .p-role{font-size:0.6rem;color:#cbd5e1}';
   document.head.appendChild(s);
 })();
 
@@ -74,12 +81,23 @@ LEAGUES.forEach((names, div) => names.forEach(n => {
   });
 }));
 
+/* ---------- FORMATION PRESETS & CUSTOM SYSTEMS ---------- */
 const FORMATIONS = {};
-[['4-3-3', [[4, 'DEF', 72], [3, 'MID', 50], [3, 'FWD', 22]]], ['4-2-3-1', [[4, 'DEF', 72], [2, 'MID', 56], [3, 'MID', 38], [1, 'FWD', 18]]],
- ['4-4-2', [[4, 'DEF', 72], [4, 'MID', 46], [2, 'FWD', 20]]], ['5-3-2', [[5, 'DEF', 72], [3, 'MID', 46], [2, 'FWD', 20]]], ['3-5-2', [[3, 'DEF', 72], [5, 'MID', 46], [2, 'FWD', 20]]]
+[
+  ['4-3-3', [[4, 'DEF', 72], [3, 'MID', 50], [3, 'FWD', 22]]],
+  ['4-2-3-1', [[4, 'DEF', 72], [2, 'MID', 56], [3, 'MID', 38], [1, 'FWD', 18]]],
+  ['4-4-2', [[4, 'DEF', 72], [4, 'MID', 46], [2, 'FWD', 20]]],
+  ['3-5-2', [[3, 'DEF', 72], [5, 'MID', 46], [2, 'FWD', 20]]],
+  ['5-3-2', [[5, 'DEF', 72], [3, 'MID', 46], [2, 'FWD', 20]]],
+  ['4-1-2-1-2', [[4, 'DEF', 72], [1, 'MID', 58], [2, 'MID', 46], [1, 'MID', 34], [2, 'FWD', 20]]],
+  ['4-5-1', [[4, 'DEF', 72], [5, 'MID', 46], [1, 'FWD', 18]]]
 ].forEach(([name, rows]) => {
   const t = [{ x: 50, y: 90, role: 'GK', posType: 'GK', duty: ROLE.GK }];
-  rows.forEach(([n, type, y]) => { for (let i = 0; i < n; i++) t.push({ x: n === 1 ? 50 : 12 + (76 / (n - 1)) * i, y, role: TAG[type], posType: type, duty: ROLE[type] }); });
+  rows.forEach(([n, type, y]) => {
+    for (let i = 0; i < n; i++) {
+      t.push({ x: n === 1 ? 50 : Math.round(12 + (76 / (n - 1)) * i), y, role: TAG[type], posType: type, duty: ROLE[type] });
+    }
+  });
   FORMATIONS[name] = t;
 });
 
@@ -89,6 +107,7 @@ function mkPlayer(pos, base, i, cid) {
   return { id: `${cid}_${i}_${R(0, 99999)}`, name: pick(FIRSTNAMES) + ' ' + pick(SURNAMES), naturalPos: pos, nat: Math.random() < 0.7 ? 'ENG' : pick(NATS), age: R(18, 35), ovr, con: 100,
     role: ROLE[pos], starter: i < 11, val: Math.max(0.3, +((ovr - 50) * 0.75).toFixed(1)), wage: Math.max(0.01, +((ovr - 45) * 0.003).toFixed(3)), contract: R(1, 5), morale: 'Good', goals: 0, cleanSheets: 0, inj: 0, yellows: 0, susp: 0 };
 }
+
 function generateProceduralSquad(c) {
   const real = typeof REAL_SQUADS !== 'undefined' && REAL_SQUADS[c.name];
   if (!real) return SQUAD_ORDER.map((pos, i) => mkPlayer(pos, c.str, i, c.id));
@@ -113,6 +132,7 @@ function generateProceduralSquad(c) {
   squad.forEach((p, j) => { p.starter = j < 11; }); 
   return squad;
 }
+
 const TRANSFER_SCOUT_POOL = [];
 for (let i = 0; i < 40; i++) {
   const pos = pick(['GK', 'DEF', 'MID', 'FWD']), p = mkPlayer(pos, 66 + R(0, 14), i, 'scout');
@@ -133,7 +153,18 @@ const getActiveUserMatch = () => {
   return cup || league;
 };
 
-/* ---------- AUTHENTIC SVG CLUB CRESTS ---------- */
+/* ---------- POSITION FAMILIARITY MATRIX ---------- */
+function getPositionFamiliarityMultiplier(naturalPos, currentPosType) {
+  if (naturalPos === currentPosType) return 1.0; // 100%
+  if (naturalPos === 'GK' || currentPosType === 'GK') return 0.35; // Goalkeeper out of net = disaster
+  if (naturalPos === 'MID' && (currentPosType === 'DEF' || currentPosType === 'FWD')) return 0.85; // Flexible midfielders
+  if ((naturalPos === 'DEF' || naturalPos === 'FWD') && currentPosType === 'MID') return 0.75; // Outfield adjacent
+  if (naturalPos === 'DEF' && currentPosType === 'FWD') return 0.45; // Striker played at CB or vice-versa
+  if (naturalPos === 'FWD' && currentPosType === 'DEF') return 0.45;
+  return 0.70;
+}
+
+/* ---------- CREST VISUALS ---------- */
 const CLUB_CREST_THEMES = {
   'Newcastle United': { bg: '#171717', border: '#ffffff', fg: '#f59e0b', code: 'NEW' },
   'Arsenal': { bg: '#dc2626', border: '#ffffff', fg: '#fef08a', code: 'ARS' },
@@ -173,35 +204,66 @@ function createBadgeHtml(id, size = 30) {
 
 function computeClubAttributes(club) {
   const st = club.players.filter(p => p.starter);
-  const avg = (arr, fb) => arr.length ? Math.round(arr.reduce((s, x) => s + x.ovr * (x.inj > 0 ? 0.6 : 0.8 + 0.2 * x.con / 100), 0) / arr.length) : fb;
-  const d = avg(st.filter(p => p.naturalPos === 'DEF' || p.naturalPos === 'GK'), 60), m = avg(st.filter(p => p.naturalPos === 'MID'), 60), a = avg(st.filter(p => p.naturalPos === 'FWD'), 60);
+  const tpl = FORMATIONS[state ? state.currentFormation : '4-3-3'] || FORMATIONS['4-3-3'];
+  const avg = (arr, fb) => {
+    if (!arr.length) return fb;
+    return Math.round(arr.reduce((s, x) => {
+      const slot = tpl.find(slotItem => slotItem.duty === x.role) || { posType: x.naturalPos };
+      const famMult = getPositionFamiliarityMultiplier(x.naturalPos, slot.posType);
+      const effOvr = x.ovr * famMult;
+      return s + effOvr * (x.inj > 0 ? 0.6 : 0.8 + 0.2 * x.con / 100);
+    }, 0) / arr.length);
+  };
+
+  const d = avg(st.filter(p => p.naturalPos === 'DEF' || p.naturalPos === 'GK'), 60);
+  const m = avg(st.filter(p => p.naturalPos === 'MID'), 60);
+  const a = avg(st.filter(p => p.naturalPos === 'FWD'), 60);
   return { att: a, mid: m, def: d, ovr: Math.round((a + m + d) / 3) };
 }
 const computeClubWeeklyWageBill = club => +club.players.reduce((s, p) => s + (p.wage || 0.02), 0).toFixed(3);
 
-/* ---------- state ---------- */
+/* ---------- STATE INITIALIZATION ---------- */
 function setupFreshState(managerName = 'Manager', clubId = 'NEW') {
-  state = { seasonYear: 2026, currentWeek: 1, totalWeeks: 46, userClubId: clubId, currentFormation: '4-3-3', audioEnabled: true, activeStandingsTab: 0,
-    medicalFacilityLevel: 1, academyFacilityLevel: 1, stadiumCapacityBonus: 0, clubs: JSON.parse(JSON.stringify(CLUBS_DATABASE)),
-    marketPlayers: JSON.parse(JSON.stringify(TRANSFER_SCOUT_POOL)), standings: {}, newsFeed: [], cups: { carabaoAlive: true, faAlive: true },
+  state = { 
+    seasonYear: 2026, currentWeek: 1, totalWeeks: 46, userClubId: clubId, 
+    currentFormation: '4-3-3', audioEnabled: true, activeStandingsTab: 0,
+    medicalFacilityLevel: 1, academyFacilityLevel: 1, stadiumCapacityBonus: 0, 
+    clubs: JSON.parse(JSON.stringify(CLUBS_DATABASE)),
+    marketPlayers: JSON.parse(JSON.stringify(TRANSFER_SCOUT_POOL)), 
+    standings: {}, newsFeed: [], cups: { carabaoAlive: true, faAlive: true },
     deadlineDaysCompleted: {}, youthProspects: [], youthIntakeCompleted: false, fixtures: [],
-    manager: { name: managerName, confidence: 85, fansApproval: 82, matches: 0, wins: 0, draws: 0, losses: 0, motmAwards: 0, faCups: 0, carabaoCups: 0 } };
+    customFormations: {},
+    tacticalFamiliarity: { '4-3-3': 100, '4-2-3-1': 55, '4-4-2': 50, '3-5-2': 40, '5-3-2': 40, '4-1-2-1-2': 45, '4-5-1': 45 },
+    manager: { name: managerName, confidence: 85, fansApproval: 82, matches: 0, wins: 0, draws: 0, losses: 0, motmAwards: 0, faCups: 0, carabaoCups: 0 } 
+  };
   state.clubs.forEach(c => { c.players = generateProceduralSquad(c); });
   buildStandings(); generateTrueRoundRobinFixtures(); generateInitialNews(); generateYouthIntake(false);
 }
+
 function buildStandings() {
   for (let d = 0; d <= 3; d++) state.standings[d] = state.clubs.filter(c => c.div === d).map(c => ({ id: c.id, name: c.name, played: 0, won: 0, drawn: 0, lost: 0, gf: 0, ga: 0, gd: 0, pts: 0 }));
 }
+
 function ensureAllSquadsHydrated() {
   state.clubs.forEach(c => { if (!c.players || c.players.length < 14) c.players = generateProceduralSquad(c); });
   if (!state.cups) state.cups = { carabaoAlive: true, faAlive: true };
+  if (!state.tacticalFamiliarity) state.tacticalFamiliarity = { '4-3-3': 100, '4-2-3-1': 55, '4-4-2': 50, '3-5-2': 40, '5-3-2': 40, '4-1-2-1-2': 45, '4-5-1': 45 };
+  if (!state.customFormations) state.customFormations = {};
+  if (state.customFormations['Custom']) FORMATIONS['Custom'] = state.customFormations['Custom'];
 }
+
 function saveGame() { if (state) try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch (e) {} }
+
 function initGame() {
   let ok = false;
   try {
     const saved = localStorage.getItem(STORAGE_KEY);
-    if (saved) { state = JSON.parse(saved); if (!state.clubs || state.clubs.length < 92 || !state.manager) throw 0; ensureAllSquadsHydrated(); ok = true; }
+    if (saved) { 
+      state = JSON.parse(saved); 
+      if (!state.clubs || state.clubs.length < 92 || !state.manager) throw 0; 
+      ensureAllSquadsHydrated(); 
+      ok = true; 
+    }
   } catch (e) { state = null; }
   if (!ok) { setupFreshState('Manager', 'NEW'); saveGame(); }
   layoutMatchday(); initMarketFilterDropdowns(); renderAll();
@@ -263,11 +325,9 @@ function ensureCupTie() {
   w.matches.unshift({ div: -1, type: 'CUP', cupName: cfg[0], cupKey: cfg[1], final: cfg[2], home: homeUser ? state.userClubId : opp.id, away: homeUser ? opp.id : state.userClubId, homeGoals: null, awayGoals: null, played: false, scorers: [] });
 }
 
-/* ---------- sound safe helper ---------- */
+/* ---------- audio safe wrapper ---------- */
 function playSoundSafe(name) {
-  try {
-    if (typeof playSound === 'function') playSound(name);
-  } catch (e) {}
+  try { if (typeof playSound === 'function') playSound(name); } catch (e) {}
 }
 
 /* ---------- match engine ---------- */
@@ -281,6 +341,7 @@ function simGoals(h, a) {
   const dh = (hs.att + hs.mid) / 2 - (as.def + as.mid) / 2, da = (as.att + as.mid) / 2 - (hs.def + hs.mid) / 2;
   return [poisson(Math.max(0.25, 1.4 + dh / 22 + 0.25)), poisson(Math.max(0.2, 1.15 + da / 22))];
 }
+
 function applyResult(m, hg, ag, scorersDone) {
   const h = clubById(m.home), a = clubById(m.away); m.homeGoals = hg; m.awayGoals = ag; m.played = true;
   if (!scorersDone) {
@@ -290,14 +351,12 @@ function applyResult(m, hg, ag, scorersDone) {
   if (ag === 0) { const g = h.players.find(p => p.starter && p.naturalPos === 'GK'); if (g) g.cleanSheets++; }
   if (hg === 0) { const g = a.players.find(p => p.starter && p.naturalPos === 'GK'); if (g) g.cleanSheets++; }
 
+  // Disciplinary tracking
   if (matchLiveState) {
     if (matchLiveState.reds && matchLiveState.reds.length) {
       matchLiveState.reds.forEach(pid => {
         const p = [...h.players, ...a.players].find(x => x.id === pid);
-        if (p) {
-          p.susp = 1;
-          addNewsStory('Discipline', `SUSPENSION: ${p.name} banned for 1 match`, 'Sent off in the previous fixture.', true);
-        }
+        if (p) { p.susp = 1; addNewsStory('Discipline', `SUSPENSION: ${p.name} banned for 1 match`, 'Sent off in the previous fixture.', true); }
       });
     }
 
@@ -306,12 +365,17 @@ function applyResult(m, hg, ag, scorersDone) {
         const p = [...h.players, ...a.players].find(x => x.id === pid);
         if (p) {
           p.yellows = (p.yellows || 0) + 1;
-          if (p.yellows % 5 === 0) {
-            p.susp = 1;
-            addNewsStory('Discipline', `SUSPENSION: ${p.name} reaches 5 yellow cards`, 'Serves an automatic 1-match ban.', true);
-          }
+          if (p.yellows % 5 === 0) { p.susp = 1; addNewsStory('Discipline', `SUSPENSION: ${p.name} reaches 5 yellow cards`, 'Serves an automatic 1-match ban.', true); }
         }
       });
+    }
+  }
+
+  // Tactical familiarity progression: +3% familiarity for the system played
+  if (m.home === state.userClubId || m.away === state.userClubId) {
+    const fKey = state.currentFormation;
+    if (state.tacticalFamiliarity) {
+      state.tacticalFamiliarity[fKey] = Math.min(100, (state.tacticalFamiliarity[fKey] || 40) + 3);
     }
   }
 
@@ -360,23 +424,8 @@ function simulateAITransfers() {
       state.marketPlayers.splice(targetIdx, 1);
       buyer.players.push({
         id: 'trans_ai_' + Date.now() + R(0, 999),
-        name: target.name,
-        naturalPos: target.naturalPos,
-        nat: target.nat,
-        age: target.age,
-        ovr: target.ovr,
-        con: 100,
-        role: ROLE[target.naturalPos],
-        starter: false,
-        val: target.val || +((target.ovr - 45) * 0.8).toFixed(1),
-        wage: target.wage || 0.03,
-        contract: 2,
-        morale: 'Good',
-        goals: 0,
-        cleanSheets: 0,
-        inj: 0,
-        yellows: 0,
-        susp: 0
+        name: target.name, naturalPos: target.naturalPos, nat: target.nat, age: target.age, ovr: target.ovr, con: 100, role: ROLE[target.naturalPos], starter: false,
+        val: target.val || +((target.ovr - 45) * 0.8).toFixed(1), wage: target.wage || 0.03, contract: 2, morale: 'Good', goals: 0, cleanSheets: 0, inj: 0, yellows: 0, susp: 0
       });
       addNewsStory('Transfer News', `${buyer.name} sign free agent ${target.name}`, 'Bolstering squad depth on a free transfer.', false);
       return;
@@ -400,21 +449,8 @@ function simulateAITransfers() {
     if (pIndex >= 0) {
       seller.players.splice(pIndex, 1);
       fixStarters(seller);
-
-      buyer.players.push({
-        ...dealPlayer,
-        starter: false,
-        inj: 0,
-        con: 100,
-        morale: 'Good'
-      });
-
-      addNewsStory(
-        'Market Move',
-        `${buyer.name} sign ${dealPlayer.name} from ${seller.name} (£${fee}M)`,
-        'A permanent agreement has been reached between both clubs.',
-        fee >= 15.0
-      );
+      buyer.players.push({ ...dealPlayer, starter: false, inj: 0, con: 100, morale: 'Good' });
+      addNewsStory('Market Move', `${buyer.name} sign ${dealPlayer.name} from ${seller.name} (£${fee}M)`, 'A permanent agreement has been reached between both clubs.', fee >= 15.0);
     }
   }
 }
@@ -441,12 +477,7 @@ function applyWeeklyFinancesAndFatigue() {
   club.budget = Math.max(0, +(club.budget - computeClubWeeklyWageBill(club) * 0.4 + [0.5, 0.2, 0.08, 0.03][club.div]).toFixed(2));
   club.players.forEach(p => {
     if (p.inj > 0) { p.inj--; if (!p.inj) addNewsStory('Medical Update', `${p.name} returns from injury`, `${p.name} has resumed training.`, false); }
-    if (p.susp > 0) {
-      p.susp--;
-      if (p.susp === 0) {
-        addNewsStory('Discipline', `${p.name} has served suspension`, 'Eligible for team selection again.', false);
-      }
-    }
+    if (p.susp > 0) { p.susp--; if (p.susp === 0) addNewsStory('Discipline', `${p.name} has served suspension`, 'Eligible for team selection again.', false); }
     if (p.starter) {
       p.con = Math.max(55, p.con - R(4, 9));
       if (p.con < 70 && Math.random() < 0.12 && !p.inj) { p.inj = R(1, 3); addNewsStory('Injury Blow', `INJURY: ${p.name} out for ${p.inj} weeks`, 'A muscle strain.', true); }
@@ -487,24 +518,9 @@ function handleMasterAdvanceClick() {
 }
 
 function resetLiveState() {
-  matchLiveState = { 
-    subsUsed: 0, 
-    maxSubs: 5, 
-    pendingSubInId: null, 
-    isPaused: false, 
-    timelineEvents: [], 
-    yellows: {}, 
-    reds: [] 
-  };
-  const badge = $('activeShoutBadge');
-  if (badge) badge.innerText = '';
-  const subCount = $('subsRemainingText');
-  if (subCount) subCount.innerText = 5;
-  const pauseBtn = $('btnPauseMatch');
-  if (pauseBtn) {
-    pauseBtn.style.display = 'none';
-    pauseBtn.innerText = '⏸️ PAUSE';
-  }
+  matchLiveState = { subsUsed: 0, maxSubs: 5, pendingSubInId: null, isPaused: false, timelineEvents: [], yellows: {}, reds: [] };
+  const subCount = $('subsRemainingText'); if (subCount) subCount.innerText = 5;
+  const pauseBtn = $('btnPauseMatch'); if (pauseBtn) { pauseBtn.style.display = 'none'; pauseBtn.innerText = '⏸️ PAUSE'; }
 }
 
 function showResultModal(m) {
@@ -582,16 +598,71 @@ function fixStarters(club) {
   while (club.players.filter(p => p.starter).length < 11) { const n = club.players.find(p => !p.starter); if (!n) break; n.starter = true; }
 }
 
-/* ---------- tactics ---------- */
-function changeFormation(f) { if (!FORMATIONS[f]) return; state.currentFormation = f; autoPickBestXI(); }
+/* ---------- TACTICS, DRAG-AND-DROP & FAMILIARITY ENGINE ---------- */
+function analyzeTacticalShape(template) {
+  const pros = [], cons = [];
+  const defCount = template.filter(s => s.posType === 'DEF').length;
+  const midCount = template.filter(s => s.posType === 'MID').length;
+  const fwdCount = template.filter(s => s.posType === 'FWD').length;
+  
+  // Spatial width analysis: count flank players (x <= 20% or x >= 80%)
+  const flankCount = template.filter(s => s.posType !== 'GK' && (s.x <= 24 || s.x >= 76)).length;
+  const centralMid = template.filter(s => s.posType === 'MID' && (s.x > 30 && s.x < 70)).length;
+
+  if (centralMid >= 3) pros.push('✅ Strong central dominance & possession control');
+  if (defCount >= 4) pros.push('✅ Solid defensive screen & compact backline');
+  else if (defCount === 3) pros.push('✅ Fluid transition from back with extra outfield overload');
+  if (fwdCount >= 3) pros.push('✅ High attacking volume and final third presence');
+  if (flankCount >= 3) pros.push('✅ Excellent lateral width and crossing outlets');
+
+  if (flankCount < 2) cons.push('❌ Vulnerable on flanks against wide counter-attacks');
+  if (defCount < 4) cons.push('❌ Backline can become isolated if wingbacks push forward');
+  if (midCount < 3) cons.push('❌ Easily bypassed through the center by 3-man midfields');
+  if (fwdCount === 1) cons.push('❌ Lone striker may struggle for service without runners');
+
+  return { pros: pros.slice(0, 3), cons: cons.slice(0, 2) };
+}
+
+function changeFormation(f) {
+  state.currentFormation = f;
+  const customControls = $('customFormationControls');
+  if (customControls) customControls.style.display = f === 'Custom' ? 'flex' : 'none';
+
+  if (f === 'Custom' && (!FORMATIONS['Custom'] || !FORMATIONS['Custom'].length)) {
+    FORMATIONS['Custom'] = JSON.parse(JSON.stringify(FORMATIONS['4-3-3']));
+  }
+  autoPickBestXI();
+}
+
 function autoPickBestXI() {
   const club = getCurrentUserClub(), tpl = FORMATIONS[state.currentFormation] || FORMATIONS['4-3-3'];
   club.players.forEach(p => p.starter = false);
   const pool = [...club.players].sort((a, b) => ((a.inj > 0 || a.susp > 0) - (b.inj > 0 || b.susp > 0)) || b.ovr * b.con - a.ovr * a.con), picked = [];
-  tpl.forEach(slot => { let i = pool.findIndex(p => p.naturalPos === slot.posType && !p.susp && !p.inj); if (i < 0) i = 0; picked.push(pool.splice(i, 1)[0]); });
+  tpl.forEach(slot => { 
+    let i = pool.findIndex(p => p.naturalPos === slot.posType && !p.susp && !p.inj); 
+    if (i < 0) i = 0; 
+    picked.push(pool.splice(i, 1)[0]); 
+  });
   picked.forEach((p, i) => { p.starter = true; p.role = tpl[i].duty; });
-  club.players = [...picked, ...pool]; cancelPlayerSwap(); saveGame(); renderTactics(); updateHeaderClubDisplay(); playSoundSafe('whistle');
+  club.players = [...picked, ...pool]; 
+  cancelPlayerSwap(); 
+  saveGame(); 
+  renderTactics(); 
+  updateHeaderClubDisplay(); 
+  playSoundSafe('whistle');
 }
+
+function saveCustomTacticalShape() {
+  const name = ($('customFormationNameInput') ? $('customFormationNameInput').value.trim() : '') || 'Custom System';
+  if (!state.customFormations) state.customFormations = {};
+  state.customFormations['Custom'] = JSON.parse(JSON.stringify(FORMATIONS['Custom']));
+  if (!state.tacticalFamiliarity['Custom']) state.tacticalFamiliarity['Custom'] = 50;
+  saveGame();
+  renderTactics();
+  alert(`Tactical shape "${name}" saved! Team will build familiarity as you play matches.`);
+  playSoundSafe('click');
+}
+
 function handlePlayerSelect(id) {
   const club = getCurrentUserClub();
   if (!selectedPlayerSwapId) {
@@ -622,12 +693,112 @@ function renderTactics() {
   const club = getCurrentUserClub(), tpl = FORMATIONS[state.currentFormation] || FORMATIONS['4-3-3'];
   const st = club.players.filter(p => p.starter), bench = club.players.filter(p => !p.starter);
   $('formationSelect').value = state.currentFormation;
+
+  const customControls = $('customFormationControls');
+  if (customControls) customControls.style.display = state.currentFormation === 'Custom' ? 'flex' : 'none';
+
+  // Familiarity Display Updates
+  const famScore = (state.tacticalFamiliarity && state.tacticalFamiliarity[state.currentFormation]) || 50;
+  if ($('familiarityScoreBadge')) $('familiarityScoreBadge').innerText = `${famScore}%`;
+  if ($('familiarityProgressBar')) {
+    $('familiarityProgressBar').style.width = `${famScore}%`;
+    $('familiarityProgressBar').style.background = famScore >= 75 ? '#10b981' : famScore >= 50 ? '#38bdf8' : '#f59e0b';
+  }
+  if ($('familiarityStatusText')) {
+    $('familiarityStatusText').innerText = famScore >= 75 ? 'Fully Adapted — Passing and shape are instinctive.' :
+      famScore >= 50 ? 'Learning — Squad understands basic runs and spacing.' :
+      'Unfamiliar — Frequent miscommunications and defensive positioning errors.';
+  }
+
+  // Tactical Shape Pros/Cons Analysis Card
+  const analysis = analyzeTacticalShape(tpl);
+  const analysisContainer = $('analysisBadgesContainer');
+  if (analysisContainer) {
+    analysisContainer.innerHTML = [
+      ...analysis.pros.map(t => `<div style="color:#10b981">${t}</div>`),
+      ...analysis.cons.map(t => `<div style="color:#f87171">${t}</div>`)
+    ].join('');
+  }
+
+  // Interactive 2D Pitch Nodes & Drag Engine
   const nodes = $('pitchNodesWrapper'); nodes.innerHTML = '';
   st.forEach((p, i) => {
-    const t = tpl[i] || { x: 50, y: 50, role: TAG[p.naturalPos], duty: p.role }, n = document.createElement('div');
-    n.className = `pitch-node ${selectedPlayerSwapId === p.id ? 'selected-for-swap' : ''}`; n.style.left = t.x + '%'; n.style.top = t.y + '%'; n.onclick = () => handlePlayerSelect(p.id);
-    n.innerHTML = `<div class="pitch-kit">${i + 1}<div class="pitch-role-tag">${t.role}</div></div><div class="pitch-name-card"><div class="p-name">${p.name.split(' ').pop()} ${p.inj > 0 ? '🚑' : ''}${p.susp > 0 ? '🟥' : ''}</div><div class="p-role">${p.ovr} • ${p.con}%</div></div>`; nodes.appendChild(n);
+    const t = tpl[i] || { x: 50, y: 50, role: TAG[p.naturalPos], duty: p.role, posType: p.naturalPos };
+    const n = document.createElement('div');
+    n.className = `pitch-node ${selectedPlayerSwapId === p.id ? 'selected-for-swap' : ''}`;
+    n.style.left = t.x + '%'; 
+    n.style.top = t.y + '%';
+
+    // Position Familiarity Rating
+    const famMult = Math.round(getPositionFamiliarityMultiplier(p.naturalPos, t.posType) * 100);
+    const famColor = famMult === 100 ? '#10b981' : famMult >= 75 ? '#f59e0b' : '#ef4444';
+
+    n.innerHTML = `<div class="pitch-kit">${i + 1}<div class="pitch-role-tag">${t.role}</div></div>
+      <div class="pitch-name-card">
+        <div class="p-name">${p.name.split(' ').pop()} ${p.inj > 0 ? '🚑' : ''}${p.susp > 0 ? '🟥' : ''}</div>
+        <div class="p-role">${p.ovr} OVR • <span style="color:${famColor};font-weight:800;">${famMult}%</span></div>
+      </div>`;
+
+    // Drag-to-customize (Active in Custom formation or free tactical board)
+    let isDragging = false, startX, startY;
+    const onPointerDown = e => {
+      if (e.target.tagName === 'BUTTON') return;
+      isDragging = true;
+      n.classList.add('dragging');
+      startX = e.clientX || (e.touches && e.touches[0].clientX);
+      startY = e.clientY || (e.touches && e.touches[0].clientY);
+      document.addEventListener('pointermove', onPointerMove);
+      document.addEventListener('pointerup', onPointerUp);
+    };
+
+    const onPointerMove = e => {
+      if (!isDragging) return;
+      const rect = nodes.getBoundingClientRect();
+      const clientX = e.clientX || (e.touches && e.touches[0].clientX);
+      const clientY = e.clientY || (e.touches && e.touches[0].clientY);
+      let posX = Math.round(((clientX - rect.left) / rect.width) * 100);
+      let posY = Math.round(((clientY - rect.top) / rect.height) * 100);
+
+      // Pitch boundary clamping
+      posX = Math.max(8, Math.min(92, posX));
+      posY = Math.max(i === 0 ? 80 : 12, Math.min(i === 0 ? 94 : 85, posY));
+
+      n.style.left = posX + '%';
+      n.style.top = posY + '%';
+      t.x = posX;
+      t.y = posY;
+
+      // Automatically deduce dynamic role category from height on pitch
+      if (i > 0) {
+        if (posY >= 62) { t.posType = 'DEF'; t.role = 'DF'; }
+        else if (posY >= 32) { t.posType = 'MID'; t.role = 'MF'; }
+        else { t.posType = 'FWD'; t.role = 'FW'; }
+      }
+    };
+
+    const onPointerUp = () => {
+      if (!isDragging) return;
+      isDragging = false;
+      n.classList.remove('dragging');
+      document.removeEventListener('pointermove', onPointerMove);
+      document.removeEventListener('pointerup', onPointerUp);
+
+      // Switch to Custom formation tab if moving positions
+      if (state.currentFormation !== 'Custom') {
+        state.currentFormation = 'Custom';
+        $('formationSelect').value = 'Custom';
+        FORMATIONS['Custom'] = JSON.parse(JSON.stringify(tpl));
+        if ($('customFormationControls')) $('customFormationControls').style.display = 'flex';
+      }
+      saveGame();
+      renderTactics();
+    };
+
+    n.addEventListener('pointerdown', onPointerDown);
+    n.onclick = () => { if (!isDragging) handlePlayerSelect(p.id); };
+    nodes.appendChild(n);
   });
+
   const mor = m => m === 'Superb' ? '😄 <span style="color:#10b981">Superb</span>' : m === 'Good' ? '🙂 <span style="color:#38bdf8">Good</span>' : m === 'Fair' ? '😐 <span style="color:#f59e0b">Fair</span>' : '😠 <span style="color:#ef4444">Unhappy</span>';
   const row = (p, tag, cls) => {
     const sel = selectedPlayerSwapId === p.id, cc = p.con > 80 ? '#10b981' : p.con > 65 ? '#f59e0b' : '#ef4444', tr = document.createElement('tr');
@@ -898,11 +1069,10 @@ function confirmLiveMatchSub(starterOutId) {
 
 function toggleMatchPause() {
   if (!matchLiveState) return;
-
   matchLiveState.isPaused = !matchLiveState.isPaused;
   const btn = $('btnPauseMatch');
   if (btn) {
-    btn.innerText = matchLiveState.isPaused ? '▶️ RESUME' : '⏸️️ PAUSE';
+    btn.innerText = matchLiveState.isPaused ? '▶️ RESUME' : '⏸️ PAUSE';
     btn.style.background = matchLiveState.isPaused ? '#10b981' : '#334155';
   }
   if (!matchLiveState.isPaused) {
@@ -1036,7 +1206,7 @@ function startMatchdaySim() {
     if (min >= 90) {
       cancelAnimationFrame(animFrameId);
       btn.disabled = false;
-      if ($('btnPauseMatch'))$('btnPauseMatch').style.display = 'none';
+      if ($('btnPauseMatch')) $('btnPauseMatch').style.display = 'none';
       applyResult(m, hs, as, true);
       $('sbMinute').innerText = 'FULL TIME';
       feed.insertAdjacentHTML('afterbegin', `<div class="comm-line" style="font-weight:800">🏁 Full-time: ${h.name} ${hs}-${as} ${a.name}</div>`);
@@ -1050,7 +1220,8 @@ function startMatchdaySim() {
         }
       }
 
-      $('btnAdvanceMaster').className = 'btn-advance-master btn-continue-mode';$('btnAdvanceText').innerText = `CONTINUE TO WK ${state.currentWeek + 1}`;
+      $('btnAdvanceMaster').className = 'btn-advance-master btn-continue-mode';
+      $('btnAdvanceText').innerText = `CONTINUE TO WK ${state.currentWeek + 1}`;
       saveGame();
       renderStandingsTable(getCurrentUserClub().div);
       playSoundSafe('whistle');
