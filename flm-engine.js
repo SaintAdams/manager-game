@@ -25,7 +25,7 @@
 
 const STORAGE_KEY = 'FLM_CAREER_2026_V2';
 let state = null, selectedPlayerSwapId = null, wizardChosenClubId = 'NEW', activeContractTarget = null,
-  deadlineHour = 12, pendingAIBid = null, shootoutState = null, simSpeedMultiplier = 1,
+  deadlineHour = 12, pendingAIBid = null, pendingJobOffer = null, shootoutState = null, simSpeedMultiplier = 1,
   matchSimInterval = null, animFrameId = null, marketSortKey = 'ovr', marketSortAsc = false;
 
 let lastUserClubRatings = null;
@@ -232,7 +232,6 @@ function resolveMatchKitColors(homeClub, awayClub) {
   let awayColor = aKits.home;
   let usedAwayKit = false;
 
-  // Visual clash distance threshold ~110
   if (getKitColorDistance(homeColor, awayColor) < 110) {
     awayColor = aKits.away;
     usedAwayKit = true;
@@ -414,7 +413,6 @@ function computeClubAttributes(club) {
   const bench = club.players.filter(p => !p.starter);
 
   const calcUnitRating = (posType, fallback) => {
-    // 1. Starting XI weight (70%)
     const unitStarters = starters.filter(p => {
       if (posType === 'DEF') return p.naturalPos === 'DEF' || p.naturalPos === 'GK';
       return p.naturalPos === posType;
@@ -431,7 +429,6 @@ function computeClubAttributes(club) {
       starterScore = fallback - 10;
     }
 
-    // 2. Squad Depth weight (30%)
     const unitBench = bench.filter(p => {
       if (posType === 'DEF') return p.naturalPos === 'DEF' || p.naturalPos === 'GK';
       return p.naturalPos === posType;
@@ -443,7 +440,6 @@ function computeClubAttributes(club) {
       benchScore = bSum / unitBench.length;
     }
 
-    // 70% XI + 30% Squad
     const blended = Math.round((starterScore * 0.70) + (benchScore * 0.30));
     return Math.max(35, Math.min(99, blended));
   };
@@ -458,6 +454,21 @@ function computeClubAttributes(club) {
 
 const computeClubWeeklyWageBill = club => +club.players.reduce((s, p) => s + (p.wage || 0.02), 0).toFixed(3);
 
+/* ---------- BOARD EXPECTATION SYSTEM (FEATURE 6) ---------- */
+function getClubBoardExpectation(club) {
+  const div = club.div;
+  const budget = club.budget || 10;
+  if (div === 0) {
+    if (budget >= 50) return { target: 'Champions League Qualification (Top 4)', maxRank: 4, label: 'Top 4' };
+    if (budget >= 25) return { target: 'Top Half Finish', maxRank: 10, label: 'Top Half' };
+    return { target: 'Avoid Relegation', maxRank: 17, label: 'Avoid Relegation' };
+  } else {
+    if (budget >= 20) return { target: 'Automatic Promotion / Title', maxRank: 2, label: 'Promotion' };
+    if (budget >= 10) return { target: 'Play-off Places (Top 6)', maxRank: 6, label: 'Play-offs' };
+    return { target: 'Mid-Table Consolidation', maxRank: 16, label: 'Mid-Table' };
+  }
+}
+
 /* ---------- STATE INITIALIZATION ---------- */
 function setupFreshState(managerName = 'Manager', clubId = 'NEW') {
   state = { 
@@ -470,7 +481,23 @@ function setupFreshState(managerName = 'Manager', clubId = 'NEW') {
     deadlineDaysCompleted: {}, youthProspects: [], youthIntakeCompleted: false, fixtures: [],
     customFormations: {},
     tacticalFamiliarity: { '4-3-3': 100, '4-2-3-1': 55, '4-4-2': 50, '3-5-2': 40, '5-3-2': 40, '4-1-2-1-2': 45, '4-5-1': 45 },
-    manager: { name: managerName, confidence: 85, fansApproval: 82, matches: 0, wins: 0, draws: 0, losses: 0, motmAwards: 0, faCups: 0, carabaoCups: 0 } 
+    manager: { 
+      name: managerName, 
+      confidence: 85, 
+      fansApproval: 82, 
+      reputation: 2.5, // 1.0 to 5.0 stars
+      contractYears: 2,
+      warningsCount: 0,
+      matches: 0, 
+      wins: 0, 
+      draws: 0, 
+      losses: 0, 
+      motmAwards: 0, 
+      faCups: 0, 
+      carabaoCups: 0,
+      leagueTitles: 0,
+      promotions: 0
+    } 
   };
   state.clubs.forEach(c => { c.players = generateProceduralSquad(c); });
   buildStandings(); generateTrueRoundRobinFixtures(); generateInitialNews(); generateYouthIntake(false);
@@ -490,6 +517,12 @@ function ensureAllSquadsHydrated() {
   if (!state.tacticalFamiliarity) state.tacticalFamiliarity = { '4-3-3': 100, '4-2-3-1': 55, '4-4-2': 50, '3-5-2': 40, '5-3-2': 40, '4-1-2-1-2': 45, '4-5-1': 45 };
   if (!state.customFormations) state.customFormations = {};
   if (state.customFormations['Custom']) FORMATIONS['Custom'] = state.customFormations['Custom'];
+  
+  if (!state.manager.reputation) state.manager.reputation = 2.5;
+  if (!state.manager.contractYears) state.manager.contractYears = 2;
+  if (state.manager.warningsCount === undefined) state.manager.warningsCount = 0;
+  if (state.manager.leagueTitles === undefined) state.manager.leagueTitles = 0;
+  if (state.manager.promotions === undefined) state.manager.promotions = 0;
 }
 
 function saveGame() { if (state) try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch (e) {} }
@@ -631,9 +664,22 @@ function updateLeagueTableRecord(div, hid, aid, hg, ag) {
 
 function recordUserMatchResult(isHome, hg, ag) {
   const u = isHome ? hg : ag, o = isHome ? ag : hg, mg = state.manager; mg.matches++;
-  if (u > o) { mg.wins++; mg.confidence = Math.min(99, mg.confidence + 3); mg.fansApproval = Math.min(99, mg.fansApproval + (u >= 3 ? 4 : 2)); }
-  else if (u === o) { mg.draws++; mg.fansApproval = Math.max(20, mg.fansApproval - 1); }
-  else { mg.losses++; mg.confidence = Math.max(25, mg.confidence - 4); mg.fansApproval = Math.max(20, mg.fansApproval - 4); }
+  if (u > o) { 
+    mg.wins++; 
+    mg.confidence = Math.min(99, mg.confidence + 3); 
+    mg.fansApproval = Math.min(99, mg.fansApproval + (u >= 3 ? 4 : 2));
+    mg.reputation = Math.min(5.0, +(mg.reputation + 0.02).toFixed(2));
+  }
+  else if (u === o) { 
+    mg.draws++; 
+    mg.fansApproval = Math.max(15, mg.fansApproval - 1); 
+  }
+  else { 
+    mg.losses++; 
+    mg.confidence = Math.max(15, mg.confidence - 4); 
+    mg.fansApproval = Math.max(15, mg.fansApproval - 4);
+    mg.reputation = Math.max(1.0, +(mg.reputation - 0.01).toFixed(2));
+  }
 }
 
 function cupWinnerId(m) { return m.homeGoals > m.awayGoals ? m.home : m.awayGoals > m.homeGoals ? m.away : m.penWinner; }
@@ -642,7 +688,9 @@ function cupOutcome(m) {
   if (!won) { state.cups[m.cupKey + 'Alive'] = false; addNewsStory('Cup Exit', `${uc} knocked out of the ${m.cupName}`, 'The cup run is over for this season.', false); }
   else if (m.final) {
     if (m.cupKey === 'fa') state.manager.faCups++; else state.manager.carabaoCups++;
-    addNewsStory('Silverware', `${uc} WIN THE ${m.cupName.toUpperCase()}!`, 'A trophy for the cabinet.', true); playSoundSafe('cheer');
+    state.manager.reputation = Math.min(5.0, +(state.manager.reputation + 0.35).toFixed(2));
+    state.manager.confidence = Math.min(99, state.manager.confidence + 15);
+    addNewsStory('Silverware', `${uc} WIN THE ${m.cupName.toUpperCase()}!`, 'A trophy for the cabinet. Manager reputation skyrockets!', true); playSoundSafe('cheer');
   } else addNewsStory('Cup Progress', `${uc} through in the ${m.cupName}`, 'On to the next round.', false);
 }
 
@@ -693,6 +741,152 @@ function simulateAITransfers() {
   }
 }
 
+/* ---------- SACKING & JOB OFFER CHECKS (FEATURES 6, 7 & 8) ---------- */
+function checkManagerJobOffers() {
+  if (pendingJobOffer) return;
+  // Trigger offers occasionally during season or at milestone weeks (weeks 16, 26, 36)
+  if (state.currentWeek < 12 || Math.random() > 0.28) return;
+
+  const userClub = getCurrentUserClub();
+  const rep = state.manager.reputation || 2.5;
+
+  // Potential suitors based on manager's reputation
+  let suitors = [];
+  if (rep >= 4.2) {
+    suitors = state.clubs.filter(c => c.div === 0 && c.id !== userClub.id && c.budget >= 40);
+  } else if (rep >= 3.4) {
+    suitors = state.clubs.filter(c => (c.div === 0 || c.div === 1) && c.id !== userClub.id && c.str > userClub.str);
+  } else if (rep >= 2.6) {
+    suitors = state.clubs.filter(c => c.id !== userClub.id && (c.div < userClub.div || (c.div === userClub.div && c.budget > userClub.budget)));
+  }
+
+  if (suitors.length > 0) {
+    const suitor = pick(suitors);
+    const wageOffer = Math.round(suitor.budget * 0.4 + R(15, 45));
+    pendingJobOffer = { club: suitor, wage: wageOffer, contractYears: R(2, 4) };
+    
+    $('jobOfferDetails').innerHTML = `
+      <div style="display:flex; align-items:center; gap:12px; margin-bottom:14px; background:var(--bg-panel); padding:12px; border-radius:8px;">
+        ${createBadgeHtml(suitor.id, 48)}
+        <div>
+          <h3 style="font-size:1.1rem; color:#fff;">${suitor.name}</h3>
+          <p style="font-size:0.75rem; color:var(--accent);">${DIV_NAMES[suitor.div]} • Budget: £${suitor.budget}M</p>
+        </div>
+      </div>
+      <p>Following your tactical achievements and high reputation (⭐ <b>${rep.toFixed(1)}</b>), the board of <b>${suitor.name}</b> officially invites you to take over as their head coach!</p>
+      <ul style="margin:12px 0 12px 20px; font-size:0.8rem; color:#cbd5e1;">
+        <li><b>Contract Term:</b> ${pendingJobOffer.contractYears} Years</li>
+        <li><b>Transfer Warchest:</b> £${suitor.budget}M</li>
+        <li><b>Board Expectation:</b> ${getClubBoardExpectation(suitor).target}</li>
+      </ul>
+    `;
+    $('jobOfferModal').style.display = 'flex';
+    playSoundSafe('cheer');
+  }
+}
+
+function acceptJobOffer() {
+  if (!pendingJobOffer) return;
+  const newClub = pendingJobOffer.club;
+  const oldClubName = getCurrentUserClub().name;
+
+  state.userClubId = newClub.id;
+  state.manager.contractYears = pendingJobOffer.contractYears;
+  state.manager.confidence = 85;
+  state.manager.fansApproval = 80;
+  state.manager.warningsCount = 0;
+
+  addNewsStory('Managerial Appointment', `${state.manager.name} leaves ${oldClubName} to manage ${newClub.name}!`, `A blockbuster contract agreement. ${state.manager.name} has pledged to lead ${newClub.name} to silverware.`, true);
+
+  pendingJobOffer = null;
+  $('jobOfferModal').style.display = 'none';
+  saveGame();
+  renderAll();
+  alert(`🤝 Congratulations! You are now the manager of ${newClub.name}!`);
+  playSoundSafe('cheer');
+}
+
+function declineJobOffer() {
+  if (!pendingJobOffer) return;
+  addNewsStory('Pledge of Loyalty', `${state.manager.name} rejects approach from ${pendingJobOffer.club.name}`, `Reaffirmed commitment to current club projects.`, false);
+  pendingJobOffer = null;
+  $('jobOfferModal').style.display = 'none';
+  saveGame();
+}
+
+function checkManagerSackingRisk() {
+  const userClub = getCurrentUserClub();
+  const table = state.standings[userClub.div] || [];
+  const sorted = [...table].sort((a, b) => b.pts - a.pts || b.gd - a.gd);
+  const currentRank = sorted.findIndex(r => r.id === userClub.id) + 1;
+  const exp = getClubBoardExpectation(userClub);
+
+  // Check starts after Week 12 when initial standings stabilize
+  if (state.currentWeek >= 12) {
+    const isUnderperforming = currentRank > (exp.maxRank + 3) || state.manager.confidence < 35;
+
+    if (isUnderperforming) {
+      if (state.manager.confidence <= 22 || state.manager.warningsCount >= 2) {
+        // EXECUTE SACKING
+        triggerManagerSacked(userClub, currentRank, exp);
+      } else if (state.manager.warningsCount === 0 || (state.manager.warningsCount === 1 && state.currentWeek % 8 === 0)) {
+        // ISSUE FORMAL WARNING
+        state.manager.warningsCount++;
+        triggerBoardWarning(userClub, currentRank, exp);
+      }
+    } else if (currentRank <= exp.maxRank && state.manager.confidence > 60) {
+      // Clear warnings if form recovers
+      state.manager.warningsCount = 0;
+    }
+  }
+}
+
+function triggerBoardWarning(club, rank, exp) {
+  $('boardInterventionTitle').innerText = '⚠️ FORMAL BOARD WARNING';
+  $('boardInterventionTitle').style.color = '#f59e0b';
+  $('boardInterventionBody').innerHTML = `
+    <p><b>From:</b> Board of Directors, ${club.name}</p>
+    <p><b>Target:</b> ${exp.target} | <b>Current Position:</b> ${rank}th (${DIV_NAMES[club.div]})</p>
+    <hr style="border-color:var(--border); margin:10px 0;">
+    <p style="color:#f87171; font-weight:800;">"Our current league position is unacceptable. The board and supporters expected much better results with our current squad resources."</p>
+    <p style="margin-top:8px;">You are on <b>Warning ${state.manager.warningsCount} of 2</b>. Unless performances and results improve promptly, your contract will be terminated immediately.</p>
+  `;
+  $('btnDismissBoardIntervention').innerText = 'UNDERSTAND & RETURN TO DUTY';
+  $('btnDismissBoardIntervention').style.background = '#f59e0b';
+  $('boardInterventionModal').style.display = 'flex';
+  playSoundSafe('whistle');
+}
+
+function triggerManagerSacked(club, rank, exp) {
+  $('boardInterventionTitle').innerText = '🚨 CONTRACT TERMINATED (SACKED)';
+  $('boardInterventionTitle').style.color = '#ef4444';
+  $('boardInterventionBody').innerHTML = `
+    <p><b>Notice of Immediate Dismissal:</b> ${club.name}</p>
+    <p><b>Reason:</b> Failure to meet minimum board target (${exp.target}). Club sits ${rank}th.</p>
+    <hr style="border-color:var(--border); margin:10px 0;">
+    <p style="color:#f87171; font-weight:800;">"Following another disappointing run of form, the board has lost all confidence in your tactical direction and relieved you of managerial duties."</p>
+    <p style="margin-top:8px;">Your reputation has suffered a penalty (⭐ -0.4). Select a new club to rebuild your managerial career.</p>
+  `;
+  $('btnDismissBoardIntervention').innerText = 'SEEK NEW MANAGEMENT JOB';
+  $('btnDismissBoardIntervention').style.background = '#ef4444';
+  
+  state.manager.reputation = Math.max(1.0, +(state.manager.reputation - 0.4).toFixed(2));
+  state.manager.confidence = 70;
+  state.manager.warningsCount = 0;
+
+  addNewsStory('Sacking Alert', `${state.manager.name} SACKED by ${club.name}!`, `The board terminated the contract following persistent poor results and fan unrest.`, true);
+
+  $('boardInterventionModal').style.display = 'flex';
+  playSoundSafe('whistle');
+}
+
+function dismissBoardIntervention() {
+  $('boardInterventionModal').style.display = 'none';
+  if ($('boardInterventionTitle').innerText.includes('SACKED')) {
+    openClubSelectorModal();
+  }
+}
+
 function finalizeWeek() {
   const w = getWeek(); if (!w || w.done) return;
   ensureCupTie();
@@ -706,6 +900,8 @@ function finalizeWeek() {
   applyWeeklyFinancesAndFatigue();
   generateWeeklyNewsStory();
   simulateAITransfers();
+  checkManagerJobOffers();
+  checkManagerSackingRisk();
   if (state.currentWeek === 30 && !state.youthIntakeCompleted) generateYouthIntake(true);
   w.done = true; saveGame();
 }
@@ -733,7 +929,9 @@ function generateWeeklyNewsStory() {
 
 function evaluateManagerOfMonth() {
   if (Math.random() > 0.45 && state.manager.confidence > 75) {
-    state.manager.motmAwards++; state.manager.confidence = Math.min(99, state.manager.confidence + 5);
+    state.manager.motmAwards++; 
+    state.manager.confidence = Math.min(99, state.manager.confidence + 5);
+    state.manager.reputation = Math.min(5.0, +(state.manager.reputation + 0.08).toFixed(2));
     addNewsStory('Award Winner', `${state.manager.name} named Manager of the Month!`, 'An impressive run of form.', true); alert('🏆 Manager of the Month!'); playSoundSafe('cheer');
   }
 }
@@ -938,7 +1136,6 @@ function renderTactics() {
   const customControls = $('customFormationControls');
   if (customControls) customControls.style.display = state.currentFormation === 'Custom' ? 'flex' : 'none';
 
-  // Tactical Rating Badge next to formation selector
   const attrs = computeClubAttributes(club);
   let tacticsBadge = $('tacticsTeamRatingBox');
   if (!tacticsBadge && $('formationSelect')) {
@@ -952,7 +1149,6 @@ function renderTactics() {
     tacticsBadge.innerHTML = `<span>ATT: <b id="tacAtt" style="color:var(--gold)">${attrs.att}</b></span> <span>MID: <b id="tacMid" style="color:#38bdf8">${attrs.mid}</b></span> <span>DEF: <b id="tacDef" style="color:#34d399">${attrs.def}</b></span>`;
   }
 
-  // Familiarity Display Updates
   const famScore = (state.tacticalFamiliarity && state.tacticalFamiliarity[state.currentFormation]) || 50;
   if ($('familiarityScoreBadge')) $('familiarityScoreBadge').innerText = `${famScore}%`;
   if ($('familiarityProgressBar')) {
@@ -965,7 +1161,6 @@ function renderTactics() {
       'Unfamiliar — Frequent miscommunications and defensive positioning errors.';
   }
 
-  // Tactical Shape Pros/Cons Analysis Card
   const analysis = analyzeTacticalShape(tpl);
   const analysisContainer = $('analysisBadgesContainer');
   if (analysisContainer) {
@@ -975,7 +1170,6 @@ function renderTactics() {
     ].join('');
   }
 
-  // Interactive 2D Pitch Nodes & Drag Engine
   const nodes = $('pitchNodesWrapper');
   if (nodes) {
     nodes.innerHTML = '';
@@ -1107,7 +1301,6 @@ function setup2DPlayers(h, a) {
   pitchEngine.homeClubId = h.id;
   pitchEngine.awayClubId = a.id;
 
-  // Resolve authentic home/away match kits & automatic anti-clash
   const matchKits = resolveMatchKitColors(h, a);
   pitchEngine.homeColor = matchKits.homeColor;
   pitchEngine.awayColor = matchKits.awayColor;
@@ -1586,13 +1779,39 @@ function upgradeAcademyFacility() { if (spend(3.0)) { state.academyFacilityLevel
 function upgradeStand(s, c) { if (spend(c)) { state.stadiumCapacityBonus += s; saveGame(); renderAll(); renderFacilities(); } }
 
 function renderManagerOffice() {
-  const m = state.manager, club = getCurrentUserClub();
-  $('managerProfileSummary').innerHTML = `<p><b>Manager:</b> ${m.name}</p><p><b>Club:</b> ${club.name}</p><p><b>Record:</b> ${m.wins}W ${m.draws}D ${m.losses}L (${m.matches} played)</p><p><b>Win rate:</b> ${m.matches ? Math.round(m.wins / m.matches * 100) : 0}%</p><p><b>Weekly wages:</b> £${Math.round(computeClubWeeklyWageBill(club) * 1000).toLocaleString()}k</p><p><b>Board:</b> ${m.confidence}% • <b>Fans:</b> ${m.fansApproval}%</p>`;
+  const m = state.manager, club = getCurrentUserClub(), exp = getClubBoardExpectation(club);
+  const repStars = (m.reputation || 2.5).toFixed(1);
+  const warnText = m.warningsCount > 0 
+    ? `<span style="color:#ef4444; font-weight:800;">⚠️️ ${m.warningsCount} Formal Warning(s)</span>` 
+    : `<span style="color:#10b981; font-weight:800;">✅ Stable (No Warnings)</span>`;
+
+  $('mgrContractBadge').innerText = `Contract: ${m.contractYears || 2} Years Remaining`;
+
+  $('managerProfileSummary').innerHTML = `
+    <div class="manager-stat-cluster">
+      <div class="mgr-card"><div class="val">⭐ ${repStars}</div><div class="lbl">Reputation</div></div>
+      <div class="mgr-card"><div class="val">${m.contractYears || 2} Yrs</div><div class="lbl">Contract</div></div>
+      <div class="mgr-card"><div class="val" style="color:${m.confidence >= 60 ? '#10b981' : '#ef4444'}">${m.confidence}%</div><div class="lbl">Board Approval</div></div>
+      <div class="mgr-card"><div class="val" style="color:${m.fansApproval >= 60 ? '#38bdf8' : '#ef4444'}">${m.fansApproval}%</div><div class="lbl">Fan Support</div></div>
+    </div>
+
+    <div style="background:var(--bg-panel); border:1px solid var(--border); border-radius:8px; padding:12px; margin-bottom:12px;">
+      <h4 style="color:var(--gold); font-size:0.85rem; margin-bottom:6px;">🎯 Seasonal Board Expectations</h4>
+      <p style="font-size:0.82rem; color:#f1f5f9; font-weight:700;">Target: <span style="color:#38bdf8;">${exp.target}</span></p>
+      <p style="font-size:0.75rem; color:var(--text-muted); margin-top:3px;">Club Status: ${warnText}</p>
+    </div>
+
+    <p><b>Manager:</b> ${m.name}</p>
+    <p><b>Current Club:</b> ${club.name} (${DIV_NAMES[club.div]})</p>
+    <p><b>Career Record:</b> ${m.wins}W ${m.draws}D ${m.losses}L (${m.matches} matches)</p>
+    <p><b>Win Rate:</b> ${m.matches ? Math.round(m.wins / m.matches * 100) : 0}%</p>
+    <p><b>Weekly Wage Bill:</b> £${Math.round(computeClubWeeklyWageBill(club) * 1000).toLocaleString()}k/wk</p>
+  `;
 }
 
 function renderHonours() {
   const m = state.manager, box = (i, v, l) => `<div style="background:var(--bg-panel);padding:14px;border-radius:8px;text-align:center;min-width:120px"><div style="font-size:1.8rem">${i}</div><div style="font-weight:800;color:var(--gold)">${v || 0}</div><div style="font-size:.72rem;color:var(--text-muted)">${l}</div></div>`;
-  $('honoursList').innerHTML = box('🏅', m.motmAwards, 'Manager of Month') + box('🏆', m.faCups, 'FA Cups') + box('🏆', m.carabaoCups, 'Carabao Cups');
+  $('honoursList').innerHTML = box('🏅', m.motmAwards, 'Manager of Month') + box('🏆', m.faCups, 'FA Cups') + box('🏆', m.carabaoCups, 'Carabao Cups') + box('👑', m.leagueTitles || 0, 'League Titles') + box('📈', m.promotions || 0, 'Promotions');
 }
 
 /* ---------- news / academy ---------- */
@@ -1689,6 +1908,18 @@ const sortedDivs = () => { const s = {}; for (let d = 0; d <= 3; d++) s[d] = [..
 
 function showEndSeasonGala() {
   const s = sortedDivs(), mv = d => `<p><b>Up from ${DIV_NAMES[d + 1]}:</b> ${s[d + 1].slice(0, 3).map(r => r.name).join(', ')}</p><p><b>Down from ${DIV_NAMES[d]}:</b> ${s[d].slice(-3).map(r => r.name).join(', ')}</p>`;
+  
+  // Track League Title & Promotion Honours for user
+  const userClub = getCurrentUserClub();
+  const divTable = s[userClub.div];
+  if (divTable && divTable[0].id === userClub.id) {
+    state.manager.leagueTitles = (state.manager.leagueTitles || 0) + 1;
+    state.manager.reputation = Math.min(5.0, +(state.manager.reputation + 0.50).toFixed(2));
+  } else if (userClub.div > 0 && divTable.slice(0, 3).some(r => r.id === userClub.id)) {
+    state.manager.promotions = (state.manager.promotions || 0) + 1;
+    state.manager.reputation = Math.min(5.0, +(state.manager.reputation + 0.35).toFixed(2));
+  }
+
   $('eosSummaryContent').innerHTML = `<div style="background:var(--bg-panel);padding:12px;border-radius:8px;margin-bottom:10px"><h3 style="color:var(--gold)">👑 Champions</h3>${[0, 1, 2, 3].map(d => `<p><b>${DIV_NAMES[d]}:</b>${s[d][0].name}</p>`).join('')}</div><div style="background:var(--bg-panel);padding:12px;border-radius:8px"><h3 style="color:#38bdf8">📈 Movement</h3>${mv(0)}${mv(1)}${mv(2)}</div>`;
   $('endSeasonModal').style.display = 'flex'; playSoundSafe('cheer');
 }
@@ -1711,6 +1942,15 @@ function executeNextSeasonTransition() {
   state.deadlineDaysCompleted = {};
   state.youthIntakeCompleted = false;
   state.cups = { carabaoAlive: true, faAlive: true };
+  if (state.manager.contractYears > 1) {
+    state.manager.contractYears--;
+  } else {
+    // Contract extension offered by current board if confidence is good
+    if (state.manager.confidence >= 50) {
+      state.manager.contractYears = 2;
+      addNewsStory('Contract Signed', `${state.manager.name} signs contract extension with ${getCurrentUserClub().name}`, 'The board has rewarded stable progress with a 2-year deal.', false);
+    }
+  }
 
   let userReleasedCount = 0;
 
@@ -1810,13 +2050,16 @@ function updateHeaderClubDisplay() {
   lastUserClubRatings = { ...s };
 
   $('headerWageBill').innerText = `£${Math.round(computeClubWeeklyWageBill(c) * 1000).toLocaleString()}k/w`;
+  if ($('headerReputation'))$('headerReputation').innerText = `⭐ ${(state.manager.reputation || 2.5).toFixed(1)}`;
 }
 
 function renderAll() {
   const club = getCurrentUserClub(); ensureCupTie();
   $('headerDivName').innerText = DIV_NAMES[club.div];$('headerWeek').innerText = `Wk ${state.currentWeek} / ${state.totalWeeks}`;
   $('headerSeasonTag').innerText = `${state.seasonYear}/${String(state.seasonYear + 1).slice(-2)} Career • English Pyramid`;
-  $('headerConfidence').innerText = `${state.manager.confidence}%`; $('headerFansApproval').innerText = `${state.manager.fansApproval}%`; $('headerBudget').innerText = `£${club.budget.toFixed(1)}M`;
+  $('headerConfidence').innerText = `${state.manager.confidence}%`; 
+  if ($('headerReputation'))$('headerReputation').innerText = `⭐ ${(state.manager.reputation || 2.5).toFixed(1)}`;
+  $('headerBudget').innerText = `£${club.budget.toFixed(1)}M`;
   $('btnAudio').innerText = state.audioEnabled ? '🔊' : '🔇';
   const activeMatch = getActiveUserMatch(), w = getWeek(), dl = (state.currentWeek === 4 || state.currentWeek === 22) && !state.deadlineDaysCompleted[state.currentWeek];
   const b = $('btnAdvanceMaster'), t =$('btnAdvanceText');
