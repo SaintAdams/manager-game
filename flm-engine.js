@@ -1,4 +1,4 @@
-/* Football League Manager - Complete Stable Engine (Upgraded Visuals & Full Pyramid) */
+/* Football League Manager - Complete Stable Engine */
 (function () {
   const s = document.createElement('style');
   s.textContent = '.matchday-grid>*,.broadcast-card>*,.canvas-container{min-width:0;max-width:100%}' +
@@ -87,177 +87,6 @@ const LEAGUES = ('Arsenal,Aston Villa,Bournemouth,Brentford,Brighton,Chelsea,Cry
   'Leicester City,Southampton,Burnley,Middlesbrough,West Brom,Norwich City,Sheffield United,West Ham,Watford,Wolves,Stoke City,Swansea City,Bristol City,Millwall,Preston,QPR,Blackburn,Derby County,Portsmouth,Oxford United,Sheffield Wednesday,Plymouth Argyle,Birmingham City,Charlton|' +
   'Wrexham,Bolton,Stockport,Leyton Orient,Huddersfield,Lincoln City,Reading,Wycombe,Barnsley,Peterborough,Blackpool,Rotherham,Cardiff City,Bradford City,Stevenage,Mansfield Town,Exeter City,Northampton,Burton Albion,Wigan,Luton Town,Port Vale,Doncaster,Crawley Town|' +
   'Notts County,Walsall,Chesterfield,Swindon,Gillingham,Salford City,Grimsby Town,Bromley,Crewe Alexandra,Colchester,Fleetwood,Tranmere,AFC Wimbledon,Barrow,Cheltenham,Harrogate,MK Dons,Accrington Stanley,Newport County,Bristol Rovers,Carlisle,Shrewsbury,Morecambe,Oldham Athletic').split('|').map(s => s.split(','));
-
-/* ---------- COMPLETE REAL SQUADS (TIERS 1 - 4) ---------- */
-const REAL_SQUADS = {
-  // Premier League
-  'Arsenal': [
-    ['David Raya', 'GK', 85, 29, 'ESP'], ['William Saliba', 'DEF', 88, 24, 'FRA'], ['Gabriel Magalhaes', 'DEF', 86, 27, 'BRA'],
-    ['Ben White', 'DEF', 83, 27, 'ENG'], ['Jurrien Timber', 'DEF', 82, 24, 'NED'], ['Declan Rice', 'MID', 88, 26, 'ENG'],
-    ['Martin Odegaard', 'MID', 89, 26, 'NOR'], ['Mikel Merino', 'MID', 83, 29, 'ESP'], ['Bukayo Saka', 'FWD', 88, 23, 'ENG'],
-    ['Gabriel Martinelli', 'FWD', 84, 24, 'BRA'], ['Kai Havertz', 'FWD', 84, 26, 'GER'], ['Neto', 'GK', 79, 36, 'BRA'],
-    ['Oleksandr Zinchenko', 'DEF', 80, 28, 'UKR'], ['Thomas Partey', 'MID', 82, 32, 'GHA'], ['Leandro Trossard', 'FWD', 82, 30, 'BEL'],
-    ['Gabriel Jesus', 'FWD', 81, 28, 'BRA']
-  ],
-  'Manchester City': [
-    ['Ederson', 'GK', 87, 32, 'BRA'], ['Ruben Dias', 'DEF', 88, 28, 'POR'], ['Manuel Akanji', 'DEF', 84, 30, 'SUI'],
-    ['Josko Gvardiol', 'DEF', 85, 23, 'CRO'], ['Kyle Walker', 'DEF', 83, 35, 'ENG'], ['Rodri', 'MID', 91, 29, 'ESP'],
-    ['Kevin De Bruyne', 'MID', 90, 34, 'BEL'], ['Bernardo Silva', 'MID', 87, 31, 'POR'], ['Phil Foden', 'FWD', 88, 25, 'ENG'],
-    ['Erling Haaland', 'FWD', 92, 25, 'NOR'], ['Jeremy Doku', 'FWD', 82, 23, 'BEL'], ['Stefan Ortega', 'GK', 80, 32, 'GER'],
-    ['Nathan Ake', 'DEF', 82, 30, 'NED'], ['Mateo Kovacic', 'MID', 82, 31, 'CRO'], ['Jack Grealish', 'FWD', 83, 30, 'ENG'],
-    ['Savinho', 'FWD', 81, 21, 'BRA']
-  ],
-  'Liverpool': [
-    ['Alisson', 'GK', 89, 32, 'BRA'], ['Virgil van Dijk', 'DEF', 89, 34, 'NED'], ['Ibrahima Konate', 'DEF', 84, 26, 'FRA'],
-    ['Trent Alexander-Arnold', 'DEF', 86, 26, 'ENG'], ['Andy Robertson', 'DEF', 84, 31, 'SCO'], ['Ryan Gravenberch', 'MID', 82, 23, 'NED'],
-    ['Alexis Mac Allister', 'MID', 86, 26, 'ARG'], ['Dominik Szoboszlai', 'MID', 83, 24, 'HUN'], ['Mohamed Salah', 'FWD', 89, 33, 'EGY'],
-    ['Luis Diaz', 'FWD', 85, 28, 'COL'], ['Darwin Nunez', 'FWD', 82, 26, 'URU'], ['Caoimhin Kelleher', 'GK', 79, 26, 'IRL'],
-    ['Joe Gomez', 'DEF', 80, 28, 'ENG'], ['Curtis Jones', 'MID', 80, 24, 'ENG'], ['Cody Gakpo', 'FWD', 83, 26, 'NED'],
-    ['Diogo Jota', 'FWD', 83, 28, 'POR']
-  ],
-  'Newcastle United': [
-    ['Nick Pope', 'GK', 83, 33, 'ENG'], ['Fabian Schar', 'DEF', 82, 33, 'SUI'], ['Dan Burn', 'DEF', 80, 33, 'ENG'],
-    ['Kieran Trippier', 'DEF', 82, 34, 'ENG'], ['Lewis Hall', 'DEF', 78, 20, 'ENG'], ['Bruno Guimaraes', 'MID', 86, 27, 'BRA'],
-    ['Sandro Tonali', 'MID', 84, 25, 'ITA'], ['Joelinton', 'MID', 82, 28, 'BRA'], ['Anthony Gordon', 'FWD', 83, 24, 'ENG'],
-    ['Alexander Isak', 'FWD', 86, 25, 'SWE'], ['Harvey Barnes', 'FWD', 80, 27, 'ENG'], ['Martin Dubravka', 'GK', 78, 36, 'SVK'],
-    ['Tino Livramento', 'DEF', 80, 22, 'ENG'], ['Sean Longstaff', 'MID', 78, 27, 'ENG'], ['Jacob Murphy', 'FWD', 77, 30, 'ENG'],
-    ['Callum Wilson', 'FWD', 80, 33, 'ENG']
-  ],
-  'Chelsea': [
-    ['Robert Sanchez', 'GK', 80, 27, 'ESP'], ['Levi Colwill', 'DEF', 81, 22, 'ENG'], ['Wesley Fofana', 'DEF', 80, 24, 'FRA'],
-    ['Reece James', 'DEF', 83, 25, 'ENG'], ['Marc Cucurella', 'DEF', 80, 27, 'ESP'], ['Moises Caicedo', 'MID', 83, 23, 'ECU'],
-    ['Enzo Fernandez', 'MID', 83, 24, 'ARG'], ['Cole Palmer', 'MID', 86, 23, 'ENG'], ['Noni Madueke', 'FWD', 79, 23, 'ENG'],
-    ['Nicolas Jackson', 'FWD', 80, 24, 'SEN'], ['Pedro Neto', 'FWD', 81, 25, 'POR'], ['Filip Jorgensen', 'GK', 76, 23, 'DEN'],
-    ['Malo Gusto', 'DEF', 79, 22, 'FRA'], ['Romeo Lavia', 'MID', 77, 21, 'BEL'], ['Christopher Nkunku', 'FWD', 83, 27, 'FRA'],
-    ['Joao Felix', 'FWD', 81, 25, 'POR']
-  ],
-  'Manchester United': [
-    ['Andre Onana', 'GK', 82, 29, 'CMR'], ['Lisandro Martinez', 'DEF', 83, 27, 'ARG'], ['Matthijs de Ligt', 'DEF', 83, 26, 'NED'],
-    ['Diogo Dalot', 'DEF', 81, 26, 'POR'], ['Noussair Mazraoui', 'DEF', 80, 27, 'MAR'], ['Kobbie Mainoo', 'MID', 80, 20, 'ENG'],
-    ['Manuel Ugarte', 'MID', 81, 24, 'URU'], ['Bruno Fernandes', 'MID', 87, 30, 'POR'], ['Alejandro Garnacho', 'FWD', 81, 21, 'ARG'],
-    ['Marcus Rashford', 'FWD', 81, 27, 'ENG'], ['Rasmus Hojlund', 'FWD', 80, 22, 'DEN'], ['Altay Bayindir', 'GK', 76, 27, 'TUR'],
-    ['Harry Maguire', 'DEF', 79, 32, 'ENG'], ['Casemiro', 'MID', 82, 33, 'BRA'], ['Amad Diallo', 'FWD', 78, 23, 'CIV'],
-    ['Joshua Zirkzee', 'FWD', 79, 24, 'NED']
-  ],
-  'Tottenham': [
-    ['Guglielmo Vicario', 'GK', 83, 28, 'ITA'], ['Cristian Romero', 'DEF', 84, 27, 'ARG'], ['Micky van de Ven', 'DEF', 83, 24, 'NED'],
-    ['Pedro Porro', 'DEF', 82, 25, 'ESP'], ['Destiny Udogie', 'DEF', 81, 22, 'ITA'], ['Rodrigo Bentancur', 'MID', 81, 28, 'URU'],
-    ['Pape Matar Sarr', 'MID', 79, 22, 'SEN'], ['James Maddison', 'MID', 84, 28, 'ENG'], ['Dejan Kulusevski', 'FWD', 82, 25, 'SWE'],
-    ['Son Heung-min', 'FWD', 86, 33, 'KOR'], ['Dominic Solanke', 'FWD', 81, 27, 'ENG'], ['Fraser Forster', 'GK', 75, 37, 'ENG'],
-    ['Radu Dragusin', 'DEF', 78, 23, 'ROU'], ['Yves Bissouma', 'MID', 80, 28, 'MLI'], ['Brennan Johnson', 'FWD', 79, 24, 'WAL'],
-    ['Richarlison', 'FWD', 80, 28, 'BRA']
-  ],
-  'Aston Villa': [
-    ['Emiliano Martinez', 'GK', 87, 33, 'ARG'], ['Ezri Konsa', 'DEF', 82, 27, 'ENG'], ['Pau Torres', 'DEF', 82, 28, 'ESP'],
-    ['Matty Cash', 'DEF', 79, 28, 'POL'], ['Lucas Digne', 'DEF', 80, 32, 'FRA'], ['Amadou Onana', 'MID', 81, 24, 'BEL'],
-    ['Youri Tielemans', 'MID', 82, 28, 'BEL'], ['John McGinn', 'MID', 81, 30, 'SCO'], ['Leon Bailey', 'FWD', 81, 28, 'JAM'],
-    ['Morgan Rogers', 'FWD', 79, 23, 'ENG'], ['Ollie Watkins', 'FWD', 84, 29, 'ENG'], ['Robin Olsen', 'GK', 74, 35, 'SWE'],
-    ['Diego Carlos', 'DEF', 79, 32, 'BRA'], ['Boubacar Kamara', 'MID', 81, 25, 'FRA'], ['Jacob Ramsey', 'MID', 78, 24, 'ENG'],
-    ['Jhon Duran', 'FWD', 80, 21, 'COL']
-  ],
-
-  // Championship
-  'Leeds United': [
-    ['Illan Meslier', 'GK', 76, 25, 'FRA'], ['Joe Rodon', 'DEF', 75, 27, 'WAL'], ['Pascal Struijk', 'DEF', 75, 26, 'NED'],
-    ['Jayden Bogle', 'DEF', 73, 25, 'ENG'], ['Junior Firpo', 'DEF', 74, 29, 'DOM'], ['Ethan Ampadu', 'MID', 76, 24, 'WAL'],
-    ['Ilia Gruev', 'MID', 73, 25, 'BUL'], ['Brenden Aaronson', 'MID', 74, 24, 'USA'], ['Wilfried Gnonto', 'FWD', 75, 21, 'ITA'],
-    ['Daniel James', 'FWD', 75, 27, 'WAL'], ['Mateo Joseph', 'FWD', 73, 21, 'ESP'], ['Karl Darlow', 'GK', 71, 34, 'ENG'],
-    ['Max Wober', 'DEF', 74, 27, 'AUT'], ['Ao Tanaka', 'MID', 74, 26, 'JPN'], ['Manor Solomon', 'FWD', 75, 26, 'ISR'],
-    ['Joel Piroe', 'FWD', 74, 26, 'NED']
-  ],
-  'Sheffield United': [
-    ['Michael Cooper', 'GK', 74, 25, 'ENG'], ['Anel Ahmedhodzic', 'DEF', 76, 26, 'BIH'], ['Harry Souttar', 'DEF', 74, 26, 'AUS'],
-    ['Alfie Gilchrist', 'DEF', 72, 21, 'ENG'], ['Harrison Burrows', 'DEF', 73, 23, 'ENG'], ['Vinicius Souza', 'MID', 75, 26, 'BRA'],
-    ['Oliver Arblaster', 'MID', 74, 21, 'ENG'], ['Gustavo Hamer', 'MID', 77, 28, 'NED'], ['Callum O\'Hare', 'FWD', 74, 27, 'ENG'],
-    ['Jesurun Rak-Sakyi', 'FWD', 72, 22, 'ENG'], ['Kieffer Moore', 'FWD', 74, 33, 'WAL'], ['Adam Davies', 'GK', 69, 33, 'WAL'],
-    ['Jack Robinson', 'DEF', 71, 32, 'ENG'], ['Sydie Peck', 'MID', 70, 21, 'ENG'], ['Andre Brooks', 'MID', 71, 22, 'ENG'],
-    ['Rhian Brewster', 'FWD', 71, 25, 'ENG']
-  ],
-  'Burnley': [
-    ['James Trafford', 'GK', 76, 22, 'ENG'], ['Maxime Esteve', 'DEF', 75, 23, 'FRA'], ['CJ Egan-Riley', 'DEF', 71, 22, 'ENG'],
-    ['Connor Roberts', 'DEF', 73, 29, 'WAL'], ['Lucas Pires', 'DEF', 72, 24, 'BRA'], ['Josh Cullen', 'MID', 75, 29, 'IRL'],
-    ['Josh Brownhill', 'MID', 76, 29, 'ENG'], ['Hannibal Mejbri', 'MID', 73, 22, 'TUN'], ['Luca Koleosho', 'FWD', 73, 20, 'ITA'],
-    ['Jaidon Anthony', 'FWD', 73, 25, 'ENG'], ['Lyle Foster', 'FWD', 74, 25, 'RSA'], ['Vaclav Hladky', 'GK', 72, 34, 'CZE'],
-    ['Joe Worrall', 'DEF', 73, 28, 'ENG'], ['Josh Laurent', 'MID', 72, 30, 'ENG'], ['Jeremy Sarmiento', 'FWD', 73, 23, 'ECU'],
-    ['Zian Flemming', 'FWD', 74, 27, 'NED']
-  ],
-  'Sunderland': [
-    ['Anthony Patterson', 'GK', 74, 25, 'ENG'], ['Dan Ballard', 'DEF', 74, 25, 'NIR'], ['Luke O\'Nien', 'DEF', 72, 30, 'ENG'],
-    ['Trai Hume', 'DEF', 73, 23, 'NIR'], ['Dennis Cirkin', 'DEF', 72, 23, 'ENG'], ['Dan Neil', 'MID', 74, 23, 'ENG'],
-    ['Jobe Bellingham', 'MID', 74, 19, 'ENG'], ['Chris Rigg', 'MID', 73, 18, 'ENG'], ['Patrick Roberts', 'FWD', 73, 28, 'ENG'],
-    ['Romaine Mundle', 'FWD', 72, 22, 'ENG'], ['Wilson Isidor', 'FWD', 73, 25, 'FRA'], ['Simon Moore', 'GK', 68, 35, 'ENG'],
-    ['Chris Mepham', 'DEF', 73, 27, 'WAL'], ['Alan Browne', 'MID', 72, 30, 'IRL'], ['Adil Aouchiche', 'MID', 71, 23, 'FRA'],
-    ['Eliezer Mayenda', 'FWD', 70, 20, 'ESP']
-  ],
-
-  // League One
-  'Wrexham': [
-    ['Arthur Okonkwo', 'GK', 71, 23, 'ENG'], ['Eoghan O\'Connell', 'DEF', 67, 29, 'IRL'], ['Max Cleworth', 'DEF', 68, 23, 'ENG'],
-    ['Thomas O\'Connor', 'DEF', 67, 26, 'IRL'], ['Ryan Barnett', 'DEF', 68, 25, 'ENG'], ['James McClean', 'DEF', 68, 36, 'IRL'],
-    ['George Dobson', 'MID', 69, 27, 'ENG'], ['Andy Cannon', 'MID', 68, 29, 'ENG'], ['Elliot Lee', 'MID', 70, 30, 'ENG'],
-    ['Jack Marriott', 'FWD', 69, 30, 'ENG'], ['Paul Mullin', 'FWD', 71, 30, 'ENG'], ['Callum Burton', 'GK', 64, 29, 'ENG'],
-    ['Dan Scarr', 'DEF', 67, 30, 'ENG'], ['Ollie Rathbone', 'MID', 68, 28, 'ENG'], ['Steven Fletcher', 'FWD', 66, 38, 'SCO'],
-    ['Ollie Palmer', 'FWD', 66, 33, 'ENG']
-  ],
-  'Birmingham City': [
-    ['Ryan Allsop', 'GK', 71, 33, 'ENG'], ['Krystian Bielik', 'DEF', 73, 27, 'POL'], ['Christoph Klarer', 'DEF', 72, 25, 'AUT'],
-    ['Ethan Laird', 'DEF', 71, 24, 'ENG'], ['Alex Cochrane', 'DEF', 71, 25, 'ENG'], ['Paik Seung-ho', 'MID', 73, 28, 'KOR'],
-    ['Tomoki Iwata', 'MID', 73, 28, 'JPN'], ['Willum Willumsson', 'MID', 72, 26, 'ISL'], ['Keshi Anderson', 'FWD', 69, 30, 'ENG'],
-    ['Emil Hansson', 'FWD', 71, 27, 'SWE'], ['Jay Stansfield', 'FWD', 73, 22, 'ENG'], ['Bailey Peacock-Farrell', 'GK', 69, 28, 'NIR'],
-    ['Ben Davies', 'DEF', 70, 30, 'ENG'], ['Marc Leonard', 'MID', 70, 23, 'SCO'], ['Scott Wright', 'FWD', 70, 28, 'SCO'],
-    ['Lyndon Dykes', 'FWD', 71, 29, 'SCO']
-  ],
-  'Bolton': [
-    ['Nathan Baxter', 'GK', 70, 26, 'ENG'], ['Ricardo Santos', 'DEF', 70, 30, 'ENG'], ['Eoin Toal', 'DEF', 68, 26, 'NIR'],
-    ['George Johnston', 'DEF', 67, 26, 'SCO'], ['Josh Dacres-Cogley', 'DEF', 68, 29, 'ENG'], ['Szabolcs Schon', 'DEF', 68, 24, 'HUN'],
-    ['Josh Sheehan', 'MID', 70, 30, 'WAL'], ['George Thomason', 'MID', 69, 24, 'ENG'], ['Kyle Dempsey', 'MID', 68, 29, 'ENG'],
-    ['Dion Charles', 'FWD', 71, 29, 'NIR'], ['Victor Adeboyejo', 'FWD', 68, 27, 'NGA'], ['Luke Southwood', 'GK', 67, 27, 'NIR'],
-    ['Will Forrester', 'DEF', 66, 24, 'ENG'], ['Jay Matete', 'MID', 67, 24, 'ENG'], ['John McAtee', 'FWD', 68, 26, 'ENG'],
-    ['Aaron Collins', 'FWD', 69, 28, 'WAL']
-  ],
-  'Huddersfield': [
-    ['Lee Nicholls', 'GK', 71, 32, 'ENG'], ['Michal Helik', 'DEF', 72, 30, 'POL'], ['Tom Lees', 'DEF', 69, 34, 'ENG'],
-    ['Nigel Lonwijk', 'DEF', 67, 22, 'NED'], ['Lasse Sorensen', 'DEF', 68, 25, 'DEN'], ['Jaheim Headley', 'DEF', 66, 23, 'ENG'],
-    ['Jonathan Hogg', 'MID', 68, 36, 'ENG'], ['Ben Wiles', 'MID', 69, 26, 'ENG'], ['Antony Evans', 'MID', 69, 26, 'ENG'],
-    ['Josh Koroma', 'FWD', 69, 26, 'SLE'], ['Callum Marshall', 'FWD', 67, 20, 'NIR'], ['Chris Maxwell', 'GK', 66, 35, 'WAL'],
-    ['Matty Pearson', 'DEF', 68, 32, 'ENG'], ['David Kasumu', 'MID', 67, 25, 'ENG'], ['Brodie Spencer', 'DEF', 66, 21, 'NIR'],
-    ['Danny Ward', 'FWD', 67, 33, 'ENG']
-  ],
-
-  // League Two
-  'Notts County': [
-    ['Alex Bass', 'GK', 66, 27, 'ENG'], ['Jacob Bedeau', 'DEF', 65, 25, 'GRN'], ['Matty Platt', 'DEF', 65, 27, 'ENG'],
-    ['Lewis Macari', 'DEF', 63, 23, 'SCO'], ['Jodi Jones', 'MID', 68, 27, 'MLT'], ['Nick Tsaroulla', 'DEF', 64, 26, 'CYP'],
-    ['Matt Palmer', 'MID', 66, 29, 'ENG'], ['Jack Edwards', 'MID', 63, 22, 'ENG'], ['Dan Crowley', 'MID', 67, 28, 'ENG'],
-    ['Alassana Jatta', 'FWD', 66, 26, 'GAM'], ['David McGoldrick', 'FWD', 67, 37, 'IRL'], ['Sam Slocombe', 'GK', 61, 37, 'ENG'],
-    ['Robbie Cundy', 'DEF', 63, 28, 'ENG'], ['Conor Grant', 'MID', 64, 23, 'IRL'], ['Sam Austin', 'MID', 63, 28, 'ENG'],
-    ['Cedwyn Scott', 'FWD', 63, 26, 'ENG']
-  ],
-  'Chesterfield': [
-    ['Ryan Boot', 'GK', 64, 30, 'ENG'], ['Chey Dunkley', 'DEF', 66, 33, 'ENG'], ['Tom Naylor', 'DEF', 66, 34, 'ENG'],
-    ['Vontae Daley-Campbell', 'DEF', 63, 24, 'ENG'], ['Lewis Gordon', 'DEF', 63, 24, 'SCO'], ['Darren Oldaker', 'MID', 65, 26, 'ENG'],
-    ['Ollie Banks', 'MID', 65, 32, 'ENG'], ['Armando Dobra', 'MID', 66, 24, 'ALB'], ['Dilan Markanday', 'FWD', 66, 23, 'ENG'],
-    ['James Berry', 'FWD', 65, 24, 'ENG'], ['Will Grigg', 'FWD', 66, 34, 'NIR'], ['Max Thompson', 'GK', 63, 21, 'ENG'],
-    ['Jamie Grimes', 'DEF', 62, 34, 'ENG'], ['Jenson Metcalfe', 'MID', 62, 20, 'ENG'], ['Liam Mandeville', 'FWD', 64, 28, 'ENG'],
-    ['Paddy Madden', 'FWD', 65, 35, 'IRL']
-  ],
-  'Walsall': [
-    ['Tommy Simkin', 'GK', 65, 20, 'ENG'], ['David Okagbue', 'DEF', 64, 21, 'IRL'], ['Harry Williams', 'DEF', 63, 22, 'ENG'],
-    ['Taylor Allen', 'DEF', 65, 25, 'ENG'], ['Connor Barrett', 'DEF', 65, 23, 'ENG'], ['Liam Gordon', 'DEF', 64, 26, 'GUY'],
-    ['Ryan Stirk', 'MID', 65, 24, 'WAL'], ['Charlie Lakin', 'MID', 65, 26, 'ENG'], ['Jamie Jellis', 'MID', 64, 24, 'ENG'],
-    ['Nathan Lowe', 'FWD', 66, 20, 'ENG'], ['Jamille Matt', 'FWD', 64, 35, 'JAM'], ['Sam Hornby', 'GK', 62, 30, 'ENG'],
-    ['Donervon Daniels', 'DEF', 64, 31, 'MSR'], ['Oisin McEntee', 'DEF', 64, 24, 'IRL'], ['Brandon Comley', 'MID', 63, 29, 'MSR'],
-    ['Danny Johnson', 'FWD', 63, 32, 'ENG']
-  ],
-  'Gillingham': [
-    ['Jake Turner', 'GK', 64, 26, 'ENG'], ['Max Ehmer', 'DEF', 65, 33, 'GER'], ['Shad Ogie', 'DEF', 64, 24, 'IRL'],
-    ['Remao Hutton', 'DEF', 65, 26, 'ENG'], ['Max Clark', 'DEF', 64, 29, 'ENG'], ['Robbie McKenzie', 'MID', 64, 26, 'ENG'],
-    ['Armani Little', 'MID', 65, 28, 'ENG'], ['Timothee Dieng', 'MID', 65, 33, 'FRA'], ['Jayden Clarke', 'FWD', 64, 24, 'ENG'],
-    ['Jack Nolan', 'FWD', 65, 24, 'ENG'], ['Oliver Hawkins', 'FWD', 64, 33, 'ENG'], ['Glenn Morris', 'GK', 62, 41, 'ENG'],
-    ['Conor Masterson', 'DEF', 64, 27, 'IRL'], ['Ethan Coleman', 'MID', 64, 25, 'ENG'], ['Jonny Williams', 'MID', 65, 31, 'WAL'],
-    ['Josh Andrews', 'FWD', 63, 23, 'ENG']
-  ]
-};
 
 const CLUB_KITS_DATABASE = {
   'Arsenal': { home: '#dc2626', away: '#09090b', gk: '#f59e0b' },
@@ -361,6 +190,26 @@ function parseColorToRgb(colorStr) {
     const num = parseInt(hex.length === 3 ? hex.split('').map(c => c + c).join('') : hex, 16);
     return { r: (num >> 16) & 255, g: (num >> 8) & 255, b: num & 255 };
   }
+  if (colorStr.startsWith('hsl')) {
+    const m = colorStr.match(/\d+/g);
+    if (!m) return { r: 50, g: 50, b: 50 };
+    const h = +m[0] / 360, s = +m[1] / 100, l = +m[2] / 100;
+    if (s === 0) { const val = Math.round(l * 255); return { r: val, g: val, b: val }; }
+    const hue2rgb = (p, q, t) => {
+      if (t < 0) t += 1; if (t > 1) t -= 1;
+      if (t < 1/6) return p + (q - p) * 6 * t;
+      if (t < 1/2) return q;
+      if (t < 2/3) return p + (q - p) * (2/3 - t) * 6;
+      return p;
+    };
+    const q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+    const p = 2 * l - q;
+    return {
+      r: Math.round(hue2rgb(p, q, h + 1/3) * 255),
+      g: Math.round(hue2rgb(p, q, h) * 255),
+      b: Math.round(hue2rgb(p, q, h - 1/3) * 255)
+    };
+  }
   return { r: 50, g: 50, b: 50 };
 }
 
@@ -384,7 +233,9 @@ function resolveMatchKitColors(homeClub, awayClub) {
   if (getKitColorDistance(homeColor, awayColor) < 110) {
     awayColor = aKits.away;
     usedAwayKit = true;
-    if (getKitColorDistance(homeColor, awayColor) < 90) awayColor = '#f8fafc';
+    if (getKitColorDistance(homeColor, awayColor) < 90) {
+      awayColor = '#f8fafc';
+    }
   }
 
   let hGK = hKits.gk || '#047857', aGK = aKits.gk || '#f59e0b';
@@ -395,12 +246,13 @@ const CLUBS_DATABASE = [];
 LEAGUES.forEach((names, div) => names.forEach(n => {
   const nu = n === 'Newcastle United';
   let h = 0; for (const ch of n) h = (h * 31 + ch.charCodeAt(0)) % 360;
+  const managerName = (typeof REAL_MANAGERS !== 'undefined' && REAL_MANAGERS[n]) || (pick(FIRSTNAMES) + ' ' + pick(SURNAMES));
   const clubKit = CLUB_KITS_DATABASE[n] || { home: `hsl(${h},60%,38%)`, away: '#ffffff', gk: '#047857' };
   CLUBS_DATABASE.push({ 
     id: nu ? 'NEW' : 'C' + CLUBS_DATABASE.length, 
     name: n, 
     div, 
-    manager: pick(FIRSTNAMES) + ' ' + pick(SURNAMES),
+    manager: managerName,
     stadium: nu ? "St James' Park" : n + ' Stadium',
     cap: nu ? 52305 : [42000, 26000, 14000, 7000][div] + R(0, 8000), 
     budget: [60, 20, 8, 3][div] + R(0, 10), 
@@ -430,7 +282,7 @@ const FORMATIONS = {};
 
 const SQUAD_ORDER = ['GK', 'DEF', 'DEF', 'DEF', 'DEF', 'MID', 'MID', 'MID', 'FWD', 'FWD', 'FWD', 'GK', 'DEF', 'DEF', 'DEF', 'MID', 'MID', 'MID', 'FWD', 'FWD', 'DEF', 'MID'];
 function mkPlayer(pos, base, i, cid) {
-  const ovr = Math.max(40, Math.min(92, base + R(-4, 5)));
+  const ovr = Math.max(40, Math.min(92, base + R(-6, 7)));
   return { 
     id: `${cid}_${i}_${R(0, 99999)}`, 
     name: pick(FIRSTNAMES) + ' ' + pick(SURNAMES), 
@@ -438,7 +290,7 @@ function mkPlayer(pos, base, i, cid) {
     nat: Math.random() < 0.7 ? 'ENG' : pick(NATS), 
     age: R(18, 35), 
     ovr, 
-    con: 100, 
+    con: 100,
     role: ROLE[pos], 
     starter: i < 11, 
     val: Math.max(0.3, +((ovr - 50) * 0.75).toFixed(1)), 
@@ -455,7 +307,7 @@ function mkPlayer(pos, base, i, cid) {
 }
 
 function generateProceduralSquad(c) {
-  const real = REAL_SQUADS[c.name];
+  const real = typeof REAL_SQUADS !== 'undefined' && REAL_SQUADS[c.name];
   if (!real) return SQUAD_ORDER.map((pos, i) => mkPlayer(pos, c.str, i, c.id));
   
   const all = real.map(([name, pos, ovr, age, nat], i) => Object.assign(mkPlayer(pos, ovr, i, c.id), { 
@@ -511,19 +363,27 @@ function getPositionFamiliarityMultiplier(naturalPos, currentPosType) {
 function createBadgeHtml(id, size = 30) {
   const c = clubById(id) || {};
   const name = c.name || id;
+  const crestThemes = (typeof CLUB_CREST_THEMES !== 'undefined' && CLUB_CREST_THEMES) || {};
+  const theme = crestThemes[name] || {
+    bg: c.col || '#1e293b',
+    border: 'rgba(255,255,255,0.7)',
+    fg: '#ffffff',
+    code: name.replace(/[^A-Za-z ]/g, '').split(' ').filter(Boolean).map(w => w[0]).join('').slice(0, 3).toUpperCase()
+  };
+
   const fSize = Math.round(size * 0.30);
-  const code = name.replace(/[^A-Za-z ]/g, '').split(' ').filter(Boolean).map(w => w[0]).join('').slice(0, 3).toUpperCase();
   return `<span class="badge-icon-wrap" style="width:${size}px;height:${size}px;display:inline-flex;align-items:center;justify-content:center;filter:drop-shadow(0 2px 4px rgba(0,0,0,0.5));">
-    <svg width="${size}" height="${size}" viewBox="0 0 40 46" fill="none">
-      <path d="M20 2L37 7V24C37 34.5 29.5 41.5 20 44C10.5 41.5 3 34.5 3 24V7L20 2Z" fill="${c.col || '#1e293b'}" stroke="rgba(255,255,255,0.7)" stroke-width="2.5"/>
+    <svg width="${size}" height="${size}" viewBox="0 0 40 46" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M20 2L37 7V24C37 34.5 29.5 41.5 20 44C10.5 41.5 3 34.5 3 24V7L20 2Z" fill="${theme.bg}" stroke="${theme.border}" stroke-width="2.5"/>
       <path d="M20 5L34 9.5V23C34 32 28 38 20 40.5C12 38 6 32 6 23V9.5L20 5Z" fill="rgba(0,0,0,0.15)"/>
-      <text x="20" y="27" font-size="${fSize + 3}" font-weight="900" font-family="-apple-system, sans-serif" fill="#ffffff" text-anchor="middle">${code}</text>
+      <text x="20" y="27" font-size="${fSize + 3}" font-weight="900" font-family="-apple-system, sans-serif" fill="${theme.fg}" text-anchor="middle" letter-spacing="-0.5">${theme.code}</text>
     </svg>
   </span>`;
 }
 
 function computeClubAttributes(club) {
   if (!club || !club.players || !club.players.length) return { att: 60, mid: 60, def: 60, ovr: 60 };
+
   const formationKey = (state && state.currentFormation && club.id === state.userClubId) ? state.currentFormation : '4-3-3';
   const tpl = FORMATIONS[formationKey] || FORMATIONS['4-3-3'];
 
@@ -531,7 +391,7 @@ function computeClubAttributes(club) {
     let famMult = 1.0;
     if (isStarter && tpl[slotIdx]) famMult = getPositionFamiliarityMultiplier(p.naturalPos, tpl[slotIdx].posType);
     const healthMult = p.inj > 0 ? 0.60 : (0.80 + 0.20 * ((p.con || 100) / 100));
-    const moraleMult = p.morale === 'Superb' ? 1.06 : p.morale === 'Good' ? 1.02 : 0.95;
+    const moraleMult = p.morale === 'Superb' ? 1.06 : p.morale === 'Good' ? 1.02 : p.morale === 'Fair' ? 0.98 : 0.92;
     const chemMult = 0.94 + ((p.chemistry || 60) / 100) * 0.10;
     return p.ovr * famMult * healthMult * moraleMult * chemMult;
   };
@@ -543,14 +403,17 @@ function computeClubAttributes(club) {
     const unitStarters = starters.filter(p => posType === 'DEF' ? (p.naturalPos === 'DEF' || p.naturalPos === 'GK') : p.naturalPos === posType);
     let starterScore = fallback - 10;
     if (unitStarters.length > 0) {
-      starterScore = unitStarters.reduce((acc, p) => acc + getEffPlayerRating(p, true, starters.indexOf(p)), 0) / unitStarters.length;
+      const sum = unitStarters.reduce((acc, p) => acc + getEffPlayerRating(p, true, starters.indexOf(p)), 0);
+      starterScore = sum / unitStarters.length;
     }
     const unitBench = bench.filter(p => posType === 'DEF' ? (p.naturalPos === 'DEF' || p.naturalPos === 'GK') : p.naturalPos === posType);
     let benchScore = starterScore;
     if (unitBench.length > 0) {
-      benchScore = unitBench.reduce((acc, p) => acc + (p.ovr * (p.inj > 0 ? 0.6 : 0.9)), 0) / unitBench.length;
+      const bSum = unitBench.reduce((acc, p) => acc + (p.ovr * (p.inj > 0 ? 0.6 : 0.9)), 0);
+      benchScore = bSum / unitBench.length;
     }
-    return Math.max(35, Math.min(99, Math.round((starterScore * 0.70) + (benchScore * 0.30))));
+    const blended = Math.round((starterScore * 0.70) + (benchScore * 0.30));
+    return Math.max(35, Math.min(99, blended));
   };
 
   const att = calcUnitRating('FWD', club.str || 65);
@@ -564,26 +427,33 @@ const computeClubWeeklyWageBill = club => +club.players.reduce((s, p) => s + (p.
 
 function getClubBoardObjectives(club) {
   const div = club.div, budget = club.budget || 10;
+  let leagueObj = 'Avoid Relegation', faObj = 'Third Round', carabaoObj = 'Second Round', minRank = 17;
+
   if (div === 0) {
-    if (budget >= 50) return { leagueObj: 'Champions Cup Spot (Top 4)', minRank: 4, faObj: 'Semi-Finals', carabaoObj: 'Quarter-Finals' };
-    if (budget >= 25) return { leagueObj: 'Top Half Finish', minRank: 10, faObj: 'Fifth Round', carabaoObj: 'Fourth Round' };
-    return { leagueObj: 'Avoid Relegation', minRank: 17, faObj: 'Fourth Round', carabaoObj: 'Third Round' };
+    if (budget >= 50) { leagueObj = 'Champions Cup Spot (Top 4)'; minRank = 4; faObj = 'Semi-Finals'; carabaoObj = 'Quarter-Finals'; }
+    else if (budget >= 25) { leagueObj = 'Top Half Finish'; minRank = 10; faObj = 'Fifth Round'; carabaoObj = 'Fourth Round'; }
+    else { leagueObj = 'Avoid Relegation'; minRank = 17; faObj = 'Fourth Round'; carabaoObj = 'Third Round'; }
+  } else if (div === 1) {
+    if (budget >= 15) { leagueObj = 'Automatic Promotion'; minRank = 2; faObj = 'Fourth Round'; carabaoObj = 'Third Round'; }
+    else { leagueObj = 'Play-Offs (Top 6)'; minRank = 6; faObj = 'Third Round'; carabaoObj = 'Second Round'; }
+  } else {
+    leagueObj = 'Promotion Contention'; minRank = 3; faObj = 'Second Round'; carabaoObj = 'First Round';
   }
-  if (div === 1) {
-    if (budget >= 15) return { leagueObj: 'Automatic Promotion', minRank: 2, faObj: 'Fourth Round', carabaoObj: 'Third Round' };
-    return { leagueObj: 'Play-Offs (Top 6)', minRank: 6, faObj: 'Third Round', carabaoObj: 'Second Round' };
-  }
-  return { leagueObj: 'Promotion Contention', minRank: 3, faObj: 'Second Round', carabaoObj: 'First Round' };
+  return { leagueObj, faObj, carabaoObj, minRank };
 }
 
 /* ---------- WEB AUDIO ENGINE ---------- */
 let audioCtx = null, crowdLoopNode = null, crowdGainNode = null;
+
 function initAudioEngine() {
   if (!state || !state.audioEnabled) return;
   try {
     const AudioClass = window.AudioContext || window.webkitAudioContext;
-    if (!audioCtx && AudioClass) audioCtx = new AudioClass();
-    if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume().catch(() => {});
+    if (!AudioClass) return;
+    if (!audioCtx) audioCtx = new AudioClass();
+    if (audioCtx.state === 'suspended') {
+      audioCtx.resume().catch(() => {});
+    }
   } catch(e) {}
 }
 
@@ -592,19 +462,24 @@ function startStadiumCrowdLoop(isDerby = false) {
   initAudioEngine();
   if (!audioCtx) return;
   stopStadiumCrowdLoop();
+
   try {
     const bufferSize = audioCtx.sampleRate * 2;
     const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
     const data = buffer.getChannelData(0);
     for (let i = 0; i < bufferSize; i++) data[i] = Math.random() * 2 - 1;
+
     const whiteNoise = audioCtx.createBufferSource();
     whiteNoise.buffer = buffer;
     whiteNoise.loop = true;
+
     const filter = audioCtx.createBiquadFilter();
     filter.type = 'lowpass';
     filter.frequency.value = isDerby ? 550 : 380;
+
     crowdGainNode = audioCtx.createGain();
     crowdGainNode.gain.setValueAtTime(isDerby ? 0.08 : 0.04, audioCtx.currentTime);
+
     whiteNoise.connect(filter);
     filter.connect(crowdGainNode);
     crowdGainNode.connect(audioCtx.destination);
@@ -614,302 +489,73 @@ function startStadiumCrowdLoop(isDerby = false) {
 }
 
 function stopStadiumCrowdLoop() {
-  if (crowdLoopNode) { try { crowdLoopNode.stop(); } catch(e) {} crowdLoopNode = null; }
+  if (crowdLoopNode) {
+    try { crowdLoopNode.stop(); } catch(e) {}
+    crowdLoopNode = null;
+  }
 }
 
 function playSound(type) {
   if (!state || !state.audioEnabled) return;
   initAudioEngine();
   if (!audioCtx) return;
+
   try {
     const now = audioCtx.currentTime;
     const osc = audioCtx.createOscillator(), gain = audioCtx.createGain();
     osc.connect(gain); gain.connect(audioCtx.destination);
+
     if (type === 'whistle') {
-      osc.type = 'triangle'; osc.frequency.setValueAtTime(2400, now); osc.frequency.setValueAtTime(2900, now + 0.08);
-      gain.gain.setValueAtTime(0.25, now); gain.gain.exponentialRampToValueAtTime(0.001, now + 0.3);
+      osc.type = 'triangle';
+      osc.frequency.setValueAtTime(2400, now);
+      osc.frequency.setValueAtTime(2900, now + 0.08);
+      gain.gain.setValueAtTime(0.25, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.3);
       osc.start(now); osc.stop(now + 0.3);
     } else if (type === 'goal' || type === 'roar') {
       if (crowdGainNode) {
         crowdGainNode.gain.cancelScheduledValues(now);
-        crowdGainNode.gain.setValueAtTime(0.25, now);
-        crowdGainNode.gain.exponentialRampToValueAtTime(0.05, now + 3.0);
+        crowdGainNode.gain.setValueAtTime(0.24, now);
+        crowdGainNode.gain.exponentialRampToValueAtTime(0.05, now + 3.2);
       }
-      osc.type = 'sawtooth'; osc.frequency.setValueAtTime(160, now); osc.frequency.exponentialRampToValueAtTime(45, now + 0.6);
-      gain.gain.setValueAtTime(0.35, now); gain.gain.exponentialRampToValueAtTime(0.001, now + 0.6);
+      osc.type = 'sawtooth';
+      osc.frequency.setValueAtTime(160, now);
+      osc.frequency.exponentialRampToValueAtTime(45, now + 0.6);
+      gain.gain.setValueAtTime(0.35, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.6);
       osc.start(now); osc.stop(now + 0.6);
+    } else if (type === 'groan') {
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(180, now);
+      osc.frequency.exponentialRampToValueAtTime(80, now + 0.4);
+      gain.gain.setValueAtTime(0.18, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.4);
+      osc.start(now); osc.stop(now + 0.4);
+    } else if (type === 'cheer') {
+      osc.type = 'triangle';
+      osc.frequency.setValueAtTime(440, now);
+      osc.frequency.exponentialRampToValueAtTime(880, now + 0.5);
+      gain.gain.setValueAtTime(0.2, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.5);
+      osc.start(now); osc.stop(now + 0.5);
     } else if (type === 'click') {
-      osc.type = 'sine'; osc.frequency.setValueAtTime(600, now);
-      gain.gain.setValueAtTime(0.1, now); gain.gain.exponentialRampToValueAtTime(0.001, now + 0.05);
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(600, now);
+      gain.gain.setValueAtTime(0.1, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.05);
       osc.start(now); osc.stop(now + 0.05);
     }
   } catch(e) {}
 }
-function playSoundSafe(n) { try { playSound(n); } catch(e) {} }
 
-/* ---------- 2D PITCH ENGINE WITH GOALS & TRAIL ---------- */
-function initPitchCanvas() { 
-  const c = $('matchPitchCanvas'); 
-  if (!c) return;
-  pitchEngine.ctx = c.getContext('2d'); 
-  c.width = 800; c.height = 480; 
-}
+function playSoundSafe(name) { try { playSound(name); } catch(e) {} }
 
-function getFormationCoords(formationKey, isAway = false) {
-  const tpl = FORMATIONS[formationKey] || FORMATIONS['4-3-3'];
-  return tpl.map((slot) => {
-    let nx = ((100 - slot.y) / 100) * 336 + 40;
-    let ny = (slot.x / 100) * 400 + 40;
-    if (isAway) nx = 800 - nx;
-    return { x: Math.round(nx), y: Math.round(ny), role: slot.role };
-  });
-}
-
-function setup2DPlayers(h, a) {
-  initPitchCanvas();
-  const matchKits = resolveMatchKitColors(h, a);
-  pitchEngine.homeColor = matchKits.homeColor;
-  pitchEngine.awayColor = matchKits.awayColor;
-  pitchEngine.homeGKColor = matchKits.homeGK;
-  pitchEngine.awayGKColor = matchKits.awayGK;
-
-  const hCoords = getFormationCoords(h.id === state.userClubId ? state.currentFormation : '4-3-3', false);
-  const aCoords = getFormationCoords(a.id === state.userClubId ? state.currentFormation : '4-2-3-1', true);
-
-  pitchEngine.homePlayers = hCoords.map((pos, i) => ({ 
-    playerId: `h_${i}`, num: i + 1, baseX: pos.x, baseY: pos.y, x: pos.x, y: pos.y, 
-    color: matchKits.homeColor, isHome: true 
-  }));
-  pitchEngine.awayPlayers = aCoords.map((pos, i) => ({ 
-    playerId: `a_${i}`, num: i + 1, baseX: pos.x, baseY: pos.y, x: pos.x, y: pos.y, 
-    color: matchKits.awayColor, isHome: false 
-  }));
-  pitchEngine.ball = { x: 400, y: 240, targetX: 400, targetY: 240, trail: [] };
-  pitchEngine.floatingAlerts = [];
-  draw2DPitch();
-}
-
-function draw2DPitch() {
-  const { ctx, w, h, ball } = pitchEngine;
-  if (!ctx) return;
-
-  // Turf grass stripes
-  ctx.fillStyle = '#1e5229'; ctx.fillRect(0, 0, w, h);
-  ctx.fillStyle = '#174221'; for (let i = 0; i < 10; i += 2) ctx.fillRect(i * 80, 0, 80, h);
-
-  // Boundary lines & half-way circle
-  ctx.strokeStyle = 'rgba(255,255,255,0.7)'; ctx.lineWidth = 2;
-  ctx.strokeRect(20, 20, w - 40, h - 40);
-  ctx.beginPath(); ctx.moveTo(w / 2, 20); ctx.lineTo(w / 2, h - 20); ctx.stroke();
-  ctx.beginPath(); ctx.arc(w / 2, h / 2, 65, 0, Math.PI * 2); ctx.stroke();
-
-  // Penalty Boxes & Spots
-  ctx.strokeRect(20, 140, 110, 200);
-  ctx.strokeRect(w - 130, 140, 110, 200);
-  ctx.beginPath(); ctx.arc(95, 240, 2.5, 0, Math.PI * 2); ctx.fillStyle = '#fff'; ctx.fill();
-  ctx.beginPath(); ctx.arc(w - 95, 240, 2.5, 0, Math.PI * 2); ctx.fill();
-
-  // 1. PHYSICAL GOAL POSTS & MESH NETS (Visible Goal mouths)
-  const drawGoalPostAndNet = (isLeft) => {
-    const gx = isLeft ? 4 : w - 20;
-    const depth = 16;
-    const topY = 195, botY = 285;
-
-    // Net interior shading & cross-hatch pattern
-    ctx.fillStyle = 'rgba(240, 240, 240, 0.16)';
-    ctx.fillRect(gx, topY, depth, botY - topY);
-
-    ctx.strokeStyle = 'rgba(255, 255, 255, 0.35)';
-    ctx.lineWidth = 1;
-    for (let ny = topY; ny <= botY; ny += 10) {
-      ctx.beginPath(); ctx.moveTo(gx, ny); ctx.lineTo(gx + depth, ny); ctx.stroke();
-    }
-    for (let nx = gx; nx <= gx + depth; nx += 5) {
-      ctx.beginPath(); ctx.moveTo(nx, topY); ctx.lineTo(nx, botY); ctx.stroke();
-    }
-
-    // Heavy Goal frame posts
-    ctx.strokeStyle = '#ffffff';
-    ctx.lineWidth = 3.5;
-    ctx.strokeRect(gx, topY, depth, botY - topY);
-  };
-  drawGoalPostAndNet(true);
-  drawGoalPostAndNet(false);
-
-  // 2. BALL TRAIL SYSTEM
-  if (ball.trail && ball.trail.length > 1) {
-    for (let i = 0; i < ball.trail.length - 1; i++) {
-      const p1 = ball.trail[i], p2 = ball.trail[i + 1];
-      const alpha = (i / ball.trail.length) * 0.75;
-      ctx.beginPath();
-      ctx.moveTo(p1.x, p1.y);
-      ctx.lineTo(p2.x, p2.y);
-      ctx.strokeStyle = `rgba(255, 255, 255, ${alpha})`;
-      ctx.lineWidth = 1 + (i / ball.trail.length) * 3.5;
-      ctx.stroke();
-    }
-  }
-
-  // Players
-  [...pitchEngine.homePlayers, ...pitchEngine.awayPlayers].forEach(p => {
-    ctx.fillStyle = '#ffffff'; ctx.beginPath(); ctx.arc(p.x, p.y, 9, 0, Math.PI * 2); ctx.fill();
-    ctx.fillStyle = p.num === 1 ? (p.isHome ? pitchEngine.homeGKColor : pitchEngine.awayGKColor) : p.color;
-    ctx.beginPath(); ctx.arc(p.x, p.y, 7.2, 0, Math.PI * 2); ctx.fill();
-    ctx.fillStyle = '#ffffff'; ctx.font = 'bold 8.5px sans-serif'; ctx.textAlign = 'center'; ctx.fillText(p.num, p.x, p.y + 3);
-  });
-
-  // Glowing Ball
-  ctx.fillStyle = '#fff';
-  ctx.beginPath(); ctx.arc(ball.x, ball.y, 5, 0, Math.PI * 2); ctx.fill();
-  ctx.strokeStyle = 'rgba(0,0,0,0.4)'; ctx.lineWidth = 1; ctx.stroke();
-
-  // 3. FLOATING ON-PITCH GOAL ALERTS
-  pitchEngine.floatingAlerts = (pitchEngine.floatingAlerts || []).filter(a => a.life > 0);
-  pitchEngine.floatingAlerts.forEach(a => {
-    ctx.save();
-    ctx.globalAlpha = Math.min(1, a.life / 20);
-    ctx.font = '900 24px -apple-system, BlinkMacSystemFont, sans-serif';
-    ctx.textAlign = 'center';
-    ctx.fillStyle = 'rgba(15, 23, 42, 0.85)';
-    ctx.fillRect(a.x - 140, a.y - 28, 280, 48);
-    ctx.strokeStyle = '#f59e0b'; ctx.lineWidth = 2;
-    ctx.strokeRect(a.x - 140, a.y - 28, 280, 48);
-    ctx.fillStyle = '#facc15';
-    ctx.fillText(a.text, a.x, a.y + 5);
-    ctx.restore();
-    a.life--;
-    a.y -= 0.4;
-  });
-}
-
-function update2DPitchPhysics() {
-  const b = pitchEngine.ball;
-  b.x += (b.targetX - b.x) * 0.16;
-  b.y += (b.targetY - b.y) * 0.16;
-
-  // Add trail breadcrumb
-  b.trail.push({ x: b.x, y: b.y });
-  if (b.trail.length > 12) b.trail.shift();
-
-  [...pitchEngine.homePlayers, ...pitchEngine.awayPlayers].forEach(p => {
-    const dx = b.x - p.baseX, dy = b.y - p.baseY, d = Math.hypot(dx, dy) || 1;
-    p.x += (p.baseX + (dx / d) * Math.min(38, d * 0.28) - p.x) * 0.1;
-    p.y += (p.baseY + (dy / d) * Math.min(38, d * 0.28) - p.y) * 0.1;
-  });
-  draw2DPitch();
-}
-
-/* ---------- MATCHDAY SIMULATION WITH VISUAL GOALS ---------- */
-function startMatchdaySim() {
-  const m = getActiveUserMatch(); if (!m || m.played) return;
-  if ($('btnStartMatch')) $('btnStartMatch').disabled = true;
-  const h = clubById(m.home), a = clubById(m.away), feed = $('commentaryFeed');
-  if (feed) feed.innerHTML = ''; 
-  if ($('matchTimelineBar')) $('matchTimelineBar').innerHTML = '';
-  matchLiveState.isDerby = isRivalMatch(h, a);
-  matchLiveState.reds = []; matchLiveState.yellows = {}; m.scorers = [];
-
-  const pauseBtn = $('btnPauseMatch');
-  if (pauseBtn) { pauseBtn.style.display = 'inline-flex'; pauseBtn.innerText = '⏸️ PAUSE'; }
-
-  startStadiumCrowdLoop(matchLiveState.isDerby);
-  playSoundSafe('whistle');
-
-  let min = 0, hs = 0, as = 0;
-  clearTimeout(matchSimInterval); 
-  cancelAnimationFrame(animFrameId);
-
-  function renderLoop() { 
-    update2DPitchPhysics(); 
-    if (min < 90) animFrameId = requestAnimationFrame(renderLoop); 
-  }
-  renderLoop();
-
-  const triggerGoalVisual = (club, isHome) => {
-    const sc = pickScorer(club); sc.goals++;
-    isHome ? hs++ : as++;
-    m.scorers.push({ team: club.name, player: sc.name, min });
-
-    // Target the actual goal nets: (Left Goal x=12, Right Goal x=788)
-    pitchEngine.ball.targetX = isHome ? 788 : 12;
-    pitchEngine.ball.targetY = 220 + R(-25, 25);
-
-    // Trigger on-canvas celebration badge
-    pitchEngine.floatingAlerts.push({
-      x: 400,
-      y: 200,
-      text: `⚽ GOAL! ${sc.name.split(' ').pop().toUpperCase()}`,
-      life: 75
-    });
-
-    if (feed) feed.insertAdjacentHTML('afterbegin', `<div class="comm-line goal">⚽ ${min}' GOAL! ${club.name} (${sc.name}) [${hs}-${as}]</div>`);
-    addTimelineEvent('goal', `⚽ ${min}' ${sc.name.split(' ').pop()}`);
-    if ($('sbScore')) $('sbScore').innerText = `${hs} - ${as}`;
-    playSoundSafe(isHome ? 'goal' : 'roar');
-  };
-
-  function tick() {
-    if (matchLiveState.isPaused) {
-      matchSimInterval = setTimeout(tick, 200);
-      return;
-    }
-
-    min += 2; 
-    pitchEngine.currentMinute = min;
-    if ($('sbMinute')) $('sbMinute').innerText = `${min}'`;
-    
-    // Normal passage of play passes
-    if (min % 4 === 0) {
-      pitchEngine.ball.targetX = 140 + Math.random() * 520;
-      pitchEngine.ball.targetY = 60 + Math.random() * 360;
-    }
-
-    const hS = computeClubAttributes(h), aS = computeClubAttributes(a);
-    if (Math.random() < Math.max(0.01, (0.028 + (hS.att - aS.def) / 1400))) triggerGoalVisual(h, true);
-    if (Math.random() < Math.max(0.01, (0.024 + (aS.att - hS.def) / 1400))) triggerGoalVisual(a, false);
-
-    if (min >= 90) {
-      cancelAnimationFrame(animFrameId);
-      stopStadiumCrowdLoop();
-      playSoundSafe('whistle');
-      applyResult(m, hs, as, true);
-      if ($('sbMinute')) $('sbMinute').innerText = 'FULL TIME';
-      if ($('btnStartMatch')) $('btnStartMatch').disabled = false;
-      if ($('btnPauseMatch')) $('btnPauseMatch').style.display = 'none';
-      if (feed) feed.insertAdjacentHTML('afterbegin', `<div class="comm-line" style="font-weight:900;">🏁 Full Time: ${h.name} ${hs}-${as} ${a.name}</div>`);
-      if (m.type === 'CUP') {
-        if (hs === as) launchPenaltyShootout(m, h, a);
-        else cupOutcome(m);
-      }
-      if ($('btnAdvanceMaster')) $('btnAdvanceMaster').className = 'btn-advance-master btn-continue-mode';
-      if ($('btnAdvanceText')) $('btnAdvanceText').innerText = `CONTINUE TO WK ${state.currentWeek + 1}`;
-      saveGame(); 
-      renderStandingsTable(getCurrentUserClub().div); 
-      return;
-    }
-    matchSimInterval = setTimeout(tick, Math.max(12, 120 / simSpeedMultiplier));
-  }
-  tick();
-}
-
-function addTimelineEvent(type, text) {
-  matchLiveState.timelineEvents.push({ type, text });
-  const bar = $('matchTimelineBar');
-  if (bar) {
-    const i = document.createElement('div');
-    i.className = `timeline-event-item ${type}`; i.innerText = text; bar.appendChild(i);
-  }
-}
-
-function setSimSpeed(s) { 
-  simSpeedMultiplier = s; 
-  if ($('spd1')) $('spd1').className = `btn-speed ${s === 1 ? 'active' : ''}`; 
-  if ($('spd3')) $('spd3').className = `btn-speed ${s === 3 ? 'active' : ''}`; 
-}
-function triggerInstantSim() { simSpeedMultiplier = 25; }
-function toggleMatchPause() {
-  matchLiveState.isPaused = !matchLiveState.isPaused;
-  if ($('btnPauseMatch')) $('btnPauseMatch').innerText = matchLiveState.isPaused ? '▶️ RESUME' : '⏸️ PAUSE';
+function toggleAudio() {
+  if (!state) return;
+  state.audioEnabled = !state.audioEnabled;
+  if ($('btnAudio')) $('btnAudio').innerText = state.audioEnabled ? '🔊' : '🔇';
+  if (!state.audioEnabled) stopStadiumCrowdLoop();
+  playSoundSafe('click');
 }
 
 /* ---------- BRACKETS & CUPS ---------- */
@@ -922,7 +568,10 @@ function initCupTournamentTrees() {
     }
     return { name, r16, qf: [], sf: [], final: [] };
   };
-  state.cupBrackets = { fa: generateBracket('The FA Cup'), carabao: generateBracket('Carabao Cup') };
+  state.cupBrackets = {
+    fa: generateBracket('The FA Cup'),
+    carabao: generateBracket('Carabao Cup')
+  };
 }
 
 function switchCupTreeTab(key) {
@@ -943,8 +592,8 @@ function renderCupBracketTree() {
       <div class="bracket-round-title">${title}</div>
       ${(matches || []).map(m => `
         <div class="bracket-match-node">
-          <div class="bracket-team-line ${m && m.winner === m.h ? 'winner' : ''}"><span>${(m && m.h) || 'TBD'}</span><span>${(m && m.hScore !== null) ? m.hScore : '-'}</span></div>
-          <div class="bracket-team-line ${m && m.winner === m.a ? 'winner' : ''}"><span>${(m && m.a) || 'TBD'}</span><span>${(m && m.aScore !== null) ? m.aScore : '-'}</span></div>
+          <div class="bracket-team-line ${m && m.winner === m.h ? 'winner' : ''}"><span>${(m && m.h) || 'TBD'}</span><span>${(m && m.hScore !== null && m.hScore !== undefined) ? m.hScore : '-'}</span></div>
+          <div class="bracket-team-line ${m && m.winner === m.a ? 'winner' : ''}"><span>${(m && m.a) || 'TBD'}</span><span>${(m && m.aScore !== null && m.aScore !== undefined) ? m.aScore : '-'}</span></div>
         </div>
       `).join('')}
     </div>
@@ -965,23 +614,28 @@ function renderCupBracketTree() {
   `;
 }
 
-/* ---------- SAVE EXPORT, IMPORT & BACKUPS ---------- */
+/* ---------- SAVE EXPORT, IMPORT & ROLLING BACKUPS ---------- */
 function saveGame() {
   if (!state) return;
   try {
     const raw = JSON.stringify(state);
     localStorage.setItem(STORAGE_KEY, raw);
+
     if (state.currentWeek % 4 === 0) {
       const slot = ((Math.floor(state.currentWeek / 4) - 1) % 3) + 1;
       localStorage.setItem(`${BACKUP_PREFIX}${slot}`, JSON.stringify({
-        savedAtWeek: state.currentWeek, savedSeason: state.seasonYear, timestamp: new Date().toLocaleTimeString(), data: raw
+        savedAtWeek: state.currentWeek,
+        savedSeason: state.seasonYear,
+        timestamp: new Date().toLocaleTimeString(),
+        data: raw
       }));
     }
   } catch(e) {
+    console.warn('FLM: save failed (storage full?) - clearing backups and retrying', e);
     try {
       for (let i = 1; i <= 3; i++) localStorage.removeItem(`${BACKUP_PREFIX}${i}`);
       localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
-    } catch(e2) {}
+    } catch(e2) { console.error('FLM: save failed again', e2); }
   }
 }
 
@@ -1004,11 +658,16 @@ function importCareerSave(e) {
   reader.onload = ev => {
     try {
       const loaded = JSON.parse(ev.target.result);
-      if (!loaded.clubs || !loaded.manager) throw new Error('Invalid save');
+      if (!loaded.clubs || !loaded.manager) throw new Error('Invalid save file');
       state = loaded;
       ensureAllSquadsHydrated();
-      saveGame(); renderAll(); alert('✅ Career save loaded!');
-    } catch(err) { alert('❌ Corrupted save file.'); }
+      saveGame();
+      renderAll();
+      alert('✅ Career save file successfully loaded!');
+      playSoundSafe('cheer');
+    } catch(err) {
+      alert('❌ Failed to load save file: Invalid or corrupted format.');
+    }
   };
   reader.readAsText(file);
 }
@@ -1020,7 +679,10 @@ function restoreBackupSlot(slot) {
     const parsed = JSON.parse(b);
     state = JSON.parse(parsed.data);
     ensureAllSquadsHydrated();
-    saveGame(); renderAll(); alert(`✅ Restored to Week ${parsed.savedAtWeek}!`);
+    saveGame();
+    renderAll();
+    alert(`✅ Restored to backup from Week ${parsed.savedAtWeek}!`);
+    playSoundSafe('cheer');
   } catch(e) { alert('Failed to restore backup.'); }
 }
 
@@ -1042,7 +704,7 @@ function renderBackupsList() {
   }
 }
 
-/* ---------- INITIALIZATION & ENGINE HYDRATION ---------- */
+/* ---------- INITIALIZATION & HYDRATION ---------- */
 function setupFreshState(managerName = 'Manager', clubId = 'NEW') {
   state = { 
     seasonYear: 2026, currentWeek: 1, totalWeeks: 46, userClubId: clubId, 
@@ -1055,7 +717,12 @@ function setupFreshState(managerName = 'Manager', clubId = 'NEW') {
     customFormations: {},
     tacticalFamiliarity: { '4-3-3': 100, '4-2-3-1': 55, '4-4-2': 50, '3-5-2': 40, '5-3-2': 40, '4-1-2-1-2': 45, '4-5-1': 45 },
     manager: { 
-      name: managerName, confidence: 85, fansApproval: 82, reputation: 2.5, contractYears: 2, warningsCount: 0,
+      name: managerName, 
+      confidence: 85, 
+      fansApproval: 82, 
+      reputation: 2.5,
+      contractYears: 2,
+      warningsCount: 0,
       matches: 0, wins: 0, draws: 0, losses: 0, motmAwards: 0, faCups: 0, carabaoCups: 0, leagueTitles: 0, promotions: 0
     } 
   };
@@ -1086,6 +753,8 @@ function ensureAllSquadsHydrated() {
   if (!state.customFormations) state.customFormations = {};
   if (state.customFormations['Custom']) FORMATIONS['Custom'] = state.customFormations['Custom'];
   if (!state.cupBrackets) initCupTournamentTrees();
+  if (!state.manager.reputation) state.manager.reputation = 2.5;
+  if (!state.manager.contractYears) state.manager.contractYears = 2;
 }
 
 function initGame() {
@@ -1102,7 +771,15 @@ function initGame() {
   if (!ok) { setupFreshState('Manager', 'NEW'); saveGame(); }
   layoutMatchday(); 
   initMarketFilterDropdowns(); 
-  renderAll();
+  try {
+    renderAll();
+  } catch (err) {
+    console.error('FLM: failed to render saved career', err);
+    if (ok && confirm('Your saved career failed to load (' + err.message + ').\n\nOK = start a fresh career.\nCancel = leave the save untouched.')) {
+      localStorage.removeItem(STORAGE_KEY);
+      setupFreshState('Manager', 'NEW'); saveGame(); renderAll();
+    } else if (!ok) { throw err; }
+  }
 }
 
 function openCareerSetupWizard() { 
@@ -1135,12 +812,17 @@ function filterWizardClubs(div) {
 function confirmNewCareerSetup() {
   const name = ($('wizardNameInput') && $('wizardNameInput').value.trim()) || 'Manager';
   if ($('careerSetupModal')) $('careerSetupModal').style.display = 'none';
-  setupFreshState(name, wizardChosenClubId);
-  initMarketFilterDropdowns(); 
-  saveGame(); 
-  renderAll(); 
-  switchTab('tactics'); 
-  playSoundSafe('whistle');
+  try {
+    setupFreshState(name, wizardChosenClubId);
+    initMarketFilterDropdowns(); 
+    saveGame(); 
+    renderAll(); 
+    switchTab('tactics'); 
+    playSoundSafe('whistle');
+  } catch(err) {
+    console.error('Error starting career:', err);
+    renderAll();
+  }
 }
 
 function promptNewCareer() { 
@@ -1161,7 +843,7 @@ function filterModalClubs(div) {
   if (!grid) return;
   grid.innerHTML = '';
   state.clubs.filter(c => c.div === div).forEach(c => {
-    const card = document.createElement('div'); 
+    const card = document.createElement('div');
     card.style.cssText = 'background:var(--bg-panel);padding:8px 10px;border-radius:8px;cursor:pointer;border:1px solid var(--border);display:flex;align-items:center;gap:10px;';
     card.onclick = () => { 
       state.userClubId = c.id; 
@@ -1211,8 +893,14 @@ function ensureCupTie() {
   if (!state.cups[cfg[1] + 'Alive']) return;
   const opp = pick(state.clubs.filter(c => c.id !== state.userClubId)), homeUser = Math.random() < 0.5;
   w.matches.unshift({ 
-    div: -1, type: 'CUP', cupName: cfg[0], cupKey: cfg[1], roundName: cfg[2], final: cfg[3], 
-    home: homeUser ? state.userClubId : opp.id, away: homeUser ? opp.id : state.userClubId, 
+    div: -1, 
+    type: 'CUP', 
+    cupName: cfg[0], 
+    cupKey: cfg[1], 
+    roundName: cfg[2],
+    final: cfg[3], 
+    home: homeUser ? state.userClubId : opp.id, 
+    away: homeUser ? opp.id : state.userClubId, 
     homeGoals: null, awayGoals: null, played: false, scorers: [] 
   });
 }
@@ -1255,8 +943,8 @@ function applyResult(m, hg, ag, scorersDone) {
     const userLost = isUserHome ? hg < ag : ag < hg;
     const club = getCurrentUserClub();
     club.players.forEach(p => {
-      if (userWon) p.morale = 'Superb';
-      else if (userLost) p.morale = 'Fair';
+      if (userWon) p.morale = p.morale === 'Fair' ? 'Good' : 'Superb';
+      else if (userLost) p.morale = p.morale === 'Superb' ? 'Good' : 'Fair';
     });
   }
 
@@ -1313,7 +1001,9 @@ function cupOutcome(m) {
 }
 
 function checkManagerJobOffers() {
-  if (pendingJobOffer || !state || state.currentWeek < 12 || Math.random() > 0.28) return;
+  if (pendingJobOffer || !state) return;
+  if (state.currentWeek < 12 || Math.random() > 0.28) return;
+
   const userClub = getCurrentUserClub(), rep = state.manager.reputation || 2.5;
   let suitors = [];
   if (rep >= 4.2) suitors = state.clubs.filter(c => c.div === 0 && c.id !== userClub.id && c.budget >= 40);
@@ -1342,6 +1032,7 @@ function checkManagerJobOffers() {
       `;
     }
     if ($('jobOfferModal')) $('jobOfferModal').style.display = 'flex';
+    playSoundSafe('cheer');
   }
 }
 
@@ -1363,6 +1054,77 @@ function declineJobOffer() {
   if ($('jobOfferModal')) $('jobOfferModal').style.display = 'none';
 }
 
+function checkManagerSackingRisk() {
+  if (!state || state.currentWeek < 12) return;
+  const userClub = getCurrentUserClub();
+  const table = state.standings[userClub.div] || [];
+  const sorted = [...table].sort((a, b) => b.pts - a.pts || b.gd - a.gd);
+  const currentRank = sorted.findIndex(r => r.id === userClub.id) + 1;
+  const objs = getClubBoardObjectives(userClub);
+
+  if (currentRank > objs.minRank + 3 || state.manager.confidence < 30) {
+    if (state.manager.confidence <= 20 || state.manager.warningsCount >= 2) {
+      triggerManagerSacked(userClub, currentRank, objs);
+    } else if (state.manager.warningsCount === 0 || state.currentWeek % 8 === 0) {
+      state.manager.warningsCount++;
+      triggerBoardWarning(userClub, currentRank, objs);
+    }
+  } else if (currentRank <= objs.minRank && state.manager.confidence > 60) {
+    state.manager.warningsCount = 0;
+  }
+}
+
+function triggerBoardWarning(club, rank, objs) {
+  if ($('boardInterventionTitle')) {
+    $('boardInterventionTitle').innerText = '⚠️ FORMAL BOARD WARNING';
+    $('boardInterventionTitle').style.color = '#f59e0b';
+  }
+  if ($('boardInterventionBody')) {
+    $('boardInterventionBody').innerHTML = `
+      <p><b>From:</b> Board of Directors, ${club.name}</p>
+      <p><b>Target:</b> ${objs.leagueObj} | <b>Current Position:</b> ${rank}th</p>
+      <hr style="border-color:var(--border); margin:10px 0;">
+      <p style="color:#f87171; font-weight:800;">"Our current results fall unacceptably short of expectations. You are on Warning ${state.manager.warningsCount} of 2."</p>
+    `;
+  }
+  if ($('btnDismissBoardIntervention')) {
+    $('btnDismissBoardIntervention').innerText = 'RETURN TO DUTY';
+    $('btnDismissBoardIntervention').style.background = '#f59e0b';
+  }
+  if ($('boardInterventionModal')) $('boardInterventionModal').style.display = 'flex';
+  playSoundSafe('whistle');
+}
+
+function triggerManagerSacked(club, rank, objs) {
+  if ($('boardInterventionTitle')) {
+    $('boardInterventionTitle').innerText = '🚨 SACKED BY THE BOARD';
+    $('boardInterventionTitle').style.color = '#ef4444';
+  }
+  if ($('boardInterventionBody')) {
+    $('boardInterventionBody').innerHTML = `
+      <p><b>Notice of Dismissal:</b> ${club.name}</p>
+      <p><b>Reason:</b> Failure to meet target (${objs.leagueObj}). Club currently sits ${rank}th.</p>
+      <hr style="border-color:var(--border); margin:10px 0;">
+      <p style="color:#f87171;">Your managerial contract has been terminated immediately. Select a new club to continue your career.</p>
+    `;
+  }
+  if ($('btnDismissBoardIntervention')) {
+    $('btnDismissBoardIntervention').innerText = 'FIND NEW CLUB';
+    $('btnDismissBoardIntervention').style.background = '#ef4444';
+  }
+  state.manager.reputation = Math.max(1.0, +(state.manager.reputation - 0.4).toFixed(2));
+  state.manager.confidence = 70;
+  state.manager.warningsCount = 0;
+  addNewsStory('Sacking', `${state.manager.name} SACKED by ${club.name}`, 'Board terminates contract after string of poor results.', true);
+  if ($('boardInterventionModal')) $('boardInterventionModal').style.display = 'flex';
+  playSoundSafe('whistle');
+}
+
+function dismissBoardIntervention() {
+  if ($('boardInterventionModal')) $('boardInterventionModal').style.display = 'none';
+  if ($('boardInterventionTitle') && $('boardInterventionTitle').innerText.includes('SACKED')) openClubSelectorModal();
+}
+
 function finalizeWeek() {
   const w = getWeek(); if (!w || w.done) return;
   ensureCupTie();
@@ -1380,6 +1142,7 @@ function finalizeWeek() {
   applyWeeklyFatigueAndInjuries();
   generateWeeklyNewsStory();
   try { checkManagerJobOffers(); } catch(e) {}
+  try { checkManagerSackingRisk(); } catch(e) {}
   if (state.currentWeek === 30 && !state.youthIntakeCompleted) generateYouthIntake(true);
   w.done = true; saveGame();
 }
@@ -1534,6 +1297,12 @@ function fixStarters(club) {
 /* ---------- TACTICS & INTERACTIVE DRAG ENGINE ---------- */
 function changeFormation(f) {
   state.currentFormation = f;
+  const customControls = $('customFormationControls');
+  if (customControls) customControls.style.display = f === 'Custom' ? 'flex' : 'none';
+
+  if (f === 'Custom' && (!FORMATIONS['Custom'] || !FORMATIONS['Custom'].length)) {
+    FORMATIONS['Custom'] = JSON.parse(JSON.stringify(FORMATIONS['4-3-3']));
+  }
   autoPickBestXI();
 }
 
@@ -1549,6 +1318,25 @@ function autoPickBestXI() {
   picked.forEach((p, i) => { p.starter = true; p.role = tpl[i].duty; });
   club.players = [...picked, ...pool]; 
   cancelPlayerSwap(); saveGame(); renderTactics(); updateHeaderClubDisplay(); playSoundSafe('whistle');
+}
+
+function saveCustomTacticalShape() {
+  const name = ($('customFormationNameInput') ? $('customFormationNameInput').value.trim() : '') || 'Custom System';
+  const tpl = FORMATIONS[state.currentFormation] || FORMATIONS['4-3-3'];
+  
+  if (!state.customFormations) state.customFormations = {};
+  FORMATIONS['Custom'] = JSON.parse(JSON.stringify(tpl));
+  state.customFormations['Custom'] = JSON.parse(JSON.stringify(tpl));
+  state.currentFormation = 'Custom';
+  
+  if (!state.tacticalFamiliarity) state.tacticalFamiliarity = {};
+  if (!state.tacticalFamiliarity['Custom']) state.tacticalFamiliarity['Custom'] = 50;
+
+  saveGame();
+  renderTactics();
+  updateHeaderClubDisplay();
+  alert(`Tactical shape "${name}" saved!`);
+  playSoundSafe('click');
 }
 
 function handlePlayerSelect(id) {
@@ -1578,6 +1366,16 @@ function renderTactics() {
   const st = club.players.filter(p => p.starter), bench = club.players.filter(p => !p.starter);
   if ($('formationSelect')) $('formationSelect').value = state.currentFormation;
 
+  const customControls = $('customFormationControls');
+  if (customControls) customControls.style.display = state.currentFormation === 'Custom' ? 'flex' : 'none';
+
+  const famScore = (state.tacticalFamiliarity && state.tacticalFamiliarity[state.currentFormation]) || 50;
+  if ($('familiarityScoreBadge')) $('familiarityScoreBadge').innerText = `${famScore}%`;
+  if ($('familiarityProgressBar')) {
+    $('familiarityProgressBar').style.width = `${famScore}%`;
+    $('familiarityProgressBar').style.background = famScore >= 75 ? '#10b981' : famScore >= 50 ? '#38bdf8' : '#f59e0b';
+  }
+
   const nodes = $('pitchNodesWrapper');
   if (nodes) {
     nodes.innerHTML = '';
@@ -1600,7 +1398,64 @@ function renderTactics() {
           <div class="p-role">${p.ovr} OVR • <span style="color:${famColor};font-weight:800;">${famMult}%</span></div>
         </div>`;
 
-      n.onclick = () => handlePlayerSelect(p.id);
+      let isDragging = false, moved = false;
+      const onPointerDown = e => {
+        if (e.target.tagName === 'BUTTON') return;
+        isDragging = true; moved = false;
+        if (state.currentFormation !== 'Custom') {
+          FORMATIONS['Custom'] = JSON.parse(JSON.stringify(tpl));
+          state.currentFormation = 'Custom';
+          t = FORMATIONS['Custom'][i] || t;
+        }
+        n.classList.add('dragging');
+        document.addEventListener('pointermove', onPointerMove);
+        document.addEventListener('pointerup', onPointerUp);
+      };
+
+      const onPointerMove = e => {
+        if (!isDragging) return;
+        moved = true;
+        const rect = nodes.getBoundingClientRect();
+        const clientX = e.clientX || (e.touches && e.touches[0].clientX);
+        const clientY = e.clientY || (e.touches && e.touches[0].clientY);
+        let posX = Math.round(((clientX - rect.left) / rect.width) * 100);
+        let posY = Math.round(((clientY - rect.top) / rect.height) * 100);
+
+        posX = Math.max(8, Math.min(92, posX));
+        posY = Math.max(i === 0 ? 78 : 12, Math.min(i === 0 ? 94 : 85, posY));
+
+        n.style.left = posX + '%';
+        n.style.top = posY + '%';
+        t.x = posX;
+        t.y = posY;
+
+        if (i > 0) {
+          if (posY >= 62) { t.posType = 'DEF'; t.role = 'DF'; }
+          else if (posY >= 32) { t.posType = 'MID'; t.role = 'MF'; }
+          else { t.posType = 'FWD'; t.role = 'FW'; }
+        }
+      };
+
+      const onPointerUp = () => {
+        if (!isDragging) return;
+        isDragging = false;
+        n.classList.remove('dragging');
+        document.removeEventListener('pointermove', onPointerMove);
+        document.removeEventListener('pointerup', onPointerUp);
+
+        if ($('formationSelect')) $('formationSelect').value = 'Custom';
+        if ($('customFormationControls')) $('customFormationControls').style.display = 'flex';
+        if (!state.customFormations) state.customFormations = {};
+        state.customFormations['Custom'] = JSON.parse(JSON.stringify(FORMATIONS['Custom']));
+        if (!state.tacticalFamiliarity) state.tacticalFamiliarity = {};
+        if (!state.tacticalFamiliarity['Custom']) state.tacticalFamiliarity['Custom'] = 50;
+        saveGame();
+        renderTactics();
+        updateHeaderClubDisplay();
+      };
+
+      n.addEventListener('pointerdown', onPointerDown);
+      n.onclick = () => { if (!isDragging && !moved) handlePlayerSelect(p.id); };
       nodes.appendChild(n);
     });
   }
@@ -1622,6 +1477,76 @@ function renderTactics() {
   if (bb) { bb.innerHTML = ''; bench.forEach((p, i) => bb.appendChild(row(p, 'S' + (i + 1), 'pick-sub'))); }
 }
 
+/* ---------- 2D PITCH ENGINE ---------- */
+function initPitchCanvas() { 
+  const c = $('matchPitchCanvas'); 
+  if (!c) return;
+  pitchEngine.ctx = c.getContext('2d'); 
+  c.width = 800; c.height = 480; 
+}
+
+function getFormationCoords(formationKey, isAway = false) {
+  const tpl = FORMATIONS[formationKey] || FORMATIONS['4-3-3'];
+  return tpl.map((slot) => {
+    let nx = ((100 - slot.y) / 100) * (336) + 40;
+    let ny = (slot.x / 100) * (400) + 40;
+    if (isAway) nx = 800 - nx;
+    return { x: Math.round(nx), y: Math.round(ny), role: slot.role };
+  });
+}
+
+function setup2DPlayers(h, a) {
+  initPitchCanvas();
+  const matchKits = resolveMatchKitColors(h, a);
+  pitchEngine.homeColor = matchKits.homeColor;
+  pitchEngine.awayColor = matchKits.awayColor;
+  pitchEngine.homeGKColor = matchKits.homeGK;
+  pitchEngine.awayGKColor = matchKits.awayGK;
+
+  const hCoords = getFormationCoords(h.id === state.userClubId ? state.currentFormation : '4-3-3', false);
+  const aCoords = getFormationCoords(a.id === state.userClubId ? state.currentFormation : '4-2-3-1', true);
+
+  pitchEngine.homePlayers = hCoords.map((pos, i) => ({ 
+    playerId: `h_${i}`, num: i + 1, baseX: pos.x, baseY: pos.y, x: pos.x, y: pos.y, 
+    color: matchKits.homeColor, isHome: true 
+  }));
+  pitchEngine.awayPlayers = aCoords.map((pos, i) => ({ 
+    playerId: `a_${i}`, num: i + 1, baseX: pos.x, baseY: pos.y, x: pos.x, y: pos.y, 
+    color: matchKits.awayColor, isHome: false 
+  }));
+  pitchEngine.ball = { x: 400, y: 240, targetX: 400, targetY: 240, trail: [] };
+  draw2DPitch();
+}
+
+function draw2DPitch() {
+  const { ctx, w, h, ball } = pitchEngine;
+  if (!ctx) return;
+  ctx.fillStyle = '#1e5229'; ctx.fillRect(0, 0, w, h);
+  ctx.fillStyle = '#174221'; for (let i = 0; i < 10; i += 2) ctx.fillRect(i * 80, 0, 80, h);
+  ctx.strokeStyle = 'rgba(255,255,255,0.7)'; ctx.lineWidth = 2; ctx.strokeRect(16, 16, w - 32, h - 32);
+  ctx.beginPath(); ctx.moveTo(w / 2, 16); ctx.lineTo(w / 2, h - 16); ctx.stroke();
+  ctx.beginPath(); ctx.arc(w / 2, h / 2, 65, 0, Math.PI * 2); ctx.stroke();
+
+  [...pitchEngine.homePlayers, ...pitchEngine.awayPlayers].forEach(p => {
+    ctx.fillStyle = '#ffffff'; ctx.beginPath(); ctx.arc(p.x, p.y, 9, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = p.num === 1 ? (p.isHome ? pitchEngine.homeGKColor : pitchEngine.awayGKColor) : p.color;
+    ctx.beginPath(); ctx.arc(p.x, p.y, 7.2, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = '#ffffff'; ctx.font = 'bold 8.5px sans-serif'; ctx.textAlign = 'center'; ctx.fillText(p.num, p.x, p.y + 3);
+  });
+  ctx.fillStyle = '#ffffff'; ctx.beginPath(); ctx.arc(ball.x, ball.y, 5, 0, Math.PI * 2); ctx.fill();
+}
+
+function update2DPitchPhysics() {
+  const b = pitchEngine.ball;
+  b.x += (b.targetX - b.x) * 0.15; b.y += (b.targetY - b.y) * 0.15;
+  [...pitchEngine.homePlayers, ...pitchEngine.awayPlayers].forEach(p => {
+    const dx = b.x - p.baseX, dy = b.y - p.baseY, d = Math.hypot(dx, dy) || 1;
+    p.x += (p.baseX + (dx / d) * Math.min(35, d * 0.25) - p.x) * 0.1;
+    p.y += (p.baseY + (dy / d) * Math.min(35, d * 0.25) - p.y) * 0.1;
+  });
+  draw2DPitch();
+}
+
 /* ---------- IN-MATCH SUBSTITUTIONS ---------- */
 function cancelInMatchSub() {
   matchLiveState.pendingSubInId = null;
@@ -1641,13 +1566,16 @@ function populateInMatchSubChips() {
     if (titleElem) {
       titleElem.innerHTML = `<span>🔄 Subbing in: <b style="color:var(--gold)">${incomingPlayer ? incomingPlayer.name : ''}</b></span> <button class="btn-swap-pill" style="padding:2px 8px;font-size:0.68rem;" onclick="cancelInMatchSub()">Cancel</button>`;
     }
+
     club.players.filter(p => p.starter).forEach(p => {
       const isRed = matchLiveState.reds.includes(p.id);
       const chip = document.createElement('div');
       chip.className = 'sub-chip starter-chip';
       chip.style.opacity = isRed ? '0.4' : '1';
       chip.innerHTML = `<span>${p.name} (${p.naturalPos} • ${p.con}%)</span><b style="color:${isRed ? '#ef4444' : '#f87171'}">${isRed ? 'SENT OFF' : 'Sub Off ⬇'}</b>`;
-      if (!isRed) chip.onclick = () => confirmLiveMatchSub(p.id);
+      if (!isRed) {
+        chip.onclick = () => confirmLiveMatchSub(p.id);
+      }
       container.appendChild(chip);
     });
     return;
@@ -1655,37 +1583,166 @@ function populateInMatchSubChips() {
 
   const remaining = matchLiveState.maxSubs - matchLiveState.subsUsed;
   if (titleElem) {
-    titleElem.innerHTML = `<span>🔄 TACTICAL SUBSTITUTIONS (REMAINING: <span id="subsRemainingText">${remaining}</span>)</span>`;
+    titleElem.innerHTML = `<span>🔄 TACTICAL SUBSTITUTIONS (REMAINING: <span id="subsRemainingText">${remaining}</span>)</span><span style="font-size: 0.68rem; color: var(--text-muted);">Tap a bench player to bring on</span>`;
   }
+
   if (remaining <= 0) {
     container.innerHTML = '<span style="font-size:0.75rem; color:var(--text-muted);">All substitutions used for this match.</span>';
     return;
   }
+
   const bench = club.players.filter(p => !p.starter && !p.inj && !p.susp);
+  if (!bench.length) {
+    container.innerHTML = '<span style="font-size:0.75rem; color:var(--text-muted);">No fit bench players available.</span>';
+    return;
+  }
+
   bench.forEach(p => {
     const chip = document.createElement('div');
     chip.className = 'sub-chip';
     chip.innerHTML = `<span>${p.name} (${p.naturalPos} • OVR ${p.ovr} • ${p.con}%)</span><b style="color:#10b981">Bring On ⬆</b>`;
-    chip.onclick = () => { matchLiveState.pendingSubInId = p.id; populateInMatchSubChips(); };
+    chip.onclick = () => {
+      matchLiveState.pendingSubInId = p.id;
+      populateInMatchSubChips();
+    };
     container.appendChild(chip);
   });
 }
 
 function confirmLiveMatchSub(starterOutId) {
   if (matchLiveState.subsUsed >= matchLiveState.maxSubs || !matchLiveState.pendingSubInId) return;
+
   const club = getCurrentUserClub();
   const inP = club.players.find(x => x.id === matchLiveState.pendingSubInId);
   const outP = club.players.find(x => x.id === starterOutId);
-  if (!inP || !outP) { cancelInMatchSub(); return; }
 
-  inP.starter = true; outP.starter = false; inP.role = outP.role;
-  matchLiveState.subsUsed++; matchLiveState.pendingSubInId = null;
+  if (!inP || !outP) {
+    cancelInMatchSub();
+    return;
+  }
+
+  inP.starter = true;
+  outP.starter = false;
+  inP.role = outP.role;
+  matchLiveState.subsUsed++;
+  matchLiveState.pendingSubInId = null;
 
   addTimelineEvent('sub', `🔄 ${pitchEngine.currentMinute}' ${inP.name.split(' ').pop()} on for ${outP.name.split(' ').pop()}`);
+  const feed = $('commentaryFeed');
+  if (feed) feed.insertAdjacentHTML('afterbegin', `<div class="comm-line" style="border-left-color:#38bdf8">🔄 ${pitchEngine.currentMinute}' Tactical Substitution: <b>${inP.name}</b> on for <b>${outP.name}</b>.</div>`);
+
   populateInMatchSubChips();
   const m = getActiveUserMatch();
   if (m) setup2DPlayers(clubById(m.home), clubById(m.away));
   playSoundSafe('click');
+}
+
+/* ---------- MATCHDAY SIMULATION (FIXED FULL-TIME RESOLUTION) ---------- */
+function startMatchdaySim() {
+  const m = getActiveUserMatch(); if (!m || m.played) return;
+  if ($('btnStartMatch')) $('btnStartMatch').disabled = true;
+  const h = clubById(m.home), a = clubById(m.away), feed = $('commentaryFeed');
+  if (feed) feed.innerHTML = ''; 
+  if ($('matchTimelineBar')) $('matchTimelineBar').innerHTML = '';
+  matchLiveState.isDerby = isRivalMatch(h, a);
+  matchLiveState.reds = []; matchLiveState.yellows = {}; m.scorers = [];
+
+  const pauseBtn = $('btnPauseMatch');
+  if (pauseBtn) {
+    pauseBtn.style.display = 'inline-flex';
+    pauseBtn.innerText = '⏸️ PAUSE';
+    pauseBtn.style.background = '#334155';
+  }
+
+  startStadiumCrowdLoop(matchLiveState.isDerby);
+  playSoundSafe('whistle');
+
+  let min = 0, hs = 0, as = 0;
+  clearTimeout(matchSimInterval); 
+  cancelAnimationFrame(animFrameId);
+
+  function renderLoop() { 
+    update2DPitchPhysics(); 
+    if (min < 90) {
+      animFrameId = requestAnimationFrame(renderLoop); 
+    }
+  }
+  renderLoop();
+
+  const goal = (club, isHome) => {
+    const sc = pickScorer(club); sc.goals++;
+    isHome ? hs++ : as++;
+    m.scorers.push({ team: club.name, player: sc.name, min });
+    pitchEngine.ball.targetX = isHome ? 782 : 18; pitchEngine.ball.targetY = 240;
+    if (feed) feed.insertAdjacentHTML('afterbegin', `<div class="comm-line goal">⚽ ${min}' GOAL! ${club.name} (${sc.name}) [${hs}-${as}]</div>`);
+    addTimelineEvent('goal', `⚽ ${min}' ${sc.name.split(' ').pop()}`);
+    if ($('sbScore')) $('sbScore').innerText = `${hs} - ${as}`;
+    playSoundSafe(isHome ? 'goal' : 'roar');
+  };
+
+  function tick() {
+    if (matchLiveState.isPaused) {
+      matchSimInterval = setTimeout(tick, 200);
+      return;
+    }
+
+    min += 2; 
+    pitchEngine.currentMinute = min;
+    if ($('sbMinute')) $('sbMinute').innerText = `${min}'`;
+    
+    if (min % 4 === 0) {
+      pitchEngine.ball.targetX = 140 + Math.random() * 520;
+      pitchEngine.ball.targetY = 60 + Math.random() * 360;
+    }
+    if (Math.random() < 0.04) playSoundSafe('groan');
+
+    const hS = computeClubAttributes(h), aS = computeClubAttributes(a);
+    if (Math.random() < Math.max(0.01, (0.028 + (hS.att - aS.def) / 1400))) goal(h, true);
+    if (Math.random() < Math.max(0.01, (0.024 + (aS.att - hS.def) / 1400))) goal(a, false);
+
+    if (min >= 90) {
+      cancelAnimationFrame(animFrameId);
+      stopStadiumCrowdLoop();
+      playSoundSafe('whistle');
+      applyResult(m, hs, as, true);
+      if ($('sbMinute')) $('sbMinute').innerText = 'FULL TIME';
+      if ($('btnStartMatch')) $('btnStartMatch').disabled = false;
+      if ($('btnPauseMatch')) $('btnPauseMatch').style.display = 'none';
+      if (feed) feed.insertAdjacentHTML('afterbegin', `<div class="comm-line" style="font-weight:900;">🏁 Full Time: ${h.name} ${hs}-${as} ${a.name}</div>`);
+      if (m.type === 'CUP') {
+        if (hs === as) launchPenaltyShootout(m, h, a);
+        else cupOutcome(m);
+      }
+      if ($('btnAdvanceMaster')) $('btnAdvanceMaster').className = 'btn-advance-master btn-continue-mode';
+      if ($('btnAdvanceText')) $('btnAdvanceText').innerText = `CONTINUE TO WK ${state.currentWeek + 1}`;
+      saveGame(); 
+      renderStandingsTable(getCurrentUserClub().div); 
+      return;
+    }
+    matchSimInterval = setTimeout(tick, Math.max(12, 120 / simSpeedMultiplier));
+  }
+  tick();
+}
+
+function addTimelineEvent(type, text) {
+  matchLiveState.timelineEvents.push({ type, text });
+  const bar = $('matchTimelineBar');
+  if (bar) {
+    const i = document.createElement('div');
+    i.className = `timeline-event-item ${type}`; i.innerText = text; bar.appendChild(i);
+  }
+}
+
+function setSimSpeed(s) { 
+  simSpeedMultiplier = s; 
+  if ($('spd1')) $('spd1').className = `btn-speed ${s === 1 ? 'active' : ''}`; 
+  if ($('spd3')) $('spd3').className = `btn-speed ${s === 3 ? 'active' : ''}`; 
+}
+
+function triggerInstantSim() { simSpeedMultiplier = 25; }
+function toggleMatchPause() {
+  matchLiveState.isPaused = !matchLiveState.isPaused;
+  if ($('btnPauseMatch')) $('btnPauseMatch').innerText = matchLiveState.isPaused ? '▶️ RESUME' : '⏸️ PAUSE';
 }
 
 /* ---------- STANDINGS & EUROPEAN QUALIFICATION ---------- */
@@ -1724,7 +1781,7 @@ function renderStandingsTable(div) {
 
 /* ---------- MATCHDAY VIEW & VENUES ---------- */
 function renderMatchdayView() {
-  const m = getActiveUserMatch();
+  const m = getActiveUserMatch(), w = getWeek();
   if (m) {
     const h = clubById(m.home), a = clubById(m.away);
     const isDerby = isRivalMatch(h, a);
@@ -1744,7 +1801,102 @@ function renderMatchdayView() {
 
     setup2DPlayers(h, a);
     populateInMatchSubChips();
+  } else {
+    if ($('sbScore'))$('sbScore').innerText = '-'; 
+    if ($('sbMinute'))$('sbMinute').innerText = 'NO FIXTURE';
+    if ($('btnStartMatch'))$('btnStartMatch').disabled = true;
   }
+}
+
+/* ---------- MANAGER PROFILE & FINANCES VIEW ---------- */
+function renderManagerOffice() {
+  const m = state.manager, club = getCurrentUserClub(), objs = getClubBoardObjectives(club);
+  if ($('mgrContractBadge'))$('mgrContractBadge').innerText = `Contract: ${m.contractYears || 2} Years Remaining`;
+
+  if ($('managerProfileSummary')) {$('managerProfileSummary').innerHTML = `
+      <div class="manager-stat-cluster">
+        <div class="mgr-card"><div class="val">⭐ ${(m.reputation || 2.5).toFixed(1)}</div><div class="lbl">Reputation</div></div>
+        <div class="mgr-card"><div class="val" style="color:#10b981">${m.confidence}%</div><div class="lbl">Board Rating</div></div>
+        <div class="mgr-card"><div class="val" style="color:#38bdf8">${m.fansApproval}%</div><div class="lbl">Fan Support</div></div>
+        <div class="mgr-card"><div class="val">${m.contractYears || 2} Yrs</div><div class="lbl">Contract</div></div>
+      </div>
+
+      <div style="background:var(--bg-panel); border:1px solid var(--border); border-radius:8px; padding:12px; margin-bottom:12px;">
+        <h4 style="color:var(--gold); font-size:0.85rem; margin-bottom:6px;">🎯 Board Multi-Competition Mandates</h4>
+        <p style="font-size:0.8rem;"><b>League Goal:</b> <span style="color:#38bdf8;">${objs.leagueObj}</span></p>
+        <p style="font-size:0.8rem;"><b>FA Cup Expectation:</b> <span style="color:#f59e0b;">${objs.faObj}</span></p>
+        <p style="font-size:0.8rem;"><b>Carabao Cup Expectation:</b> <span style="color:#10b981;">${objs.carabaoObj}</span></p>
+      </div>
+
+      <p><b>Manager:</b> ${m.name}</p>
+      <p><b>Current Club:</b> ${club.name} (${DIV_NAMES[club.div]})</p>
+      <p><b>Career Record:</b> ${m.wins}W ${m.draws}D ${m.losses}L (${m.matches} games)</p>
+    `;
+  }
+
+  const fin = $('financesOverviewStrip');
+  if (fin) {
+    fin.innerHTML = `
+      <div style="display:flex; justify-content:space-between; flex-wrap:wrap; gap:8px;">
+        <span><b>Available Budget:</b> £${club.budget.toFixed(1)}M</span>
+        <span><b>Weekly Wage Outflow:</b> £${Math.round(computeClubWeeklyWageBill(club) * 1000).toLocaleString()}k</span>
+        <span><b>Stadium Capacity:</b> ${(club.cap + state.stadiumCapacityBonus).toLocaleString()} seats</span>
+      </div>
+    `;
+  }
+  renderBackupsList();
+}
+
+function renderFacilities() {
+  const med = state.medicalFacilityLevel || 1, ac = state.academyFacilityLevel || 1;
+  if ($('facilitiesList')) {$('facilitiesList').innerHTML = `
+      <div style="background:var(--bg-panel);padding:14px;border-radius:8px"><h4>🏟️ Stand Expansion</h4><p style="font-size:.72rem;color:var(--text-muted);margin:4px 0">+2,500 seats for higher matchday ticket yield.</p><button class="btn-swap-pill" onclick="upgradeStand(2500,4.0)">Expand (£4.0M)</button></div>
+      <div style="background:var(--bg-panel);padding:14px;border-radius:8px"><h4>🏥 Medical Centre (Lvl ${med})</h4><p style="font-size:.72rem;color:var(--text-muted);margin:4px 0">Faster recovery times for injured stars.</p><button class="btn-swap-pill" onclick="upgradeMedicalCentre()">Upgrade (£2.5M)</button></div>
+      <div style="background:var(--bg-panel);padding:14px;border-radius:8px"><h4>🌱 Youth Academy (Lvl ${ac})</h4><p style="font-size:.72rem;color:var(--text-muted);margin:4px 0">Scout 90+ potential wonderkids every spring.</p><button class="btn-swap-pill" onclick="upgradeAcademyFacility()">Upgrade (£3.0M)</button></div>
+    `;
+  }
+}
+
+function spend(cost) { const c = getCurrentUserClub(); if (c.budget < cost) { alert(`Insufficient budget (£${cost}M needed).`); return false; } c.budget -= cost; return true; }
+function upgradeMedicalCentre() { if (spend(2.5)) { state.medicalFacilityLevel++; saveGame(); renderAll(); renderFacilities(); } }
+function upgradeAcademyFacility() { if (spend(3.0)) { state.academyFacilityLevel++; saveGame(); renderAll(); renderFacilities(); } }
+function upgradeStand(s, c) { if (spend(c)) { state.stadiumCapacityBonus += s; saveGame(); renderAll(); renderFacilities(); } }
+
+function renderHonours() {
+  const m = state.manager, box = (i, v, l) => `<div style="background:var(--bg-panel);padding:14px;border-radius:8px;text-align:center;min-width:120px"><div style="font-size:1.8rem">${i}</div><div style="font-weight:800;color:var(--gold)">${v || 0}</div><div style="font-size:.72rem;color:var(--text-muted)">${l}</div></div>`;
+  if ($('honoursList')) {$('honoursList').innerHTML = box('🏅', m.motmAwards, 'Manager of Month') + box('🏆', m.faCups, 'FA Cups') + box('🏆', m.carabaoCups, 'Carabao Cups') + box('👑', m.leagueTitles || 0, 'League Titles') + box('📈', m.promotions || 0, 'Promotions');
+  }
+}
+
+/* ---------- YOUTH ACADEMY ---------- */
+function generateYouthIntake(announce) {
+  const lvl = state.academyFacilityLevel || 1, n = R(3, 5);
+  state.youthProspects = Array.from({ length: n }, (_, i) => {
+    const pos = pick(['GK', 'DEF', 'MID', 'FWD']);
+    const ovr = 52 + lvl * 2 + R(0, 5);
+    const potential = Math.min(95, ovr + 18 + R(0, 14));
+    return { id: `youth_${Date.now()}_${i}`, name: pick(FIRSTNAMES) + ' ' + pick(SURNAMES), naturalPos: pos, nat: 'ENG', age: R(15, 17), ovr, potential, wage: 0.005, contract: 3, signed: false };
+  });
+  if (announce) { state.youthIntakeCompleted = true; addNewsStory('Academy Day', `Spring Intake: ${n} prospects at ${getCurrentUserClub().name}`, 'Wonderkids ready for inspection.', true); }
+}
+
+function renderAcademyTab() {
+  const g = $('academyProspectsGrid'); 
+  if (!g) return;
+  g.innerHTML = '';
+  if ($('academyIntakeStatusTag'))$('academyIntakeStatusTag').innerText = state.youthIntakeCompleted ? 'Spring Intake Active' : `Next intake: Week 30`;
+  if (!state.youthIntakeCompleted) { g.innerHTML = '<p style="color:var(--text-muted);font-size:.8rem">No prospects yet. The spring intake arrives in Week 30.</p>'; return; }
+  state.youthProspects.forEach(p => {
+    const c = document.createElement('div'); c.className = 'prospect-card';
+    c.innerHTML = `<div class="prospect-tag">${p.potential >= 88 ? '⭐ Wonderkid' : 'Prospect'}</div><div style="font-weight:900">${p.name}</div><div style="font-size:.75rem;color:var(--text-muted)">${p.naturalPos} • ${p.age} yrs</div><div style="display:flex;justify-content:space-between;font-size:.8rem"><span>Now <b style="color:var(--gold)">${p.ovr}</b></span><span>Potential <b style="color:#10b981">${p.potential}</b></span></div><button class="btn-swap-pill" style="margin-top:8px;background:${p.signed ? '#334155' : '#059669'};color:#fff" onclick="signAcademyProspect('${p.id}')">${p.signed ? 'Signed' : 'Sign (£5k/w)'}</button>`;
+    g.appendChild(c);
+  });
+}
+
+function signAcademyProspect(id) {
+  const p = state.youthProspects.find(x => x.id === id); if (!p || p.signed) return; p.signed = true;
+  getCurrentUserClub().players.push({ id: p.id, name: p.name, naturalPos: p.naturalPos, nat: p.nat, age: p.age, ovr: p.ovr, con: 100, role: ROLE[p.naturalPos], starter: false, val: +((p.ovr - 45) * 0.8).toFixed(1), wage: p.wage, contract: p.contract, morale: 'Superb', chemistry: 75, goals: 0, cleanSheets: 0, inj: 0, yellows: 0, susp: 0 });
+  saveGame(); renderAll(); renderAcademyTab(); playSoundSafe('cheer');
 }
 
 /* ---------- TRANSFER MARKET ---------- */
@@ -1784,13 +1936,17 @@ function toggleMarketSort(k) {
 function renderTransfers() {
   const club = getCurrentUserClub(); 
   if ($('marketBudgetDisplay'))$('marketBudgetDisplay').innerText = `Available: £${club.budget.toFixed(1)}M`;
+  ['name', 'naturalPos', 'nat', 'age', 'ovr', 'price', 'clubName'].forEach(k => { 
+    const e = $(`sort_${k}`); 
+    if (e) e.innerText = marketSortKey === k ? (marketSortAsc ? ' ▲' : ' ▼') : ''; 
+  });
   const q = $('marketSearchInput') ?$('marketSearchInput').value.toLowerCase().trim() : '';
   const fl = $('filterMarketLeague') ?$('filterMarketLeague').value : 'ALL';
   const ft = $('filterMarketTeam') ?$('filterMarketTeam').value : 'ALL';
   const fp = $('filterMarketPos') ?$('filterMarketPos').value : 'ALL';
   const fn = $('filterMarketNation') ?$('filterMarketNation').value : 'ALL';
 
-  let pool = state.marketPlayers.map(p => ({ id: p.id, name: p.name, naturalPos: p.naturalPos, nat: p.nat, age: p.age, ovr: p.ovr, price: p.price, clubName: p.club || 'Foreign Club', clubId: 'SCOUT', div: -1, scout: true }));
+  let pool = state.marketPlayers.map(p => ({ id: p.id, name: p.name, naturalPos: p.naturalPos, nat: p.nat, age: p.age, ovr: p.ovr, price: p.price, clubName: p.club || (p.price === 0 ? 'Free Agent' : 'Foreign Club'), clubId: 'SCOUT', div: -1, scout: true }));
   state.clubs.forEach(c => { 
     if (c.id !== club.id) c.players.forEach(p => pool.push({ id: p.id, name: p.name, naturalPos: p.naturalPos, nat: p.nat, age: p.age, ovr: p.ovr, price: +(p.val * 1.15).toFixed(1), clubName: c.name, clubId: c.id, div: c.div, scout: false })); 
   });
@@ -1805,6 +1961,8 @@ function renderTransfers() {
       const ok = club.budget >= p.price;
       return `<tr class="fm-row"><td><b>${p.name}</b></td><td>${p.naturalPos}</td><td>${p.nat}</td><td>${p.age}</td><td><b style="color:var(--gold)">${p.ovr}</b></td><td>£${p.price.toFixed(1)}M</td><td>${p.clubName}</td><td><button class="btn-swap-pill" style="${ok ? 'background:#059669;color:#fff' : 'opacity:.4'}" onclick="executeBuyPlayer('${p.id}',${p.scout},'${p.clubId}')">${ok ? 'Sign' : 'No funds'}</button></td></tr>`;
     }).join('');
+  }
+  if ($('squadSellListBody')) {$('squadSellListBody').innerHTML = club.players.map(p => `<tr class="fm-row"><td><b>${p.name}</b>${p.starter ? ' [XI]' : ''}</td><td>${p.naturalPos}</td><td>${p.age}</td><td><b style="color:var(--gold)">${p.ovr}</b></td><td style="color:#34d399">£${p.val.toFixed(1)}M</td><td><button class="btn-sell-pill" onclick="sellSquadPlayer('${p.id}')">Sell</button></td></tr>`).join('');
   }
 }
 
@@ -1824,14 +1982,11 @@ function executeBuyPlayer(id, scout, sellerId) {
   saveGame(); renderAll(); updateHeaderClubDisplay(); renderTransfers(); playSoundSafe('cheer');
 }
 
-/* ---------- YOUTH ACADEMY & NEWS FEED ---------- */
-function generateYouthIntake(announce) {
-  const lvl = state.academyFacilityLevel || 1, n = R(3, 5);
-  state.youthProspects = Array.from({ length: n }, (_, i) => {
-    const pos = pick(['GK', 'DEF', 'MID', 'FWD']), ovr = 52 + lvl * 2 + R(0, 5), potential = Math.min(95, ovr + 18 + R(0, 14));
-    return { id: `youth_${Date.now()}_${i}`, name: pick(FIRSTNAMES) + ' ' + pick(SURNAMES), naturalPos: pos, nat: 'ENG', age: R(15, 17), ovr, potential, wage: 0.005, contract: 3, signed: false };
-  });
-  if (announce) { state.youthIntakeCompleted = true; addNewsStory('Academy Day', `Spring Intake: ${n} prospects at ${getCurrentUserClub().name}`, 'Wonderkids ready for inspection.', true); }
+function sellSquadPlayer(id) {
+  const club = getCurrentUserClub(); if (club.players.length <= 16) { alert('Squad too thin.'); return; }
+  const i = club.players.findIndex(x => x.id === id); if (i < 0) return; const p = club.players[i];
+  club.budget += p.val; club.players.splice(i, 1); fixStarters(club);
+  saveGame(); renderAll(); updateHeaderClubDisplay(); renderTransfers(); playSoundSafe('whistle');
 }
 
 function generateInitialNews() {
@@ -1842,8 +1997,17 @@ function addNewsStory(tag, headline, body, breaking = false) {
   state.newsFeed.unshift({ tag, headline, body, breaking, time: `Week ${state.currentWeek}` }); 
   if (state.newsFeed.length > 25) state.newsFeed.pop(); 
 }
+function renderNewsFeed() {
+  const f = $('newsFeedList'); if (!f || !state || !state.newsFeed) return;
+  f.innerHTML = '';
+  state.newsFeed.forEach(n => { 
+    const c = document.createElement('div'); c.className = `news-card ${n.breaking ? 'breaking' : ''}`; 
+    c.innerHTML = `<div style="display:flex;justify-content:space-between"><span style="font-size:.65rem;font-weight:800;color:var(--accent);text-transform:uppercase">${n.tag}</span><span style="font-size:.68rem;color:var(--text-muted)">${n.time}</span></div><div style="font-weight:800">${n.headline}</div><div style="font-size:.8rem;color:#cbd5e1">${n.body}</div>`; 
+    f.appendChild(c); 
+  });
+}
 
-/* ---------- MANAGER & MASTER RENDER ---------- */
+/* ---------- MASTER RENDER & HEADER ---------- */
 function updateHeaderClubDisplay() {
   const c = getCurrentUserClub(); if (!c) return;
   const s = computeClubAttributes(c);
@@ -1862,6 +2026,7 @@ function renderAll() {
   ensureCupTie();
   if ($('headerDivName'))$('headerDivName').innerText = DIV_NAMES[club.div];
   if ($('headerWeek'))$('headerWeek').innerText = `Wk ${state.currentWeek} / ${state.totalWeeks}`;
+  if ($('headerSeasonTag'))$('headerSeasonTag').innerText = `${state.seasonYear}/${String(state.seasonYear + 1).slice(-2)} Career • English Pyramid`;
   if ($('headerConfidence'))$('headerConfidence').innerText = `${state.manager.confidence}%`;
   if ($('headerBudget'))$('headerBudget').innerText = `£${club.budget.toFixed(1)}M`;
   updateHeaderClubDisplay(); 
@@ -1872,15 +2037,25 @@ function renderAll() {
 }
 
 function switchTab(id) {
-  ['tactics', 'matchday', 'cups', 'news', 'transfers', 'standings'].forEach(t => { 
-    const el = $(`tab-${t}`); if (el) el.style.display = t === id ? 'block' : 'none'; 
-    const nav = $(`nav-${t}`); if (nav) nav.className = `nav-item ${t === id ? 'active' : ''}`; 
+  ['tactics', 'matchday', 'cups', 'news', 'transfers', 'standings', 'academy', 'facilities', 'manager', 'honours'].forEach(t => { 
+    const el = $(`tab-${t}`);
+    if (el) el.style.display = t === id ? 'block' : 'none'; 
+    const nav = $(`nav-${t}`);
+    if (nav) nav.className = `nav-item ${t === id ? 'active' : ''}`; 
   });
-  if (id === 'tactics') renderTactics();
-  if (id === 'matchday') renderMatchdayView();
-  if (id === 'cups') renderCupBracketTree();
-  if (id === 'transfers') renderTransfers();
-  if (id === 'standings') renderStandingsTable(state.activeStandingsTab);
+  const tabActions = { 
+    tactics: renderTactics, 
+    news: renderNewsFeed, 
+    cups: renderCupBracketTree, 
+    transfers: renderTransfers, 
+    standings: () => renderStandingsTable(state.activeStandingsTab), 
+    academy: renderAcademyTab, 
+    matchday: renderMatchdayView, 
+    facilities: renderFacilities, 
+    manager: renderManagerOffice, 
+    honours: renderHonours 
+  };
+  if (tabActions[id]) tabActions[id]();
 }
 
 function layoutMatchday() {
@@ -1895,11 +2070,14 @@ function layoutMatchday() {
   }
 }
 
+
+/* ---------- FALLBACK: END OF SEASON ---------- */
 if (typeof window.showEndSeasonGala !== 'function') {
   window.showEndSeasonGala = function () {
     const club = getCurrentUserClub();
     const rows = [...(state.standings[club.div] || [])].sort((a, b) => b.pts - a.pts || b.gd - a.gd || b.gf - a.gf);
     const pos = rows.findIndex(r => r.id === club.id) + 1;
     alert(`Season complete! ${club.name} finished position ${pos} in the ${DIV_NAMES[club.div]}.`);
+    if (pos === 1 && club.div === 0) { state.manager.leagueTitles = (state.manager.leagueTitles || 0) + 1; saveGame(); }
   };
 }
