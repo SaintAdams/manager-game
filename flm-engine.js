@@ -937,12 +937,12 @@ function populateInMatchSubChips() {
   container.innerHTML = '';
   const club = getCurrentUserClub();
 
-  // If a player MUST be replaced due to injury:
+  // If an injured starter MUST be replaced:
   if (matchLiveState.forcedSubOutId) {
     const injPlayer = club.players.find(p => p.id === matchLiveState.forcedSubOutId);
     const targetPos = injPlayer ? injPlayer.naturalPos : 'FWD';
 
-    titleElem.innerHTML = `<span style="color:#ef4444;font-weight:900;">🚑 REPLACE INJURED: ${injPlayer ? injPlayer.name : 'Player'} (${targetPos})</span><span style="font-size:0.68rem;color:var(--text-muted);">Choose a recommended like-for-like or alternative sub</span>`;
+    titleElem.innerHTML = `<span style="color:#ef4444;font-weight:900;">🚑 MUST REPLACE: ${injPlayer ? injPlayer.name : 'Injured Player'} (${targetPos})</span><span style="font-size:0.68rem;color:var(--text-muted);">Choose a replacement to resume the match</span>`;
 
     const bench = club.players.filter(p => !p.starter && !p.inj && !p.susp);
     if (!bench.length) {
@@ -1059,7 +1059,8 @@ function confirmLiveMatchSub(starterOutId) {
   matchLiveState.subsUsed++;
   matchLiveState.pendingSubInId = null;
 
-  if (matchLiveState.forcedSubOutId === starterOutId) {
+  const wasForced = (matchLiveState.forcedSubOutId === starterOutId);
+  if (wasForced) {
     matchLiveState.forcedSubOutId = null;
   }
 
@@ -1070,14 +1071,11 @@ function confirmLiveMatchSub(starterOutId) {
   const m = getActiveUserMatch();
   if (m) setup2DPlayers(clubById(m.home), clubById(m.away));
   playSound('click');
-}
 
-function dismissInjuryModalAndSub() {
-  const modal = $('injuryAlertModal');
-  if (modal) modal.style.display = 'none';
-  populateInMatchSubChips();
-  const drawer = $('inMatchSubDrawer');
-  if (drawer) drawer.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  // If this substitution resolved an injury stoppage, resume match immediately!
+  if (wasForced && matchLiveState.isPaused) {
+    toggleMatchPause();
+  }
 }
 
 function toggleMatchPause() {
@@ -1087,7 +1085,11 @@ function toggleMatchPause() {
     const club = getCurrentUserClub();
     const injPlayer = club.players.find(p => p.id === matchLiveState.forcedSubOutId && p.starter);
     if (injPlayer) {
-      alert(`⚠️ You cannot resume the match while ${injPlayer.name} is injured on the pitch! Bring on a substitute first.`);
+      $('commentaryFeed').insertAdjacentHTML(
+        'afterbegin',
+        `<div class="comm-line injury">⚠️ <b>INJURY STOPPAGE:</b> Select a substitution for ${injPlayer.name} below before resuming play.</div>`
+      );
+      playSound('whistle');
       return;
     }
   }
@@ -1124,7 +1126,7 @@ function startMatchdaySim() {
   const pauseBtn = $('btnPauseMatch');
   if (pauseBtn) {
     pauseBtn.style.display = 'inline-flex';
-    pauseBtn.innerText = '⏸️️ PAUSE';
+    pauseBtn.innerText = '⏸️ PAUSE';
     pauseBtn.style.background = '#334155';
   }
 
@@ -1181,6 +1183,7 @@ function startMatchdaySim() {
     addTimelineEvent('injury', `🚑 ${min}' ${p.name.split(' ').pop()}`);
     playSound('whistle');
 
+    // If YOUR player is injured, pause and highlight the substitution drawer directly
     if (club.id === state.userClubId) {
       matchLiveState.forcedSubOutId = p.id;
       matchLiveState.isPaused = true;
@@ -1189,12 +1192,6 @@ function startMatchdaySim() {
         pauseBtn.innerText = '▶️ RESUME';
         pauseBtn.style.background = '#10b981';
       }
-
-      $('injuryModalDetails').innerHTML = `
-        <p><b>${p.name}</b> (${p.naturalPos} • OVR ${p.ovr}) has sustained an injury at minute ${min} and cannot continue.</p>
-        <p style="margin-top: 8px; color: #f59e0b; font-size: 0.8rem;">The match has been paused. Select a substitute below to replace him before resuming.</p>
-      `;
-      $('injuryAlertModal').style.display = 'flex';
       populateInMatchSubChips();
     }
   };
@@ -1227,7 +1224,6 @@ function startMatchdaySim() {
       }));
     }
 
-    // Balanced disciplinary and injury chances
     if (Math.random() < 0.035) {
       triggerCard(Math.random() < 0.5 ? h : a);
     }
@@ -1278,7 +1274,8 @@ function startMatchdaySim() {
         }
       }
 
-      $('btnAdvanceMaster').className = 'btn-advance-master btn-continue-mode';$('btnAdvanceText').innerText = `CONTINUE TO WK ${state.currentWeek + 1}`;
+      $('btnAdvanceMaster').className = 'btn-advance-master btn-continue-mode';
+      $('btnAdvanceText').innerText = `CONTINUE TO WK ${state.currentWeek + 1}`;
       saveGame();
       renderStandingsTable(getCurrentUserClub().div);
       playSound('whistle');
