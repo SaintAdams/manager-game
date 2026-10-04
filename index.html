@@ -35,7 +35,6 @@
     .header-club-chip { display: flex; align-items: center; gap: 10px; background: var(--bg-panel); border: 1px solid var(--border); padding: 4px 12px; border-radius: 8px; }
     .badge-icon-wrap { width: 34px; height: 34px; position: relative; display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; }
     .badge-icon-img { width: 100%; height: 100%; object-fit: contain; }
-    .badge-fallback { width: 100%; height: 100%; border-radius: 6px; background: #334155; color: #fff; font-weight: 900; font-size: 0.72rem; display: flex; align-items: center; justify-content: center; }
     .header-club-text h2 { font-size: 0.92rem; font-weight: 800; color: #fff; line-height: 1.1; }
     .header-club-text p { font-size: 0.65rem; color: var(--text-muted); }
 
@@ -74,37 +73,17 @@
 
     .tactics-container { display: grid; grid-template-columns: 460px 1fr; gap: 16px; }
     .pitch-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; padding: 12px; display: flex; flex-direction: column; gap: 10px; }
-    .tactics-toolbar { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
     .tactics-select { background: var(--bg-panel); color: #fff; border: 1px solid var(--border); padding: 7px 10px; border-radius: 6px; font-weight: 700; font-size: 0.8rem; outline: none; }
-    .btn-auto-pick { background: linear-gradient(135deg, #059669 0%, #047857 100%); color: #fff; border: none; padding: 7px 12px; border-radius: 6px; font-weight: 800; font-size: 0.78rem; cursor: pointer; display: flex; align-items: center; gap: 5px; }
-
-    .football-pitch {
-      width: 100%; height: 480px;
-      background: repeating-linear-gradient(0deg, var(--pitch-grass-1), var(--pitch-grass-1) 48px, var(--pitch-grass-2) 48px, var(--pitch-grass-2) 96px);
-      border: 2px solid rgba(255, 255, 255, 0.7); border-radius: 8px; position: relative; overflow: hidden; box-shadow: inset 0 0 30px rgba(0,0,0,0.6);
-    }
-    .pitch-line-half { position: absolute; top: 50%; left: 0; right: 0; height: 2px; background: rgba(255, 255, 255, 0.65); transform: translateY(-50%); }
-    .pitch-circle-center { position: absolute; top: 50%; left: 50%; width: 90px; height: 90px; border: 2px solid rgba(255, 255, 255, 0.65); border-radius: 50%; transform: translate(-50%, -50%); }
-    .pitch-spot-center { position: absolute; top: 50%; left: 50%; width: 6px; height: 6px; background: #fff; border-radius: 50%; transform: translate(-50%, -50%); }
-    .penalty-box-top { position: absolute; top: 0; left: 50%; width: 180px; height: 75px; border: 2px solid rgba(255, 255, 255, 0.65); border-top: none; transform: translateX(-50%); }
-    .six-yard-top { position: absolute; top: 0; left: 50%; width: 90px; height: 30px; border: 2px solid rgba(255, 255, 255, 0.65); border-top: none; transform: translateX(-50%); }
-    .penalty-box-bottom { position: absolute; bottom: 0; left: 50%; width: 180px; height: 75px; border: 2px solid rgba(255, 255, 255, 0.65); border-bottom: none; transform: translateX(-50%); }
-    .six-yard-bottom { position: absolute; bottom: 0; left: 50%; width: 90px; height: 30px; border: 2px solid rgba(255, 255, 255, 0.65); border-bottom: none; transform: translateX(-50%); }
 
     .pitch-node { position: absolute; transform: translate(-50%, -50%); display: flex; flex-direction: column; align-items: center; cursor: pointer; z-index: 10; transition: transform 0.15s ease; width: 66px; }
     .pitch-node:active { transform: translate(-50%, -50%) scale(1.1); }
     .pitch-node.selected-for-swap { transform: translate(-50%, -50%) scale(1.15); z-index: 30; filter: drop-shadow(0 0 8px #f59e0b); }
     .pitch-kit { width: 34px; height: 34px; background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); border: 2px solid #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 0.85rem; color: #fff; box-shadow: 0 3px 6px rgba(0,0,0,0.6); position: relative; }
-    .pitch-node.selected-for-swap .pitch-kit { border-color: #f59e0b; background: #d97706; }
     .pitch-role-tag { position: absolute; bottom: -6px; background: #0284c7; color: #fff; font-size: 0.58rem; font-weight: 800; padding: 1px 3px; border-radius: 3px; text-transform: uppercase; }
     .pitch-name-card { margin-top: 4px; background: rgba(15, 23, 42, 0.9); border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 4px; padding: 2px 4px; text-align: center; width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .pitch-name-card .p-name { font-size: 0.68rem; font-weight: 800; color: #fff; }
     .pitch-name-card .p-role { font-size: 0.58rem; font-weight: 700; color: #38bdf8; }
 
-    .swap-status-bar { background: linear-gradient(90deg, #b45309 0%, #d97706 100%); color: #fff; padding: 8px 12px; border-radius: 8px; font-size: 0.78rem; font-weight: 800; display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
-    .swap-status-bar button { background: rgba(0,0,0,0.3); border: 1px solid #fff; color: #fff; padding: 3px 8px; border-radius: 4px; cursor: pointer; font-size: 0.72rem; }
-
-    .squad-roster-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; padding: 14px; display: flex; flex-direction: column; gap: 12px; overflow-x: auto; }
     .section-title-strip { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); padding-bottom: 6px; }
     .section-title-strip h3 { font-size: 0.9rem; font-weight: 800; text-transform: uppercase; color: var(--text-main); }
     .section-title-strip span.count { font-size: 0.72rem; color: var(--text-muted); font-weight: 700; }
@@ -155,10 +134,6 @@
     .comm-line.redcard { border-left-color: #ef4444; background: rgba(239, 68, 68, 0.2); font-weight: 800; color: #f87171; }
     .comm-line.injury { border-left-color: #ec4899; background: rgba(236, 72, 153, 0.15); font-weight: 700; color: #f472b6; }
 
-    .shouts-bar { display: flex; align-items: center; gap: 6px; background: var(--bg-panel); padding: 8px 12px; border-radius: 8px; border: 1px solid var(--border); flex-wrap: wrap; }
-    .btn-shout { background: var(--bg-dark); border: 1px solid var(--border); color: #fff; padding: 5px 10px; border-radius: 6px; font-size: 0.72rem; font-weight: 800; cursor: pointer; }
-    .btn-shout:hover { border-color: var(--accent); }
-
     .canvas-container { width: 100%; background: #090e18; border: 2px solid var(--border); border-radius: 10px; position: relative; overflow: hidden; display: flex; flex-direction: column; align-items: center; }
     #matchPitchCanvas { width: 100%; height: 440px; background: #173f22; display: block; }
     .sim-controls-bar { width: 100%; background: var(--bg-panel); border-top: 1px solid var(--border); padding: 8px 12px; display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; }
@@ -171,14 +146,12 @@
     .sub-chips-row { display: flex; gap: 6px; overflow-x: auto; padding-top: 4px; }
     .sub-chip { background: var(--bg-dark); border: 1px solid var(--border); padding: 4px 8px; border-radius: 6px; font-size: 0.72rem; cursor: pointer; white-space: nowrap; display: flex; align-items: center; gap: 6px; }
     .sub-chip:hover { border-color: var(--fm-green); }
-    .sub-chip.selected { border-color: var(--gold); background: rgba(245, 158, 11, 0.2); }
     .sub-chip.starter-chip { border-color: rgba(255, 255, 255, 0.2); }
     .sub-chip.starter-chip:hover { border-color: var(--fm-red); }
 
     .commentary-box { background: #090d14; border: 1px solid var(--border); border-radius: 8px; height: 160px; overflow-y: auto; padding: 10px; display: flex; flex-direction: column; gap: 6px; }
     .comm-line { font-size: 0.78rem; padding: 5px 8px; border-radius: 6px; background: var(--bg-panel); border-left: 3px solid var(--accent); }
     .comm-line.goal { border-left-color: #10b981; background: rgba(16, 185, 129, 0.15); font-weight: 800; color: #34d399; }
-    .comm-line.pen { border-left-color: var(--purple); background: rgba(168, 85, 247, 0.15); font-weight: 800; color: #c084fc; }
 
     .standings-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; padding: 14px; overflow-x: auto; }
     .grounds-grid-container { display: flex; flex-direction: column; gap: 7px; }
@@ -230,6 +203,12 @@
     .pen-pip { width: 18px; height: 18px; border-radius: 50%; background: #334155; border: 1px solid #475569; }
     .pen-pip.scored { background: #10b981; border-color: #059669; }
     .pen-pip.missed { background: #ef4444; border-color: #b91c1c; }
+
+    /* Manager Career Status Box */
+    .manager-stat-cluster { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 10px; margin: 12px 0; }
+    .mgr-card { background: var(--bg-dark); padding: 10px 12px; border-radius: 8px; border: 1px solid var(--border); }
+    .mgr-card .val { font-size: 1.15rem; font-weight: 900; color: #fff; }
+    .mgr-card .lbl { font-size: 0.62rem; color: var(--text-muted); text-transform: uppercase; font-weight: 800; margin-top: 2px; }
 
     footer { background: #080c14; border-top: 1px solid var(--border); padding: 10px 16px; text-align: center; font-size: 0.75rem; font-weight: 700; color: #64748b; }
 
@@ -284,15 +263,15 @@
       </div>
       <div class="metric-pill">
         <span class="label">Calendar</span>
-        <span class="val" id="headerWeek">Wk 1 / 38</span>
+        <span class="val" id="headerWeek">Wk 1 / 46</span>
       </div>
       <div class="metric-pill">
-        <span class="label">Board Approval</span>
+        <span class="label">Board Status</span>
         <span class="val" id="headerConfidence" style="color: #34d399;">85%</span>
       </div>
       <div class="metric-pill">
-        <span class="label">Fans Approval</span>
-        <span class="val" id="headerFansApproval" style="color: #38bdf8;">82%</span>
+        <span class="label">Reputation</span>
+        <span class="val" id="headerReputation" style="color: var(--gold);">⭐ 3.5</span>
       </div>
       <div class="metric-pill">
         <span class="label">Wage Bill</span>
@@ -334,7 +313,6 @@
     <main class="viewport" id="mainViewport">
       <!-- TAB: TACTICS -->
       <div id="tab-tactics" class="tab-pane active">
-        <!-- TOP CONTROLS & FAMILIARITY BAR -->
         <div style="display:grid; grid-template-columns: auto 1fr auto; gap:12px; align-items:center; background:var(--bg-panel); padding:10px 14px; border-radius:8px; border:1px solid var(--border); margin-bottom:12px;">
           <div style="display:flex; align-items:center; gap:8px;">
             <label style="font-size:0.8rem; font-weight:800; color:var(--text-muted);">FORMATION:</label>
@@ -351,7 +329,6 @@
             <button class="btn-swap-pill" style="background:#2563eb; color:#fff;" onclick="autoPickBestXI()">⚡ Auto Pick XI</button>
           </div>
 
-          <!-- Mid: Tactical Familiarity Bar -->
           <div style="display:flex; flex-direction:column; justify-content:center; gap:3px;">
             <div style="display:flex; justify-content:space-between; font-size:0.72rem; font-weight:800;">
               <span style="color:var(--text-muted); text-transform:uppercase;">Tactical Familiarity</span>
@@ -362,38 +339,28 @@
             </div>
           </div>
 
-          <!-- Right: Custom save controls (only shows on Custom) -->
           <div id="customFormationControls" style="display:none; align-items:center; gap:8px;">
             <input id="customFormationNameInput" type="text" placeholder="Custom System" style="background:var(--bg-card); color:#fff; border:1px solid var(--border); padding:5px 8px; border-radius:6px; font-size:0.75rem; width:130px;" value="Custom System" />
             <button class="btn-swap-pill" style="background:#10b981; color:#fff;" onclick="saveCustomTacticalShape()">💾 Save</button>
           </div>
         </div>
 
-        <!-- NOTIFICATION BAR -->
         <div id="swapNotificationBar" style="display:none; align-items:center; justify-content:space-between; background:rgba(245,158,11,0.18); border:1px solid var(--gold); padding:8px 12px; border-radius:6px; margin-bottom:10px;">
           <span id="swapNotificationText" style="font-size:0.8rem; font-weight:700; color:var(--gold);"></span>
           <button class="btn-swap-pill" style="background:#475569;" onclick="cancelPlayerSwap()">Cancel</button>
         </div>
 
-        <!-- MAIN TWO-COLUMN TACTICS LAYOUT -->
         <div class="tactics-layout-grid" style="display:grid; grid-template-columns:minmax(320px, 420px) minmax(0, 1fr); gap:16px; align-items:start;">
-          
-          <!-- LEFT COLUMN: Pitch + Shape Analysis Card -->
           <div style="display:flex; flex-direction:column; gap:10px; width:100%;">
-            <!-- 2D Pitch Card -->
             <div class="tactics-pitch-card" style="position:relative; width:100%; aspect-ratio:3.8/5; background:#1b4d24; border:2px solid rgba(255,255,255,0.7); border-radius:10px; overflow:hidden; user-select:none; box-shadow:0 6px 14px rgba(0,0,0,0.4);">
-              <!-- Pitch Grass Strips & Markings -->
               <div style="position:absolute; inset:0; background:repeating-linear-gradient(0deg, #1e5229 0px, #1e5229 45px, #174221 45px, #174221 90px);"></div>
               <div style="position:absolute; top:50%; left:0; right:0; height:2px; background:rgba(255,255,255,0.6);"></div>
               <div style="position:absolute; top:50%; left:50%; width:90px; height:90px; border:2px solid rgba(255,255,255,0.6); border-radius:50%; transform:translate(-50%, -50%);"></div>
               <div style="position:absolute; top:0; left:25%; right:25%; height:60px; border:2px solid rgba(255,255,255,0.6); border-top:none;"></div>
               <div style="position:absolute; bottom:0; left:25%; right:25%; height:60px; border:2px solid rgba(255,255,255,0.6); border-bottom:none;"></div>
-              
-              <!-- Player Circles Container -->
               <div id="pitchNodesWrapper" style="position:absolute; inset:0;"></div>
             </div>
 
-            <!-- Shape Analysis Card -->
             <div style="background:var(--bg-panel); padding:10px 12px; border-radius:8px; border:1px solid var(--border);">
               <div style="font-size:0.72rem; font-weight:800; color:var(--text-muted); text-transform:uppercase; margin-bottom:4px;">Shape Analysis</div>
               <div id="analysisBadgesContainer" style="display:flex; flex-direction:column; gap:3px; font-size:0.72rem;"></div>
@@ -404,9 +371,7 @@
             </div>
           </div>
 
-          <!-- RIGHT COLUMN: Tables (Starting XI & Bench) -->
           <div style="display:flex; flex-direction:column; gap:16px; min-width:0;">
-            <!-- Starting XI Table -->
             <div style="background:var(--bg-panel); padding:12px; border-radius:8px; border:1px solid var(--border);">
               <div style="font-weight:900; font-size:0.9rem; margin-bottom:8px; color:#fff;">STARTING ELEVEN</div>
               <div style="overflow-x:auto;">
@@ -430,7 +395,6 @@
               </div>
             </div>
 
-            <!-- Bench Table -->
             <div style="background:var(--bg-panel); padding:12px; border-radius:8px; border:1px solid var(--border);">
               <div style="font-weight:900; font-size:0.9rem; margin-bottom:8px; color:#fff;">SUBSTITUTES BENCH</div>
               <div style="overflow-x:auto;">
@@ -454,9 +418,9 @@
               </div>
             </div>
           </div>
-
         </div>
       </div>
+
       <!-- MATCHDAY TAB -->
       <div id="tab-matchday" class="tab-pane" style="display: none;">
         <div class="matchday-grid">
@@ -564,7 +528,7 @@
         </div>
       </div>
 
-      <!-- ADVANCED TRANSFER MARKET TAB -->
+      <!-- TRANSFER MARKET TAB -->
       <div id="tab-transfers" class="tab-pane" style="display: none;">
         <div class="standings-card">
           <div class="section-title-strip" style="margin-bottom: 12px;">
@@ -640,7 +604,7 @@
         </div>
       </div>
 
-      <!-- LEAGUE TABLES & STATS TAB -->
+      <!-- LEAGUE TABLES TAB -->
       <div id="tab-standings" class="tab-pane" style="display: none;">
         <div class="standings-card">
           <div class="league-tabs">
@@ -726,7 +690,10 @@
       <!-- MANAGER OFFICE TAB -->
       <div id="tab-manager" class="tab-pane" style="display: none;">
         <div class="standings-card">
-          <h3 style="margin-bottom: 12px;">Manager Dossier &amp; Club Finances</h3>
+          <div class="section-title-strip" style="margin-bottom: 12px;">
+            <h3>📋 Manager Dossier &amp; Board Expectations</h3>
+            <span class="count" id="mgrContractBadge">Contract: 2 Years Remaining</span>
+          </div>
           <div id="managerProfileSummary" style="font-size: 0.85rem; line-height: 1.6;"></div>
         </div>
       </div>
@@ -741,7 +708,7 @@
     </main>
   </div>
 
-  <!-- FIXED 3-COLUMN BROADCAST RESULT MODAL -->
+  <!-- RESULT MODAL -->
   <div id="resultSummaryModal" class="modal-backdrop" style="display: none; z-index: 1550;">
     <div class="modal-window" style="width: 520px; text-align: center;">
       <h3 style="color: var(--accent); font-size: 0.82rem; text-transform: uppercase; margin-bottom: 12px; letter-spacing: 0.5px;">Full Time Result</h3>
@@ -811,6 +778,31 @@
     </div>
   </div>
 
+  <!-- MANAGER JOB OFFER MODAL (FEATURE 8) -->
+  <div id="jobOfferModal" class="modal-backdrop" style="display: none; z-index: 2200;">
+    <div class="modal-window" style="width: 550px; border-color: var(--gold);">
+      <div class="modal-header">
+        <h2 style="color: var(--gold);">📨 FORMAL MANAGERIAL JOB OFFER</h2>
+      </div>
+      <div id="jobOfferDetails" style="font-size: 0.88rem; line-height: 1.6; margin-bottom: 18px;"></div>
+      <div style="display: flex; gap: 10px;">
+        <button class="btn-advance-master" style="flex: 1; justify-content: center; background: #10b981; color: #fff;" onclick="acceptJobOffer()">✅ ACCEPT OFFER &amp; MOVE</button>
+        <button class="btn-advance-master" style="flex: 1; justify-content: center; background: #334155; color: #fff;" onclick="declineJobOffer()">❌ DECLINE OFFER</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- BOARD SACKING / WARNING MODAL (FEATURE 7) -->
+  <div id="boardInterventionModal" class="modal-backdrop" style="display: none; z-index: 2300;">
+    <div class="modal-window" style="width: 520px; border-color: #ef4444; text-align: center;">
+      <h2 id="boardInterventionTitle" style="color: #ef4444; margin-bottom: 10px;">🚨 BOARD ROOM EMERGENCY MEETING</h2>
+      <div id="boardInterventionBody" style="font-size: 0.85rem; line-height: 1.6; color: #cbd5e1; margin-bottom: 18px; text-align: left; background: var(--bg-panel); padding: 14px; border-radius: 8px;"></div>
+      <button id="btnDismissBoardIntervention" class="btn-advance-master" style="width: 100%; justify-content: center; background: #ef4444; color: #fff;" onclick="dismissBoardIntervention()">
+        CONTINUE
+      </button>
+    </div>
+  </div>
+
   <!-- CAREER SETUP WIZARD MODAL -->
   <div id="careerSetupModal" class="modal-backdrop" style="display: none; z-index: 2000;">
     <div class="modal-window" style="width: 650px;">
@@ -854,8 +846,8 @@
   </div>
 
   <footer>Created by Jason Adams &amp; Jonathan Brewer - Football League Manager</footer>
-<script src="flm-squads.js"></script>
-<script src="flm-engine.js"></script>
+  <script src="flm-squads.js"></script>
+  <script src="flm-engine.js"></script>
   <script>
     /* AUDIO CONTROLLER */
     let audioCtx = null;
