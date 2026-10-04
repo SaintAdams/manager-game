@@ -826,10 +826,12 @@ function populateInMatchSubChips() {
   container.innerHTML = '';
   const club = getCurrentUserClub();
 
-  // If a player MUST be replaced due to injury:
+  // SCENARIO 1: An injured starter MUST be replaced
   if (matchLiveState.forcedSubOutId) {
     const injPlayer = club.players.find(p => p.id === matchLiveState.forcedSubOutId);
-    titleElem.innerHTML = `<span style="color:#ef4444;font-weight:900;">🚑 MUST REPLACE: ${injPlayer ? injPlayer.name : 'Injured Player'}</span><span style="font-size:0.68rem;color:var(--text-muted);">Tap a bench player to bring on</span>`;
+    const targetPos = injPlayer ? injPlayer.naturalPos : 'FWD';
+
+    titleElem.innerHTML = `<span style="color:#ef4444;font-weight:900;">🚑 REPLACE INJURED: ${injPlayer ? injPlayer.name : 'Player'} (${targetPos})</span><span style="font-size:0.68rem;color:var(--text-muted);">Choose a recommended like-for-like or alternative sub</span>`;
 
     const bench = club.players.filter(p => !p.starter && !p.inj && !p.susp);
     if (!bench.length) {
@@ -837,18 +839,97 @@ function populateInMatchSubChips() {
       return;
     }
 
-    bench.forEach(p => {
+    // Split bench into recommended (same natural position) vs alternatives
+    const exactMatches = bench.filter(p => p.naturalPos === targetPos);
+    const otherOptions = bench.filter(p => p.naturalPos !== targetPos);
+
+    const makeSubChip = (p, isRecommended) => {
       const chip = document.createElement('div');
       chip.className = 'sub-chip';
-      chip.innerHTML = `<span>${p.name} (${p.naturalPos} • OVR ${p.ovr})</span><b style="color:#10b981">Sub in for ${injPlayer ? injPlayer.name.split(' ').pop() : ''} ⬆</b>`;
+      if (isRecommended) {
+        chip.style.borderColor = 'var(--gold)';
+        chip.style.background = 'rgba(245, 158, 11, 0.15)';
+      }
+      chip.innerHTML = `<span>${isRecommended ? '⭐ ' : ''}<b>${p.name}</b> (${p.naturalPos} • OVR ${p.ovr} • ${p.con}%)</span><b style="color:${isRecommended ? '#10b981' : '#38bdf8'}">${isRecommended ? 'Direct Swap ⬆' : 'Sub On ⬆'}</b>`;
       chip.onclick = () => {
         matchLiveState.pendingSubInId = p.id;
         confirmLiveMatchSub(matchLiveState.forcedSubOutId);
       };
+      return chip;
+    };
+
+    if (exactMatches.length) {
+      const recHeader = document.createElement('div');
+      recHeader.style.cssText = 'width:100%;font-size:0.7rem;font-weight:800;color:var(--gold);margin-bottom:2px;';
+      recHeader.innerText = `RECOMMENDED LIKE-FOR-LIKE (${targetPos}):`;
+      container.appendChild(recHeader);
+
+      exactMatches.forEach(p => container.appendChild(makeSubChip(p, true)));
+    } else {
+      const warningHeader = document.createElement('div');
+      warningHeader.style.cssText = 'width:100%;font-size:0.7rem;font-weight:800;color:#ef4444;margin-bottom:2px;';
+      warningHeader.innerText = `NO BENCH ${targetPos}S REMAINING — CHOOSE AN EMERGENCY OUT-OF-POSITION SUB:`;
+      container.appendChild(warningHeader);
+    }
+
+    if (otherOptions.length && exactMatches.length) {
+      const altHeader = document.createElement('div');
+      altHeader.style.cssText = 'width:100%;font-size:0.7rem;font-weight:800;color:var(--text-muted);margin:6px 0 2px 0;';
+      altHeader.innerText = 'OTHER BENCH OPTIONS:';
+      container.appendChild(altHeader);
+
+      otherOptions.forEach(p => container.appendChild(makeSubChip(p, false)));
+    } else if (otherOptions.length && !exactMatches.length) {
+      otherOptions.forEach(p => container.appendChild(makeSubChip(p, false)));
+    }
+    return;
+  }
+
+  // SCENARIO 2: Starter replacement selection mode (normal sub)
+  if (matchLiveState.pendingSubInId) {
+    const incomingPlayer = club.players.find(p => p.id === matchLiveState.pendingSubInId);
+    titleElem.innerHTML = `<span>🔄 Subbing in: <b style="color:var(--gold)">${incomingPlayer ? incomingPlayer.name : ''}</b></span> <button class="btn-swap-pill" style="padding:2px 8px;font-size:0.68rem;" onclick="cancelInMatchSub()">Cancel</button>`;
+
+    club.players.filter(p => p.starter).forEach(p => {
+      const isRed = matchLiveState.reds.includes(p.id);
+      const chip = document.createElement('div');
+      chip.className = 'sub-chip starter-chip';
+      chip.style.opacity = isRed ? '0.4' : '1';
+      chip.innerHTML = `<span>${p.name} (${p.naturalPos} • ${p.con}%)</span><b style="color:${isRed ? '#ef4444' : '#f87171'}">${isRed ? 'SENT OFF' : 'Sub Off ⬇'}</b>`;
+      if (!isRed) {
+        chip.onclick = () => confirmLiveMatchSub(p.id);
+      }
       container.appendChild(chip);
     });
     return;
   }
+
+  // SCENARIO 3: Normal bench browsing mode
+  const remaining = matchLiveState.maxSubs - matchLiveState.subsUsed;
+  titleElem.innerHTML = `<span>🔄 TACTICAL SUBSTITUTIONS (REMAINING: <span id="subsRemainingText">${remaining}</span>)</span><span style="font-size: 0.68rem; color: var(--text-muted);">Tap a bench player to bring on</span>`;
+
+  if (remaining <= 0) {
+    container.innerHTML = '<span style="font-size:0.75rem; color:var(--text-muted);">All substitutions used for this match.</span>';
+    return;
+  }
+
+  const bench = club.players.filter(p => !p.starter && !p.inj && !p.susp);
+  if (!bench.length) {
+    container.innerHTML = '<span style="font-size:0.75rem; color:var(--text-muted);">No fit bench players available.</span>';
+    return;
+  }
+
+  bench.forEach(p => {
+    const chip = document.createElement('div');
+    chip.className = 'sub-chip';
+    chip.innerHTML = `<span>${p.name} (${p.naturalPos} • OVR ${p.ovr} • ${p.con}%)</span><b style="color:#10b981">Bring On ⬆</b>`;
+    chip.onclick = () => {
+      matchLiveState.pendingSubInId = p.id;
+      populateInMatchSubChips();
+    };
+    container.appendChild(chip);
+  });
+}
 
   // Normal mode: Starter replacement selection mode
   if (matchLiveState.pendingSubInId) {
