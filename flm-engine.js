@@ -222,9 +222,7 @@ function getClubKitColors(club) {
   if (!club) return { home: '#1e293b', away: '#ffffff', gk: '#047857' };
   const configured = CLUB_KITS_DATABASE[club.name];
   if (configured) return configured;
-  const rgb = parseColorToRgb(club.col);
-  const brightness = (rgb.r * 299 + rgb.g * 587 + rgb.b * 114) / 1000;
-  return { home: club.col || '#1e293b', away: brightness > 128 ? '#0f172a' : '#f8fafc', gk: '#047857' };
+  return { home: club.col || '#1e293b', away: '#f8fafc', gk: '#047857' };
 }
 
 function resolveMatchKitColors(homeClub, awayClub) {
@@ -236,22 +234,18 @@ function resolveMatchKitColors(homeClub, awayClub) {
     awayColor = aKits.away;
     usedAwayKit = true;
     if (getKitColorDistance(homeColor, awayColor) < 90) {
-      const rgb = parseColorToRgb(homeColor);
-      const bright = (rgb.r * 299 + rgb.g * 587 + rgb.b * 114) / 1000;
-      awayColor = bright > 130 ? '#0f172a' : '#f8fafc';
+      awayColor = '#f8fafc';
     }
   }
 
   let hGK = hKits.gk || '#047857', aGK = aKits.gk || '#f59e0b';
-  if (getKitColorDistance(homeColor, hGK) < 90) hGK = '#f59e0b';
-  if (getKitColorDistance(awayColor, aGK) < 90 || getKitColorDistance(hGK, aGK) < 70) aGK = '#38bdf8';
-
   return { homeColor, awayColor, homeGK: hGK, awayGK: aGK, usedAwayKit };
 }
 
 const CLUBS_DATABASE = [];
 LEAGUES.forEach((names, div) => names.forEach(n => {
-  const nu = n === 'Newcastle United'; let h = 0; for (const ch of n) h = (h * 31 + ch.charCodeAt(0)) % 360;
+  const nu = n === 'Newcastle United';
+  let h = 0; for (const ch of n) h = (h * 31 + ch.charCodeAt(0)) % 360;
   const managerName = (typeof REAL_MANAGERS !== 'undefined' && REAL_MANAGERS[n]) || (pick(FIRSTNAMES) + ' ' + pick(SURNAMES));
   const clubKit = CLUB_KITS_DATABASE[n] || { home: `hsl(${h},60%,38%)`, away: '#ffffff', gk: '#047857' };
   CLUBS_DATABASE.push({ 
@@ -366,25 +360,8 @@ function getPositionFamiliarityMultiplier(naturalPos, currentPosType) {
   return 0.70;
 }
 
-const CLUB_CREST_THEMES = {
-  'Newcastle United': { bg: '#171717', border: '#ffffff', fg: '#f59e0b', code: 'NEW' },
-  'Arsenal': { bg: '#dc2626', border: '#ffffff', fg: '#fef08a', code: 'ARS' },
-  'Manchester City': { bg: '#38bdf8', border: '#ffffff', fg: '#0f172a', code: 'MCI' },
-  'Liverpool': { bg: '#b91c1c', border: '#facc15', fg: '#ffffff', code: 'LIV' },
-  'Aston Villa': { bg: '#6b21a8', border: '#38bdf8', fg: '#fde047', code: 'AVL' },
-  'Chelsea': { bg: '#1d4ed8', border: '#ffffff', fg: '#fbbf24', code: 'CHE' },
-  'Manchester United': { bg: '#b91c1c', border: '#facc15', fg: '#000000', code: 'MUN' },
-  'Tottenham': { bg: '#0f172a', border: '#ffffff', fg: '#94a3b8', code: 'TOT' },
-  'West Ham': { bg: '#581c87', border: '#38bdf8', fg: '#facc15', code: 'WHU' },
-  'Everton': { bg: '#1e40af', border: '#ffffff', fg: '#ffffff', code: 'EVE' },
-  'Sunderland': { bg: '#b91c1c', border: '#000000', fg: '#ffffff', code: 'SUN' },
-  'Leeds United': { bg: '#ffffff', border: '#1d4ed8', fg: '#facc15', code: 'LEE' },
-  'Wrexham': { bg: '#dc2626', border: '#ffffff', fg: '#15803d', code: 'WXH' },
-  'Leicester City': { bg: '#1d4ed8', border: '#f59e0b', fg: '#ffffff', code: 'LEI' }
-};
-
 function createBadgeHtml(id, size = 30) {
-  const c = (state ? state.clubs : CLUBS_DATABASE).find(x => x.id === id) || {};
+  const c = clubById(id) || {};
   const name = c.name || id;
   const theme = CLUB_CREST_THEMES[name] || {
     bg: c.col || '#1e293b',
@@ -473,7 +450,9 @@ function initAudioEngine() {
     const AudioClass = window.AudioContext || window.webkitAudioContext;
     if (!AudioClass) return;
     if (!audioCtx) audioCtx = new AudioClass();
-    if (audioCtx.state === 'suspended') audioCtx.resume();
+    if (audioCtx.state === 'suspended') {
+      audioCtx.resume().catch(() => {});
+    }
   } catch(e) {}
 }
 
@@ -1007,7 +986,7 @@ function cupOutcome(m) {
 }
 
 function checkManagerJobOffers() {
-  if (pendingJobOffer) return;
+  if (pendingJobOffer || !state) return;
   if (state.currentWeek < 12 || Math.random() > 0.28) return;
 
   const userClub = getCurrentUserClub(), rep = state.manager.reputation || 2.5;
@@ -1061,7 +1040,7 @@ function declineJobOffer() {
 }
 
 function checkManagerSackingRisk() {
-  if (state.currentWeek < 12) return;
+  if (!state || state.currentWeek < 12) return;
   const userClub = getCurrentUserClub();
   const table = state.standings[userClub.div] || [];
   const sorted = [...table].sort((a, b) => b.pts - a.pts || b.gd - a.gd);
@@ -1147,8 +1126,8 @@ function finalizeWeek() {
 
   applyWeeklyFatigueAndInjuries();
   generateWeeklyNewsStory();
-  checkManagerJobOffers();
-  checkManagerSackingRisk();
+  try { checkManagerJobOffers(); } catch(e) {}
+  try { checkManagerSackingRisk(); } catch(e) {}
   if (state.currentWeek === 30 && !state.youthIntakeCompleted) generateYouthIntake(true);
   w.done = true; saveGame();
 }
@@ -1176,7 +1155,8 @@ function handleMasterAdvanceClick() {
   if (checkDeadlineDayTrigger()) return;
   const m = getActiveUserMatch();
   if (m && !m.played) {
-    clearTimeout(matchSimInterval); cancelAnimationFrame(animFrameId); $('btnStartMatch').disabled = false;
+    clearTimeout(matchSimInterval); cancelAnimationFrame(animFrameId); 
+    if ($('btnStartMatch')) $('btnStartMatch').disabled = false;
     finalizeWeek(); renderAll();
     if (!(shootoutState && shootoutState.active)) showResultModal(m); return;
   }
@@ -1327,9 +1307,16 @@ function autoPickBestXI() {
 
 function saveCustomTacticalShape() {
   const name = ($('customFormationNameInput') ? $('customFormationNameInput').value.trim() : '') || 'Custom System';
+  const tpl = FORMATIONS[state.currentFormation] || FORMATIONS['4-3-3'];
+  
   if (!state.customFormations) state.customFormations = {};
-  state.customFormations['Custom'] = JSON.parse(JSON.stringify(FORMATIONS['Custom']));
+  FORMATIONS['Custom'] = JSON.parse(JSON.stringify(tpl));
+  state.customFormations['Custom'] = JSON.parse(JSON.stringify(tpl));
+  state.currentFormation = 'Custom';
+  
+  if (!state.tacticalFamiliarity) state.tacticalFamiliarity = {};
   if (!state.tacticalFamiliarity['Custom']) state.tacticalFamiliarity['Custom'] = 50;
+
   saveGame();
   renderTactics();
   updateHeaderClubDisplay();
@@ -1367,7 +1354,6 @@ function renderTactics() {
   const customControls = $('customFormationControls');
   if (customControls) customControls.style.display = state.currentFormation === 'Custom' ? 'flex' : 'none';
 
-  // Familiarity Display Updates
   const famScore = (state.tacticalFamiliarity && state.tacticalFamiliarity[state.currentFormation]) || 50;
   if ($('familiarityScoreBadge')) $('familiarityScoreBadge').innerText = `${famScore}%`;
   if ($('familiarityProgressBar')) {
@@ -1375,7 +1361,6 @@ function renderTactics() {
     $('familiarityProgressBar').style.background = famScore >= 75 ? '#10b981' : famScore >= 50 ? '#38bdf8' : '#f59e0b';
   }
 
-  // Interactive 2D Pitch Nodes & Full Drag Engine
   const nodes = $('pitchNodesWrapper');
   if (nodes) {
     nodes.innerHTML = '';
@@ -1398,7 +1383,6 @@ function renderTactics() {
           <div class="p-role">${p.ovr} OVR • <span style="color:${famColor};font-weight:800;">${famMult}%</span></div>
         </div>`;
 
-      // Full Drag Engine
       let isDragging = false;
       const onPointerDown = e => {
         if (e.target.tagName === 'BUTTON') return;
@@ -1472,7 +1456,7 @@ function renderTactics() {
   if (bb) { bb.innerHTML = ''; bench.forEach((p, i) => bb.appendChild(row(p, 'S' + (i + 1), 'pick-sub'))); }
 }
 
-/* ---------- 2D PITCH ENGINE & FIXED SETUP ---------- */
+/* ---------- 2D PITCH ENGINE ---------- */
 function initPitchCanvas() { 
   const c = $('matchPitchCanvas'); 
   if (!c) return;
@@ -1542,7 +1526,7 @@ function update2DPitchPhysics() {
   draw2DPitch();
 }
 
-/* In-Match Substitutions Drawer Functions */
+/* ---------- IN-MATCH SUBSTITUTIONS ---------- */
 function cancelInMatchSub() {
   matchLiveState.pendingSubInId = null;
   populateInMatchSubChips();
@@ -1632,6 +1616,7 @@ function confirmLiveMatchSub(starterOutId) {
   playSoundSafe('click');
 }
 
+/* ---------- MATCHDAY SIMULATION (FIXED FULL-TIME RESOLUTION) ---------- */
 function startMatchdaySim() {
   const m = getActiveUserMatch(); if (!m || m.played) return;
   if ($('btnStartMatch')) $('btnStartMatch').disabled = true;
@@ -1652,8 +1637,16 @@ function startMatchdaySim() {
   playSoundSafe('whistle');
 
   let min = 0, hs = 0, as = 0;
-  clearTimeout(matchSimInterval); cancelAnimationFrame(animFrameId);
-  (function loop() { update2DPitchPhysics(); if (min < 90) animFrameId = requestAnimationFrame(loop); })();
+  clearTimeout(matchSimInterval); 
+  cancelAnimationFrame(animFrameId);
+
+  function renderLoop() { 
+    update2DPitchPhysics(); 
+    if (min < 90) {
+      animFrameId = requestAnimationFrame(renderLoop); 
+    }
+  }
+  renderLoop();
 
   const goal = (club, isHome) => {
     const sc = pickScorer(club); sc.goals++;
@@ -1672,8 +1665,10 @@ function startMatchdaySim() {
       return;
     }
 
-    min += 2; pitchEngine.currentMinute = min;
+    min += 2; 
+    pitchEngine.currentMinute = min;
     if ($('sbMinute')) $('sbMinute').innerText = `${min}'`;
+    
     if (min % 4 === 0) {
       pitchEngine.ball.targetX = 140 + Math.random() * 520;
       pitchEngine.ball.targetY = 60 + Math.random() * 360;
@@ -1699,7 +1694,9 @@ function startMatchdaySim() {
       }
       if ($('btnAdvanceMaster')) $('btnAdvanceMaster').className = 'btn-advance-master btn-continue-mode';
       if ($('btnAdvanceText')) $('btnAdvanceText').innerText = `CONTINUE TO WK ${state.currentWeek + 1}`;
-      saveGame(); renderStandingsTable(getCurrentUserClub().div); return;
+      saveGame(); 
+      renderStandingsTable(getCurrentUserClub().div); 
+      return;
     }
     matchSimInterval = setTimeout(tick, Math.max(12, 120 / simSpeedMultiplier));
   }
@@ -1767,17 +1764,17 @@ function renderMatchdayView() {
   if (m) {
     const h = clubById(m.home), a = clubById(m.away);
     const isDerby = isRivalMatch(h, a);
-    if ($('derbyBannerWrap')) $('derbyBannerWrap').style.display = isDerby ? 'block' : 'none';
+    if ($('derbyBannerWrap'))$('derbyBannerWrap').style.display = isDerby ? 'block' : 'none';
 
     const compText = m.type === 'CUP' ? `${m.cupName} - ${m.roundName || 'Knockout Round'}` : `${DIV_NAMES[m.div]} - Matchday ${state.currentWeek}`;
-    if ($('matchCompetitionBadge')) $('matchCompetitionBadge').innerText = compText;
-    if ($('matchVenueBadge')) $('matchVenueBadge').innerText = m.final ? '🏟️ Wembley Stadium (National Final)' : `🏟️ ${h.stadium}`;
+    if ($('matchCompetitionBadge'))$('matchCompetitionBadge').innerText = compText;
+    if ($('matchVenueBadge'))$('matchVenueBadge').innerText = m.final ? '🏟️ Wembley Stadium (National Final)' : `🏟️ ${h.stadium}`;
 
-    if ($('sbHomeBadgeWrap')) $('sbHomeBadgeWrap').innerHTML = createBadgeHtml(h.id, 40);
-    if ($('sbAwayBadgeWrap')) $('sbAwayBadgeWrap').innerHTML = createBadgeHtml(a.id, 40);
-    if ($('sbHomeName')) $('sbHomeName').innerText = h.name; 
-    if ($('sbAwayName')) $('sbAwayName').innerText = a.name;
-    if ($('sbScore')) $('sbScore').innerText = m.played ? `${m.homeGoals} - ${m.awayGoals}` : '0 - 0';
+    if ($('sbHomeBadgeWrap'))$('sbHomeBadgeWrap').innerHTML = createBadgeHtml(h.id, 40);
+    if ($('sbAwayBadgeWrap'))$('sbAwayBadgeWrap').innerHTML = createBadgeHtml(a.id, 40);
+    if ($('sbHomeName'))$('sbHomeName').innerText = h.name; 
+    if ($('sbAwayName'))$('sbAwayName').innerText = a.name;
+    if ($('sbScore'))$('sbScore').innerText = m.played ? `${m.homeGoals} - ${m.awayGoals}` : '0 - 0';
     if ($('sbMinute'))$('sbMinute').innerText = m.played ? 'FULL TIME' : 'PRE-MATCH';
     if ($('btnStartMatch'))$('btnStartMatch').disabled = m.played;
 
@@ -1971,41 +1968,25 @@ function sellSquadPlayer(id) {
   saveGame(); renderAll(); updateHeaderClubDisplay(); renderTransfers(); playSoundSafe('whistle');
 }
 
-/* ---------- END SEASON TRANSITION ---------- */
-const sortedDivs = () => { const s = {}; for (let d = 0; d <= 3; d++) s[d] = [...state.standings[d]].sort((a, b) => b.pts - a.pts || b.gd - a.gd || b.gf - a.gf); return s; };
-
-function showEndSeasonGala() {
-  const s = sortedDivs();
-  if ($('eosSummaryContent')) {$('eosSummaryContent').innerHTML = `
-      <div style="background:var(--bg-panel);padding:12px;border-radius:8px;margin-bottom:10px">
-        <h3 style="color:var(--gold)">👑 Champions</h3>
-        ${[0, 1, 2, 3].map(d => `<p><b>${DIV_NAMES[d]}:</b>${s[d][0].name}</p>`).join('')}
-      </div>
-    `;
-  }
-  if ($('endSeasonModal'))$('endSeasonModal').style.display = 'flex'; 
-  playSoundSafe('cheer');
+function generateInitialNews() {
+  state.newsFeed = [{ tag: 'Season Kick-Off', breaking: true, headline: `${state.seasonYear}/${String(state.seasonYear + 1).slice(-2)} season underway: 92 clubs battle for glory`, body: 'Boards demand results across the pyramid.', time: 'Week 1' }];
+}
+function addNewsStory(tag, headline, body, breaking = false) { 
+  if (!state || !state.newsFeed) return;
+  state.newsFeed.unshift({ tag, headline, body, breaking, time: `Week ${state.currentWeek}` }); 
+  if (state.newsFeed.length > 25) state.newsFeed.pop(); 
+}
+function renderNewsFeed() {
+  const f = $('newsFeedList'); if (!f || !state || !state.newsFeed) return;
+  f.innerHTML = '';
+  state.newsFeed.forEach(n => { 
+    const c = document.createElement('div'); c.className = `news-card ${n.breaking ? 'breaking' : ''}`; 
+    c.innerHTML = `<div style="display:flex;justify-content:space-between"><span style="font-size:.65rem;font-weight:800;color:var(--accent);text-transform:uppercase">${n.tag}</span><span style="font-size:.68rem;color:var(--text-muted)">${n.time}</span></div><div style="font-weight:800">${n.headline}</div><div style="font-size:.8rem;color:#cbd5e1">${n.body}</div>`; 
+    f.appendChild(c); 
+  });
 }
 
-function closeEosModal() { if ($('endSeasonModal'))$('endSeasonModal').style.display = 'none'; }
-
-function executeNextSeasonTransition() {
-  closeEosModal();
-  const s = sortedDivs(), move = {};
-  for (let d = 0; d <= 2; d++) {
-    s[d].slice(-3).forEach(r => move[r.id] = d + 1);
-    s[d + 1].slice(0, 3).forEach(r => move[r.id] = d);
-  }
-  state.clubs.forEach(c => { if (move[c.id] !== undefined) c.div = move[c.id]; });
-  state.seasonYear++; state.currentWeek = 1;
-  state.deadlineDaysCompleted = {}; state.youthIntakeCompleted = false;
-  state.cups = { carabaoAlive: true, faAlive: true };
-  initCupTournamentTrees();
-  buildStandings(); generateTrueRoundRobinFixtures();
-  saveGame(); renderAll();
-  alert(`Welcome to the ${state.seasonYear}/${String(state.seasonYear + 1).slice(-2)} season!`);
-}
-
+/* ---------- MASTER RENDER & HEADER ---------- */
 function updateHeaderClubDisplay() {
   const c = getCurrentUserClub(); if (!c) return;
   const s = computeClubAttributes(c);
@@ -2043,7 +2024,7 @@ function switchTab(id) {
   });
   const tabActions = { 
     tactics: renderTactics, 
-    news: () => {}, 
+    news: renderNewsFeed, 
     cups: renderCupBracketTree, 
     transfers: renderTransfers, 
     standings: () => renderStandingsTable(state.activeStandingsTab), 
