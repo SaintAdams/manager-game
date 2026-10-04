@@ -332,21 +332,13 @@
     </nav>
 
     <main class="viewport" id="mainViewport">
-      <!-- TACTICS TAB -->
-      <div id="tab-tactics" class="tab-pane">
-        <div id="swapNotificationBar" class="swap-status-bar" style="display: none;">
-          <span id="swapNotificationText">🔄 SELECT PLAYER TO SWAP</span>
-          <button onclick="cancelPlayerSwap()">Cancel</button>
-        </div>
-
-        <div class="tactics-container">
-          <div class="pitch-card">
-            <div class="tactics-toolbar">
-              <!-- TACTICS CONTROLS HEADER -->
-        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:12px;">
+      <!-- TAB: TACTICS -->
+      <div id="tab-tactics" class="tab-pane active">
+        <!-- TOP CONTROLS & FAMILIARITY BAR -->
+        <div style="display:grid; grid-template-columns: auto 1fr auto; gap:12px; align-items:center; background:var(--bg-panel); padding:10px 14px; border-radius:8px; border:1px solid var(--border); margin-bottom:12px;">
           <div style="display:flex; align-items:center; gap:8px;">
             <label style="font-size:0.8rem; font-weight:800; color:var(--text-muted);">FORMATION:</label>
-            <select id="formationSelect" class="form-select" onchange="changeFormation(this.value)" style="background:var(--bg-panel); color:#fff; border:1px solid var(--border); padding:6px 10px; border-radius:6px; font-weight:800;">
+            <select id="formationSelect" class="form-select" onchange="changeFormation(this.value)" style="background:var(--bg-card); color:#fff; border:1px solid var(--border); padding:6px 10px; border-radius:6px; font-weight:800;">
               <option value="4-3-3">4-3-3</option>
               <option value="4-2-3-1">4-2-3-1</option>
               <option value="4-4-2">4-4-2</option>
@@ -359,32 +351,21 @@
             <button class="btn-swap-pill" style="background:#2563eb; color:#fff;" onclick="autoPickBestXI()">⚡ Auto Pick XI</button>
           </div>
 
-          <div id="customFormationControls" style="display:none; align-items:center; gap:8px;">
-            <input id="customFormationNameInput" type="text" placeholder="Custom System Name" style="background:var(--bg-panel); color:#fff; border:1px solid var(--border); padding:6px 10px; border-radius:6px; font-size:0.8rem; width:170px;" value="My Custom System" />
-            <button class="btn-swap-pill" style="background:#10b981; color:#fff;" onclick="saveCustomTacticalShape()">💾 Save Shape</button>
-          </div>
-        </div>
-
-        <!-- TACTICAL FAMILIARITY & ANALYSIS ROW -->
-        <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); gap:12px; margin-bottom:14px;">
-          <!-- Live Familiarity Gauge -->
-          <div style="background:var(--bg-panel); padding:12px 14px; border-radius:8px; border:1px solid var(--border);">
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
-              <span style="font-size:0.75rem; font-weight:800; color:var(--text-muted); text-transform:uppercase;">Tactical Familiarity</span>
-              <b id="familiarityScoreBadge" style="font-size:0.85rem; color:#10b981;">100%</b>
+          <!-- Mid: Tactical Familiarity Bar -->
+          <div style="display:flex; flex-direction:column; justify-content:center; gap:3px;">
+            <div style="display:flex; justify-content:space-between; font-size:0.72rem; font-weight:800;">
+              <span style="color:var(--text-muted); text-transform:uppercase;">Tactical Familiarity</span>
+              <span id="familiarityScoreBadge" style="color:#10b981;">100%</span>
             </div>
-            <div style="height:8px; background:rgba(255,255,255,0.08); border-radius:4px; overflow:hidden; margin-bottom:6px;">
+            <div style="height:6px; background:rgba(255,255,255,0.08); border-radius:3px; overflow:hidden;">
               <div id="familiarityProgressBar" style="height:100%; width:100%; background:#10b981; transition:width 0.3s ease;"></div>
             </div>
-            <div id="familiarityStatusText" style="font-size:0.72rem; color:#94a3b8;">Fully Adapted — Players know teammates' movement patterns instinctively.</div>
           </div>
 
-          <!-- Dynamic Shape Pros & Cons -->
-          <div id="tacticalAnalysisCard" style="background:var(--bg-panel); padding:12px 14px; border-radius:8px; border:1px solid var(--border);">
-            <div style="font-size:0.75rem; font-weight:800; color:var(--text-muted); text-transform:uppercase; margin-bottom:6px;">System Shape Analysis</div>
-            <div id="analysisBadgesContainer" style="display:flex; flex-direction:column; gap:4px; font-size:0.75rem;">
-              <!-- Dynamic pros & cons render here -->
-            </div>
+          <!-- Right: Custom save controls (only shows on Custom) -->
+          <div id="customFormationControls" style="display:none; align-items:center; gap:8px;">
+            <input id="customFormationNameInput" type="text" placeholder="Custom System" style="background:var(--bg-card); color:#fff; border:1px solid var(--border); padding:5px 8px; border-radius:6px; font-size:0.75rem; width:130px;" value="Custom System" />
+            <button class="btn-swap-pill" style="background:#10b981; color:#fff;" onclick="saveCustomTacticalShape()">💾 Save</button>
           </div>
         </div>
 
@@ -394,88 +375,88 @@
           <button class="btn-swap-pill" style="background:#475569;" onclick="cancelPlayerSwap()">Cancel</button>
         </div>
 
-        <!-- 2D INTERACTIVE TACTICAL PITCH -->
-        <div class="pitch-container" style="position:relative; width:100%; max-width:760px; margin:0 auto 16px auto; aspect-ratio:4/5; background:#1b4d24; border:2px solid rgba(255,255,255,0.7); border-radius:10px; overflow:hidden; user-select:none;">
-          <!-- Pitch Grass Markings -->
-          <div style="position:absolute; inset:0; background:repeating-linear-gradient(0deg, #1e5229 0px, #1e5229 45px, #174221 45px, #174221 90px);"></div>
-          <div style="position:absolute; top:50%; left:0; right:0; height:2px; background:rgba(255,255,255,0.6);"></div>
-          <div style="position:absolute; top:50%; left:50%; width:110px; height:110px; border:2px solid rgba(255,255,255,0.6); border-radius:50%; transform:translate(-50%, -50%);"></div>
-          <div style="position:absolute; top:0; left:25%; right:25%; height:75px; border:2px solid rgba(255,255,255,0.6); border-top:none;"></div>
-          <div style="position:absolute; bottom:0; left:25%; right:25%; height:75px; border:2px solid rgba(255,255,255,0.6); border-bottom:none;"></div>
+        <!-- MAIN TWO-COLUMN TACTICS LAYOUT -->
+        <div class="tactics-layout-grid" style="display:grid; grid-template-columns:minmax(320px, 420px) minmax(0, 1fr); gap:16px; align-items:start;">
           
-          <!-- Interactive Player Nodes Container -->
-          <div id="pitchNodesWrapper" style="position:absolute; inset:0;"></div>
-        </div>
-
-              <button class="btn-auto-pick" onclick="autoPickBestXI()">⚡ Auto-Pick XI</button>
+          <!-- LEFT COLUMN: Pitch + Shape Analysis Card -->
+          <div style="display:flex; flex-direction:column; gap:10px; width:100%;">
+            <!-- 2D Pitch Card -->
+            <div class="tactics-pitch-card" style="position:relative; width:100%; aspect-ratio:3.8/5; background:#1b4d24; border:2px solid rgba(255,255,255,0.7); border-radius:10px; overflow:hidden; user-select:none; box-shadow:0 6px 14px rgba(0,0,0,0.4);">
+              <!-- Pitch Grass Strips & Markings -->
+              <div style="position:absolute; inset:0; background:repeating-linear-gradient(0deg, #1e5229 0px, #1e5229 45px, #174221 45px, #174221 90px);"></div>
+              <div style="position:absolute; top:50%; left:0; right:0; height:2px; background:rgba(255,255,255,0.6);"></div>
+              <div style="position:absolute; top:50%; left:50%; width:90px; height:90px; border:2px solid rgba(255,255,255,0.6); border-radius:50%; transform:translate(-50%, -50%);"></div>
+              <div style="position:absolute; top:0; left:25%; right:25%; height:60px; border:2px solid rgba(255,255,255,0.6); border-top:none;"></div>
+              <div style="position:absolute; bottom:0; left:25%; right:25%; height:60px; border:2px solid rgba(255,255,255,0.6); border-bottom:none;"></div>
+              
+              <!-- Player Circles Container -->
+              <div id="pitchNodesWrapper" style="position:absolute; inset:0;"></div>
             </div>
 
-            <div class="football-pitch" id="pitchSurface">
-              <div class="pitch-line-half"></div>
-              <div class="pitch-circle-center"></div>
-              <div class="pitch-spot-center"></div>
-              <div class="penalty-box-top"></div>
-              <div class="six-yard-top"></div>
-              <div class="penalty-box-bottom"></div>
-              <div class="six-yard-bottom"></div>
-              <div id="pitchNodesWrapper"></div>
+            <!-- Shape Analysis Card -->
+            <div style="background:var(--bg-panel); padding:10px 12px; border-radius:8px; border:1px solid var(--border);">
+              <div style="font-size:0.72rem; font-weight:800; color:var(--text-muted); text-transform:uppercase; margin-bottom:4px;">Shape Analysis</div>
+              <div id="analysisBadgesContainer" style="display:flex; flex-direction:column; gap:3px; font-size:0.72rem;"></div>
             </div>
-            
-            <p style="font-size: 0.72rem; color: var(--text-muted); text-align: center;">
-              💡 <b>Tap any player on the pitch or table</b> to swap positions. Rotate starters to manage fatigue and morale!
-            </p>
+
+            <div style="font-size:0.72rem; color:var(--text-muted); text-align:center;">
+              💡 Drag player dots on the pitch to build custom shapes, or tap to swap.
+            </div>
           </div>
 
-          <div class="squad-roster-card">
-            <div class="section-title-strip">
-              <h3>Starting Eleven</h3>
-              <span class="count">11 Selected</span>
+          <!-- RIGHT COLUMN: Tables (Starting XI & Bench) -->
+          <div style="display:flex; flex-direction:column; gap:16px; min-width:0;">
+            <!-- Starting XI Table -->
+            <div style="background:var(--bg-panel); padding:12px; border-radius:8px; border:1px solid var(--border);">
+              <div style="font-weight:900; font-size:0.9rem; margin-bottom:8px; color:#fff;">STARTING ELEVEN</div>
+              <div style="overflow-x:auto;">
+                <table class="table-compact" style="width:100%; border-collapse:collapse; font-size:0.75rem;">
+                  <thead>
+                    <tr style="border-bottom:1px solid var(--border); color:var(--text-muted); text-align:left;">
+                      <th style="padding:4px 6px;">PK</th>
+                      <th style="padding:4px 6px;">ROLE</th>
+                      <th style="padding:4px 6px;">PLAYER</th>
+                      <th style="padding:4px 6px;">AGE</th>
+                      <th style="padding:4px 6px;">OVR</th>
+                      <th style="padding:4px 6px;">FITNESS</th>
+                      <th style="padding:4px 6px;">MORALE</th>
+                      <th style="padding:4px 6px;">CONTRACT</th>
+                      <th style="padding:4px 6px;">WAGE</th>
+                      <th style="padding:4px 6px; text-align:right;">ACTION</th>
+                    </tr>
+                  </thead>
+                  <tbody id="startersTableBody"></tbody>
+                </table>
+              </div>
             </div>
 
-            <table class="fm-table" id="startersTable">
-              <thead>
-                <tr>
-                  <th style="width: 44px;">PK</th>
-                  <th style="width: 65px;">Role</th>
-                  <th>Player Name</th>
-                  <th style="width: 40px;">Age</th>
-                  <th style="width: 40px;">OVR</th>
-                  <th style="width: 75px;">Fitness</th>
-                  <th style="width: 60px;">Morale</th>
-                  <th style="width: 65px;">Contract</th>
-                  <th style="width: 75px;">Wage</th>
-                  <th style="width: 80px;">Action</th>
-                </tr>
-              </thead>
-              <tbody id="startersTableBody"></tbody>
-            </table>
-
-            <div class="section-title-strip" style="margin-top: 10px;">
-              <h3>Substitutes Bench</h3>
-              <span class="count">Reserves</span>
+            <!-- Bench Table -->
+            <div style="background:var(--bg-panel); padding:12px; border-radius:8px; border:1px solid var(--border);">
+              <div style="font-weight:900; font-size:0.9rem; margin-bottom:8px; color:#fff;">SUBSTITUTES BENCH</div>
+              <div style="overflow-x:auto;">
+                <table class="table-compact" style="width:100%; border-collapse:collapse; font-size:0.75rem;">
+                  <thead>
+                    <tr style="border-bottom:1px solid var(--border); color:var(--text-muted); text-align:left;">
+                      <th style="padding:4px 6px;">PK</th>
+                      <th style="padding:4px 6px;">ROLE</th>
+                      <th style="padding:4px 6px;">PLAYER</th>
+                      <th style="padding:4px 6px;">AGE</th>
+                      <th style="padding:4px 6px;">OVR</th>
+                      <th style="padding:4px 6px;">FITNESS</th>
+                      <th style="padding:4px 6px;">MORALE</th>
+                      <th style="padding:4px 6px;">CONTRACT</th>
+                      <th style="padding:4px 6px;">WAGE</th>
+                      <th style="padding:4px 6px; text-align:right;">ACTION</th>
+                    </tr>
+                  </thead>
+                  <tbody id="benchTableBody"></tbody>
+                </table>
+              </div>
             </div>
-
-            <table class="fm-table" id="benchTable">
-              <thead>
-                <tr>
-                  <th style="width: 44px;">PK</th>
-                  <th style="width: 65px;">Role</th>
-                  <th>Player Name</th>
-                  <th style="width: 40px;">Age</th>
-                  <th style="width: 40px;">OVR</th>
-                  <th style="width: 75px;">Fitness</th>
-                  <th style="width: 60px;">Morale</th>
-                  <th style="width: 65px;">Contract</th>
-                  <th style="width: 75px;">Wage</th>
-                  <th style="width: 80px;">Action</th>
-                </tr>
-              </thead>
-              <tbody id="benchTableBody"></tbody>
-            </table>
           </div>
+
         </div>
       </div>
-
       <!-- MATCHDAY TAB -->
       <div id="tab-matchday" class="tab-pane" style="display: none;">
         <div class="matchday-grid">
