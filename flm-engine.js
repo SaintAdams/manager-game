@@ -826,19 +826,15 @@ function triggerTouchlineShout(t) {
   const myGoals = isHome ? (m.scorers ? m.scorers.filter(s => s.team === club.name).length : 0) : (m.scorers ? m.scorers.filter(s => s.team === club.name).length : 0);
   const oppClub = clubById(isHome ? m.away : m.home);
   const oppGoals = m.scorers ? m.scorers.filter(s => s.team === oppClub.name).length : 0;
-  const diff = myGoals - oppGoals; // Positive = leading, Negative = trailing
+  const diff = myGoals - oppGoals;
 
-  // Squad morale calculation
   const starters = club.players.filter(p => p.starter);
   const superbCount = starters.filter(p => p.morale === 'Superb').length;
   const unhappyCount = starters.filter(p => p.morale === 'Unhappy').length;
   const squadMoraleScore = (superbCount * 2) - (unhappyCount * 3);
 
-  // Captaincy / Veteran presence
   const captain = starters.reduce((best, p) => (p.ovr + (p.age >= 28 ? 10 : 0)) > (best.ovr + (best.age >= 28 ? 10 : 0)) ? p : best, starters[0] || {});
   const leaderBonus = captain && captain.age >= 28 ? 15 : 0;
-
-  // Manager Authority (Confidence & Approval)
   const authority = (state.manager.confidence + state.manager.fansApproval) / 2;
 
   let success = false;
@@ -848,7 +844,6 @@ function triggerTouchlineShout(t) {
 
   switch (t) {
     case 'DEMAND_MORE':
-      // Best when drawing or trailing by 1 with authority. Bad if down heavily or low morale.
       if (diff <= 0 && (authority + squadMoraleScore + leaderBonus >= 70)) {
         success = true;
         attMod = 0.038;
@@ -863,7 +858,6 @@ function triggerTouchlineShout(t) {
       break;
 
     case 'CALM_DOWN':
-      // Best when protecting a lead or under heavy pressure.
       if (diff >= 0) {
         success = true;
         defMod = 0.04;
@@ -877,20 +871,18 @@ function triggerTouchlineShout(t) {
       break;
 
     case 'PUSH_FORWARD':
-      // High risk, high reward attack overload.
       success = diff <= 0;
       attMod = 0.055;
-      defMod = -0.05; // Vulnerable to counter attacks!
+      defMod = -0.05;
       reactionText = `⚡ All-out attack! Players stream forward, leaving space behind!`;
       break;
 
     case 'PRAISE':
-      // Great when winning comfortably (diff >= 1). Horrible when losing.
       if (diff >= 1) {
         success = true;
         attMod = 0.02;
         defMod = 0.02;
-        starters.forEach(p => p.con = Math.min(100, p.con + 2)); // Morale/energy lift
+        starters.forEach(p => p.con = Math.min(100, p.con + 2));
         reactionText = `👏 The squad beams with pride and plays with high confidence.`;
       } else {
         success = false;
@@ -937,7 +929,7 @@ function populateInMatchSubChips() {
   container.innerHTML = '';
   const club = getCurrentUserClub();
 
-  // SCENARIO 1: An injured starter MUST be replaced
+  // If a player MUST be replaced due to injury:
   if (matchLiveState.forcedSubOutId) {
     const injPlayer = club.players.find(p => p.id === matchLiveState.forcedSubOutId);
     const targetPos = injPlayer ? injPlayer.naturalPos : 'FWD';
@@ -950,7 +942,6 @@ function populateInMatchSubChips() {
       return;
     }
 
-    // Split bench into recommended (same natural position) vs alternatives
     const exactMatches = bench.filter(p => p.naturalPos === targetPos);
     const otherOptions = bench.filter(p => p.naturalPos !== targetPos);
 
@@ -995,52 +986,6 @@ function populateInMatchSubChips() {
     }
     return;
   }
-
-  // SCENARIO 2: Starter replacement selection mode (normal sub)
-  if (matchLiveState.pendingSubInId) {
-    const incomingPlayer = club.players.find(p => p.id === matchLiveState.pendingSubInId);
-    titleElem.innerHTML = `<span>🔄 Subbing in: <b style="color:var(--gold)">${incomingPlayer ? incomingPlayer.name : ''}</b></span> <button class="btn-swap-pill" style="padding:2px 8px;font-size:0.68rem;" onclick="cancelInMatchSub()">Cancel</button>`;
-
-    club.players.filter(p => p.starter).forEach(p => {
-      const isRed = matchLiveState.reds.includes(p.id);
-      const chip = document.createElement('div');
-      chip.className = 'sub-chip starter-chip';
-      chip.style.opacity = isRed ? '0.4' : '1';
-      chip.innerHTML = `<span>${p.name} (${p.naturalPos} • ${p.con}%)</span><b style="color:${isRed ? '#ef4444' : '#f87171'}">${isRed ? 'SENT OFF' : 'Sub Off ⬇'}</b>`;
-      if (!isRed) {
-        chip.onclick = () => confirmLiveMatchSub(p.id);
-      }
-      container.appendChild(chip);
-    });
-    return;
-  }
-
-  // SCENARIO 3: Normal bench browsing mode
-  const remaining = matchLiveState.maxSubs - matchLiveState.subsUsed;
-  titleElem.innerHTML = `<span>🔄 TACTICAL SUBSTITUTIONS (REMAINING: <span id="subsRemainingText">${remaining}</span>)</span><span style="font-size: 0.68rem; color: var(--text-muted);">Tap a bench player to bring on</span>`;
-
-  if (remaining <= 0) {
-    container.innerHTML = '<span style="font-size:0.75rem; color:var(--text-muted);">All substitutions used for this match.</span>';
-    return;
-  }
-
-  const bench = club.players.filter(p => !p.starter && !p.inj && !p.susp);
-  if (!bench.length) {
-    container.innerHTML = '<span style="font-size:0.75rem; color:var(--text-muted);">No fit bench players available.</span>';
-    return;
-  }
-
-  bench.forEach(p => {
-    const chip = document.createElement('div');
-    chip.className = 'sub-chip';
-    chip.innerHTML = `<span>${p.name} (${p.naturalPos} • OVR ${p.ovr} • ${p.con}%)</span><b style="color:#10b981">Bring On ⬆</b>`;
-    chip.onclick = () => {
-      matchLiveState.pendingSubInId = p.id;
-      populateInMatchSubChips();
-    };
-    container.appendChild(chip);
-  });
-}
 
   // Normal mode: Starter replacement selection mode
   if (matchLiveState.pendingSubInId) {
@@ -1106,7 +1051,6 @@ function confirmLiveMatchSub(starterOutId) {
   matchLiveState.subsUsed++;
   matchLiveState.pendingSubInId = null;
 
-  // Clear forced sub lock if the injured starter came off
   if (matchLiveState.forcedSubOutId === starterOutId) {
     matchLiveState.forcedSubOutId = null;
   }
@@ -1131,7 +1075,6 @@ function dismissInjuryModalAndSub() {
 function toggleMatchPause() {
   if (!matchLiveState) return;
 
-  // Block resuming if an injured starter is still on the pitch
   if (matchLiveState.isPaused && matchLiveState.forcedSubOutId) {
     const club = getCurrentUserClub();
     const injPlayer = club.players.find(p => p.id === matchLiveState.forcedSubOutId && p.starter);
@@ -1144,7 +1087,7 @@ function toggleMatchPause() {
   matchLiveState.isPaused = !matchLiveState.isPaused;
   const btn = $('btnPauseMatch');
   if (btn) {
-    btn.innerText = matchLiveState.isPaused ? '▶️ RESUME' : '⏸️️ PAUSE';
+    btn.innerText = matchLiveState.isPaused ? '▶️ RESUME' : '⏸️ PAUSE';
     btn.style.background = matchLiveState.isPaused ? '#10b981' : '#334155';
   }
   if (!matchLiveState.isPaused) {
@@ -1230,7 +1173,6 @@ function startMatchdaySim() {
     addTimelineEvent('injury', `🚑 ${min}' ${p.name.split(' ').pop()}`);
     playSound('whistle');
 
-    // If YOUR player is injured:
     if (club.id === state.userClubId) {
       matchLiveState.forcedSubOutId = p.id;
       matchLiveState.isPaused = true;
@@ -1277,7 +1219,6 @@ function startMatchdaySim() {
       }));
     }
 
-    // Card and injury probability per tick
     if (Math.random() < 0.035) {
       triggerCard(Math.random() < 0.5 ? h : a);
     }
@@ -1328,7 +1269,8 @@ function startMatchdaySim() {
         }
       }
 
-      $('btnAdvanceMaster').className = 'btn-advance-master btn-continue-mode';$('btnAdvanceText').innerText = `CONTINUE TO WK ${state.currentWeek + 1}`;
+      $('btnAdvanceMaster').className = 'btn-advance-master btn-continue-mode';
+      $('btnAdvanceText').innerText = `CONTINUE TO WK ${state.currentWeek + 1}`;
       saveGame();
       renderStandingsTable(getCurrentUserClub().div);
       playSound('whistle');
