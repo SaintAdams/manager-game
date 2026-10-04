@@ -27,6 +27,7 @@ let matchLiveState = {
   subsUsed: 0,
   maxSubs: 5,
   pendingSubInId: null,
+  forcedSubOutId: null,
   isPaused: false,
   timelineEvents: [],
   yellows: {},
@@ -482,7 +483,11 @@ function handleMasterAdvanceClick() {
 }
 
 function resetLiveState() {
-  matchLiveState = { activeShout: null, shoutExpireMin: 0, subsUsed: 0, maxSubs: 5, pendingSubInId: null, isPaused: false, timelineEvents: [], yellows: {}, reds: [] };
+  matchLiveState = { 
+    activeShout: null, shoutExpireMin: 0, subsUsed: 0, maxSubs: 5, 
+    pendingSubInId: null, forcedSubOutId: null, isPaused: false, 
+    timelineEvents: [], yellows: {}, reds: [] 
+  };
   $('activeShoutBadge').innerText = '';
   $('subsRemainingText').innerText = 5;
   const pauseBtn = $('btnPauseMatch');
@@ -813,6 +818,31 @@ function populateInMatchSubChips() {
   container.innerHTML = '';
   const club = getCurrentUserClub();
 
+  // SCENARIO 1: An injured starter MUST be replaced
+  if (matchLiveState.forcedSubOutId) {
+    const injPlayer = club.players.find(p => p.id === matchLiveState.forcedSubOutId);
+    titleElem.innerHTML = `<span style="color:#ef4444;font-weight:900;">🚑 MUST REPLACE: ${injPlayer ? injPlayer.name : 'Injured Player'}</span><span style="font-size:0.68rem;color:var(--text-muted);">Tap a bench player to bring on</span>`;
+
+    const bench = club.players.filter(p => !p.starter && !p.inj && !p.susp);
+    if (!bench.length) {
+      container.innerHTML = '<span style="font-size:0.75rem; color:#ef4444;">No fit bench players available! Player must leave pitch.</span>';
+      return;
+    }
+
+    bench.forEach(p => {
+      const chip = document.createElement('div');
+      chip.className = 'sub-chip';
+      chip.innerHTML = `<span>${p.name} (${p.naturalPos} • OVR ${p.ovr})</span><b style="color:#10b981">Sub in for ${injPlayer ? injPlayer.name.split(' ').pop() : ''} ⬆</b>`;
+      chip.onclick = () => {
+        matchLiveState.pendingSubInId = p.id;
+        confirmLiveMatchSub(matchLiveState.forcedSubOutId);
+      };
+      container.appendChild(chip);
+    });
+    return;
+  }
+
+  // SCENARIO 2: Starter replacement selection mode (normal sub)
   if (matchLiveState.pendingSubInId) {
     const incomingPlayer = club.players.find(p => p.id === matchLiveState.pendingSubInId);
     titleElem.innerHTML = `<span>🔄 Subbing in: <b style="color:var(--gold)">${incomingPlayer ? incomingPlayer.name : ''}</b></span> <button class="btn-swap-pill" style="padding:2px 8px;font-size:0.68rem;" onclick="cancelInMatchSub()">Cancel</button>`;
@@ -830,6 +860,65 @@ function populateInMatchSubChips() {
     });
     return;
   }
+
+  // SCENARIO 3: Normal sub menu
+  const remaining = matchLiveState.maxSubs - matchLiveState.subsUsed;
+  titleElem.innerHTML = `<span>🔄 TACTICAL SUBSTITUTIONS (REMAINING: <span id="subsRemainingText">${remaining}</span>)</span><span style="font-size: 0.68rem; color: var(--text-muted);">Tap a bench player to bring on</span>`;
+
+  if (remaining <= 0) {
+    container.innerHTML = '<span style="font-size:0.75rem; color:var(--text-muted);">All substitutions used for this match.</span>';
+    return;
+  }
+
+  const bench = club.players.filter(p => !p.starter && !p.inj && !p.susp);
+  if (!bench.length) {
+    container.innerHTML = '<span style="font-size:0.75rem; color:var(--text-muted);">No fit bench players available.</span>';
+    return;
+  }
+
+  bench.forEach(p => {
+    const chip = document.createElement('div');
+    chip.className = 'sub-chip';
+    chip.innerHTML = `<span>${p.name} (${p.naturalPos} • OVR ${p.ovr} • ${p.con}%)</span><b style="color:#10b981">Bring On ⬆</b>`;
+    chip.onclick = () => {
+      matchLiveState.pendingSubInId = p.id;
+      populateInMatchSubChips();
+    };
+    container.appendChild(chip);
+  });
+}
+
+function confirmLiveMatchSub(starterOutId) {
+  if (matchLiveState.subsUsed >= matchLiveState.maxSubs || !matchLiveState.pendingSubInId) return;
+
+  const club = getCurrentUserClub();
+  const inP = club.players.find(x => x.id === matchLiveState.pendingSubInId);
+  const outP = club.players.find(x => x.id === starterOutId);
+
+  if (!inP || !outP) {
+    cancelInMatchSub();
+    return;
+  }
+
+  inP.starter = true;
+  outP.starter = false;
+  inP.role = outP.role;
+  matchLiveState.subsUsed++;
+  matchLiveState.pendingSubInId = null;
+
+  // Clear forced sub requirement if the injured player came off
+  if (matchLiveState.forcedSubOutId === starterOutId) {
+    matchLiveState.forcedSubOutId = null;
+  }
+
+  addTimelineEvent('sub', `🔄 ${pitchEngine.currentMinute}' ${inP.name.split(' ').pop()} on for ${outP.name.split(' ').pop()}`);
+  $('commentaryFeed').insertAdjacentHTML('afterbegin', `<div class="comm-line" style="border-left-color:#38bdf8">🔄 ${pitchEngine.currentMinute}' Tactical Substitution: <b>${inP.name}</b> on for <b>${outP.name}</b>.</div>`);
+
+  populateInMatchSubChips();
+  const m = getActiveUserMatch();
+  if (m) setup2DPlayers(clubById(m.home), clubById(m.away));
+  playSound('click');
+}
 
   const remaining = matchLiveState.maxSubs - matchLiveState.subsUsed;
   titleElem.innerHTML = `<span>🔄 TACTICAL SUBSTITUTIONS (REMAINING: <span id="subsRemainingText">${remaining}</span>)</span><span style="font-size: 0.68rem; color: var(--text-muted);">Tap a bench player to bring on</span>`;
@@ -886,6 +975,17 @@ function confirmLiveMatchSub(starterOutId) {
 
 function toggleMatchPause() {
   if (!matchLiveState) return;
+
+  // Block resume if an injured starter is still on the pitch
+  if (matchLiveState.isPaused && matchLiveState.forcedSubOutId) {
+    const club = getCurrentUserClub();
+    const injPlayer = club.players.find(p => p.id === matchLiveState.forcedSubOutId && p.starter);
+    if (injPlayer) {
+      alert(`⚠️ You cannot resume the match while ${injPlayer.name} is injured on the pitch! Bring on a substitute first.`);
+      return;
+    }
+  }
+
   matchLiveState.isPaused = !matchLiveState.isPaused;
   const btn = $('btnPauseMatch');
   if (btn) {
@@ -985,13 +1085,21 @@ function startMatchdaySim() {
 
     // If it's YOUR player that was injured:
     if (club.id === state.userClubId) {
-      // 1. Automatically pause the match stopwatch
+      matchLiveState.forcedSubOutId = p.id;
       matchLiveState.isPaused = true;
       const pauseBtn = $('btnPauseMatch');
       if (pauseBtn) {
         pauseBtn.innerText = '▶️ RESUME';
         pauseBtn.style.background = '#10b981';
       }
+
+      $('injuryModalDetails').innerHTML = `
+        <p><b>${p.name}</b> (${p.naturalPos} • OVR ${p.ovr}) has sustained an injury at minute ${min} and cannot continue.</p>
+        <p style="margin-top: 8px; color: #f59e0b; font-size: 0.8rem;">The match has been paused. Select a substitute below to replace him before resuming.</p>
+      `;
+      $('injuryAlertModal').style.display = 'flex';
+      populateInMatchSubChips();
+    }
 
       // 2. Open the injury modal
       $('injuryModalDetails').innerHTML = `
@@ -1035,7 +1143,7 @@ function startMatchdaySim() {
     if (Math.random() < 0.035) {
       triggerCard(Math.random() < 0.5 ? h : a);
     }
-    if (Math.random() < 0.012) {
+    if (Math.random() < 0.002) {
       triggerMatchInjury(Math.random() < 0.5 ? h : a);
     }
 
