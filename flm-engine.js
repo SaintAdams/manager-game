@@ -28,6 +28,8 @@ let state = null, selectedPlayerSwapId = null, wizardChosenClubId = 'NEW', activ
   deadlineHour = 12, pendingAIBid = null, shootoutState = null, simSpeedMultiplier = 1,
   matchSimInterval = null, animFrameId = null, marketSortKey = 'ovr', marketSortAsc = false;
 
+let lastUserClubRatings = null;
+
 let matchLiveState = {
   subsUsed: 0,
   maxSubs: 5,
@@ -230,11 +232,10 @@ function resolveMatchKitColors(homeClub, awayClub) {
   let awayColor = aKits.home;
   let usedAwayKit = false;
 
-  // If away team's home kit visually clashes with home team's kit
+  // Visual clash distance threshold ~110
   if (getKitColorDistance(homeColor, awayColor) < 110) {
     awayColor = aKits.away;
     usedAwayKit = true;
-    // Edge-case fallback: if away kit also clashes with home kit, use pure contrast
     if (getKitColorDistance(homeColor, awayColor) < 90) {
       const rgb = parseColorToRgb(homeColor);
       const bright = (rgb.r * 299 + rgb.g * 587 + rgb.b * 114) / 1000;
@@ -389,24 +390,72 @@ function createBadgeHtml(id, size = 30) {
   </span>`;
 }
 
+/* ---------- DYNAMIC TEAM RATINGS ENGINE ---------- */
 function computeClubAttributes(club) {
-  const st = club.players.filter(p => p.starter);
-  const tpl = FORMATIONS[state ? state.currentFormation : '4-3-3'] || FORMATIONS['4-3-3'];
-  const avg = (arr, fb) => {
-    if (!arr.length) return fb;
-    return Math.round(arr.reduce((s, x) => {
-      const slot = tpl.find(slotItem => slotItem.duty === x.role) || { posType: x.naturalPos };
-      const famMult = getPositionFamiliarityMultiplier(x.naturalPos, slot.posType);
-      const effOvr = x.ovr * famMult;
-      return s + effOvr * (x.inj > 0 ? 0.6 : 0.8 + 0.2 * x.con / 100);
-    }, 0) / arr.length);
+  if (!club || !club.players || !club.players.length) {
+    return { att: 60, mid: 60, def: 60, ovr: 60 };
+  }
+
+  const formationKey = (state && state.currentFormation && club.id === state.userClubId)
+    ? state.currentFormation
+    : '4-3-3';
+  const tpl = FORMATIONS[formationKey] || FORMATIONS['4-3-3'];
+
+  const getEffPlayerRating = (p, isStarter, slotIdx) => {
+    let famMult = 1.0;
+    if (isStarter && tpl[slotIdx]) {
+      famMult = getPositionFamiliarityMultiplier(p.naturalPos, tpl[slotIdx].posType);
+    }
+    const healthMult = p.inj > 0 ? 0.60 : (0.80 + 0.20 * ((p.con || 100) / 100));
+    return p.ovr * famMult * healthMult;
   };
 
-  const d = avg(st.filter(p => p.naturalPos === 'DEF' || p.naturalPos === 'GK'), 60);
-  const m = avg(st.filter(p => p.naturalPos === 'MID'), 60);
-  const a = avg(st.filter(p => p.naturalPos === 'FWD'), 60);
-  return { att: a, mid: m, def: d, ovr: Math.round((a + m + d) / 3) };
+  const starters = club.players.filter(p => p.starter);
+  const bench = club.players.filter(p => !p.starter);
+
+  const calcUnitRating = (posType, fallback) => {
+    // 1. Starting XI weight (70%)
+    const unitStarters = starters.filter(p => {
+      if (posType === 'DEF') return p.naturalPos === 'DEF' || p.naturalPos === 'GK';
+      return p.naturalPos === posType;
+    });
+
+    let starterScore = 0;
+    if (unitStarters.length > 0) {
+      const sum = unitStarters.reduce((acc, p) => {
+        const slotIdx = starters.indexOf(p);
+        return acc + getEffPlayerRating(p, true, slotIdx);
+      }, 0);
+      starterScore = sum / unitStarters.length;
+    } else {
+      starterScore = fallback - 10;
+    }
+
+    // 2. Squad Depth weight (30%)
+    const unitBench = bench.filter(p => {
+      if (posType === 'DEF') return p.naturalPos === 'DEF' || p.naturalPos === 'GK';
+      return p.naturalPos === posType;
+    });
+
+    let benchScore = starterScore;
+    if (unitBench.length > 0) {
+      const bSum = unitBench.reduce((acc, p) => acc + (p.ovr * (p.inj > 0 ? 0.6 : 0.9)), 0);
+      benchScore = bSum / unitBench.length;
+    }
+
+    // 70% XI + 30% Squad
+    const blended = Math.round((starterScore * 0.70) + (benchScore * 0.30));
+    return Math.max(35, Math.min(99, blended));
+  };
+
+  const att = calcUnitRating('FWD', club.str || 65);
+  const mid = calcUnitRating('MID', club.str || 65);
+  const def = calcUnitRating('DEF', club.str || 65);
+  const ovr = Math.round((att * 0.35) + (mid * 0.35) + (def * 0.30));
+
+  return { att, mid, def, ovr };
 }
+
 const computeClubWeeklyWageBill = club => +club.players.reduce((s, p) => s + (p.wage || 0.02), 0).toFixed(3);
 
 /* ---------- STATE INITIALIZATION ---------- */
@@ -542,7 +591,6 @@ function applyResult(m, hg, ag, scorersDone) {
   if (ag === 0) { const g = h.players.find(p => p.starter && p.naturalPos === 'GK'); if (g) g.cleanSheets++; }
   if (hg === 0) { const g = a.players.find(p => p.starter && p.naturalPos === 'GK'); if (g) g.cleanSheets++; }
 
-  // Disciplinary tracking
   if (matchLiveState) {
     if (matchLiveState.reds && matchLiveState.reds.length) {
       matchLiveState.reds.forEach(pid => {
@@ -562,7 +610,6 @@ function applyResult(m, hg, ag, scorersDone) {
     }
   }
 
-  // Tactical familiarity progression: +3% familiarity for the system played
   if (m.home === state.userClubId || m.away === state.userClubId) {
     const fKey = state.currentFormation;
     if (state.tacticalFamiliarity) {
@@ -778,7 +825,7 @@ function acceptDeadlineBid() {
   club.budget += pendingAIBid.fee; club.players = club.players.filter(x => x.id !== p.id); fixStarters(club);
   state.manager.fansApproval = Math.max(20, state.manager.fansApproval - 2);
   addNewsStory('Deadline Day', `${p.name} joins ${pendingAIBid.buyer} for £${pendingAIBid.fee.toFixed(1)}M`, 'Deal completed.', true);
-  pendingAIBid = null; saveGame(); renderAll(); updateDeadlineModalUI();
+  pendingAIBid = null; saveGame(); renderAll(); updateHeaderClubDisplay(); updateDeadlineModalUI();
 }
 function rejectDeadlineBid() { pendingAIBid = null; updateDeadlineModalUI(); }
 function closeDeadlineDay() {
@@ -849,6 +896,7 @@ function saveCustomTacticalShape() {
   if (!state.tacticalFamiliarity['Custom']) state.tacticalFamiliarity['Custom'] = 50;
   saveGame();
   renderTactics();
+  updateHeaderClubDisplay();
   alert(`Tactical shape "${name}" saved! Team will build familiarity as you play matches.`);
   playSoundSafe('click');
 }
@@ -890,6 +938,20 @@ function renderTactics() {
   const customControls = $('customFormationControls');
   if (customControls) customControls.style.display = state.currentFormation === 'Custom' ? 'flex' : 'none';
 
+  // Tactical Rating Badge next to formation selector
+  const attrs = computeClubAttributes(club);
+  let tacticsBadge = $('tacticsTeamRatingBox');
+  if (!tacticsBadge && $('formationSelect')) {
+    const parent = $('formationSelect').parentElement;
+    tacticsBadge = document.createElement('div');
+    tacticsBadge.id = 'tacticsTeamRatingBox';
+    tacticsBadge.style.cssText = 'display:flex; gap:8px; font-size:0.75rem; font-weight:800; background:rgba(0,0,0,0.3); padding:4px 8px; border-radius:6px; border:1px solid var(--border);';
+    parent.appendChild(tacticsBadge);
+  }
+  if (tacticsBadge) {
+    tacticsBadge.innerHTML = `<span>ATT: <b id="tacAtt" style="color:var(--gold)">${attrs.att}</b></span> <span>MID: <b id="tacMid" style="color:#38bdf8">${attrs.mid}</b></span> <span>DEF: <b id="tacDef" style="color:#34d399">${attrs.def}</b></span>`;
+  }
+
   // Familiarity Display Updates
   const famScore = (state.tacticalFamiliarity && state.tacticalFamiliarity[state.currentFormation]) || 50;
   if ($('familiarityScoreBadge')) $('familiarityScoreBadge').innerText = `${famScore}%`;
@@ -926,7 +988,6 @@ function renderTactics() {
       n.style.left = t.x + '%'; 
       n.style.top = t.y + '%';
 
-      // Position Familiarity Rating
       const famMult = Math.round(getPositionFamiliarityMultiplier(p.naturalPos, t.posType) * 100);
       const famColor = famMult === 100 ? '#10b981' : famMult >= 75 ? '#f59e0b' : '#ef4444';
       const nodeKitColor = i === 0 ? (userKit.gk || '#047857') : userKit.home;
@@ -937,7 +998,6 @@ function renderTactics() {
           <div class="p-role">${p.ovr} OVR • <span style="color:${famColor};font-weight:800;">${famMult}%</span></div>
         </div>`;
 
-      // Drag Engine
       let isDragging = false;
       const onPointerDown = e => {
         if (e.target.tagName === 'BUTTON') return;
@@ -985,6 +1045,7 @@ function renderTactics() {
         }
         saveGame();
         renderTactics();
+        updateHeaderClubDisplay();
       };
 
       n.addEventListener('pointerdown', onPointerDown);
@@ -1128,7 +1189,6 @@ function draw2DPitch() {
     }
   }
 
-  // Draw Player Dots with Team Styling (Filter out sent-off players)
   const allPitchPlayers = [...pitchEngine.homePlayers, ...pitchEngine.awayPlayers].filter(
     p => !(matchLiveState && matchLiveState.reds && matchLiveState.reds.includes(p.playerId))
   );
@@ -1139,13 +1199,11 @@ function draw2DPitch() {
     ctx.arc(p.x + 1, p.y + 2, 9, 0, Math.PI * 2);
     ctx.fill();
 
-    // Outer border trim
     ctx.fillStyle = '#ffffff';
     ctx.beginPath();
     ctx.arc(p.x, p.y, 9, 0, Math.PI * 2);
     ctx.fill();
 
-    // Outfield jersey vs GK jersey
     const isGK = p.num === 1;
     const shirtColor = isGK ? (p.isHome ? pitchEngine.homeGKColor : pitchEngine.awayGKColor) : p.color;
 
@@ -1154,7 +1212,6 @@ function draw2DPitch() {
     ctx.arc(p.x, p.y, 7.2, 0, Math.PI * 2);
     ctx.fill();
 
-    // High contrast squad number
     const rgb = parseColorToRgb(shirtColor);
     const lum = (rgb.r * 299 + rgb.g * 587 + rgb.b * 114) / 1000;
     ctx.fillStyle = lum > 140 ? '#000000' : '#ffffff';
@@ -1222,7 +1279,6 @@ function populateInMatchSubChips() {
   container.innerHTML = '';
   const club = getCurrentUserClub();
 
-  // Starter replacement selection mode
   if (matchLiveState.pendingSubInId) {
     const incomingPlayer = club.players.find(p => p.id === matchLiveState.pendingSubInId);
     titleElem.innerHTML = `<span>🔄 Subbing in: <b style="color:var(--gold)">${incomingPlayer ? incomingPlayer.name : ''}</b></span> <button class="btn-swap-pill" style="padding:2px 8px;font-size:0.68rem;" onclick="cancelInMatchSub()">Cancel</button>`;
@@ -1241,7 +1297,6 @@ function populateInMatchSubChips() {
     return;
   }
 
-  // Normal bench browsing mode
   const remaining = matchLiveState.maxSubs - matchLiveState.subsUsed;
   titleElem.innerHTML = `<span>🔄 TACTICAL SUBSTITUTIONS (REMAINING: <span id="subsRemainingText">${remaining}</span>)</span><span style="font-size: 0.68rem; color: var(--text-muted);">Tap a bench player to bring on</span>`;
 
@@ -1292,6 +1347,7 @@ function confirmLiveMatchSub(starterOutId) {
   populateInMatchSubChips();
   const m = getActiveUserMatch();
   if (m) setup2DPlayers(clubById(m.home), clubById(m.away));
+  updateHeaderClubDisplay();
   playSoundSafe('click');
 }
 
@@ -1500,7 +1556,8 @@ function renderMatchdayView() {
     populateInMatchSubChips();
   } else { 
     $('sbScore').innerText = '-';
-    $('sbMinute').innerText = 'NO FIXTURE';$('btnStartMatch').disabled = true;
+    $('sbMinute').innerText = 'NO FIXTURE';
+    $('btnStartMatch').disabled = true;
     $('commentaryFeed').innerHTML = '<div class="comm-line">No fixture scheduled for your club this calendar week.</div>';
   }
   const g = $('aroundGroundsList'); g.innerHTML = '';
@@ -1563,7 +1620,7 @@ function renderAcademyTab() {
 function signAcademyProspect(id) {
   const p = state.youthProspects.find(x => x.id === id); if (!p || p.signed) return; p.signed = true;
   getCurrentUserClub().players.push({ id: p.id, name: p.name, naturalPos: p.naturalPos, nat: p.nat, age: p.age, ovr: p.ovr, con: 100, role: ROLE[p.naturalPos], starter: false, val: +((p.ovr - 45) * 0.8).toFixed(1), wage: p.wage, contract: p.contract, morale: 'Superb', goals: 0, cleanSheets: 0, inj: 0, yellows: 0, susp: 0 });
-  saveGame(); renderAll(); renderAcademyTab(); playSoundSafe('cheer');
+  saveGame(); renderAll(); updateHeaderClubDisplay(); renderAcademyTab(); playSoundSafe('cheer');
 }
 
 /* ---------- transfer market ---------- */
@@ -1617,14 +1674,14 @@ function executeBuyPlayer(id, scout, sellerId) {
     if (!confirm(`Buy ${t.name} from ${s.name} for £${fee.toFixed(1)}M?`)) return; club.budget -= fee; s.budget += fee; s.players.splice(i, 1); fixStarters(s);
     club.players.push({ ...t, starter: false, inj: 0, con: 100, morale: 'Superb' }); addNewsStory('Done Deal', `${club.name} raid ${s.name} for ${t.name} (£${fee}M)`, 'Signing confirmed.', true);
   }
-  state.manager.fansApproval = Math.min(99, state.manager.fansApproval + 3); saveGame(); renderAll(); renderTransfers(); playSoundSafe('cheer');
+  state.manager.fansApproval = Math.min(99, state.manager.fansApproval + 3); saveGame(); renderAll(); updateHeaderClubDisplay(); renderTransfers(); playSoundSafe('cheer');
 }
 
 function sellSquadPlayer(id) {
   const club = getCurrentUserClub(); if (club.players.length <= 16) { alert('Squad too small. Sign replacements first.'); return; }
   const i = club.players.findIndex(x => x.id === id); if (i < 0) return; const p = club.players[i];
   if (!confirm(`Sell ${p.name} for £${p.val.toFixed(1)}M?`)) return; club.budget += p.val; club.players.splice(i, 1); fixStarters(club);
-  state.manager.fansApproval = Math.max(20, state.manager.fansApproval - 2); addNewsStory('Departure', `${p.name} leaves ${club.name} (£${p.val.toFixed(1)}M)`, 'Sale agreed.', false); saveGame(); renderAll(); renderTransfers(); playSoundSafe('whistle');
+  state.manager.fansApproval = Math.max(20, state.manager.fansApproval - 2); addNewsStory('Departure', `${p.name} leaves ${club.name} (£${p.val.toFixed(1)}M)`, 'Sale agreed.', false); saveGame(); renderAll(); updateHeaderClubDisplay(); renderTransfers(); playSoundSafe('whistle');
 }
 
 /* ---------- season end ---------- */
@@ -1716,11 +1773,43 @@ function executeNextSeasonTransition() {
   alert(`Welcome to the ${state.seasonYear}/${String(state.seasonYear + 1).slice(-2)} season!${userReleasedCount > 0 ? `\n\n📢 Note: ${userReleasedCount} player(s) left on a free transfer after their contracts expired.` : ''}`);
 }
 
-/* ---------- master render ---------- */
+/* ---------- master render & dynamic stat flash ---------- */
+function animateStatDelta(elemId, newVal, oldVal) {
+  const el = $(elemId);
+  if (!el) return;
+  el.innerText = newVal;
+
+  if (oldVal !== null && oldVal !== undefined && oldVal !== newVal) {
+    const isUp = newVal > oldVal;
+    el.style.transition = 'color 0.25s ease, transform 0.25s ease';
+    el.style.color = isUp ? '#34d399' : '#f87171';
+    el.style.transform = 'scale(1.25)';
+
+    setTimeout(() => {
+      el.style.color = '#ffffff';
+      el.style.transform = 'scale(1)';
+    }, 900);
+  }
+}
+
 function updateHeaderClubDisplay() {
-  const c = getCurrentUserClub(), s = computeClubAttributes(c);
-  $('headerBadgeWrap').innerHTML = createBadgeHtml(c.id, 34); $('headerClubName').innerText = c.name; $('headerStadium').innerText = `${c.stadium} • Capacity: ${(c.cap + (state.stadiumCapacityBonus || 0)).toLocaleString()}`;
-  $('statAttack').innerText = s.att; $('statMidfield').innerText = s.mid; $('statDefence').innerText = s.def; $('statOvr').innerText = s.ovr; $('headerWageBill').innerText = `£${Math.round(computeClubWeeklyWageBill(c) * 1000).toLocaleString()}k/w`;
+  const c = getCurrentUserClub();
+  if (!c) return;
+
+  const s = computeClubAttributes(c);
+
+  $('headerBadgeWrap').innerHTML = createBadgeHtml(c.id, 34);$('headerClubName').innerText = c.name;
+  $('headerStadium').innerText = `${c.stadium} • Capacity: ${(c.cap + (state.stadiumCapacityBonus || 0)).toLocaleString()}`;
+
+  const prev = lastUserClubRatings;
+  animateStatDelta('statAttack', s.att, prev ? prev.att : null);
+  animateStatDelta('statMidfield', s.mid, prev ? prev.mid : null);
+  animateStatDelta('statDefence', s.def, prev ? prev.def : null);
+  animateStatDelta('statOvr', s.ovr, prev ? prev.ovr : null);
+
+  lastUserClubRatings = { ...s };
+
+  $('headerWageBill').innerText = `£${Math.round(computeClubWeeklyWageBill(c) * 1000).toLocaleString()}k/w`;
 }
 
 function renderAll() {
