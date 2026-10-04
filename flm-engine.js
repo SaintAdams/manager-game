@@ -226,7 +226,7 @@ function filterWizardClubs(div) {
 }
 function confirmNewCareerSetup() {
   setupFreshState($('wizardNameInput').value.trim() || 'Manager', wizardChosenClubId);
-  $('careerSetupModal').style.display = 'none'; initMarketFilterDropdowns(); saveGame(); renderAll(); switchTab('tactics'); playSound('whistle');
+  $('careerSetupModal').style.display = 'none'; initMarketFilterDropdowns(); saveGame(); renderAll(); switchTab('tactics'); playSoundSafe('whistle');
 }
 function promptNewCareer() { if (confirm('Start a completely new career? Current progress will be reset.')) { localStorage.removeItem(STORAGE_KEY); openCareerSetupWizard(); } }
 function openClubSelectorModal() { filterModalClubs(0); $('clubSelectorModal').style.display = 'flex'; }
@@ -237,7 +237,7 @@ function filterModalClubs(div) {
   state.clubs.filter(c => c.div === div).forEach(c => {
     const card = document.createElement('div');
     card.style.cssText = 'background:var(--bg-panel);padding:8px 10px;border-radius:8px;cursor:pointer;border:1px solid var(--border);display:flex;align-items:center;gap:10px;';
-    card.onclick = () => { state.userClubId = c.id; closeClubSelectorModal(); saveGame(); initMarketFilterDropdowns(); renderAll(); playSound('whistle'); };
+    card.onclick = () => { state.userClubId = c.id; closeClubSelectorModal(); saveGame(); initMarketFilterDropdowns(); renderAll(); playSoundSafe('whistle'); };
     card.innerHTML = clubCardHtml(c); grid.appendChild(card);
   });
 }
@@ -267,6 +267,15 @@ function ensureCupTie() {
   if (!state.cups[cfg[1] + 'Alive']) return;
   const opp = pick(state.clubs.filter(c => c.id !== state.userClubId)), homeUser = Math.random() < 0.5;
   w.matches.unshift({ div: -1, type: 'CUP', cupName: cfg[0], cupKey: cfg[1], final: cfg[2], home: homeUser ? state.userClubId : opp.id, away: homeUser ? opp.id : state.userClubId, homeGoals: null, awayGoals: null, played: false, scorers: [] });
+}
+
+/* ---------- sound safe helper ---------- */
+function playSoundSafe(name) {
+  try {
+    if (typeof playSound === 'function') playSound(name);
+  } catch (e) {
+    // Graceful silent fallback
+  }
 }
 
 /* ---------- match engine ---------- */
@@ -339,7 +348,7 @@ function cupOutcome(m) {
   if (!won) { state.cups[m.cupKey + 'Alive'] = false; addNewsStory('Cup Exit', `${uc} knocked out of the ${m.cupName}`, 'The cup run is over for this season.', false); }
   else if (m.final) {
     if (m.cupKey === 'fa') state.manager.faCups++; else state.manager.carabaoCups++;
-    addNewsStory('Silverware', `${uc} WIN THE ${m.cupName.toUpperCase()}!`, 'A trophy for the cabinet.', true); playSound('cheer');
+    addNewsStory('Silverware', `${uc} WIN THE ${m.cupName.toUpperCase()}!`, 'A trophy for the cabinet.', true); playSoundSafe('cheer');
   } else addNewsStory('Cup Progress', `${uc} through in the ${m.cupName}`, 'On to the next round.', false);
 }
 
@@ -464,7 +473,7 @@ function generateWeeklyNewsStory() {
 function evaluateManagerOfMonth() {
   if (Math.random() > 0.45 && state.manager.confidence > 75) {
     state.manager.motmAwards++; state.manager.confidence = Math.min(99, state.manager.confidence + 5);
-    addNewsStory('Award Winner', `${state.manager.name} named Manager of the Month!`, 'An impressive run of form.', true); alert('🏆 Manager of the Month!'); playSound('cheer');
+    addNewsStory('Award Winner', `${state.manager.name} named Manager of the Month!`, 'An impressive run of form.', true); alert('🏆 Manager of the Month!'); playSoundSafe('cheer');
   }
 }
 
@@ -482,7 +491,7 @@ function handleMasterAdvanceClick() {
   if (state.currentWeek >= state.totalWeeks) { showEndSeasonGala(); return; }
   state.currentWeek++; resetLiveState();
   if (state.currentWeek % 4 === 0) evaluateManagerOfMonth();
-  saveGame(); renderAll(); playSound('click');
+  saveGame(); renderAll(); playSoundSafe('click');
 }
 
 function resetLiveState() {
@@ -515,7 +524,7 @@ function showResultModal(m) {
   $('modalScoreDisplay').innerHTML = `<div class="result-modal-scoreboard"><div class="result-team">${createBadgeHtml(h.id, 46)}<div class="result-team-name">${h.name}</div></div><div class="result-score-center"><div class="result-score-digits">${m.homeGoals} - ${m.awayGoals}</div><div class="result-ft-badge">FULL TIME</div></div><div class="result-team">${createBadgeHtml(a.id, 46)}<div class="result-team-name">${a.name}</div></div></div>`;
   const sc = m.scorers.map(s => `${s.min}' ${s.player}`).join(', ');
   $('modalHighlightsFeed').innerHTML = `<p><b>${mine > 0 ? 'Great win!' : mine < 0 ? 'Tough defeat.' : 'Points shared.'}</b></p><p style="margin-top:6px">${sc ? 'Goals: ' + sc : 'No goals.'}</p>`;
-  $('resultSummaryModal').style.display = 'flex'; playSound('whistle');
+  $('resultSummaryModal').style.display = 'flex'; playSoundSafe('whistle');
 }
 
 function dismissResultModal() { $('resultSummaryModal').style.display = 'none'; handleMasterAdvanceClick(); }
@@ -525,14 +534,14 @@ function launchPenaltyShootout(m, h, a) {
   shootoutState = { active: true, match: m, homeClub: h, awayClub: a, homeScore: 0, awayScore: 0, homeKicks: [], awayKicks: [], turn: 'home' };
   $('penHomeTeamName').innerText = h.name; $('penAwayTeamName').innerText = a.name; $('penHomeScore').innerText = '0'; $('penAwayScore').innerText = '0';
   $('penHomePips').innerHTML = ''; $('penAwayPips').innerHTML = ''; $('penKickStatusText').innerText = `${h.name} to take first!`;
-  $('btnTakePenalty').disabled = false; $('shootoutModal').style.display = 'flex'; playSound('whistle');
+  $('btnTakePenalty').disabled = false; $('shootoutModal').style.display = 'flex'; playSoundSafe('whistle');
 }
 function takeShootoutTurn() {
   const s = shootoutState; if (!s || !s.active) return; const home = s.turn === 'home', scored = Math.random() < 0.78, team = home ? s.homeClub : s.awayClub;
   if (home) { s.homeKicks.push(scored); if (scored) s.homeScore++; s.turn = 'away'; } else { s.awayKicks.push(scored); if (scored) s.awayScore++; s.turn = 'home'; }
   [['penHomePips', s.homeKicks], ['penAwayPips', s.awayKicks]].forEach(([id, k]) => { $(id).innerHTML = k.map(r => `<div class="pen-pip ${r ? 'scored' : 'missed'}"></div>`).join(''); });
   $('penHomeScore').innerText = s.homeScore; $('penAwayScore').innerText = s.awayScore;
-  $('penKickStatusText').innerHTML = scored ? `⚽ <b style="color:#10b981">SCORED!</b> ${team.name}` : `❌ <b style="color:#ef4444">MISSED!</b> ${team.name}`; playSound(scored ? 'goal' : 'click');
+  $('penKickStatusText').innerHTML = scored ? `⚽ <b style="color:#10b981">SCORED!</b> ${team.name}` : `❌ <b style="color:#ef4444">MISSED!</b> ${team.name}`; playSoundSafe(scored ? 'goal' : 'click');
   const hk = s.homeKicks.length, ak = s.awayKicks.length;
   if (hk === ak && hk >= 5 && s.homeScore !== s.awayScore) concludeShootout();
   else if (hk <= 5 && ak <= 5 && (s.homeScore > s.awayScore + (5 - ak) || s.awayScore > s.homeScore + (5 - hk))) concludeShootout();
@@ -549,7 +558,7 @@ function concludeShootout() {
 
 /* ---------- deadline day ---------- */
 function checkDeadlineDayTrigger() {
-  if ((state.currentWeek === 4 || state.currentWeek === 22) && !state.deadlineDaysCompleted[state.currentWeek]) { deadlineHour = 12; updateDeadlineModalUI(); $('deadlineModal').style.display = 'flex'; playSound('whistle'); return true; }
+  if ((state.currentWeek === 4 || state.currentWeek === 22) && !state.deadlineDaysCompleted[state.currentWeek]) { deadlineHour = 12; updateDeadlineModalUI(); $('deadlineModal').style.display = 'flex'; playSoundSafe('whistle'); return true; }
   return false;
 }
 function updateDeadlineModalUI() {
@@ -593,13 +602,13 @@ function autoPickBestXI() {
   const pool = [...club.players].sort((a, b) => ((a.inj > 0 || a.susp > 0) - (b.inj > 0 || b.susp > 0)) || b.ovr * b.con - a.ovr * a.con), picked = [];
   tpl.forEach(slot => { let i = pool.findIndex(p => p.naturalPos === slot.posType && !p.susp && !p.inj); if (i < 0) i = 0; picked.push(pool.splice(i, 1)[0]); });
   picked.forEach((p, i) => { p.starter = true; p.role = tpl[i].duty; });
-  club.players = [...picked, ...pool]; cancelPlayerSwap(); saveGame(); renderTactics(); updateHeaderClubDisplay(); playSound('whistle');
+  club.players = [...picked, ...pool]; cancelPlayerSwap(); saveGame(); renderTactics(); updateHeaderClubDisplay(); playSoundSafe('whistle');
 }
 function handlePlayerSelect(id) {
   const club = getCurrentUserClub();
   if (!selectedPlayerSwapId) {
     selectedPlayerSwapId = id; const p = club.players.find(x => x.id === id);
-    $('swapNotificationText').innerHTML = `🔄 <b>${p.name}</b> selected — tap another player to swap`; $('swapNotificationBar').style.display = 'flex'; renderTactics(); playSound('click'); return;
+    $('swapNotificationText').innerHTML = `🔄 <b>${p.name}</b> selected — tap another player to swap`; $('swapNotificationBar').style.display = 'flex'; renderTactics(); playSoundSafe('click'); return;
   }
   if (selectedPlayerSwapId === id) { cancelPlayerSwap(); return; }
   const i = club.players.findIndex(x => x.id === selectedPlayerSwapId), j = club.players.findIndex(x => x.id === id);
@@ -607,7 +616,7 @@ function handlePlayerSelect(id) {
     const a = club.players[i], b = club.players[j]; [a.starter, b.starter] = [b.starter, a.starter]; [a.role, b.role] = [b.role, a.role]; club.players[i] = b; club.players[j] = a;
     club.players = [...club.players.filter(p => p.starter), ...club.players.filter(p => !p.starter)];
   }
-  cancelPlayerSwap(); saveGame(); renderTactics(); updateHeaderClubDisplay(); playSound('whistle');
+  cancelPlayerSwap(); saveGame(); renderTactics(); updateHeaderClubDisplay(); playSoundSafe('whistle');
 }
 function cancelPlayerSwap() { selectedPlayerSwapId = null; $('swapNotificationBar').style.display = 'none'; renderTactics(); }
 function openContractModal(id) {
@@ -617,7 +626,7 @@ function openContractModal(id) {
 }
 function confirmContractOffer(y) {
   if (!activeContractTarget) return; activeContractTarget.contract += y; activeContractTarget.wage = +(activeContractTarget.wage * 1.1).toFixed(3); activeContractTarget.morale = 'Superb';
-  closeContractModal(); saveGame(); renderAll(); playSound('cheer');
+  closeContractModal(); saveGame(); renderAll(); playSoundSafe('cheer');
 }
 function closeContractModal() { activeContractTarget = null; $('contractModal').style.display = 'none'; }
 
@@ -740,7 +749,7 @@ function draw2DPitch() {
     }
   }
 
-  // Draw Player Dots with Team Styling (Filter out sent-off players)
+  // Draw Player Dots with Team Styling (sent-off players removed)
   const allPitchPlayers = [...pitchEngine.homePlayers, ...pitchEngine.awayPlayers].filter(
     p => !(matchLiveState && matchLiveState.reds && matchLiveState.reds.includes(p.playerId))
   );
@@ -809,115 +818,126 @@ function update2DPitchPhysics() {
 function setSimSpeed(s) { simSpeedMultiplier = s; $('spd1').className = `btn-speed ${s === 1 ? 'active' : ''}`; $('spd3').className = `btn-speed ${s === 3 ? 'active' : ''}`; }
 function triggerInstantSim() { simSpeedMultiplier = 25; }
 
-/* ---------- CONTEXT-DRIVEN TOUCHLINE SHOUTS ---------- */
+/* ---------- CONTEXT-DRIVEN TOUCHLINE SHOUTS (FAILSAFE) ---------- */
 function triggerTouchlineShout(t) {
-  const curMin = pitchEngine.currentMinute || 0;
+  try {
+    const curMin = pitchEngine.currentMinute || 0;
 
-  // Non-blocking cooldown notice: streams directly to feed, never freezes simulation
-  if (curMin < matchLiveState.shoutNextAvailableMin) {
-    const wait = matchLiveState.shoutNextAvailableMin - curMin;
-    $('commentaryFeed').insertAdjacentHTML(
-      'afterbegin',
-      `<div class="comm-line" style="border-left-color: #64748b; color: #94a3b8;">⏳ <b>TOUCHLINE:</b> The squad needs time to digest your last instruction. (${wait}' remaining)</div>`
-    );
-    playSound('click');
-    return;
+    // Non-blocking cooldown check
+    if (curMin < matchLiveState.shoutNextAvailableMin) {
+      const wait = matchLiveState.shoutNextAvailableMin - curMin;
+      $('commentaryFeed').insertAdjacentHTML(
+        'afterbegin',
+        `<div class="comm-line" style="border-left-color: #64748b; color: #94a3b8;">⏳ <b>TOUCHLINE:</b> The squad needs time to digest your last instruction. (${wait}' remaining)</div>`
+      );
+      playSoundSafe('click');
+      return;
+    }
+
+    const m = getActiveUserMatch();
+    if (!m || m.played) return;
+
+    const club = getCurrentUserClub();
+    const isHome = m.home === club.id;
+
+    // Goal difference calculation with scoreboard fallback
+    let myGoals = 0, oppGoals = 0;
+    const sbText = $('sbScore') ? $('sbScore').innerText : '0 - 0';
+    const parts = sbText.split('-').map(x => parseInt(x.trim(), 10) || 0);
+    if (parts.length === 2) {
+      myGoals = isHome ? parts[0] : parts[1];
+      oppGoals = isHome ? parts[1] : parts[0];
+    }
+    const diff = myGoals - oppGoals;
+
+    const starters = (club.players || []).filter(p => p.starter);
+    const superbCount = starters.filter(p => p.morale === 'Superb').length;
+    const unhappyCount = starters.filter(p => p.morale === 'Unhappy').length;
+    const squadMoraleScore = (superbCount * 2) - (unhappyCount * 3);
+
+    const captain = starters.reduce((best, p) => (p.ovr + (p.age >= 28 ? 10 : 0)) > (best.ovr + (best.age >= 28 ? 10 : 0)) ? p : best, starters[0] || { name: 'Captain' });
+    const leaderBonus = captain && captain.age >= 28 ? 15 : 0;
+    const authority = ((state.manager ? state.manager.confidence : 75) + (state.manager ? state.manager.fansApproval : 75)) / 2;
+
+    let success = false;
+    let reactionText = '';
+    let attMod = 0;
+    let defMod = 0;
+
+    switch (t) {
+      case 'DEMAND_MORE':
+        if (diff <= 0 && (authority + squadMoraleScore + leaderBonus >= 60)) {
+          success = true;
+          attMod = 0.038;
+          defMod = -0.01;
+          reactionText = `🔥 Squad fired up! Attacking intensity surges under ${captain.name}'s leadership.`;
+        } else {
+          success = false;
+          attMod = -0.025;
+          defMod = -0.035;
+          reactionText = `⚠️ Backfire! The squad feels unjustly berated and looks nervous.`;
+        }
+        break;
+
+      case 'CALM_DOWN':
+        if (diff >= 0) {
+          success = true;
+          defMod = 0.04;
+          attMod = -0.01;
+          reactionText = `🧘 Squad regains composure, tightening up and slowing the tempo.`;
+        } else {
+          success = false;
+          attMod = -0.03;
+          reactionText = `😒 The players are puzzled by your caution while trailing!`;
+        }
+        break;
+
+      case 'PUSH_FORWARD':
+        success = diff <= 0;
+        attMod = 0.055;
+        defMod = -0.05;
+        reactionText = `⚡ All-out attack! Players stream forward, leaving space behind!`;
+        break;
+
+      case 'PRAISE':
+        if (diff >= 1) {
+          success = true;
+          attMod = 0.02;
+          defMod = 0.02;
+          starters.forEach(p => { if (p) p.con = Math.min(100, (p.con || 90) + 2); });
+          reactionText = `👏 The squad beams with pride and plays with high confidence.`;
+        } else {
+          success = false;
+          attMod = -0.03;
+          reactionText = `😡 Players are frustrated by sarcastic praise while trailing!`;
+        }
+        break;
+    }
+
+    matchLiveState.activeShout = t;
+    matchLiveState.shoutExpireMin = curMin + 12;
+    matchLiveState.shoutNextAvailableMin = curMin + 14;
+    matchLiveState.shoutAttMod = attMod;
+    matchLiveState.shoutDefMod = defMod;
+
+    const badgeElem = $('activeShoutBadge');
+    if (badgeElem) {
+      badgeElem.innerText = success ? `📣 ${t} (EFFECTIVE)` : `📣 ${t} (BACKFIRED)`;
+      badgeElem.style.color = success ? '#10b981' : '#ef4444';
+    }
+
+    const feed = $('commentaryFeed');
+    if (feed) {
+      feed.insertAdjacentHTML(
+        'afterbegin',
+        `<div class="comm-line" style="border-left-color:${success ? '#10b981' : '#ef4444'};">📢 ${curMin}' <b>TOUCHLINE:</b> ${reactionText}</div>`
+      );
+    }
+
+    playSoundSafe(success ? 'cheer' : 'whistle');
+  } catch (err) {
+    console.error('Error in touchline shout:', err);
   }
-
-  const m = getActiveUserMatch();
-  if (!m || m.played) return;
-
-  const club = getCurrentUserClub();
-  const isHome = m.home === club.id;
-  const myGoals = isHome 
-    ? (m.scorers ? m.scorers.filter(s => s.team === club.name).length : 0) 
-    : (m.scorers ? m.scorers.filter(s => s.team === club.name).length : 0);
-  const oppClub = clubById(isHome ? m.away : m.home);
-  const oppGoals = m.scorers ? m.scorers.filter(s => s.team === oppClub.name).length : 0;
-  const diff = myGoals - oppGoals;
-
-  const starters = club.players.filter(p => p.starter);
-  const superbCount = starters.filter(p => p.morale === 'Superb').length;
-  const unhappyCount = starters.filter(p => p.morale === 'Unhappy').length;
-  const squadMoraleScore = (superbCount * 2) - (unhappyCount * 3);
-
-  const captain = starters.reduce((best, p) => (p.ovr + (p.age >= 28 ? 10 : 0)) > (best.ovr + (best.age >= 28 ? 10 : 0)) ? p : best, starters[0] || {});
-  const leaderBonus = captain && captain.age >= 28 ? 15 : 0;
-  const authority = (state.manager.confidence + state.manager.fansApproval) / 2;
-
-  let success = false;
-  let reactionText = '';
-  let attMod = 0;
-  let defMod = 0;
-
-  switch (t) {
-    case 'DEMAND_MORE':
-      if (diff <= 0 && (authority + squadMoraleScore + leaderBonus >= 70)) {
-        success = true;
-        attMod = 0.038;
-        defMod = -0.01;
-        reactionText = `🔥 Squad fired up! Attacking intensity surges under ${captain.name}'s leadership.`;
-      } else {
-        success = false;
-        attMod = -0.025;
-        defMod = -0.035;
-        reactionText = `⚠️ Backfire! The squad feels unjustly berated and looks nervous and rushed.`;
-      }
-      break;
-
-    case 'CALM_DOWN':
-      if (diff >= 0) {
-        success = true;
-        defMod = 0.04;
-        attMod = -0.01;
-        reactionText = `🧘 Squad regains composure, tightening up and slowing the tempo.`;
-      } else {
-        success = false;
-        attMod = -0.03;
-        reactionText = `😒 The players are puzzled by your caution while trailing!`;
-      }
-      break;
-
-    case 'PUSH_FORWARD':
-      success = diff <= 0;
-      attMod = 0.055;
-      defMod = -0.05;
-      reactionText = `⚡ All-out attack! Players stream forward, leaving space behind!`;
-      break;
-
-    case 'PRAISE':
-      if (diff >= 1) {
-        success = true;
-        attMod = 0.02;
-        defMod = 0.02;
-        starters.forEach(p => p.con = Math.min(100, p.con + 2));
-        reactionText = `👏 The squad beams with pride and plays with high confidence.`;
-      } else {
-        success = false;
-        attMod = -0.03;
-        reactionText = `😡 Players are frustrated by sarcastic praise while not ahead!`;
-      }
-      break;
-  }
-
-  matchLiveState.activeShout = t;
-  matchLiveState.shoutExpireMin = curMin + 12;
-  matchLiveState.shoutNextAvailableMin = curMin + 14;
-  matchLiveState.shoutAttMod = attMod;
-  matchLiveState.shoutDefMod = defMod;
-
-  const badgeElem = $('activeShoutBadge');
-  if (badgeElem) {
-    badgeElem.innerText = success ? `📣 ${t} (EFFECTIVE)` : `📣 ${t} (BACKFIRED)`;
-    badgeElem.style.color = success ? '#10b981' : '#ef4444';
-  }
-
-  $('commentaryFeed').insertAdjacentHTML(
-    'afterbegin',
-    `<div class="comm-line" style="border-left-color:${success ? '#10b981' : '#ef4444'};">📢 ${curMin}' <b>TOUCHLINE:</b> ${reactionText}</div>`
-  );
-
-  playSound(success ? 'cheer' : 'whistle');
 }
 
 function addTimelineEvent(type, text) {
@@ -937,7 +957,7 @@ function populateInMatchSubChips() {
   container.innerHTML = '';
   const club = getCurrentUserClub();
 
-  // If an injured starter MUST be replaced:
+  // If a player MUST be replaced due to injury:
   if (matchLiveState.forcedSubOutId) {
     const injPlayer = club.players.find(p => p.id === matchLiveState.forcedSubOutId);
     const targetPos = injPlayer ? injPlayer.naturalPos : 'FWD';
@@ -1070,12 +1090,20 @@ function confirmLiveMatchSub(starterOutId) {
   populateInMatchSubChips();
   const m = getActiveUserMatch();
   if (m) setup2DPlayers(clubById(m.home), clubById(m.away));
-  playSound('click');
+  playSoundSafe('click');
 
-  // If this substitution resolved an injury stoppage, resume match immediately!
+  // If this sub resolved an injury stoppage, resume the game immediately
   if (wasForced && matchLiveState.isPaused) {
     toggleMatchPause();
   }
+}
+
+function dismissInjuryModalAndSub() {
+  const modal = $('injuryAlertModal');
+  if (modal) modal.style.display = 'none';
+  populateInMatchSubChips();
+  const drawer = $('inMatchSubDrawer');
+  if (drawer) drawer.scrollIntoView({ behavior: 'smooth', block: 'center' });
 }
 
 function toggleMatchPause() {
@@ -1089,7 +1117,7 @@ function toggleMatchPause() {
         'afterbegin',
         `<div class="comm-line injury">⚠️ <b>INJURY STOPPAGE:</b> Select a substitution for ${injPlayer.name} below before resuming play.</div>`
       );
-      playSound('whistle');
+      playSoundSafe('whistle');
       return;
     }
   }
@@ -1101,7 +1129,7 @@ function toggleMatchPause() {
     btn.style.background = matchLiveState.isPaused ? '#10b981' : '#334155';
   }
   if (!matchLiveState.isPaused) {
-    playSound('whistle');
+    playSoundSafe('whistle');
   }
 }
 
@@ -1144,7 +1172,7 @@ function startMatchdaySim() {
     pitchEngine.ball.targetY = 240;
     feed.insertAdjacentHTML('afterbegin', `<div class="comm-line goal">⚽ ${min}' GOAL! ${club.name} (${sc.name}) [${hs}-${as}]</div>`);
     addTimelineEvent('goal', `⚽ ${min}' ${sc.name.split(' ').pop()} (${club.id})`);
-    playSound('goal');
+    playSoundSafe('goal');
     $('sbScore').innerText = `${hs} - ${as}`;
   };
 
@@ -1163,13 +1191,13 @@ function startMatchdaySim() {
       pitchEngine.floatingAlerts.push({ id: p.id, icon: '🟥', expireTime: Date.now() + 4500 });
       feed.insertAdjacentHTML('afterbegin', `<div class="comm-line redcard">🟥 ${min}' RED CARD! ${p.name} (${club.name}) is sent off!</div>`);
       addTimelineEvent('red', `🟥 ${min}' ${p.name.split(' ').pop()}`);
-      playSound('whistle');
+      playSoundSafe('whistle');
     } else {
       matchLiveState.yellows[p.id] = 1;
       pitchEngine.floatingAlerts.push({ id: p.id, icon: '🟨', expireTime: Date.now() + 4500 });
       feed.insertAdjacentHTML('afterbegin', `<div class="comm-line card">🟨 ${min}' Booking: ${p.name} (${club.name}) receives a yellow card.</div>`);
       addTimelineEvent('yellow', `🟨 ${min}' ${p.name.split(' ').pop()}`);
-      playSound('click');
+      playSoundSafe('click');
     }
   };
 
@@ -1181,9 +1209,8 @@ function startMatchdaySim() {
     pitchEngine.floatingAlerts.push({ id: p.id, icon: '🚑', expireTime: Date.now() + 4500 });
     feed.insertAdjacentHTML('afterbegin', `<div class="comm-line injury">🚑 ${min}' INJURY: ${p.name} (${club.name}) is down in pain and cannot continue!</div>`);
     addTimelineEvent('injury', `🚑 ${min}' ${p.name.split(' ').pop()}`);
-    playSound('whistle');
+    playSoundSafe('whistle');
 
-    // If YOUR player is injured, pause and highlight the substitution drawer directly
     if (club.id === state.userClubId) {
       matchLiveState.forcedSubOutId = p.id;
       matchLiveState.isPaused = true;
@@ -1278,7 +1305,7 @@ function startMatchdaySim() {
       $('btnAdvanceText').innerText = `CONTINUE TO WK ${state.currentWeek + 1}`;
       saveGame();
       renderStandingsTable(getCurrentUserClub().div);
-      playSound('whistle');
+      playSoundSafe('whistle');
       return;
     }
     matchSimInterval = setTimeout(tick, Math.max(12, 120 / simSpeedMultiplier));
@@ -1375,7 +1402,7 @@ function renderAcademyTab() {
 function signAcademyProspect(id) {
   const p = state.youthProspects.find(x => x.id === id); if (!p || p.signed) return; p.signed = true;
   getCurrentUserClub().players.push({ id: p.id, name: p.name, naturalPos: p.naturalPos, nat: p.nat, age: p.age, ovr: p.ovr, con: 100, role: ROLE[p.naturalPos], starter: false, val: +((p.ovr - 45) * 0.8).toFixed(1), wage: p.wage, contract: p.contract, morale: 'Superb', goals: 0, cleanSheets: 0, inj: 0, yellows: 0, susp: 0 });
-  saveGame(); renderAll(); renderAcademyTab(); playSound('cheer');
+  saveGame(); renderAll(); renderAcademyTab(); playSoundSafe('cheer');
 }
 
 /* ---------- transfer market ---------- */
@@ -1429,14 +1456,14 @@ function executeBuyPlayer(id, scout, sellerId) {
     if (!confirm(`Buy ${t.name} from ${s.name} for £${fee.toFixed(1)}M?`)) return; club.budget -= fee; s.budget += fee; s.players.splice(i, 1); fixStarters(s);
     club.players.push({ ...t, starter: false, inj: 0, con: 100, morale: 'Superb' }); addNewsStory('Done Deal', `${club.name} raid ${s.name} for ${t.name} (£${fee}M)`, 'Signing confirmed.', true);
   }
-  state.manager.fansApproval = Math.min(99, state.manager.fansApproval + 3); saveGame(); renderAll(); renderTransfers(); playSound('cheer');
+  state.manager.fansApproval = Math.min(99, state.manager.fansApproval + 3); saveGame(); renderAll(); renderTransfers(); playSoundSafe('cheer');
 }
 
 function sellSquadPlayer(id) {
   const club = getCurrentUserClub(); if (club.players.length <= 16) { alert('Squad too small. Sign replacements first.'); return; }
   const i = club.players.findIndex(x => x.id === id); if (i < 0) return; const p = club.players[i];
   if (!confirm(`Sell ${p.name} for £${p.val.toFixed(1)}M?`)) return; club.budget += p.val; club.players.splice(i, 1); fixStarters(club);
-  state.manager.fansApproval = Math.max(20, state.manager.fansApproval - 2); addNewsStory('Departure', `${p.name} leaves ${club.name} (£${p.val.toFixed(1)}M)`, 'Sale agreed.', false); saveGame(); renderAll(); renderTransfers(); playSound('whistle');
+  state.manager.fansApproval = Math.max(20, state.manager.fansApproval - 2); addNewsStory('Departure', `${p.name} leaves ${club.name} (£${p.val.toFixed(1)}M)`, 'Sale agreed.', false); saveGame(); renderAll(); renderTransfers(); playSoundSafe('whistle');
 }
 
 /* ---------- season end ---------- */
@@ -1445,7 +1472,7 @@ const sortedDivs = () => { const s = {}; for (let d = 0; d <= 3; d++) s[d] = [..
 function showEndSeasonGala() {
   const s = sortedDivs(), mv = d => `<p><b>Up from ${DIV_NAMES[d + 1]}:</b> ${s[d + 1].slice(0, 3).map(r => r.name).join(', ')}</p><p><b>Down from ${DIV_NAMES[d]}:</b> ${s[d].slice(-3).map(r => r.name).join(', ')}</p>`;
   $('eosSummaryContent').innerHTML = `<div style="background:var(--bg-panel);padding:12px;border-radius:8px;margin-bottom:10px"><h3 style="color:var(--gold)">👑 Champions</h3>${[0, 1, 2, 3].map(d => `<p><b>${DIV_NAMES[d]}:</b>${s[d][0].name}</p>`).join('')}</div><div style="background:var(--bg-panel);padding:12px;border-radius:8px"><h3 style="color:#38bdf8">📈 Movement</h3>${mv(0)}${mv(1)}${mv(2)}</div>`;
-  $('endSeasonModal').style.display = 'flex'; playSound('cheer');
+  $('endSeasonModal').style.display = 'flex'; playSoundSafe('cheer');
 }
 
 function closeEosModal() { $('endSeasonModal').style.display = 'none'; }
@@ -1554,7 +1581,7 @@ function switchTab(id) {
   ({ tactics: renderTactics, news: renderNewsFeed, cups: renderCupsTab, transfers: renderTransfers, standings: () => renderStandingsTable(state.activeStandingsTab), academy: renderAcademyTab, matchday: renderMatchdayView, facilities: renderFacilities, manager: renderManagerOffice, honours: renderHonours })[id]();
 }
 
-/* Matchday: pitch + scoreboard left; commentary, subs and other games right (one screen, no scrolling) */
+/* Matchday layout helper */
 function layoutMatchday() {
   const grid = document.querySelector('.matchday-grid'); if (!grid || grid.dataset.laid) return; grid.dataset.laid = 1;
   const grounds = grid.querySelector('.standings-card'), comm = $('commentaryFeed'), right = document.createElement('div'); right.className = 'md-right';
