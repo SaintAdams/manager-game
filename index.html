@@ -444,14 +444,12 @@
               <span style="font-size: 0.72rem; color: var(--text-muted);">Match timeline will record goals, bookings, and substitutions here.</span>
             </div>
 
-            <div class="shouts-bar">
-              <span style="font-size: 0.7rem; font-weight: 800; color: var(--accent); margin-right: 4px;">📢 SHOUTS:</span>
-              <button class="btn-shout" onclick="triggerTouchlineShout('DEMAND_MORE')">🔥 Demand More</button>
-              <button class="btn-shout" onclick="triggerTouchlineShout('TIGHTEN_UP')">🛡️ Tighten Up</button>
-              <button class="btn-shout" onclick="triggerTouchlineShout('PUSH_FORWARD')">⚡ Push Forward</button>
-              <button class="btn-shout" onclick="triggerTouchlineShout('WASTE_TIME')">⏱️️ Waste Time</button>
-              <span id="activeShoutBadge" style="font-size: 0.72rem; font-weight: 800; color: #f59e0b; margin-left: auto;"></span>
-            </div>
+            <div class="touchline-shouts-row" style="display: flex; gap: 6px; flex-wrap: wrap; margin-top: 8px;">
+                <button class="btn-swap-pill" style="background: #ef4444; color: #fff;" onclick="triggerTouchlineShout('DEMAND_MORE')">🔥 Demand More</button>
+                <button class="btn-swap-pill" style="background: #3b82f6; color: #fff;" onclick="triggerTouchlineShout('CALM_DOWN')">🧘 Calm Down</button>
+                <button class="btn-swap-pill" style="background: #f59e0b; color: #fff;" onclick="triggerTouchlineShout('PUSH_FORWARD')">⚡ Push Forward</button>
+                <button class="btn-swap-pill" style="background: #10b981; color: #fff;" onclick="triggerTouchlineShout('PRAISE')">👏 Praise</button>
+              </div>
 
             <div class="canvas-container">
               <canvas id="matchPitchCanvas" width="800" height="480"></canvas>
