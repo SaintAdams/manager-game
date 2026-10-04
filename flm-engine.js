@@ -22,15 +22,9 @@ let state = null, selectedPlayerSwapId = null, wizardChosenClubId = 'NEW', activ
   matchSimInterval = null, animFrameId = null, marketSortKey = 'ovr', marketSortAsc = false;
 
 let matchLiveState = {
-  activeShout: null,
-  shoutExpireMin: 0,
-  shoutNextAvailableMin: 0,
-  shoutAttMod: 0,
-  shoutDefMod: 0,
   subsUsed: 0,
   maxSubs: 5,
   pendingSubInId: null,
-  forcedSubOutId: null,
   isPaused: false,
   timelineEvents: [],
   yellows: {},
@@ -273,9 +267,7 @@ function ensureCupTie() {
 function playSoundSafe(name) {
   try {
     if (typeof playSound === 'function') playSound(name);
-  } catch (e) {
-    // Graceful silent fallback
-  }
+  } catch (e) {}
 }
 
 /* ---------- match engine ---------- */
@@ -496,22 +488,18 @@ function handleMasterAdvanceClick() {
 
 function resetLiveState() {
   matchLiveState = { 
-    activeShout: null, 
-    shoutExpireMin: 0, 
-    shoutNextAvailableMin: 0,
-    shoutAttMod: 0,
-    shoutDefMod: 0,
     subsUsed: 0, 
     maxSubs: 5, 
     pendingSubInId: null, 
-    forcedSubOutId: null, 
     isPaused: false, 
     timelineEvents: [], 
     yellows: {}, 
     reds: [] 
   };
-  $('activeShoutBadge').innerText = '';
-  $('subsRemainingText').innerText = 5;
+  const badge = $('activeShoutBadge');
+  if (badge) badge.innerText = '';
+  const subCount = $('subsRemainingText');
+  if (subCount) subCount.innerText = 5;
   const pauseBtn = $('btnPauseMatch');
   if (pauseBtn) {
     pauseBtn.style.display = 'none';
@@ -749,7 +737,7 @@ function draw2DPitch() {
     }
   }
 
-  // Draw Player Dots with Team Styling (sent-off players removed)
+  // Draw Player Dots with Team Styling (Filter out sent-off players)
   const allPitchPlayers = [...pitchEngine.homePlayers, ...pitchEngine.awayPlayers].filter(
     p => !(matchLiveState && matchLiveState.reds && matchLiveState.reds.includes(p.playerId))
   );
@@ -818,128 +806,6 @@ function update2DPitchPhysics() {
 function setSimSpeed(s) { simSpeedMultiplier = s; $('spd1').className = `btn-speed ${s === 1 ? 'active' : ''}`; $('spd3').className = `btn-speed ${s === 3 ? 'active' : ''}`; }
 function triggerInstantSim() { simSpeedMultiplier = 25; }
 
-/* ---------- CONTEXT-DRIVEN TOUCHLINE SHOUTS (FAILSAFE) ---------- */
-function triggerTouchlineShout(t) {
-  try {
-    const curMin = pitchEngine.currentMinute || 0;
-
-    // Non-blocking cooldown check
-    if (curMin < matchLiveState.shoutNextAvailableMin) {
-      const wait = matchLiveState.shoutNextAvailableMin - curMin;
-      $('commentaryFeed').insertAdjacentHTML(
-        'afterbegin',
-        `<div class="comm-line" style="border-left-color: #64748b; color: #94a3b8;">⏳ <b>TOUCHLINE:</b> The squad needs time to digest your last instruction. (${wait}' remaining)</div>`
-      );
-      playSoundSafe('click');
-      return;
-    }
-
-    const m = getActiveUserMatch();
-    if (!m || m.played) return;
-
-    const club = getCurrentUserClub();
-    const isHome = m.home === club.id;
-
-    // Goal difference calculation with scoreboard fallback
-    let myGoals = 0, oppGoals = 0;
-    const sbText = $('sbScore') ? $('sbScore').innerText : '0 - 0';
-    const parts = sbText.split('-').map(x => parseInt(x.trim(), 10) || 0);
-    if (parts.length === 2) {
-      myGoals = isHome ? parts[0] : parts[1];
-      oppGoals = isHome ? parts[1] : parts[0];
-    }
-    const diff = myGoals - oppGoals;
-
-    const starters = (club.players || []).filter(p => p.starter);
-    const superbCount = starters.filter(p => p.morale === 'Superb').length;
-    const unhappyCount = starters.filter(p => p.morale === 'Unhappy').length;
-    const squadMoraleScore = (superbCount * 2) - (unhappyCount * 3);
-
-    const captain = starters.reduce((best, p) => (p.ovr + (p.age >= 28 ? 10 : 0)) > (best.ovr + (best.age >= 28 ? 10 : 0)) ? p : best, starters[0] || { name: 'Captain' });
-    const leaderBonus = captain && captain.age >= 28 ? 15 : 0;
-    const authority = ((state.manager ? state.manager.confidence : 75) + (state.manager ? state.manager.fansApproval : 75)) / 2;
-
-    let success = false;
-    let reactionText = '';
-    let attMod = 0;
-    let defMod = 0;
-
-    switch (t) {
-      case 'DEMAND_MORE':
-        if (diff <= 0 && (authority + squadMoraleScore + leaderBonus >= 60)) {
-          success = true;
-          attMod = 0.038;
-          defMod = -0.01;
-          reactionText = `🔥 Squad fired up! Attacking intensity surges under ${captain.name}'s leadership.`;
-        } else {
-          success = false;
-          attMod = -0.025;
-          defMod = -0.035;
-          reactionText = `⚠️ Backfire! The squad feels unjustly berated and looks nervous.`;
-        }
-        break;
-
-      case 'CALM_DOWN':
-        if (diff >= 0) {
-          success = true;
-          defMod = 0.04;
-          attMod = -0.01;
-          reactionText = `🧘 Squad regains composure, tightening up and slowing the tempo.`;
-        } else {
-          success = false;
-          attMod = -0.03;
-          reactionText = `😒 The players are puzzled by your caution while trailing!`;
-        }
-        break;
-
-      case 'PUSH_FORWARD':
-        success = diff <= 0;
-        attMod = 0.055;
-        defMod = -0.05;
-        reactionText = `⚡ All-out attack! Players stream forward, leaving space behind!`;
-        break;
-
-      case 'PRAISE':
-        if (diff >= 1) {
-          success = true;
-          attMod = 0.02;
-          defMod = 0.02;
-          starters.forEach(p => { if (p) p.con = Math.min(100, (p.con || 90) + 2); });
-          reactionText = `👏 The squad beams with pride and plays with high confidence.`;
-        } else {
-          success = false;
-          attMod = -0.03;
-          reactionText = `😡 Players are frustrated by sarcastic praise while trailing!`;
-        }
-        break;
-    }
-
-    matchLiveState.activeShout = t;
-    matchLiveState.shoutExpireMin = curMin + 12;
-    matchLiveState.shoutNextAvailableMin = curMin + 14;
-    matchLiveState.shoutAttMod = attMod;
-    matchLiveState.shoutDefMod = defMod;
-
-    const badgeElem = $('activeShoutBadge');
-    if (badgeElem) {
-      badgeElem.innerText = success ? `📣 ${t} (EFFECTIVE)` : `📣 ${t} (BACKFIRED)`;
-      badgeElem.style.color = success ? '#10b981' : '#ef4444';
-    }
-
-    const feed = $('commentaryFeed');
-    if (feed) {
-      feed.insertAdjacentHTML(
-        'afterbegin',
-        `<div class="comm-line" style="border-left-color:${success ? '#10b981' : '#ef4444'};">📢 ${curMin}' <b>TOUCHLINE:</b> ${reactionText}</div>`
-      );
-    }
-
-    playSoundSafe(success ? 'cheer' : 'whistle');
-  } catch (err) {
-    console.error('Error in touchline shout:', err);
-  }
-}
-
 function addTimelineEvent(type, text) {
   matchLiveState.timelineEvents.push({ type, text }); const bar = $('matchTimelineBar'); if (matchLiveState.timelineEvents.length === 1) bar.innerHTML = '';
   const i = document.createElement('div'); i.className = `timeline-event-item ${type}`; i.innerText = text; bar.appendChild(i);
@@ -957,65 +823,7 @@ function populateInMatchSubChips() {
   container.innerHTML = '';
   const club = getCurrentUserClub();
 
-  // If a player MUST be replaced due to injury:
-  if (matchLiveState.forcedSubOutId) {
-    const injPlayer = club.players.find(p => p.id === matchLiveState.forcedSubOutId);
-    const targetPos = injPlayer ? injPlayer.naturalPos : 'FWD';
-
-    titleElem.innerHTML = `<span style="color:#ef4444;font-weight:900;">🚑 MUST REPLACE: ${injPlayer ? injPlayer.name : 'Injured Player'} (${targetPos})</span><span style="font-size:0.68rem;color:var(--text-muted);">Choose a replacement to resume the match</span>`;
-
-    const bench = club.players.filter(p => !p.starter && !p.inj && !p.susp);
-    if (!bench.length) {
-      container.innerHTML = '<span style="font-size:0.75rem; color:#ef4444;">No fit bench players available! Player must leave pitch.</span>';
-      return;
-    }
-
-    const exactMatches = bench.filter(p => p.naturalPos === targetPos);
-    const otherOptions = bench.filter(p => p.naturalPos !== targetPos);
-
-    const makeSubChip = (p, isRecommended) => {
-      const chip = document.createElement('div');
-      chip.className = 'sub-chip';
-      if (isRecommended) {
-        chip.style.borderColor = 'var(--gold)';
-        chip.style.background = 'rgba(245, 158, 11, 0.15)';
-      }
-      chip.innerHTML = `<span>${isRecommended ? '⭐ ' : ''}<b>${p.name}</b> (${p.naturalPos} • OVR ${p.ovr} • ${p.con}%)</span><b style="color:${isRecommended ? '#10b981' : '#38bdf8'}">${isRecommended ? 'Direct Swap ⬆' : 'Sub On ⬆'}</b>`;
-      chip.onclick = () => {
-        matchLiveState.pendingSubInId = p.id;
-        confirmLiveMatchSub(matchLiveState.forcedSubOutId);
-      };
-      return chip;
-    };
-
-    if (exactMatches.length) {
-      const recHeader = document.createElement('div');
-      recHeader.style.cssText = 'width:100%;font-size:0.7rem;font-weight:800;color:var(--gold);margin-bottom:2px;';
-      recHeader.innerText = `RECOMMENDED LIKE-FOR-LIKE (${targetPos}):`;
-      container.appendChild(recHeader);
-
-      exactMatches.forEach(p => container.appendChild(makeSubChip(p, true)));
-    } else {
-      const warningHeader = document.createElement('div');
-      warningHeader.style.cssText = 'width:100%;font-size:0.7rem;font-weight:800;color:#ef4444;margin-bottom:2px;';
-      warningHeader.innerText = `NO BENCH ${targetPos}S REMAINING — CHOOSE AN EMERGENCY OUT-OF-POSITION SUB:`;
-      container.appendChild(warningHeader);
-    }
-
-    if (otherOptions.length && exactMatches.length) {
-      const altHeader = document.createElement('div');
-      altHeader.style.cssText = 'width:100%;font-size:0.7rem;font-weight:800;color:var(--text-muted);margin:6px 0 2px 0;';
-      altHeader.innerText = 'OTHER BENCH OPTIONS:';
-      container.appendChild(altHeader);
-
-      otherOptions.forEach(p => container.appendChild(makeSubChip(p, false)));
-    } else if (otherOptions.length && !exactMatches.length) {
-      otherOptions.forEach(p => container.appendChild(makeSubChip(p, false)));
-    }
-    return;
-  }
-
-  // Normal mode: Starter replacement selection mode
+  // Starter replacement selection mode
   if (matchLiveState.pendingSubInId) {
     const incomingPlayer = club.players.find(p => p.id === matchLiveState.pendingSubInId);
     titleElem.innerHTML = `<span>🔄 Subbing in: <b style="color:var(--gold)">${incomingPlayer ? incomingPlayer.name : ''}</b></span> <button class="btn-swap-pill" style="padding:2px 8px;font-size:0.68rem;" onclick="cancelInMatchSub()">Cancel</button>`;
@@ -1079,11 +887,6 @@ function confirmLiveMatchSub(starterOutId) {
   matchLiveState.subsUsed++;
   matchLiveState.pendingSubInId = null;
 
-  const wasForced = (matchLiveState.forcedSubOutId === starterOutId);
-  if (wasForced) {
-    matchLiveState.forcedSubOutId = null;
-  }
-
   addTimelineEvent('sub', `🔄 ${pitchEngine.currentMinute}' ${inP.name.split(' ').pop()} on for ${outP.name.split(' ').pop()}`);
   $('commentaryFeed').insertAdjacentHTML('afterbegin', `<div class="comm-line" style="border-left-color:#38bdf8">🔄 ${pitchEngine.currentMinute}' Tactical Substitution: <b>${inP.name}</b> on for <b>${outP.name}</b>.</div>`);
 
@@ -1091,41 +894,15 @@ function confirmLiveMatchSub(starterOutId) {
   const m = getActiveUserMatch();
   if (m) setup2DPlayers(clubById(m.home), clubById(m.away));
   playSoundSafe('click');
-
-  // If this sub resolved an injury stoppage, resume the game immediately
-  if (wasForced && matchLiveState.isPaused) {
-    toggleMatchPause();
-  }
-}
-
-function dismissInjuryModalAndSub() {
-  const modal = $('injuryAlertModal');
-  if (modal) modal.style.display = 'none';
-  populateInMatchSubChips();
-  const drawer = $('inMatchSubDrawer');
-  if (drawer) drawer.scrollIntoView({ behavior: 'smooth', block: 'center' });
 }
 
 function toggleMatchPause() {
   if (!matchLiveState) return;
 
-  if (matchLiveState.isPaused && matchLiveState.forcedSubOutId) {
-    const club = getCurrentUserClub();
-    const injPlayer = club.players.find(p => p.id === matchLiveState.forcedSubOutId && p.starter);
-    if (injPlayer) {
-      $('commentaryFeed').insertAdjacentHTML(
-        'afterbegin',
-        `<div class="comm-line injury">⚠️ <b>INJURY STOPPAGE:</b> Select a substitution for ${injPlayer.name} below before resuming play.</div>`
-      );
-      playSoundSafe('whistle');
-      return;
-    }
-  }
-
   matchLiveState.isPaused = !matchLiveState.isPaused;
   const btn = $('btnPauseMatch');
   if (btn) {
-    btn.innerText = matchLiveState.isPaused ? '▶️ RESUME' : '⏸️ PAUSE';
+    btn.innerText = matchLiveState.isPaused ? '▶️ RESUME' : '⏸️️ PAUSE';
     btn.style.background = matchLiveState.isPaused ? '#10b981' : '#334155';
   }
   if (!matchLiveState.isPaused) {
@@ -1144,7 +921,6 @@ function startMatchdaySim() {
   matchLiveState.timelineEvents = [];
   matchLiveState.yellows = {};
   matchLiveState.reds = [];
-  matchLiveState.forcedSubOutId = null;
   matchLiveState.isPaused = false;
   m.scorers = [];
   let min = 0, hs = 0, as = 0;
@@ -1207,20 +983,9 @@ function startMatchdaySim() {
     p.inj = R(1, 3);
     p.con = Math.max(30, p.con - 35);
     pitchEngine.floatingAlerts.push({ id: p.id, icon: '🚑', expireTime: Date.now() + 4500 });
-    feed.insertAdjacentHTML('afterbegin', `<div class="comm-line injury">🚑 ${min}' INJURY: ${p.name} (${club.name}) is down in pain and cannot continue!</div>`);
+    feed.insertAdjacentHTML('afterbegin', `<div class="comm-line injury">🚑 ${min}' INJURY: ${p.name} (${club.name}) has picked up a knock!</div>`);
     addTimelineEvent('injury', `🚑 ${min}' ${p.name.split(' ').pop()}`);
     playSoundSafe('whistle');
-
-    if (club.id === state.userClubId) {
-      matchLiveState.forcedSubOutId = p.id;
-      matchLiveState.isPaused = true;
-      const pauseBtn = $('btnPauseMatch');
-      if (pauseBtn) {
-        pauseBtn.innerText = '▶️ RESUME';
-        pauseBtn.style.background = '#10b981';
-      }
-      populateInMatchSubChips();
-    }
   };
 
   function tick() {
@@ -1233,13 +998,6 @@ function startMatchdaySim() {
     pitchEngine.currentMinute = min;
     $('sbMinute').innerText = `${min}'`;
 
-    if (matchLiveState.activeShout && min >= matchLiveState.shoutExpireMin) {
-      matchLiveState.activeShout = null;
-      matchLiveState.shoutAttMod = 0;
-      matchLiveState.shoutDefMod = 0;
-      $('activeShoutBadge').innerText = '';
-    }
-
     if (min % 4 === 0) {
       pitchEngine.ball.targetX = 140 + Math.random() * 520;
       pitchEngine.ball.targetY = 60 + Math.random() * 360;
@@ -1251,22 +1009,13 @@ function startMatchdaySim() {
       }));
     }
 
+    // Occasional card or knock without interrupting simulation
     if (Math.random() < 0.035) {
       triggerCard(Math.random() < 0.5 ? h : a);
     }
     if (Math.random() < 0.002) {
       triggerMatchInjury(Math.random() < 0.5 ? h : a);
     }
-
-    const userHome = h.id === state.userClubId;
-    const isUserPlaying = userHome || a.id === state.userClubId;
-    const uAttMod = isUserPlaying ? matchLiveState.shoutAttMod : 0;
-    const uDefMod = isUserPlaying ? matchLiveState.shoutDefMod : 0;
-
-    const userAttBoost = userHome ? uAttMod : 0;
-    const userDefBoost = userHome ? uDefMod : 0;
-    const awayAttBoost = !userHome && isUserPlaying ? uAttMod : 0;
-    const awayDefBoost = !userHome && isUserPlaying ? uDefMod : 0;
 
     const hS = computeClubAttributes(h);
     const aS = computeClubAttributes(a);
@@ -1278,8 +1027,8 @@ function startMatchdaySim() {
     const netAwayAtt = Math.max(30, (aS.att + aS.mid) / 2 - awayRedPenalty);
     const netAwayDef = Math.max(30, (aS.def + aS.mid) / 2 - awayRedPenalty);
 
-    const pH = Math.max(0.01, (0.028 + (netHomeAtt - netAwayDef) / 1400 + 0.004) + userAttBoost - awayDefBoost);
-    const pA = Math.max(0.01, (0.024 + (netAwayAtt - netHomeDef) / 1400) + awayAttBoost - userDefBoost);
+    const pH = Math.max(0.01, (0.028 + (netHomeAtt - netAwayDef) / 1400 + 0.004));
+    const pA = Math.max(0.01, (0.024 + (netAwayAtt - netHomeDef) / 1400));
 
     if (Math.random() < pH * 1.35) goal(h, true);
     if (Math.random() < pA * 1.35) goal(a, false);
@@ -1287,7 +1036,7 @@ function startMatchdaySim() {
     if (min >= 90) {
       cancelAnimationFrame(animFrameId);
       btn.disabled = false;
-      if ($('btnPauseMatch')) $('btnPauseMatch').style.display = 'none';
+      if ($('btnPauseMatch'))$('btnPauseMatch').style.display = 'none';
       applyResult(m, hs, as, true);
       $('sbMinute').innerText = 'FULL TIME';
       feed.insertAdjacentHTML('afterbegin', `<div class="comm-line" style="font-weight:800">🏁 Full-time: ${h.name} ${hs}-${as} ${a.name}</div>`);
@@ -1301,8 +1050,7 @@ function startMatchdaySim() {
         }
       }
 
-      $('btnAdvanceMaster').className = 'btn-advance-master btn-continue-mode';
-      $('btnAdvanceText').innerText = `CONTINUE TO WK ${state.currentWeek + 1}`;
+      $('btnAdvanceMaster').className = 'btn-advance-master btn-continue-mode';$('btnAdvanceText').innerText = `CONTINUE TO WK ${state.currentWeek + 1}`;
       saveGame();
       renderStandingsTable(getCurrentUserClub().div);
       playSoundSafe('whistle');
