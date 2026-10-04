@@ -690,25 +690,143 @@ function confirmContractOffer(y) {
 function closeContractModal() { activeContractTarget = null; $('contractModal').style.display = 'none'; }
 
 function renderTactics() {
-  const club = getCurrentUserClub(), tpl = FORMATIONS[state.currentFormation] || FORMATIONS['4-3-3'];
-  const st = club.players.filter(p => p.starter), bench = club.players.filter(p => !p.starter);
-  $('formationSelect').value = state.currentFormation;
+  const club = getCurrentUserClub();
+  const tpl = FORMATIONS[state.currentFormation] || FORMATIONS['4-3-3'];
+  const st = club.players.filter(p => p.starter);
+  const bench = club.players.filter(p => !p.starter);
+
+  if ($('formationSelect'))$('formationSelect').value = state.currentFormation;
 
   const customControls = $('customFormationControls');
   if (customControls) customControls.style.display = state.currentFormation === 'Custom' ? 'flex' : 'none';
 
   // Familiarity Display Updates
   const famScore = (state.tacticalFamiliarity && state.tacticalFamiliarity[state.currentFormation]) || 50;
-  if ($('familiarityScoreBadge')) $('familiarityScoreBadge').innerText = `${famScore}%`;
-  if ($('familiarityProgressBar')) {
-    $('familiarityProgressBar').style.width = `${famScore}%`;
+  if ($('familiarityScoreBadge'))$('familiarityScoreBadge').innerText = `${famScore}%`;
+  if ($('familiarityProgressBar')) {$('familiarityProgressBar').style.width = `${famScore}%`;
     $('familiarityProgressBar').style.background = famScore >= 75 ? '#10b981' : famScore >= 50 ? '#38bdf8' : '#f59e0b';
   }
-  if ($('familiarityStatusText')) {
-    $('familiarityStatusText').innerText = famScore >= 75 ? 'Fully Adapted — Passing and shape are instinctive.' :
-      famScore >= 50 ? 'Learning — Squad understands basic runs and spacing.' :
-      'Unfamiliar — Frequent miscommunications and defensive positioning errors.';
+
+  // Shape Analysis Badges
+  const analysis = analyzeTacticalShape(tpl);
+  const analysisContainer = $('analysisBadgesContainer');
+  if (analysisContainer) {
+    analysisContainer.innerHTML = [
+      ...analysis.pros.map(t => `<div style="color:#10b981;font-weight:700;">${t}</div>`),
+      ...analysis.cons.map(t => `<div style="color:#f87171;font-weight:700;">${t}</div>`)
+    ].join('');
   }
+
+  // Interactive 2D Pitch Nodes
+  const nodes = $('pitchNodesWrapper');
+  if (nodes) {
+    nodes.innerHTML = '';
+    st.forEach((p, i) => {
+      const t = tpl[i] || { x: 50, y: 50, role: TAG[p.naturalPos], duty: p.role, posType: p.naturalPos };
+      const n = document.createElement('div');
+      n.className = `pitch-node ${selectedPlayerSwapId === p.id ? 'selected-for-swap' : ''}`;
+      n.style.left = t.x + '%'; 
+      n.style.top = t.y + '%';
+
+      // Position Familiarity Rating
+      const famMult = Math.round(getPositionFamiliarityMultiplier(p.naturalPos, t.posType) * 100);
+      const famColor = famMult === 100 ? '#10b981' : famMult >= 75 ? '#f59e0b' : '#ef4444';
+
+      n.innerHTML = `<div class="pitch-kit" style="background:${i === 0 ? '#047857' : (club.col || '#0284c7')}">${i + 1}<div class="pitch-role-tag">${t.role}</div></div>
+        <div class="pitch-name-card">
+          <div class="p-name">${p.name.split(' ').pop()} ${p.inj > 0 ? '🚑' : ''}${p.susp > 0 ? '🟥' : ''}</div>
+          <div class="p-role">${p.ovr} OVR • <span style="color:${famColor};font-weight:800;">${famMult}%</span></div>
+        </div>`;
+
+      // Drag Engine
+      let isDragging = false;
+      const onPointerDown = e => {
+        if (e.target.tagName === 'BUTTON') return;
+        isDragging = true;
+        n.classList.add('dragging');
+        document.addEventListener('pointermove', onPointerMove);
+        document.addEventListener('pointerup', onPointerUp);
+      };
+
+      const onPointerMove = e => {
+        if (!isDragging) return;
+        const rect = nodes.getBoundingClientRect();
+        const clientX = e.clientX || (e.touches && e.touches[0].clientX);
+        const clientY = e.clientY || (e.touches && e.touches[0].clientY);
+        let posX = Math.round(((clientX - rect.left) / rect.width) * 100);
+        let posY = Math.round(((clientY - rect.top) / rect.height) * 100);
+
+        posX = Math.max(8, Math.min(92, posX));
+        posY = Math.max(i === 0 ? 78 : 12, Math.min(i === 0 ? 94 : 85, posY));
+
+        n.style.left = posX + '%';
+        n.style.top = posY + '%';
+        t.x = posX;
+        t.y = posY;
+
+        if (i > 0) {
+          if (posY >= 62) { t.posType = 'DEF'; t.role = 'DF'; }
+          else if (posY >= 32) { t.posType = 'MID'; t.role = 'MF'; }
+          else { t.posType = 'FWD'; t.role = 'FW'; }
+        }
+      };
+
+      const onPointerUp = () => {
+        if (!isDragging) return;
+        isDragging = false;
+        n.classList.remove('dragging');
+        document.removeEventListener('pointermove', onPointerMove);
+        document.removeEventListener('pointerup', onPointerUp);
+
+        if (state.currentFormation !== 'Custom') {
+          state.currentFormation = 'Custom';
+          if ($('formationSelect'))$('formationSelect').value = 'Custom';
+          FORMATIONS['Custom'] = JSON.parse(JSON.stringify(tpl));
+          if ($('customFormationControls'))$('customFormationControls').style.display = 'flex';
+        }
+        saveGame();
+        renderTactics();
+      };
+
+      n.addEventListener('pointerdown', onPointerDown);
+      n.onclick = () => { if (!isDragging) handlePlayerSelect(p.id); };
+      nodes.appendChild(n);
+    });
+  }
+
+  const mor = m => m === 'Superb' ? '😄 <span style="color:#10b981">Superb</span>' : m === 'Good' ? '🙂 <span style="color:#38bdf8">Good</span>' : m === 'Fair' ? '😐 <span style="color:#f59e0b">Fair</span>' : '😠 <span style="color:#ef4444">Unhappy</span>';
+  const row = (p, tag, cls) => {
+    const sel = selectedPlayerSwapId === p.id;
+    const cc = p.con > 80 ? '#10b981' : p.con > 65 ? '#f59e0b' : '#ef4444';
+    const tr = document.createElement('tr');
+    tr.className = `fm-row ${sel ? 'selected-for-swap' : ''}`;
+    tr.style.cssText = 'border-bottom:1px solid rgba(255,255,255,0.06); cursor:pointer;';
+    tr.onclick = e => { if (e.target.tagName !== 'BUTTON') handlePlayerSelect(p.id); };
+    tr.innerHTML = `<td style="padding:6px;"><span class="badge-pick ${cls}">${tag}</span></td>
+      <td style="padding:6px;"><span class="role-badge">${p.role}</span></td>
+      <td style="padding:6px;"><b>${p.name}</b>${p.inj > 0 ? `<span class="injury-badge">INJ ${p.inj}w</span>` : ''}${p.susp > 0 ? `<span class="suspension-badge">SUSP ${p.susp}m</span>` : ''}</td>
+      <td style="padding:6px;">${p.age}</td>
+      <td style="padding:6px;"><b style="color:var(--gold)">${p.ovr}</b></td>
+      <td style="padding:6px;"><div class="condition-bar" style="display:inline-block;width:50px;height:5px;background:#334155;border-radius:3px;vertical-align:middle;margin-right:4px;"><div class="condition-fill" style="width:${p.con}%;height:100%;background:${cc};border-radius:3px;"></div></div><span style="font-size:.7rem;font-weight:800;color:${cc}">${p.con}%</span></td>
+      <td style="padding:6px;">${mor(p.morale)}</td>
+      <td style="padding:6px;color:${p.contract <= 1 ? '#ef4444' : '#fff'};font-weight:800">${p.contract} yr</td>
+      <td style="padding:6px;">£${Math.round(p.wage * 1000)}k/w</td>
+      <td style="padding:6px;text-align:right;"><button class="btn-swap-pill" onclick="handlePlayerSelect('${p.id}')">${sel ? 'Cancel' : 'Swap ⇅'}</button></td>`;
+    return tr;
+  };
+
+  const sb = $('startersTableBody'); 
+  if (sb) {
+    sb.innerHTML = ''; 
+    st.forEach((p, i) => sb.appendChild(row(p, (tpl[i] || {}).role || p.naturalPos, 'pick-starter')));
+  }
+
+  const bb = $('benchTableBody'); 
+  if (bb) {
+    bb.innerHTML = ''; 
+    bench.forEach((p, i) => bb.appendChild(row(p, 'S' + (i + 1), 'pick-sub')));
+  }
+}
 
   // Tactical Shape Pros/Cons Analysis Card
   const analysis = analyzeTacticalShape(tpl);
