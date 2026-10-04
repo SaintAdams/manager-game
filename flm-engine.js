@@ -1,4 +1,4 @@
-/* Football League Manager - Complete Engine */
+/* Football League Manager - Complete Stable Engine */
 (function () {
   const s = document.createElement('style');
   s.textContent = '.matchday-grid>*,.broadcast-card>*,.canvas-container{min-width:0;max-width:100%}' +
@@ -28,8 +28,6 @@ const BACKUP_PREFIX = 'FLM_BACKUP_SLOT_';
 let state = null, selectedPlayerSwapId = null, wizardChosenClubId = 'NEW', activeContractTarget = null,
   deadlineHour = 12, pendingAIBid = null, pendingJobOffer = null, shootoutState = null, simSpeedMultiplier = 1,
   matchSimInterval = null, animFrameId = null, marketSortKey = 'ovr', marketSortAsc = false, activeCupTree = 'fa';
-
-let lastUserClubRatings = null;
 
 let matchLiveState = {
   subsUsed: 0,
@@ -464,7 +462,7 @@ function getClubBoardObjectives(club) {
   return { leagueObj, faObj, carabaoObj, minRank };
 }
 
-/* ---------- WEB AUDIO PROCEDURAL ATMOSPHERE ---------- */
+/* ---------- WEB AUDIO ENGINE ---------- */
 let audioCtx = null, crowdLoopNode = null, crowdGainNode = null;
 
 function initAudioEngine() {
@@ -578,14 +576,13 @@ function toggleAudio() {
   playSoundSafe('click');
 }
 
-/* ---------- BRACKET & TOURNAMENT TREES ---------- */
+/* ---------- BRACKET & TOURNAMENT TREES (SAFE GENERATOR) ---------- */
 function initCupTournamentTrees() {
-  const allClubs = [...state.clubs];
   const generateBracket = (name) => {
     const r16 = [];
-    const pool = [...allClubs].sort(() => Math.random() - 0.5).slice(0, 16);
+    const pool = [...state.clubs].slice(0, 16);
     for (let i = 0; i < 16; i += 2) {
-      r16.push({ h: pool[i].name, a: pool[i + 1].name, hScore: null, aScore: null, winner: null });
+      r16.push({ h: (pool[i] && pool[i].name) || 'Team A', a: (pool[i + 1] && pool[i + 1].name) || 'Team B', hScore: null, aScore: null, winner: null });
     }
     return { name, r16, qf: [], sf: [], final: [] };
   };
@@ -611,10 +608,10 @@ function renderCupBracketTree() {
   const renderRound = (title, matches) => `
     <div class="bracket-round-column">
       <div class="bracket-round-title">${title}</div>
-      ${matches.map(m => `
+      ${(matches || []).map(m => `
         <div class="bracket-match-node">
-          <div class="bracket-team-line ${m.winner === m.h ? 'winner' : ''}"><span>${m.h}</span><span>${(m.hScore !== null && m.hScore !== undefined) ? m.hScore : '-'}</span></div>
-          <div class="bracket-team-line ${m.winner === m.a ? 'winner' : ''}"><span>${m.a}</span><span>${(m.aScore !== null && m.aScore !== undefined) ? m.aScore : '-'}</span></div>
+          <div class="bracket-team-line ${m && m.winner === m.h ? 'winner' : ''}"><span>${(m && m.h) || 'TBD'}</span><span>${(m && m.hScore !== null && m.hScore !== undefined) ? m.hScore : '-'}</span></div>
+          <div class="bracket-team-line ${m && m.winner === m.a ? 'winner' : ''}"><span>${(m && m.a) || 'TBD'}</span><span>${(m && m.aScore !== null && m.aScore !== undefined) ? m.aScore : '-'}</span></div>
         </div>
       `).join('')}
     </div>
@@ -635,7 +632,6 @@ function renderCupBracketTree() {
   `;
 }
 
-/* ---------- SAVE EXPORT, IMPORT & ROLLING BACKUPS ---------- */
 function saveGame() {
   if (!state) return;
   try {
@@ -719,7 +715,6 @@ function renderBackupsList() {
   }
 }
 
-/* ---------- INITIALIZATION & HYDRATION ---------- */
 function setupFreshState(managerName = 'Manager', clubId = 'NEW') {
   state = { 
     seasonYear: 2026, currentWeek: 1, totalWeeks: 46, userClubId: clubId, 
@@ -789,7 +784,6 @@ function initGame() {
   renderAll();
 }
 
-/* ---------- CAREER SETUP & MODALS ---------- */
 function openCareerSetupWizard() { 
   wizardChosenClubId = 'NEW'; 
   filterWizardClubs(0); 
@@ -828,7 +822,7 @@ function confirmNewCareerSetup() {
     switchTab('tactics'); 
     playSoundSafe('whistle');
   } catch(err) {
-    console.error('Error starting new career:', err);
+    console.error('Error starting career:', err);
     renderAll();
   }
 }
@@ -1389,7 +1383,7 @@ function renderTactics() {
   if (bb) { bb.innerHTML = ''; bench.forEach((p, i) => bb.appendChild(row(p, 'S' + (i + 1), 'pick-sub'))); }
 }
 
-/* ---------- 2D PITCH & LIVE SIMULATION ---------- */
+/* ---------- 2D PITCH ENGINE & FIXED SETUP ---------- */
 function initPitchCanvas() { 
   const c = $('matchPitchCanvas'); 
   if (!c) return;
@@ -1409,22 +1403,22 @@ function getFormationCoords(formationKey, isAway = false) {
 
 function setup2DPlayers(h, a) {
   initPitchCanvas();
-  const kits = resolveMatchKitColors(h, a);
-  pitchEngine.homeColor = kits.homeColor;
-  pitchEngine.awayColor = kits.awayColor;
-  pitchEngine.homeGKColor = kits.homeGK;
-  pitchEngine.awayGKColor = kits.awayGK;
+  const matchKits = resolveMatchKitColors(h, a);
+  pitchEngine.homeColor = matchKits.homeColor;
+  pitchEngine.awayColor = matchKits.awayColor;
+  pitchEngine.homeGKColor = matchKits.homeGK;
+  pitchEngine.awayGKColor = matchKits.awayGK;
 
   const hCoords = getFormationCoords(h.id === state.userClubId ? state.currentFormation : '4-3-3', false);
   const aCoords = getFormationCoords(a.id === state.userClubId ? state.currentFormation : '4-2-3-1', true);
 
   pitchEngine.homePlayers = hCoords.map((pos, i) => ({ 
     playerId: `h_${i}`, num: i + 1, baseX: pos.x, baseY: pos.y, x: pos.x, y: pos.y, 
-    color: kits.homeColor, isHome: true 
+    color: matchKits.homeColor, isHome: true 
   }));
   pitchEngine.awayPlayers = aCoords.map((pos, i) => ({ 
     playerId: `a_${i}`, num: i + 1, baseX: pos.x, baseY: pos.y, x: pos.x, y: pos.y, 
-    color: kits.awayColor, isHome: false 
+    color: matchKits.awayColor, isHome: false 
   }));
   pitchEngine.ball = { x: 400, y: 240, targetX: 400, targetY: 240, trail: [] };
   draw2DPitch();
@@ -1537,10 +1531,9 @@ function setSimSpeed(s) {
 function triggerInstantSim() { simSpeedMultiplier = 25; }
 function toggleMatchPause() {
   matchLiveState.isPaused = !matchLiveState.isPaused;
-  if ($('btnPauseMatch')) $('btnPauseMatch').innerText = matchLiveState.isPaused ? '▶️ RESUME' : '⏸️ PAUSE';
+  if ($('btnPauseMatch'))$('btnPauseMatch').innerText = matchLiveState.isPaused ? '▶️ RESUME' : '⏸️ PAUSE';
 }
 
-/* ---------- STANDINGS & EUROPEAN QUALIFICATION ---------- */
 function renderStandingsTable(div) {
   state.activeStandingsTab = div;
   for (let i = 0; i <= 3; i++) {
@@ -1574,7 +1567,6 @@ function renderStandingsTable(div) {
   });
 }
 
-/* ---------- MATCHDAY VIEW & VENUES ---------- */
 function renderMatchdayView() {
   const m = getActiveUserMatch(), w = getWeek();
   if (m) {
@@ -1602,7 +1594,6 @@ function renderMatchdayView() {
   }
 }
 
-/* ---------- MANAGER PROFILE & FINANCES VIEW ---------- */
 function renderManagerOffice() {
   const m = state.manager, club = getCurrentUserClub(), objs = getClubBoardObjectives(club);
   if ($('mgrContractBadge'))$('mgrContractBadge').innerText = `Contract: ${m.contractYears || 2} Years Remaining`;
@@ -1662,7 +1653,6 @@ function renderHonours() {
   }
 }
 
-/* ---------- YOUTH ACADEMY ---------- */
 function generateYouthIntake(announce) {
   const lvl = state.academyFacilityLevel || 1, n = R(3, 5);
   state.youthProspects = Array.from({ length: n }, (_, i) => {
@@ -1693,7 +1683,6 @@ function signAcademyProspect(id) {
   saveGame(); renderAll(); renderAcademyTab(); playSoundSafe('cheer');
 }
 
-/* ---------- TRANSFER MARKET ---------- */
 function initMarketFilterDropdowns() {
   if ($('filterMarketNation')) {$('filterMarketNation').innerHTML = ['ALL', 'ENG', 'SCO', 'WAL', 'IRL', 'NIR', ...NATS.slice(4)].map(n => `<option value="${n}">${n === 'ALL' ? 'All Nations' : n}</option>`).join('');
   }
@@ -1783,7 +1772,6 @@ function sellSquadPlayer(id) {
   saveGame(); renderAll(); updateHeaderClubDisplay(); renderTransfers(); playSoundSafe('whistle');
 }
 
-/* ---------- END SEASON TRANSITION ---------- */
 const sortedDivs = () => { const s = {}; for (let d = 0; d <= 3; d++) s[d] = [...state.standings[d]].sort((a, b) => b.pts - a.pts || b.gd - a.gd || b.gf - a.gf); return s; };
 
 function showEndSeasonGala() {
