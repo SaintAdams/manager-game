@@ -155,11 +155,11 @@ const getActiveUserMatch = () => {
 
 /* ---------- POSITION FAMILIARITY MATRIX ---------- */
 function getPositionFamiliarityMultiplier(naturalPos, currentPosType) {
-  if (naturalPos === currentPosType) return 1.0; // 100%
-  if (naturalPos === 'GK' || currentPosType === 'GK') return 0.35; // Goalkeeper out of net = disaster
-  if (naturalPos === 'MID' && (currentPosType === 'DEF' || currentPosType === 'FWD')) return 0.85; // Flexible midfielders
-  if ((naturalPos === 'DEF' || naturalPos === 'FWD') && currentPosType === 'MID') return 0.75; // Outfield adjacent
-  if (naturalPos === 'DEF' && currentPosType === 'FWD') return 0.45; // Striker played at CB or vice-versa
+  if (naturalPos === currentPosType) return 1.0;
+  if (naturalPos === 'GK' || currentPosType === 'GK') return 0.35;
+  if (naturalPos === 'MID' && (currentPosType === 'DEF' || currentPosType === 'FWD')) return 0.85;
+  if ((naturalPos === 'DEF' || naturalPos === 'FWD') && currentPosType === 'MID') return 0.75;
+  if (naturalPos === 'DEF' && currentPosType === 'FWD') return 0.45;
   if (naturalPos === 'FWD' && currentPosType === 'DEF') return 0.45;
   return 0.70;
 }
@@ -605,7 +605,6 @@ function analyzeTacticalShape(template) {
   const midCount = template.filter(s => s.posType === 'MID').length;
   const fwdCount = template.filter(s => s.posType === 'FWD').length;
   
-  // Spatial width analysis: count flank players (x <= 20% or x >= 80%)
   const flankCount = template.filter(s => s.posType !== 'GK' && (s.x <= 24 || s.x >= 76)).length;
   const centralMid = template.filter(s => s.posType === 'MID' && (s.x > 30 && s.x < 70)).length;
 
@@ -695,19 +694,25 @@ function renderTactics() {
   const st = club.players.filter(p => p.starter);
   const bench = club.players.filter(p => !p.starter);
 
-  if ($('formationSelect'))$('formationSelect').value = state.currentFormation;
+  if ($('formationSelect')) $('formationSelect').value = state.currentFormation;
 
   const customControls = $('customFormationControls');
   if (customControls) customControls.style.display = state.currentFormation === 'Custom' ? 'flex' : 'none';
 
   // Familiarity Display Updates
   const famScore = (state.tacticalFamiliarity && state.tacticalFamiliarity[state.currentFormation]) || 50;
-  if ($('familiarityScoreBadge'))$('familiarityScoreBadge').innerText = `${famScore}%`;
-  if ($('familiarityProgressBar')) {$('familiarityProgressBar').style.width = `${famScore}%`;
+  if ($('familiarityScoreBadge')) $('familiarityScoreBadge').innerText = `${famScore}%`;
+  if ($('familiarityProgressBar')) {
+    $('familiarityProgressBar').style.width = `${famScore}%`;
     $('familiarityProgressBar').style.background = famScore >= 75 ? '#10b981' : famScore >= 50 ? '#38bdf8' : '#f59e0b';
   }
+  if ($('familiarityStatusText')) {
+    $('familiarityStatusText').innerText = famScore >= 75 ? 'Fully Adapted — Passing and shape are instinctive.' :
+      famScore >= 50 ? 'Learning — Squad understands basic runs and spacing.' :
+      'Unfamiliar — Frequent miscommunications and defensive positioning errors.';
+  }
 
-  // Shape Analysis Badges
+  // Tactical Shape Pros/Cons Analysis Card
   const analysis = analyzeTacticalShape(tpl);
   const analysisContainer = $('analysisBadgesContainer');
   if (analysisContainer) {
@@ -717,7 +722,7 @@ function renderTactics() {
     ].join('');
   }
 
-  // Interactive 2D Pitch Nodes
+  // Interactive 2D Pitch Nodes & Drag Engine
   const nodes = $('pitchNodesWrapper');
   if (nodes) {
     nodes.innerHTML = '';
@@ -780,9 +785,9 @@ function renderTactics() {
 
         if (state.currentFormation !== 'Custom') {
           state.currentFormation = 'Custom';
-          if ($('formationSelect'))$('formationSelect').value = 'Custom';
+          if ($('formationSelect')) $('formationSelect').value = 'Custom';
           FORMATIONS['Custom'] = JSON.parse(JSON.stringify(tpl));
-          if ($('customFormationControls'))$('customFormationControls').style.display = 'flex';
+          if ($('customFormationControls')) $('customFormationControls').style.display = 'flex';
         }
         saveGame();
         renderTactics();
@@ -826,111 +831,6 @@ function renderTactics() {
     bb.innerHTML = ''; 
     bench.forEach((p, i) => bb.appendChild(row(p, 'S' + (i + 1), 'pick-sub')));
   }
-}
-
-  // Tactical Shape Pros/Cons Analysis Card
-  const analysis = analyzeTacticalShape(tpl);
-  const analysisContainer = $('analysisBadgesContainer');
-  if (analysisContainer) {
-    analysisContainer.innerHTML = [
-      ...analysis.pros.map(t => `<div style="color:#10b981">${t}</div>`),
-      ...analysis.cons.map(t => `<div style="color:#f87171">${t}</div>`)
-    ].join('');
-  }
-
-  // Interactive 2D Pitch Nodes & Drag Engine
-  const nodes = $('pitchNodesWrapper'); nodes.innerHTML = '';
-  st.forEach((p, i) => {
-    const t = tpl[i] || { x: 50, y: 50, role: TAG[p.naturalPos], duty: p.role, posType: p.naturalPos };
-    const n = document.createElement('div');
-    n.className = `pitch-node ${selectedPlayerSwapId === p.id ? 'selected-for-swap' : ''}`;
-    n.style.left = t.x + '%'; 
-    n.style.top = t.y + '%';
-
-    // Position Familiarity Rating
-    const famMult = Math.round(getPositionFamiliarityMultiplier(p.naturalPos, t.posType) * 100);
-    const famColor = famMult === 100 ? '#10b981' : famMult >= 75 ? '#f59e0b' : '#ef4444';
-
-    n.innerHTML = `<div class="pitch-kit">${i + 1}<div class="pitch-role-tag">${t.role}</div></div>
-      <div class="pitch-name-card">
-        <div class="p-name">${p.name.split(' ').pop()} ${p.inj > 0 ? '🚑' : ''}${p.susp > 0 ? '🟥' : ''}</div>
-        <div class="p-role">${p.ovr} OVR • <span style="color:${famColor};font-weight:800;">${famMult}%</span></div>
-      </div>`;
-
-    // Drag-to-customize (Active in Custom formation or free tactical board)
-    let isDragging = false, startX, startY;
-    const onPointerDown = e => {
-      if (e.target.tagName === 'BUTTON') return;
-      isDragging = true;
-      n.classList.add('dragging');
-      startX = e.clientX || (e.touches && e.touches[0].clientX);
-      startY = e.clientY || (e.touches && e.touches[0].clientY);
-      document.addEventListener('pointermove', onPointerMove);
-      document.addEventListener('pointerup', onPointerUp);
-    };
-
-    const onPointerMove = e => {
-      if (!isDragging) return;
-      const rect = nodes.getBoundingClientRect();
-      const clientX = e.clientX || (e.touches && e.touches[0].clientX);
-      const clientY = e.clientY || (e.touches && e.touches[0].clientY);
-      let posX = Math.round(((clientX - rect.left) / rect.width) * 100);
-      let posY = Math.round(((clientY - rect.top) / rect.height) * 100);
-
-      // Pitch boundary clamping
-      posX = Math.max(8, Math.min(92, posX));
-      posY = Math.max(i === 0 ? 80 : 12, Math.min(i === 0 ? 94 : 85, posY));
-
-      n.style.left = posX + '%';
-      n.style.top = posY + '%';
-      t.x = posX;
-      t.y = posY;
-
-      // Automatically deduce dynamic role category from height on pitch
-      if (i > 0) {
-        if (posY >= 62) { t.posType = 'DEF'; t.role = 'DF'; }
-        else if (posY >= 32) { t.posType = 'MID'; t.role = 'MF'; }
-        else { t.posType = 'FWD'; t.role = 'FW'; }
-      }
-    };
-
-    const onPointerUp = () => {
-      if (!isDragging) return;
-      isDragging = false;
-      n.classList.remove('dragging');
-      document.removeEventListener('pointermove', onPointerMove);
-      document.removeEventListener('pointerup', onPointerUp);
-
-      // Switch to Custom formation tab if moving positions
-      if (state.currentFormation !== 'Custom') {
-        state.currentFormation = 'Custom';
-        $('formationSelect').value = 'Custom';
-        FORMATIONS['Custom'] = JSON.parse(JSON.stringify(tpl));
-        if ($('customFormationControls')) $('customFormationControls').style.display = 'flex';
-      }
-      saveGame();
-      renderTactics();
-    };
-
-    n.addEventListener('pointerdown', onPointerDown);
-    n.onclick = () => { if (!isDragging) handlePlayerSelect(p.id); };
-    nodes.appendChild(n);
-  });
-
-  const mor = m => m === 'Superb' ? '😄 <span style="color:#10b981">Superb</span>' : m === 'Good' ? '🙂 <span style="color:#38bdf8">Good</span>' : m === 'Fair' ? '😐 <span style="color:#f59e0b">Fair</span>' : '😠 <span style="color:#ef4444">Unhappy</span>';
-  const row = (p, tag, cls) => {
-    const sel = selectedPlayerSwapId === p.id, cc = p.con > 80 ? '#10b981' : p.con > 65 ? '#f59e0b' : '#ef4444', tr = document.createElement('tr');
-    tr.className = `fm-row ${sel ? 'selected-for-swap' : ''}`; tr.onclick = e => { if (e.target.tagName !== 'BUTTON') handlePlayerSelect(p.id); };
-    tr.innerHTML = `<td><span class="badge-pick ${cls}">${tag}</span></td><td><span class="role-badge">${p.role}</span></td>
-      <td><b>${p.name}</b>${p.inj > 0 ? `<span class="injury-badge">INJ ${p.inj}w</span>` : ''}${p.susp > 0 ? `<span class="suspension-badge">SUSP ${p.susp}m</span>` : ''}</td>
-      <td>${p.age}</td><td><b style="color:var(--gold)">${p.ovr}</b></td>
-      <td><div class="condition-bar"><div class="condition-fill" style="width:${p.con}%;background:${cc}"></div></div><span style="font-size:.72rem;font-weight:800;color:${cc}">${p.con}%</span></td><td>${mor(p.morale)}</td>
-      <td style="color:${p.contract <= 1 ? '#ef4444' : '#fff'};font-weight:800">${p.contract} yr</td><td>£${Math.round(p.wage * 1000)}k/w</td>
-      <td style="display:flex;gap:4px"><button class="btn-swap-pill" onclick="handlePlayerSelect('${p.id}')">${sel ? 'Cancel' : 'Swap ⇅'}</button><button class="btn-swap-pill" style="background:#334155" onclick="openContractModal('${p.id}')">📝</button></td>`;
-    return tr;
-  };
-  const sb = $('startersTableBody'); sb.innerHTML = ''; st.forEach((p, i) => sb.appendChild(row(p, (tpl[i] || {}).role || p.naturalPos, 'pick-starter')));
-  const bb = $('benchTableBody'); bb.innerHTML = ''; bench.forEach((p, i) => bb.appendChild(row(p, 'S' + (i + 1), 'pick-sub')));
 }
 
 /* ---------- matchday ---------- */
@@ -1187,6 +1087,7 @@ function confirmLiveMatchSub(starterOutId) {
 
 function toggleMatchPause() {
   if (!matchLiveState) return;
+
   matchLiveState.isPaused = !matchLiveState.isPaused;
   const btn = $('btnPauseMatch');
   if (btn) {
@@ -1297,7 +1198,6 @@ function startMatchdaySim() {
       }));
     }
 
-    // Occasional card or knock without interrupting simulation
     if (Math.random() < 0.035) {
       triggerCard(Math.random() < 0.5 ? h : a);
     }
