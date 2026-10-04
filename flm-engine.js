@@ -363,7 +363,8 @@ function getPositionFamiliarityMultiplier(naturalPos, currentPosType) {
 function createBadgeHtml(id, size = 30) {
   const c = clubById(id) || {};
   const name = c.name || id;
-  const theme = CLUB_CREST_THEMES[name] || {
+  const crestThemes = (typeof CLUB_CREST_THEMES !== 'undefined' && CLUB_CREST_THEMES) || {};
+  const theme = crestThemes[name] || {
     bg: c.col || '#1e293b',
     border: 'rgba(255,255,255,0.7)',
     fg: '#ffffff',
@@ -629,7 +630,13 @@ function saveGame() {
         data: raw
       }));
     }
-  } catch(e) {}
+  } catch(e) {
+    console.warn('FLM: save failed (storage full?) - clearing backups and retrying', e);
+    try {
+      for (let i = 1; i <= 3; i++) localStorage.removeItem(`${BACKUP_PREFIX}${i}`);
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    } catch(e2) { console.error('FLM: save failed again', e2); }
+  }
 }
 
 function exportCareerSave() {
@@ -764,7 +771,15 @@ function initGame() {
   if (!ok) { setupFreshState('Manager', 'NEW'); saveGame(); }
   layoutMatchday(); 
   initMarketFilterDropdowns(); 
-  renderAll();
+  try {
+    renderAll();
+  } catch (err) {
+    console.error('FLM: failed to render saved career', err);
+    if (ok && confirm('Your saved career failed to load (' + err.message + ').\n\nOK = start a fresh career.\nCancel = leave the save untouched.')) {
+      localStorage.removeItem(STORAGE_KEY);
+      setupFreshState('Manager', 'NEW'); saveGame(); renderAll();
+    } else if (!ok) { throw err; }
+  }
 }
 
 function openCareerSetupWizard() { 
@@ -1367,7 +1382,7 @@ function renderTactics() {
     const userKit = getClubKitColors(club);
 
     st.forEach((p, i) => {
-      const t = tpl[i] || { x: 50, y: 50, role: TAG[p.naturalPos], duty: p.role, posType: p.naturalPos };
+      let t = tpl[i] || { x: 50, y: 50, role: TAG[p.naturalPos], duty: p.role, posType: p.naturalPos };
       const n = document.createElement('div');
       n.className = `pitch-node ${selectedPlayerSwapId === p.id ? 'selected-for-swap' : ''}`;
       n.style.left = t.x + '%'; 
@@ -1383,10 +1398,15 @@ function renderTactics() {
           <div class="p-role">${p.ovr} OVR • <span style="color:${famColor};font-weight:800;">${famMult}%</span></div>
         </div>`;
 
-      let isDragging = false;
+      let isDragging = false, moved = false;
       const onPointerDown = e => {
         if (e.target.tagName === 'BUTTON') return;
-        isDragging = true;
+        isDragging = true; moved = false;
+        if (state.currentFormation !== 'Custom') {
+          FORMATIONS['Custom'] = JSON.parse(JSON.stringify(tpl));
+          state.currentFormation = 'Custom';
+          t = FORMATIONS['Custom'][i] || t;
+        }
         n.classList.add('dragging');
         document.addEventListener('pointermove', onPointerMove);
         document.addEventListener('pointerup', onPointerUp);
@@ -1394,6 +1414,7 @@ function renderTactics() {
 
       const onPointerMove = e => {
         if (!isDragging) return;
+        moved = true;
         const rect = nodes.getBoundingClientRect();
         const clientX = e.clientX || (e.touches && e.touches[0].clientX);
         const clientY = e.clientY || (e.touches && e.touches[0].clientY);
@@ -1422,19 +1443,19 @@ function renderTactics() {
         document.removeEventListener('pointermove', onPointerMove);
         document.removeEventListener('pointerup', onPointerUp);
 
-        if (state.currentFormation !== 'Custom') {
-          state.currentFormation = 'Custom';
-          if ($('formationSelect')) $('formationSelect').value = 'Custom';
-          FORMATIONS['Custom'] = JSON.parse(JSON.stringify(tpl));
-          if ($('customFormationControls')) $('customFormationControls').style.display = 'flex';
-        }
+        if ($('formationSelect')) $('formationSelect').value = 'Custom';
+        if ($('customFormationControls')) $('customFormationControls').style.display = 'flex';
+        if (!state.customFormations) state.customFormations = {};
+        state.customFormations['Custom'] = JSON.parse(JSON.stringify(FORMATIONS['Custom']));
+        if (!state.tacticalFamiliarity) state.tacticalFamiliarity = {};
+        if (!state.tacticalFamiliarity['Custom']) state.tacticalFamiliarity['Custom'] = 50;
         saveGame();
         renderTactics();
         updateHeaderClubDisplay();
       };
 
       n.addEventListener('pointerdown', onPointerDown);
-      n.onclick = () => { if (!isDragging) handlePlayerSelect(p.id); };
+      n.onclick = () => { if (!isDragging && !moved) handlePlayerSelect(p.id); };
       nodes.appendChild(n);
     });
   }
@@ -2047,4 +2068,16 @@ function layoutMatchday() {
     right.append(comm.previousElementSibling, comm, $('inMatchSubDrawer'), grounds); 
     grid.appendChild(right);
   }
+}
+
+
+/* ---------- FALLBACK: END OF SEASON ---------- */
+if (typeof window.showEndSeasonGala !== 'function') {
+  window.showEndSeasonGala = function () {
+    const club = getCurrentUserClub();
+    const rows = [...(state.standings[club.div] || [])].sort((a, b) => b.pts - a.pts || b.gd - a.gd || b.gf - a.gf);
+    const pos = rows.findIndex(r => r.id === club.id) + 1;
+    alert(`Season complete! ${club.name} finished position ${pos} in the ${DIV_NAMES[club.div]}.`);
+    if (pos === 1 && club.div === 0) { state.manager.leagueTitles = (state.manager.leagueTitles || 0) + 1; saveGame(); }
+  };
 }
