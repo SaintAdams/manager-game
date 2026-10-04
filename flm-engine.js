@@ -812,11 +812,113 @@ function triggerInstantSim() { simSpeedMultiplier = 25; }
 /* ---------- CONTEXT-DRIVEN TOUCHLINE SHOUTS ---------- */
 function triggerTouchlineShout(t) {
   const curMin = pitchEngine.currentMinute || 0;
+
+  // Non-blocking cooldown check: log to commentary instead of calling alert()
   if (curMin < matchLiveState.shoutNextAvailableMin) {
     const wait = matchLiveState.shoutNextAvailableMin - curMin;
-    alert(`⏳ The players need time to react! Wait ${wait} more minute(s) before shouting again.`);
+    $('commentaryFeed').insertAdjacentHTML(
+      'afterbegin',
+      `<div class="comm-line" style="border-left-color: #64748b; color: #94a3b8;">⏳ <b>TOUCHLINE:</b> The squad needs time to digest your last instruction. (${wait}' remaining)</div>`
+    );
+    playSound('click');
     return;
   }
+
+  const m = getActiveUserMatch();
+  if (!m || m.played) return;
+
+  const club = getCurrentUserClub();
+  const isHome = m.home === club.id;
+  const myGoals = isHome 
+    ? (m.scorers ? m.scorers.filter(s => s.team === club.name).length : 0) 
+    : (m.scorers ? m.scorers.filter(s => s.team === club.name).length : 0);
+  const oppClub = clubById(isHome ? m.away : m.home);
+  const oppGoals = m.scorers ? m.scorers.filter(s => s.team === oppClub.name).length : 0;
+  const diff = myGoals - oppGoals;
+
+  const starters = club.players.filter(p => p.starter);
+  const superbCount = starters.filter(p => p.morale === 'Superb').length;
+  const unhappyCount = starters.filter(p => p.morale === 'Unhappy').length;
+  const squadMoraleScore = (superbCount * 2) - (unhappyCount * 3);
+
+  const captain = starters.reduce((best, p) => (p.ovr + (p.age >= 28 ? 10 : 0)) > (best.ovr + (best.age >= 28 ? 10 : 0)) ? p : best, starters[0] || {});
+  const leaderBonus = captain && captain.age >= 28 ? 15 : 0;
+  const authority = (state.manager.confidence + state.manager.fansApproval) / 2;
+
+  let success = false;
+  let reactionText = '';
+  let attMod = 0;
+  let defMod = 0;
+
+  switch (t) {
+    case 'DEMAND_MORE':
+      if (diff <= 0 && (authority + squadMoraleScore + leaderBonus >= 70)) {
+        success = true;
+        attMod = 0.038;
+        defMod = -0.01;
+        reactionText = `🔥 Squad fired up! Attacking intensity surges under ${captain.name}'s leadership.`;
+      } else {
+        success = false;
+        attMod = -0.025;
+        defMod = -0.035;
+        reactionText = `⚠️ Backfire! The squad feels unjustly berated and looks nervous and rushed.`;
+      }
+      break;
+
+    case 'CALM_DOWN':
+      if (diff >= 0) {
+        success = true;
+        defMod = 0.04;
+        attMod = -0.01;
+        reactionText = `🧘 Squad regains composure, tightening up and slowing the tempo.`;
+      } else {
+        success = false;
+        attMod = -0.03;
+        reactionText = `😒 The players are puzzled by your caution while trailing!`;
+      }
+      break;
+
+    case 'PUSH_FORWARD':
+      success = diff <= 0;
+      attMod = 0.055;
+      defMod = -0.05;
+      reactionText = `⚡ All-out attack! Players stream forward, leaving space behind!`;
+      break;
+
+    case 'PRAISE':
+      if (diff >= 1) {
+        success = true;
+        attMod = 0.02;
+        defMod = 0.02;
+        starters.forEach(p => p.con = Math.min(100, p.con + 2));
+        reactionText = `👏 The squad beams with pride and plays with high confidence.`;
+      } else {
+        success = false;
+        attMod = -0.03;
+        reactionText = `😡 Players are frustrated by sarcastic praise while not ahead!`;
+      }
+      break;
+  }
+
+  matchLiveState.activeShout = t;
+  matchLiveState.shoutExpireMin = curMin + 12;
+  matchLiveState.shoutNextAvailableMin = curMin + 14;
+  matchLiveState.shoutAttMod = attMod;
+  matchLiveState.shoutDefMod = defMod;
+
+  const badgeElem = $('activeShoutBadge');
+  if (badgeElem) {
+    badgeElem.innerText = success ? `📣 ${t} (EFFECTIVE)` : `📣 ${t} (BACKFIRED)`;
+    badgeElem.style.color = success ? '#10b981' : '#ef4444';
+  }
+
+  $('commentaryFeed').insertAdjacentHTML(
+    'afterbegin',
+    `<div class="comm-line" style="border-left-color:${success ? '#10b981' : '#ef4444'};">📢 ${curMin}' <b>TOUCHLINE:</b> ${reactionText}</div>`
+  );
+
+  playSound(success ? 'cheer' : 'whistle');
+}
 
   const m = getActiveUserMatch();
   if (!m || m.played) return;
