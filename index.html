@@ -34,7 +34,6 @@
 
     .header-club-chip { display: flex; align-items: center; gap: 10px; background: var(--bg-panel); border: 1px solid var(--border); padding: 4px 12px; border-radius: 8px; }
     .badge-icon-wrap { width: 34px; height: 34px; position: relative; display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; }
-    .badge-icon-img { width: 100%; height: 100%; object-fit: contain; }
     .header-club-text h2 { font-size: 0.92rem; font-weight: 800; color: #fff; line-height: 1.1; }
     .header-club-text p { font-size: 0.65rem; color: var(--text-muted); }
 
@@ -71,14 +70,9 @@
 
     main.viewport { flex: 1; padding: 14px; overflow-y: auto; background: var(--bg-dark); }
 
-    .tactics-container { display: grid; grid-template-columns: 460px 1fr; gap: 16px; }
-    .pitch-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; padding: 12px; display: flex; flex-direction: column; gap: 10px; }
     .tactics-select { background: var(--bg-panel); color: #fff; border: 1px solid var(--border); padding: 7px 10px; border-radius: 6px; font-weight: 700; font-size: 0.8rem; outline: none; }
-
     .pitch-node { position: absolute; transform: translate(-50%, -50%); display: flex; flex-direction: column; align-items: center; cursor: pointer; z-index: 10; transition: transform 0.15s ease; width: 66px; }
-    .pitch-node:active { transform: translate(-50%, -50%) scale(1.1); }
-    .pitch-node.selected-for-swap { transform: translate(-50%, -50%) scale(1.15); z-index: 30; filter: drop-shadow(0 0 8px #f59e0b); }
-    .pitch-kit { width: 34px; height: 34px; background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); border: 2px solid #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 0.85rem; color: #fff; box-shadow: 0 3px 6px rgba(0,0,0,0.6); position: relative; }
+    .pitch-kit { width: 34px; height: 34px; border: 2px solid #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 0.85rem; color: #fff; box-shadow: 0 3px 6px rgba(0,0,0,0.6); position: relative; }
     .pitch-role-tag { position: absolute; bottom: -6px; background: #0284c7; color: #fff; font-size: 0.58rem; font-weight: 800; padding: 1px 3px; border-radius: 3px; text-transform: uppercase; }
     .pitch-name-card { margin-top: 4px; background: rgba(15, 23, 42, 0.9); border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 4px; padding: 2px 4px; text-align: center; width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .pitch-name-card .p-name { font-size: 0.68rem; font-weight: 800; color: #fff; }
@@ -93,14 +87,6 @@
     table.fm-table td { padding: 7px 8px; border-bottom: 1px solid rgba(255, 255, 255, 0.05); vertical-align: middle; font-weight: 600; white-space: nowrap; }
     table.fm-table tr.fm-row { cursor: pointer; transition: background 0.15s; }
     table.fm-table tr.fm-row:hover { background: var(--bg-panel-hover); }
-    table.fm-table tr.fm-row.selected-for-swap { background: rgba(245, 158, 11, 0.2) !important; outline: 1px solid #f59e0b; }
-
-    .badge-pick { display: inline-block; padding: 2px 5px; border-radius: 4px; font-size: 0.65rem; font-weight: 800; text-align: center; }
-    .pick-starter { background: rgba(16, 185, 129, 0.2); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.4); }
-    .pick-sub { background: rgba(245, 158, 11, 0.2); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.4); }
-    .role-badge { background: #0369a1; color: #fff; font-size: 0.62rem; font-weight: 800; padding: 2px 5px; border-radius: 4px; }
-    .injury-badge { background: #ef4444; color: #fff; font-size: 0.6rem; font-weight: 900; padding: 1px 4px; border-radius: 4px; margin-left: 4px; }
-    .suspension-badge { background: #dc2626; color: #fff; font-size: 0.6rem; font-weight: 900; padding: 1px 4px; border-radius: 4px; margin-left: 4px; border: 1px solid #f87171; }
 
     .btn-swap-pill { background: var(--bg-panel); color: var(--text-main); border: 1px solid var(--border); padding: 4px 8px; border-radius: 4px; font-size: 0.7rem; font-weight: 700; cursor: pointer; }
     .btn-swap-pill:active { background: var(--accent); color: #000; }
@@ -115,7 +101,12 @@
     .scoreboard-box {
       background: linear-gradient(180deg, #151d2d 0%, #0c121d 100%);
       border: 2px solid var(--border); border-radius: 12px; padding: 14px;
-      display: flex; justify-content: space-around; align-items: center; text-align: center;
+      display: flex; justify-content: space-around; align-items: center; text-align: center; position: relative;
+    }
+    .match-banner-derby {
+      position: absolute; top: -10px; background: linear-gradient(90deg, #ef4444 0%, #f59e0b 100%);
+      color: #000; font-weight: 900; font-size: 0.68rem; padding: 2px 10px; border-radius: 20px;
+      letter-spacing: 1px; text-transform: uppercase; box-shadow: 0 0 10px rgba(239,68,68,0.5);
     }
     .sb-team { display: flex; flex-direction: column; align-items: center; gap: 4px; }
     .sb-team h2 { font-size: 1.15rem; font-weight: 900; }
@@ -130,9 +121,6 @@
     .timeline-event-item.yellow { border-left-color: #f59e0b; color: #fbbf24; }
     .timeline-event-item.red { border-left-color: #ef4444; color: #f87171; }
     .timeline-event-item.injury { border-left-color: #ec4899; color: #f472b6; }
-    .comm-line.card { border-left-color: #f59e0b; background: rgba(245, 158, 11, 0.15); font-weight: 700; color: #fbbf24; }
-    .comm-line.redcard { border-left-color: #ef4444; background: rgba(239, 68, 68, 0.2); font-weight: 800; color: #f87171; }
-    .comm-line.injury { border-left-color: #ec4899; background: rgba(236, 72, 153, 0.15); font-weight: 700; color: #f472b6; }
 
     .canvas-container { width: 100%; background: #090e18; border: 2px solid var(--border); border-radius: 10px; position: relative; overflow: hidden; display: flex; flex-direction: column; align-items: center; }
     #matchPitchCanvas { width: 100%; height: 440px; background: #173f22; display: block; }
@@ -145,13 +133,11 @@
     .in-match-sub-title { font-size: 0.75rem; font-weight: 800; color: var(--accent); display: flex; justify-content: space-between; align-items: center; }
     .sub-chips-row { display: flex; gap: 6px; overflow-x: auto; padding-top: 4px; }
     .sub-chip { background: var(--bg-dark); border: 1px solid var(--border); padding: 4px 8px; border-radius: 6px; font-size: 0.72rem; cursor: pointer; white-space: nowrap; display: flex; align-items: center; gap: 6px; }
-    .sub-chip:hover { border-color: var(--fm-green); }
-    .sub-chip.starter-chip { border-color: rgba(255, 255, 255, 0.2); }
-    .sub-chip.starter-chip:hover { border-color: var(--fm-red); }
 
     .commentary-box { background: #090d14; border: 1px solid var(--border); border-radius: 8px; height: 160px; overflow-y: auto; padding: 10px; display: flex; flex-direction: column; gap: 6px; }
     .comm-line { font-size: 0.78rem; padding: 5px 8px; border-radius: 6px; background: var(--bg-panel); border-left: 3px solid var(--accent); }
     .comm-line.goal { border-left-color: #10b981; background: rgba(16, 185, 129, 0.15); font-weight: 800; color: #34d399; }
+    .comm-line.derby { border-left-color: #ef4444; background: rgba(239, 68, 68, 0.15); font-weight: 800; color: #f87171; }
 
     .standings-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; padding: 14px; overflow-x: auto; }
     .grounds-grid-container { display: flex; flex-direction: column; gap: 7px; }
@@ -174,6 +160,14 @@
     .news-grid { display: flex; flex-direction: column; gap: 12px; }
     .news-card { background: var(--bg-panel); border: 1px solid var(--border); border-radius: 10px; padding: 14px 16px; display: flex; flex-direction: column; gap: 5px; }
     .news-card.breaking { border-left: 4px solid #f59e0b; background: linear-gradient(90deg, rgba(245, 158, 11, 0.08) 0%, var(--bg-panel) 100%); }
+
+    /* CUP TOURNAMENT TREE (BRACKETS) */
+    .cup-tree-bracket { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; overflow-x: auto; padding: 10px 0; }
+    .bracket-round-column { display: flex; flex-direction: column; gap: 12px; justify-content: space-around; }
+    .bracket-round-title { font-size: 0.75rem; font-weight: 900; color: var(--accent); text-transform: uppercase; text-align: center; border-bottom: 2px solid var(--border); padding-bottom: 4px; }
+    .bracket-match-node { background: var(--bg-panel); border: 1px solid var(--border); border-radius: 8px; padding: 8px 10px; display: flex; flex-direction: column; gap: 4px; font-size: 0.72rem; }
+    .bracket-team-line { display: flex; justify-content: space-between; align-items: center; }
+    .bracket-team-line.winner { font-weight: 900; color: #10b981; }
 
     .modal-backdrop { position: fixed; inset: 0; background: rgba(0,0,0,0.88); display: flex; align-items: center; justify-content: center; z-index: 1000; padding: 12px; }
     .modal-window { background: var(--bg-card); border: 2px solid var(--border); border-radius: 16px; width: 600px; max-width: 100%; max-height: 85vh; overflow-y: auto; padding: 20px; box-shadow: 0 10px 40px rgba(0,0,0,0.8); }
@@ -204,7 +198,6 @@
     .pen-pip.scored { background: #10b981; border-color: #059669; }
     .pen-pip.missed { background: #ef4444; border-color: #b91c1c; }
 
-    /* Manager Career Status Box */
     .manager-stat-cluster { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 10px; margin: 12px 0; }
     .mgr-card { background: var(--bg-dark); padding: 10px 12px; border-radius: 8px; border: 1px solid var(--border); }
     .mgr-card .val { font-size: 1.15rem; font-weight: 900; color: #fff; }
@@ -217,7 +210,6 @@
       .app-container { flex-direction: column; }
       nav.sidebar { width: 100%; border-right: none; border-bottom: 1px solid var(--border); flex-direction: row; overflow-x: auto; white-space: nowrap; padding: 8px 10px; gap: 6px; }
       main.viewport { padding: 12px; }
-      .tactics-container { grid-template-columns: 1fr; }
       .matchday-grid { grid-template-columns: 1fr; }
       #matchPitchCanvas { height: 260px; }
       #modalClubsGrid, #wizardClubsGrid { grid-template-columns: 1fr !important; }
@@ -236,6 +228,9 @@
       </div>
       <button class="btn-icon" onclick="toggleAudio()" id="btnAudio" title="Toggle Sound">🔊</button>
       <button class="btn-icon" onclick="promptNewCareer()" title="Start New Career">🆕</button>
+      <button class="btn-icon" onclick="exportCareerSave()" title="Export Career Save (JSON)">💾 Save</button>
+      <button class="btn-icon" onclick="$('saveImportInput').click()" title="Import Career Save">📂 Load</button>
+      <input type="file" id="saveImportInput" style="display:none;" accept=".json" onchange="importCareerSave(event)">
     </div>
 
     <!-- ACTIVE CLUB CHIP WITH CREST -->
@@ -274,10 +269,6 @@
         <span class="val" id="headerReputation" style="color: var(--gold);">⭐ 3.5</span>
       </div>
       <div class="metric-pill">
-        <span class="label">Wage Bill</span>
-        <span class="val" id="headerWageBill" style="color: #f59e0b;">£1.2M/wk</span>
-      </div>
-      <div class="metric-pill">
         <span class="label">Budget</span>
         <span class="val" id="headerBudget">£50.0M</span>
       </div>
@@ -295,7 +286,7 @@
       <div class="nav-item" onclick="switchTab('matchday')" id="nav-matchday"><span class="icon">⏱️</span> Matchday</div>
 
       <div class="nav-label">Competitions & Market</div>
-      <div class="nav-item" onclick="switchTab('cups')" id="nav-cups"><span class="icon">🏆</span> Cups</div>
+      <div class="nav-item" onclick="switchTab('cups')" id="nav-cups"><span class="icon">🏆</span> Cups & Trees</div>
       <div class="nav-item" onclick="switchTab('news')" id="nav-news"><span class="icon">📰</span> News</div>
       <div class="nav-item" onclick="switchTab('transfers')" id="nav-transfers"><span class="icon">🔄</span> Market</div>
 
@@ -331,7 +322,7 @@
 
           <div style="display:flex; flex-direction:column; justify-content:center; gap:3px;">
             <div style="display:flex; justify-content:space-between; font-size:0.72rem; font-weight:800;">
-              <span style="color:var(--text-muted); text-transform:uppercase;">Tactical Familiarity</span>
+              <span style="color:var(--text-muted); text-transform:uppercase;">Tactical Familiarity &amp; Chemistry</span>
               <span id="familiarityScoreBadge" style="color:#10b981;">100%</span>
             </div>
             <div style="height:6px; background:rgba(255,255,255,0.08); border-radius:3px; overflow:hidden;">
@@ -362,12 +353,8 @@
             </div>
 
             <div style="background:var(--bg-panel); padding:10px 12px; border-radius:8px; border:1px solid var(--border);">
-              <div style="font-size:0.72rem; font-weight:800; color:var(--text-muted); text-transform:uppercase; margin-bottom:4px;">Shape Analysis</div>
+              <div style="font-size:0.72rem; font-weight:800; color:var(--text-muted); text-transform:uppercase; margin-bottom:4px;">Shape &amp; Chemistry Analysis</div>
               <div id="analysisBadgesContainer" style="display:flex; flex-direction:column; gap:3px; font-size:0.72rem;"></div>
-            </div>
-
-            <div style="font-size:0.72rem; color:var(--text-muted); text-align:center;">
-              💡 Drag player dots on the pitch to build custom shapes, or tap to swap.
             </div>
           </div>
 
@@ -383,8 +370,9 @@
                       <th style="padding:4px 6px;">PLAYER</th>
                       <th style="padding:4px 6px;">AGE</th>
                       <th style="padding:4px 6px;">OVR</th>
-                      <th style="padding:4px 6px;">FITNESS</th>
+                      <th style="padding:4px 6px;">FIT</th>
                       <th style="padding:4px 6px;">MORALE</th>
+                      <th style="padding:4px 6px;">CHEM</th>
                       <th style="padding:4px 6px;">CONTRACT</th>
                       <th style="padding:4px 6px;">WAGE</th>
                       <th style="padding:4px 6px; text-align:right;">ACTION</th>
@@ -406,8 +394,9 @@
                       <th style="padding:4px 6px;">PLAYER</th>
                       <th style="padding:4px 6px;">AGE</th>
                       <th style="padding:4px 6px;">OVR</th>
-                      <th style="padding:4px 6px;">FITNESS</th>
+                      <th style="padding:4px 6px;">FIT</th>
                       <th style="padding:4px 6px;">MORALE</th>
+                      <th style="padding:4px 6px;">CHEM</th>
                       <th style="padding:4px 6px;">CONTRACT</th>
                       <th style="padding:4px 6px;">WAGE</th>
                       <th style="padding:4px 6px; text-align:right;">ACTION</th>
@@ -425,7 +414,14 @@
       <div id="tab-matchday" class="tab-pane" style="display: none;">
         <div class="matchday-grid">
           <div class="broadcast-card">
+            <!-- COMPETITION & ROUND BANNER (FEATURE 5 & 29) -->
+            <div style="display:flex; justify-content:space-between; align-items:center; background:#090d14; border:1px solid var(--border); padding:6px 12px; border-radius:8px;">
+              <span id="matchCompetitionBadge" style="font-size:0.75rem; font-weight:900; color:var(--gold); text-transform:uppercase;">Premier League - Matchday 1</span>
+              <span id="matchVenueBadge" style="font-size:0.72rem; color:var(--text-muted);">🏟️ Home Stadium</span>
+            </div>
+
             <div class="scoreboard-box">
+              <div id="derbyBannerWrap" class="match-banner-derby" style="display:none;">🔥 RIVALRY DERBY MATCH</div>
               <div class="sb-team">
                 <div class="badge-icon-wrap" id="sbHomeBadgeWrap" style="width: 42px; height: 42px;"></div>
                 <h2 id="sbHomeName">Newcastle United</h2>
@@ -488,29 +484,23 @@
         </div>
       </div>
 
-      <!-- DOMESTIC CUPS TAB -->
+      <!-- DOMESTIC CUPS & TOURNAMENT TREES TAB (FEATURES 19 & 20) -->
       <div id="tab-cups" class="tab-pane" style="display: none;">
         <div class="standings-card">
           <div class="section-title-strip" style="margin-bottom: 14px;">
-            <h3>🏆 Domestic Cup Tournaments</h3>
+            <h3>🏆 Knockout Cup Tournaments &amp; Brackets</h3>
             <span class="count">FA Cup &amp; Carabao Cup</span>
           </div>
 
-          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 16px;">
-            <div style="background:var(--bg-panel); border:1px solid var(--border); border-radius:10px; padding:16px;">
-              <h4 style="color:#f59e0b; margin-bottom:4px; font-size:1.05rem;">The FA Cup</h4>
-              <p style="font-size:0.75rem; color:var(--text-muted); margin-bottom:8px;">Knockout bracket. 50/50 shared gate receipts &amp; penalties.</p>
-              <div style="font-size:0.85rem; font-weight:700;">Status: Round 3 Entry (January)</div>
-            </div>
-
-            <div style="background:var(--bg-panel); border:1px solid var(--border); border-radius:10px; padding:16px;">
-              <h4 style="color:#00d2ff; margin-bottom:4px; font-size:1.05rem;">Carabao Cup</h4>
-              <p style="font-size:0.75rem; color:var(--text-muted); margin-bottom:8px;">Straight to penalties after 90 minutes. Silverware &amp; Prize Money.</p>
-              <div style="font-size:0.85rem; font-weight:700;">Status: Active Round</div>
-            </div>
+          <div class="league-tabs">
+            <button class="league-tab-btn active" id="cupTabBtnFA" onclick="switchCupTreeTab('fa')">The FA Cup Bracket</button>
+            <button class="league-tab-btn" id="cupTabBtnCarabao" onclick="switchCupTreeTab('carabao')">Carabao Cup Bracket</button>
           </div>
 
-          <h4 style="font-size:0.9rem; margin-bottom:8px;">Current Cup Draw &amp; Fixture</h4>
+          <!-- Cup Tree Container -->
+          <div id="cupBracketDisplayWrapper" style="background:#090d14; border:1px solid var(--border); border-radius:10px; padding:14px; margin-bottom:16px;"></div>
+
+          <h4 style="font-size:0.9rem; margin-bottom:8px;">Current Fixture / Tie</h4>
           <div id="cupFixtureDisplay" style="background:var(--bg-panel); border-radius:8px; padding:14px; border:1px solid var(--border); font-size:0.85rem;">
             No cup matches scheduled this calendar week.
           </div>
@@ -604,7 +594,7 @@
         </div>
       </div>
 
-      <!-- LEAGUE TABLES TAB -->
+      <!-- LEAGUE TABLES TAB (FEATURE 22: EUROPEAN QUALIFICATION) -->
       <div id="tab-standings" class="tab-pane" style="display: none;">
         <div class="standings-card">
           <div class="league-tabs">
@@ -612,6 +602,13 @@
             <button class="league-tab-btn" onclick="renderStandingsTable(1)" id="tabTier1">Championship</button>
             <button class="league-tab-btn" onclick="renderStandingsTable(2)" id="tabTier2">League One</button>
             <button class="league-tab-btn" onclick="renderStandingsTable(3)" id="tabTier3">League Two</button>
+          </div>
+
+          <div id="euroQualLegend" style="display:flex; gap:12px; font-size:0.72rem; font-weight:800; margin-bottom:8px; flex-wrap:wrap;">
+            <span style="color:#38bdf8;">🟦 Champions Cup (1st-4th)</span>
+            <span style="color:#f59e0b;">🟧 Europa League (5th)</span>
+            <span style="color:#10b981;">🟩 Conference League (6th)</span>
+            <span style="color:#ef4444;">🟥 Relegation (18th-20th)</span>
           </div>
 
           <table class="fm-table" id="leagueTableElem">
@@ -662,7 +659,7 @@
         </div>
       </div>
 
-      <!-- ACADEMY TAB -->
+      <!-- ACADEMY TAB (FEATURE 26) -->
       <div id="tab-academy" class="tab-pane" style="display: none;">
         <div class="standings-card">
           <div class="section-title-strip" style="margin-bottom: 14px;">
@@ -671,7 +668,7 @@
           </div>
 
           <p style="font-size: 0.8rem; color: var(--text-muted); line-height: 1.5; margin-bottom: 14px;">
-            Your scouts monitor academy prospects throughout the year. Every spring, a fresh batch of 16–17 year old prospects emerge. Upgrade your Academy Facilities in Ground Management to attract higher-tier wonderkids!
+            Every spring, a fresh batch of 15–17 year old prospects emerge from your academy. Upgrade your Academy Facilities to attract higher-tier wonderkids with up to 95 potential!
           </p>
 
           <h4 style="font-size: 0.88rem; margin-bottom: 8px;">Academy Intake Prospects</h4>
@@ -679,22 +676,29 @@
         </div>
       </div>
 
-      <!-- FACILITIES TAB -->
+      <!-- FACILITIES & FINANCIAL OPERATIONS TAB (FEATURE 28) -->
       <div id="tab-facilities" class="tab-pane" style="display: none;">
         <div class="standings-card">
-          <h3 style="margin-bottom: 12px;">Ground Expansion &amp; Club Facilities</h3>
+          <h3 style="margin-bottom: 12px;">Ground Expansion, Sponsorships &amp; Facilities</h3>
+          <div id="financesOverviewStrip" style="background:var(--bg-panel); padding:12px; border-radius:8px; border:1px solid var(--border); margin-bottom:14px; font-size:0.8rem;"></div>
           <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px;" id="facilitiesList"></div>
         </div>
       </div>
 
-      <!-- MANAGER OFFICE TAB -->
+      <!-- MANAGER OFFICE TAB (FEATURE 23 & 27: MULTI-OBJECTIVES & REPUTATION) -->
       <div id="tab-manager" class="tab-pane" style="display: none;">
         <div class="standings-card">
           <div class="section-title-strip" style="margin-bottom: 12px;">
-            <h3>📋 Manager Dossier &amp; Board Expectations</h3>
+            <h3>📋 Manager Dossier &amp; Board Multi-Objectives</h3>
             <span class="count" id="mgrContractBadge">Contract: 2 Years Remaining</span>
           </div>
           <div id="managerProfileSummary" style="font-size: 0.85rem; line-height: 1.6;"></div>
+
+          <div class="section-title-strip" style="margin-top:20px; margin-bottom: 10px;">
+            <h3>💾 Career Backup &amp; Save Restoration (Features 24 &amp; 25)</h3>
+            <span class="count">Rolling Backups</span>
+          </div>
+          <div id="backupsListContainer" style="display:flex; flex-direction:column; gap:8px;"></div>
         </div>
       </div>
 
@@ -849,45 +853,6 @@
   <script src="flm-squads.js"></script>
   <script src="flm-engine.js"></script>
   <script>
-    /* AUDIO CONTROLLER */
-    let audioCtx = null;
-    function playSound(type) {
-      if (!state || !state.audioEnabled) return;
-      try {
-        const AudioClass = window.AudioContext || window.webkitAudioContext;
-        if (!AudioClass) return;
-        if (!audioCtx) audioCtx = new AudioClass();
-        if (audioCtx.state === 'suspended') audioCtx.resume();
-        const osc = audioCtx.createOscillator(), gain = audioCtx.createGain();
-        osc.connect(gain); gain.connect(audioCtx.destination);
-        const now = audioCtx.currentTime;
-        if (type === 'whistle') {
-          osc.type = 'triangle'; osc.frequency.setValueAtTime(2200, now); osc.frequency.setValueAtTime(2600, now + 0.08);
-          gain.gain.setValueAtTime(0.2, now); gain.gain.exponentialRampToValueAtTime(0.001, now + 0.25);
-          osc.start(now); osc.stop(now + 0.25);
-        } else if (type === 'goal') {
-          osc.type = 'sawtooth'; osc.frequency.setValueAtTime(140, now); osc.frequency.exponentialRampToValueAtTime(40, now + 0.4);
-          gain.gain.setValueAtTime(0.3, now); gain.gain.exponentialRampToValueAtTime(0.001, now + 0.4);
-          osc.start(now); osc.stop(now + 0.4);
-        } else if (type === 'click') {
-          osc.type = 'sine'; osc.frequency.setValueAtTime(600, now);
-          gain.gain.setValueAtTime(0.1, now); gain.gain.exponentialRampToValueAtTime(0.001, now + 0.05);
-          osc.start(now); osc.stop(now + 0.05);
-        } else if (type === 'cheer') {
-          osc.type = 'triangle'; osc.frequency.setValueAtTime(440, now); osc.frequency.exponentialRampToValueAtTime(880, now + 0.5);
-          gain.gain.setValueAtTime(0.2, now); gain.gain.exponentialRampToValueAtTime(0.001, now + 0.5);
-          osc.start(now); osc.stop(now + 0.5);
-        }
-      } catch(e) {}
-    }
-
-    function toggleAudio() {
-      if (!state) return;
-      state.audioEnabled = !state.audioEnabled;
-      document.getElementById('btnAudio').innerText = state.audioEnabled ? '🔊' : '🔇';
-      playSound('click');
-    }
-
     window.addEventListener('DOMContentLoaded', () => {
       initGame();
       if ('serviceWorker' in navigator) navigator.serviceWorker.register('./sw.js').catch(() => {});
