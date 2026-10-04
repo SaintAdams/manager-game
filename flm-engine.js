@@ -722,7 +722,10 @@ function draw2DPitch() {
     }
   }
 
-  const allPitchPlayers = [...pitchEngine.homePlayers, ...pitchEngine.awayPlayers];
+  // Draw Player Dots with Team Styling (exclude players who have received a red card)
+  const allPitchPlayers = [...pitchEngine.homePlayers, ...pitchEngine.awayPlayers].filter(
+    p => !(matchLiveState && matchLiveState.reds && matchLiveState.reds.includes(p.playerId))
+  );
   allPitchPlayers.forEach(p => {
     ctx.fillStyle = 'rgba(0,0,0,0.45)';
     ctx.beginPath();
@@ -894,6 +897,15 @@ function toggleMatchPause() {
   }
 }
 
+function dismissInjuryModalAndSub() {
+  const modal = $('injuryAlertModal');
+  if (modal) modal.style.display = 'none';
+  populateInMatchSubChips();
+  // Scroll directly down to the substitution drawer smoothly
+  const drawer = $('inMatchSubDrawer');
+  if (drawer) drawer.scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
+
 function startMatchdaySim() {
   const m = getActiveUserMatch();
   if (!m || m.played) return;
@@ -967,10 +979,29 @@ function startMatchdaySim() {
     p.inj = R(1, 3);
     p.con = Math.max(30, p.con - 35);
     pitchEngine.floatingAlerts.push({ id: p.id, icon: '🚑', expireTime: Date.now() + 4500 });
-    feed.insertAdjacentHTML('afterbegin', `<div class="comm-line injury">🚑 ${min}' INJURY: ${p.name} (${club.name}) is down in pain!</div>`);
+    feed.insertAdjacentHTML('afterbegin', `<div class="comm-line injury">🚑 ${min}' INJURY: ${p.name} (${club.name}) is down in pain and cannot continue!</div>`);
     addTimelineEvent('injury', `🚑 ${min}' ${p.name.split(' ').pop()}`);
     playSound('whistle');
+
+    // If it's YOUR player that was injured:
     if (club.id === state.userClubId) {
+      // 1. Automatically pause the match stopwatch
+      matchLiveState.isPaused = true;
+      const pauseBtn = $('btnPauseMatch');
+      if (pauseBtn) {
+        pauseBtn.innerText = '▶️ RESUME';
+        pauseBtn.style.background = '#10b981';
+      }
+
+      // 2. Open the injury modal
+      $('injuryModalDetails').innerHTML = `
+        <p><b>${p.name}</b> (${p.naturalPos} • OVR ${p.ovr}) has sustained an injury at minute ${min} and cannot continue.</p>
+        <p style="margin-top: 8px; color: #f59e0b; font-size: 0.8rem;">The match has been paused. Please substitute this player before resuming play.</p>
+      `;
+      $('injuryAlertModal').style.display = 'flex';
+
+      // 3. Pre-select the injured starter so your bench drawer opens to replace him
+      matchLiveState.pendingSubInId = null;
       populateInMatchSubChips();
     }
   };
