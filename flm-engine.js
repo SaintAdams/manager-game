@@ -33,7 +33,15 @@ let matchLiveState = {
   reds: []
 };
 
-let pitchEngine = { currentMinute: 0, homePlayers: [], awayPlayers: [], ball: { x: 400, y: 240, targetX: 400, targetY: 240 }, w: 800, h: 480 };
+let pitchEngine = { 
+  currentMinute: 0, 
+  homePlayers: [], 
+  awayPlayers: [], 
+  ball: { x: 400, y: 240, targetX: 400, targetY: 240, trail: [] }, 
+  floatingAlerts: [], // Array of { id, icon, expireTime }
+  w: 800, 
+  h: 480 
+};
 
 const $ = id => document.getElementById(id);
 const R = (a, b) => a + Math.floor(Math.random() * (b - a + 1));
@@ -672,24 +680,233 @@ function setup2DPlayers(h, a) {
 }
 
 function draw2DPitch() {
-  const { ctx, w, h } = pitchEngine; if (!ctx) return;
-  ctx.fillStyle = '#235d31'; ctx.fillRect(0, 0, w, h); ctx.fillStyle = '#1b4926'; for (let i = 0; i < 10; i += 2) ctx.fillRect(i * 80, 0, 80, h);
-  ctx.strokeStyle = 'rgba(255,255,255,.75)'; ctx.lineWidth = 2.5; ctx.strokeRect(16, 16, w - 32, h - 32);
-  ctx.beginPath(); ctx.moveTo(w / 2, 16); ctx.lineTo(w / 2, h - 16); ctx.stroke(); ctx.beginPath(); ctx.arc(w / 2, h / 2, 65, 0, 7); ctx.stroke();
-  ctx.strokeRect(16, h / 2 - 105, 115, 210); ctx.strokeRect(w - 131, h / 2 - 105, 115, 210);
-  [...pitchEngine.homePlayers, ...pitchEngine.awayPlayers].forEach(p => {
-    ctx.fillStyle = '#fff'; ctx.beginPath(); ctx.arc(p.x, p.y, 9.5, 0, 7); ctx.fill(); ctx.fillStyle = p.color; ctx.beginPath(); ctx.arc(p.x, p.y, 7.8, 0, 7); ctx.fill();
-    ctx.fillStyle = '#fff'; ctx.font = 'bold 8px sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText(p.num, p.x, p.y + 0.5);
+  const { ctx, w, h, ball, floatingAlerts } = pitchEngine;
+  if (!ctx) return;
+
+  // Grass pitch & mowed stripes
+  ctx.fillStyle = '#1e5229';
+  ctx.fillRect(0, 0, w, h);
+  ctx.fillStyle = '#174221';
+  for (let i = 0; i < 10; i += 2) ctx.fillRect(i * 80, 0, 80, h);
+
+  // Pitch lines
+  ctx.strokeStyle = 'rgba(255,255,255,0.7)';
+  ctx.lineWidth = 2;
+  ctx.strokeRect(16, 16, w - 32, h - 32);
+
+  // Halfway line & center circle
+  ctx.beginPath();
+  ctx.moveTo(w / 2, 16);
+  ctx.lineTo(w / 2, h - 16);
+  ctx.stroke();
+  ctx.beginPath();
+  ctx.arc(w / 2, h / 2, 65, 0, Math.PI * 2);
+  ctx.stroke();
+
+  // Penalty boxes & goal areas
+  ctx.strokeRect(16, h / 2 - 105, 115, 210);
+  ctx.strokeRect(w - 131, h / 2 - 105, 115, 210);
+  ctx.strokeRect(16, h / 2 - 45, 45, 90);
+  ctx.strokeRect(w - 61, h / 2 - 45, 45, 90);
+
+  // Draw Shot / Ball Trajectory Trails
+  if (ball.trail && ball.trail.length > 1) {
+    for (let i = 0; i < ball.trail.length - 1; i++) {
+      const alpha = (i / ball.trail.length) * 0.45;
+      ctx.strokeStyle = `rgba(255, 230, 0, ${alpha})`;
+      ctx.lineWidth = (i / ball.trail.length) * 4;
+      ctx.beginPath();
+      ctx.moveTo(ball.trail[i].x, ball.trail[i].y);
+      ctx.lineTo(ball.trail[i + 1].x, ball.trail[i + 1].y);
+      ctx.stroke();
+    }
+  }
+
+  // Draw Player Dots with Team Styling
+  const allPitchPlayers = [...pitchEngine.homePlayers, ...pitchEngine.awayPlayers];
+  allPitchPlayers.forEach(p => {
+    // Outer shadow / border
+    ctx.fillStyle = 'rgba(0,0,0,0.45)';
+    ctx.beginPath();
+    ctx.arc(p.x + 1, p.y + 2, 9, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Outer kit ring (contrasting trim)
+    ctx.fillStyle = p.num === 1 ? '#eab308' : '#ffffff'; // GK has gold trim
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, 9, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Main jersey color fill
+    ctx.fillStyle = p.num === 1 ? '#047857' : p.color;
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, 7.2, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Kit Number
+    ctx.fillStyle = '#ffffff';
+    ctx.font = 'bold 8.5px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(p.num, p.x, p.y + 0.5);
+
+    // Render Floating Alerts (Card / Injury over player's head)
+    const alert = floatingAlerts.find(a => a.id === p.playerId);
+    if (alert) {
+      ctx.font = '13px sans-serif';
+      ctx.fillText(alert.icon, p.x, p.y - 14);
+    }
   });
-  const b = pitchEngine.ball; ctx.fillStyle = '#fff'; ctx.beginPath(); ctx.arc(b.x, b.y, 5.5, 0, 7); ctx.fill(); ctx.strokeStyle = '#000'; ctx.lineWidth = 1.2; ctx.stroke();
+
+  // Ball with outline
+  ctx.fillStyle = '#ffffff';
+  ctx.beginPath();
+  ctx.arc(ball.x, ball.y, 5, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.strokeStyle = '#000000';
+  ctx.lineWidth = 1.2;
+  ctx.stroke();
 }
 
 function update2DPitchPhysics() {
-  const b = pitchEngine.ball; b.x += (b.targetX - b.x) * 0.15; b.y += (b.targetY - b.y) * 0.15;
+  const b = pitchEngine.ball;
+  b.x += (b.targetX - b.x) * 0.15;
+  b.y += (b.targetY - b.y) * 0.15;
+
+  // Record trail positions for smooth line rendering
+  b.trail.push({ x: b.x, y: b.y });
+  if (b.trail.length > 8) b.trail.shift();
+
+  // Expire floating in-match badge alerts
+  const now = Date.now();
+  pitchEngine.floatingAlerts = pitchEngine.floatingAlerts.filter(a => a.expireTime > now);
+
+  // Player physics towards ball
   [...pitchEngine.homePlayers, ...pitchEngine.awayPlayers].forEach(p => {
-    const dx = b.x - p.baseX, dy = b.y - p.baseY, d = Math.hypot(dx, dy) || 1, inf = Math.min(38, d * 0.28);
-    p.x += (p.baseX + dx / d * inf - p.x) * 0.1; p.y += (p.baseY + dy / d * inf - p.y) * 0.1;
-  }); draw2DPitch();
+    const dx = b.x - p.baseX;
+    const dy = b.y - p.baseY;
+    const d = Math.hypot(dx, dy) || 1;
+    const inf = Math.min(38, d * 0.28);
+    p.x += (p.baseX + (dx / d) * inf - p.x) * 0.1;
+    p.y += (p.baseY + (dy / d) * inf - p.y) * 0.1;
+  });
+
+  draw2DPitch();
+}
+
+function draw2DPitch() {
+  const { ctx, w, h, ball, floatingAlerts } = pitchEngine;
+  if (!ctx) return;
+
+  // Grass pitch & mowed stripes
+  ctx.fillStyle = '#1e5229';
+  ctx.fillRect(0, 0, w, h);
+  ctx.fillStyle = '#174221';
+  for (let i = 0; i < 10; i += 2) ctx.fillRect(i * 80, 0, 80, h);
+
+  // Pitch lines
+  ctx.strokeStyle = 'rgba(255,255,255,0.7)';
+  ctx.lineWidth = 2;
+  ctx.strokeRect(16, 16, w - 32, h - 32);
+
+  // Halfway line & center circle
+  ctx.beginPath();
+  ctx.moveTo(w / 2, 16);
+  ctx.lineTo(w / 2, h - 16);
+  ctx.stroke();
+  ctx.beginPath();
+  ctx.arc(w / 2, h / 2, 65, 0, Math.PI * 2);
+  ctx.stroke();
+
+  // Penalty boxes & goal areas
+  ctx.strokeRect(16, h / 2 - 105, 115, 210);
+  ctx.strokeRect(w - 131, h / 2 - 105, 115, 210);
+  ctx.strokeRect(16, h / 2 - 45, 45, 90);
+  ctx.strokeRect(w - 61, h / 2 - 45, 45, 90);
+
+  // Draw Shot / Ball Trajectory Trails
+  if (ball.trail && ball.trail.length > 1) {
+    for (let i = 0; i < ball.trail.length - 1; i++) {
+      const alpha = (i / ball.trail.length) * 0.45;
+      ctx.strokeStyle = `rgba(255, 230, 0, ${alpha})`;
+      ctx.lineWidth = (i / ball.trail.length) * 4;
+      ctx.beginPath();
+      ctx.moveTo(ball.trail[i].x, ball.trail[i].y);
+      ctx.lineTo(ball.trail[i + 1].x, ball.trail[i + 1].y);
+      ctx.stroke();
+    }
+  }
+
+  // Draw Player Dots with Team Styling
+  const allPitchPlayers = [...pitchEngine.homePlayers, ...pitchEngine.awayPlayers];
+  allPitchPlayers.forEach(p => {
+    // Outer shadow / border
+    ctx.fillStyle = 'rgba(0,0,0,0.45)';
+    ctx.beginPath();
+    ctx.arc(p.x + 1, p.y + 2, 9, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Outer kit ring (contrasting trim)
+    ctx.fillStyle = p.num === 1 ? '#eab308' : '#ffffff'; // GK has gold trim
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, 9, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Main jersey color fill
+    ctx.fillStyle = p.num === 1 ? '#047857' : p.color;
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, 7.2, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Kit Number
+    ctx.fillStyle = '#ffffff';
+    ctx.font = 'bold 8.5px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(p.num, p.x, p.y + 0.5);
+
+    // Render Floating Alerts (Card / Injury over player's head)
+    const alert = floatingAlerts.find(a => a.id === p.playerId);
+    if (alert) {
+      ctx.font = '13px sans-serif';
+      ctx.fillText(alert.icon, p.x, p.y - 14);
+    }
+  });
+
+  // Ball with outline
+  ctx.fillStyle = '#ffffff';
+  ctx.beginPath();
+  ctx.arc(ball.x, ball.y, 5, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.strokeStyle = '#000000';
+  ctx.lineWidth = 1.2;
+  ctx.stroke();
+}
+
+function update2DPitchPhysics() {
+  const b = pitchEngine.ball;
+  b.x += (b.targetX - b.x) * 0.15;
+  b.y += (b.targetY - b.y) * 0.15;
+
+  // Record trail positions for smooth line rendering
+  b.trail.push({ x: b.x, y: b.y });
+  if (b.trail.length > 8) b.trail.shift();
+
+  // Expire floating in-match badge alerts
+  const now = Date.now();
+  pitchEngine.floatingAlerts = pitchEngine.floatingAlerts.filter(a => a.expireTime > now);
+
+  // Player physics towards ball
+  [...pitchEngine.homePlayers, ...pitchEngine.awayPlayers].forEach(p => {
+    const dx = b.x - p.baseX;
+    const dy = b.y - p.baseY;
+    const d = Math.hypot(dx, dy) || 1;
+    const inf = Math.min(38, d * 0.28);
+    p.x += (p.baseX + (dx / d) * inf - p.x) * 0.1;
+    p.y += (p.baseY + (dy / d) * inf - p.y) * 0.1;
+  });
+
+  draw2DPitch();
 }
 
 function setSimSpeed(s) { simSpeedMultiplier = s; $('spd1').className = `btn-speed ${s === 1 ? 'active' : ''}`; $('spd3').className = `btn-speed ${s === 3 ? 'active' : ''}`; }
@@ -849,35 +1066,27 @@ function startMatchdaySim() {
     return active.length ? pick(active) : null;
   };
 
-  const triggerCard = (club) => {
-    const p = getRandomActivePlayer(club);
-    if (!p) return;
-    const currentYellows = matchLiveState.yellows[p.id] || 0;
-
-    if (currentYellows === 1 || Math.random() < 0.08) {
+if (currentYellows === 1 || Math.random() < 0.08) {
       matchLiveState.reds.push(p.id);
+      pitchEngine.floatingAlerts.push({ id: p.id, icon: '🟥', expireTime: Date.now() + 4500 });
       feed.insertAdjacentHTML('afterbegin', `<div class="comm-line redcard">🟥 ${min}' RED CARD! ${p.name} (${club.name}) is sent off!</div>`);
       addTimelineEvent('red', `🟥 ${min}' ${p.name.split(' ').pop()}`);
       playSound('whistle');
     } else {
       matchLiveState.yellows[p.id] = 1;
+      pitchEngine.floatingAlerts.push({ id: p.id, icon: '🟨', expireTime: Date.now() + 4500 });
       feed.insertAdjacentHTML('afterbegin', `<div class="comm-line card">🟨 ${min}' Booking: ${p.name} (${club.name}) receives a yellow card.</div>`);
       addTimelineEvent('yellow', `🟨 ${min}' ${p.name.split(' ').pop()}`);
       playSound('click');
     }
   };
 
-  const triggerMatchInjury = (club) => {
-    const p = getRandomActivePlayer(club);
-    if (!p || p.inj > 0) return;
-    p.inj = R(1, 3);
+p.inj = R(1, 3);
     p.con = Math.max(30, p.con - 35);
+    pitchEngine.floatingAlerts.push({ id: p.id, icon: '🚑', expireTime: Date.now() + 4500 });
     feed.insertAdjacentHTML('afterbegin', `<div class="comm-line injury">🚑 ${min}' INJURY: ${p.name} (${club.name}) is down in pain!</div>`);
     addTimelineEvent('injury', `🚑 ${min}' ${p.name.split(' ').pop()}`);
     playSound('whistle');
-    if (club.id === state.userClubId) {
-      populateInMatchSubChips();
-    }
   };
 
   function tick() {
@@ -988,14 +1197,32 @@ function renderMatchdayView() {
       const matchTypePrefix = m.type === 'CUP' ? `🏆 ${m.cupName}:` : `Week ${state.currentWeek}:`;
       $('commentaryFeed').innerHTML = `<div class="comm-line">${matchTypePrefix} ${h.name} vs ${a.name}. Click "Start Match" or "Advance Week".</div>`;
     }
-    setup2DPlayers(h, a); populateInMatchSubChips();
-  } else { $('sbScore').innerText = '-';$('sbMinute').innerText = 'NO FIXTURE'; $('btnStartMatch').disabled = true; $('commentaryFeed').innerHTML = '<div class="comm-line">No fixture scheduled for your club this calendar week.</div>'; }
-  const g = $('aroundGroundsList'); g.innerHTML = '';
-  if (w) w.matches.filter(x => x.div === getCurrentUserClub().div || (x.type === 'CUP' && (x.home === state.userClubId || x.away === state.userClubId))).forEach(x => {
-    const h = clubById(x.home), a = clubById(x.away), r = document.createElement('div'); r.className = 'grounds-match-row';
-    r.innerHTML = `<div class="team-home"><span>${h.name}</span>${createBadgeHtml(h.id, 18)}</div><div class="match-vs-box">${x.played ? `${x.homeGoals}-${x.awayGoals}` : 'v'}</div><div class="team-away">${createBadgeHtml(a.id, 18)}<span>${a.name}</span></div>`; g.appendChild(r);
-  });
-}
+ const hStarters = h.players.filter(p => p.starter);
+  const aStarters = a.players.filter(p => p.starter);
+
+  pitchEngine.homePlayers = homeCoords.map((pos, i) => ({
+    playerId: hStarters[i] ? hStarters[i].id : `h_${i}`,
+    num: i + 1,
+    baseX: pos.x,
+    baseY: pos.y,
+    x: pos.x,
+    y: pos.y,
+    color: pitchEngine.homeColor
+  }));
+
+  pitchEngine.awayPlayers = awayCoords.map((pos, i) => ({
+    playerId: aStarters[i] ? aStarters[i].id : `a_${i}`,
+    num: i + 1,
+    baseX: pos.x,
+    baseY: pos.y,
+    x: pos.x,
+    y: pos.y,
+    color: pitchEngine.awayColor
+  }));
+
+  pitchEngine.ball = { x: 400, y: 240, targetX: 400, targetY: 240, trail: [] };
+  pitchEngine.floatingAlerts = [];
+  draw2DPitch();
 
 function renderCupsTab() {
   ensureCupTie(); const c = userCupMatch(), d = $('cupFixtureDisplay');
