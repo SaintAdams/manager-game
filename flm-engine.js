@@ -1,4 +1,4 @@
-/* Football League Manager - game engine. Load this file before the audio script block. */
+/* Football League Manager - Complete Enhanced Engine */
 (function () {
   const s = document.createElement('style');
   s.textContent = '.matchday-grid>*,.broadcast-card>*,.canvas-container{min-width:0;max-width:100%}' +
@@ -24,9 +24,10 @@
 })();
 
 const STORAGE_KEY = 'FLM_CAREER_2026_V2';
+const BACKUP_PREFIX = 'FLM_BACKUP_SLOT_';
 let state = null, selectedPlayerSwapId = null, wizardChosenClubId = 'NEW', activeContractTarget = null,
   deadlineHour = 12, pendingAIBid = null, pendingJobOffer = null, shootoutState = null, simSpeedMultiplier = 1,
-  matchSimInterval = null, animFrameId = null, marketSortKey = 'ovr', marketSortAsc = false;
+  matchSimInterval = null, animFrameId = null, marketSortKey = 'ovr', marketSortAsc = false, activeCupTree = 'fa';
 
 let lastUserClubRatings = null;
 
@@ -37,7 +38,8 @@ let matchLiveState = {
   isPaused: false,
   timelineEvents: [],
   yellows: {},
-  reds: []
+  reds: [],
+  isDerby: false
 };
 
 let pitchEngine = { 
@@ -59,7 +61,28 @@ const NATS = ['SCO', 'WAL', 'IRL', 'NIR', 'FRA', 'ESP', 'GER', 'NED', 'POR', 'BR
 const ROLE = { GK: 'GK-De', DEF: 'CD-De', MID: 'CM-At', FWD: 'AF-At' };
 const TAG = { GK: 'GK', DEF: 'DF', MID: 'MF', FWD: 'FW' };
 const DIV_NAMES = ['Premier League', 'Championship', 'League One', 'League Two'];
-const CUP_WEEKS = { 7: ['Carabao Cup', 'carabao', false], 15: ['Carabao Cup', 'carabao', true], 23: ['The FA Cup', 'fa', false], 31: ['The FA Cup', 'fa', true] };
+const CUP_WEEKS = { 
+  7: ['Carabao Cup', 'carabao', 'Round of 16', false], 
+  15: ['Carabao Cup', 'carabao', 'Carabao Cup Final (Wembley)', true], 
+  23: ['The FA Cup', 'fa', 'Quarter Final', false], 
+  31: ['The FA Cup', 'fa', 'The FA Cup Final (Wembley)', true] 
+};
+
+/* ---------- DYNAMIC RIVALRIES LIST (FEATURE 29) ---------- */
+const HISTORIC_RIVALRIES = [
+  ['Liverpool', 'Everton'], ['Arsenal', 'Tottenham'], ['Manchester United', 'Manchester City'],
+  ['Newcastle United', 'Sunderland'], ['Aston Villa', 'Birmingham City'], ['Sheffield United', 'Sheffield Wednesday'],
+  ['Portsmouth', 'Southampton'], ['Bristol City', 'Bristol Rovers'], ['Blackburn', 'Burnley'],
+  ['Millwall', 'West Ham'], ['Derby County', 'Nottingham Forest'], ['Cardiff City', 'Swansea City'],
+  ['Oxford United', 'Swindon'], ['Wrexham', 'Chesterfield']
+];
+
+function isRivalMatch(clubA, clubB) {
+  if (!clubA || !clubB) return false;
+  return HISTORIC_RIVALRIES.some(([c1, c2]) => 
+    (c1 === clubA.name && c2 === clubB.name) || (c2 === clubA.name && c1 === clubB.name)
+  );
+}
 
 const LEAGUES = ('Arsenal,Aston Villa,Bournemouth,Brentford,Brighton,Chelsea,Crystal Palace,Everton,Fulham,Leeds United,Liverpool,Manchester City,Manchester United,Newcastle United,Nottingham Forest,Sunderland,Tottenham,Coventry City,Ipswich Town,Hull City|' +
   'Leicester City,Southampton,Burnley,Middlesbrough,West Brom,Norwich City,Sheffield United,West Ham,Watford,Wolves,Stoke City,Swansea City,Bristol City,Millwall,Preston,QPR,Blackburn,Derby County,Portsmouth,Oxford United,Sheffield Wednesday,Plymouth Argyle,Birmingham City,Charlton|' +
@@ -68,7 +91,6 @@ const LEAGUES = ('Arsenal,Aston Villa,Bournemouth,Brentford,Brighton,Chelsea,Cry
 
 /* ---------- 92-CLUB AUTHENTIC KIT DATABASE ---------- */
 const CLUB_KITS_DATABASE = {
-  // Premier League
   'Arsenal': { home: '#dc2626', away: '#09090b', gk: '#f59e0b' },
   'Aston Villa': { home: '#7b113a', away: '#f8fafc', gk: '#f59e0b' },
   'Bournemouth': { home: '#b91c1c', away: '#38bdf8', gk: '#10b981' },
@@ -89,8 +111,6 @@ const CLUB_KITS_DATABASE = {
   'Coventry City': { home: '#38bdf8', away: '#475569', gk: '#10b981' },
   'Ipswich Town': { home: '#1d4ed8', away: '#78350f', gk: '#f59e0b' },
   'Hull City': { home: '#f59e0b', away: '#0f172a', gk: '#10b981' },
-
-  // Championship
   'Leicester City': { home: '#1d4ed8', away: '#f59e0b', gk: '#0f172a' },
   'Southampton': { home: '#dc2626', away: '#0f172a', gk: '#10b981' },
   'Burnley': { home: '#7b113a', away: '#f8fafc', gk: '#10b981' },
@@ -115,8 +135,6 @@ const CLUB_KITS_DATABASE = {
   'Plymouth Argyle': { home: '#064e3b', away: '#f8fafc', gk: '#f59e0b' },
   'Birmingham City': { home: '#1d4ed8', away: '#dc2626', gk: '#f59e0b' },
   'Charlton': { home: '#dc2626', away: '#f8fafc', gk: '#10b981' },
-
-  // League One
   'Wrexham': { home: '#dc2626', away: '#059669', gk: '#f59e0b' },
   'Bolton': { home: '#f8fafc', away: '#0f172a', gk: '#10b981' },
   'Stockport': { home: '#1d4ed8', away: '#f8fafc', gk: '#f59e0b' },
@@ -141,8 +159,6 @@ const CLUB_KITS_DATABASE = {
   'Port Vale': { home: '#f8fafc', away: '#0f172a', gk: '#10b981' },
   'Doncaster': { home: '#dc2626', away: '#0284c7', gk: '#10b981' },
   'Crawley Town': { home: '#dc2626', away: '#f8fafc', gk: '#10b981' },
-
-  // League Two
   'Notts County': { home: '#171717', away: '#0284c7', gk: '#f59e0b' },
   'Walsall': { home: '#dc2626', away: '#0f172a', gk: '#10b981' },
   'Chesterfield': { home: '#1d4ed8', away: '#f8fafc', gk: '#f59e0b' },
@@ -181,10 +197,7 @@ function parseColorToRgb(colorStr) {
     const m = colorStr.match(/\d+/g);
     if (!m) return { r: 50, g: 50, b: 50 };
     const h = +m[0] / 360, s = +m[1] / 100, l = +m[2] / 100;
-    if (s === 0) {
-      const val = Math.round(l * 255);
-      return { r: val, g: val, b: val };
-    }
+    if (s === 0) { const val = Math.round(l * 255); return { r: val, g: val, b: val }; }
     const hue2rgb = (p, q, t) => {
       if (t < 0) t += 1; if (t > 1) t -= 1;
       if (t < 1/6) return p + (q - p) * 6 * t;
@@ -205,11 +218,7 @@ function parseColorToRgb(colorStr) {
 
 function getKitColorDistance(c1, c2) {
   const rgb1 = parseColorToRgb(c1), rgb2 = parseColorToRgb(c2);
-  return Math.sqrt(
-    Math.pow(rgb1.r - rgb2.r, 2) +
-    Math.pow(rgb1.g - rgb2.g, 2) +
-    Math.pow(rgb1.b - rgb2.b, 2)
-  );
+  return Math.sqrt(Math.pow(rgb1.r - rgb2.r, 2) + Math.pow(rgb1.g - rgb2.g, 2) + Math.pow(rgb1.b - rgb2.b, 2));
 }
 
 function getClubKitColors(club) {
@@ -217,20 +226,13 @@ function getClubKitColors(club) {
   if (configured) return configured;
   const rgb = parseColorToRgb(club.col);
   const brightness = (rgb.r * 299 + rgb.g * 587 + rgb.b * 114) / 1000;
-  return {
-    home: club.col,
-    away: brightness > 128 ? '#0f172a' : '#f8fafc',
-    gk: '#047857'
-  };
+  return { home: club.col, away: brightness > 128 ? '#0f172a' : '#f8fafc', gk: '#047857' };
 }
 
 function resolveMatchKitColors(homeClub, awayClub) {
-  const hKits = getClubKitColors(homeClub);
-  const aKits = getClubKitColors(awayClub);
-
+  const hKits = getClubKitColors(homeClub), aKits = getClubKitColors(awayClub);
   const homeColor = hKits.home;
-  let awayColor = aKits.home;
-  let usedAwayKit = false;
+  let awayColor = aKits.home, usedAwayKit = false;
 
   if (getKitColorDistance(homeColor, awayColor) < 110) {
     awayColor = aKits.away;
@@ -242,8 +244,7 @@ function resolveMatchKitColors(homeClub, awayClub) {
     }
   }
 
-  let hGK = hKits.gk || '#047857';
-  let aGK = aKits.gk || '#f59e0b';
+  let hGK = hKits.gk || '#047857', aGK = aKits.gk || '#f59e0b';
   if (getKitColorDistance(homeColor, hGK) < 90) hGK = '#f59e0b';
   if (getKitColorDistance(awayColor, aGK) < 90 || getKitColorDistance(hGK, aGK) < 70) aGK = '#38bdf8';
 
@@ -291,8 +292,27 @@ const FORMATIONS = {};
 const SQUAD_ORDER = ['GK', 'DEF', 'DEF', 'DEF', 'DEF', 'MID', 'MID', 'MID', 'FWD', 'FWD', 'FWD', 'GK', 'DEF', 'DEF', 'DEF', 'MID', 'MID', 'MID', 'FWD', 'FWD', 'DEF', 'MID'];
 function mkPlayer(pos, base, i, cid) {
   const ovr = Math.max(40, Math.min(92, base + R(-6, 7)));
-  return { id: `${cid}_${i}_${R(0, 99999)}`, name: pick(FIRSTNAMES) + ' ' + pick(SURNAMES), naturalPos: pos, nat: Math.random() < 0.7 ? 'ENG' : pick(NATS), age: R(18, 35), ovr, con: 100,
-    role: ROLE[pos], starter: i < 11, val: Math.max(0.3, +((ovr - 50) * 0.75).toFixed(1)), wage: Math.max(0.01, +((ovr - 45) * 0.003).toFixed(3)), contract: R(1, 5), morale: 'Good', goals: 0, cleanSheets: 0, inj: 0, yellows: 0, susp: 0 };
+  return { 
+    id: `${cid}_${i}_${R(0, 99999)}`, 
+    name: pick(FIRSTNAMES) + ' ' + pick(SURNAMES), 
+    naturalPos: pos, 
+    nat: Math.random() < 0.7 ? 'ENG' : pick(NATS), 
+    age: R(18, 35), 
+    ovr, 
+    con: 100,
+    role: ROLE[pos], 
+    starter: i < 11, 
+    val: Math.max(0.3, +((ovr - 50) * 0.75).toFixed(1)), 
+    wage: Math.max(0.01, +((ovr - 45) * 0.003).toFixed(3)), 
+    contract: R(1, 5), 
+    morale: 'Good', 
+    chemistry: R(55, 80), // Feature 10 & 11
+    goals: 0, 
+    cleanSheets: 0, 
+    inj: 0, 
+    yellows: 0, 
+    susp: 0 
+  };
 }
 
 function generateProceduralSquad(c) {
@@ -389,57 +409,38 @@ function createBadgeHtml(id, size = 30) {
   </span>`;
 }
 
-/* ---------- DYNAMIC TEAM RATINGS ENGINE ---------- */
+/* ---------- DYNAMIC RATINGS, MORALE & CHEMISTRY ENGINE (FEATURES 4, 10 & 11) ---------- */
 function computeClubAttributes(club) {
-  if (!club || !club.players || !club.players.length) {
-    return { att: 60, mid: 60, def: 60, ovr: 60 };
-  }
+  if (!club || !club.players || !club.players.length) return { att: 60, mid: 60, def: 60, ovr: 60 };
 
-  const formationKey = (state && state.currentFormation && club.id === state.userClubId)
-    ? state.currentFormation
-    : '4-3-3';
+  const formationKey = (state && state.currentFormation && club.id === state.userClubId) ? state.currentFormation : '4-3-3';
   const tpl = FORMATIONS[formationKey] || FORMATIONS['4-3-3'];
 
   const getEffPlayerRating = (p, isStarter, slotIdx) => {
     let famMult = 1.0;
-    if (isStarter && tpl[slotIdx]) {
-      famMult = getPositionFamiliarityMultiplier(p.naturalPos, tpl[slotIdx].posType);
-    }
+    if (isStarter && tpl[slotIdx]) famMult = getPositionFamiliarityMultiplier(p.naturalPos, tpl[slotIdx].posType);
     const healthMult = p.inj > 0 ? 0.60 : (0.80 + 0.20 * ((p.con || 100) / 100));
-    return p.ovr * famMult * healthMult;
+    const moraleMult = p.morale === 'Superb' ? 1.06 : p.morale === 'Good' ? 1.02 : p.morale === 'Fair' ? 0.98 : 0.92;
+    const chemMult = 0.94 + ((p.chemistry || 60) / 100) * 0.10;
+    return p.ovr * famMult * healthMult * moraleMult * chemMult;
   };
 
   const starters = club.players.filter(p => p.starter);
   const bench = club.players.filter(p => !p.starter);
 
   const calcUnitRating = (posType, fallback) => {
-    const unitStarters = starters.filter(p => {
-      if (posType === 'DEF') return p.naturalPos === 'DEF' || p.naturalPos === 'GK';
-      return p.naturalPos === posType;
-    });
-
-    let starterScore = 0;
+    const unitStarters = starters.filter(p => posType === 'DEF' ? (p.naturalPos === 'DEF' || p.naturalPos === 'GK') : p.naturalPos === posType);
+    let starterScore = fallback - 10;
     if (unitStarters.length > 0) {
-      const sum = unitStarters.reduce((acc, p) => {
-        const slotIdx = starters.indexOf(p);
-        return acc + getEffPlayerRating(p, true, slotIdx);
-      }, 0);
+      const sum = unitStarters.reduce((acc, p) => acc + getEffPlayerRating(p, true, starters.indexOf(p)), 0);
       starterScore = sum / unitStarters.length;
-    } else {
-      starterScore = fallback - 10;
     }
-
-    const unitBench = bench.filter(p => {
-      if (posType === 'DEF') return p.naturalPos === 'DEF' || p.naturalPos === 'GK';
-      return p.naturalPos === posType;
-    });
-
+    const unitBench = bench.filter(p => posType === 'DEF' ? (p.naturalPos === 'DEF' || p.naturalPos === 'GK') : p.naturalPos === posType);
     let benchScore = starterScore;
     if (unitBench.length > 0) {
       const bSum = unitBench.reduce((acc, p) => acc + (p.ovr * (p.inj > 0 ? 0.6 : 0.9)), 0);
       benchScore = bSum / unitBench.length;
     }
-
     const blended = Math.round((starterScore * 0.70) + (benchScore * 0.30));
     return Math.max(35, Math.min(99, blended));
   };
@@ -448,28 +449,283 @@ function computeClubAttributes(club) {
   const mid = calcUnitRating('MID', club.str || 65);
   const def = calcUnitRating('DEF', club.str || 65);
   const ovr = Math.round((att * 0.35) + (mid * 0.35) + (def * 0.30));
-
   return { att, mid, def, ovr };
 }
 
 const computeClubWeeklyWageBill = club => +club.players.reduce((s, p) => s + (p.wage || 0.02), 0).toFixed(3);
 
-/* ---------- BOARD EXPECTATION SYSTEM (FEATURE 6) ---------- */
-function getClubBoardExpectation(club) {
-  const div = club.div;
-  const budget = club.budget || 10;
+/* ---------- MULTI-COMPETITION OBJECTIVES (FEATURE 23) ---------- */
+function getClubBoardObjectives(club) {
+  const div = club.div, budget = club.budget || 10;
+  let leagueObj = 'Avoid Relegation', faObj = 'Third Round', carabaoObj = 'Second Round', minRank = 17;
+
   if (div === 0) {
-    if (budget >= 50) return { target: 'Champions League Qualification (Top 4)', maxRank: 4, label: 'Top 4' };
-    if (budget >= 25) return { target: 'Top Half Finish', maxRank: 10, label: 'Top Half' };
-    return { target: 'Avoid Relegation', maxRank: 17, label: 'Avoid Relegation' };
+    if (budget >= 50) { leagueObj = 'Champions Cup Spot (Top 4)'; minRank = 4; faObj = 'Semi-Finals'; carabaoObj = 'Quarter-Finals'; }
+    else if (budget >= 25) { leagueObj = 'Top Half Finish'; minRank = 10; faObj = 'Fifth Round'; carabaoObj = 'Fourth Round'; }
+    else { leagueObj = 'Avoid Relegation'; minRank = 17; faObj = 'Fourth Round'; carabaoObj = 'Third Round'; }
+  } else if (div === 1) {
+    if (budget >= 15) { leagueObj = 'Automatic Promotion'; minRank = 2; faObj = 'Fourth Round'; carabaoObj = 'Third Round'; }
+    else { leagueObj = 'Play-Offs (Top 6)'; minRank = 6; faObj = 'Third Round'; carabaoObj = 'Second Round'; }
   } else {
-    if (budget >= 20) return { target: 'Automatic Promotion / Title', maxRank: 2, label: 'Promotion' };
-    if (budget >= 10) return { target: 'Play-off Places (Top 6)', maxRank: 6, label: 'Play-offs' };
-    return { target: 'Mid-Table Consolidation', maxRank: 16, label: 'Mid-Table' };
+    leagueObj = 'Promotion Contention'; minRank = 3; faObj = 'Second Round'; carabaoObj = 'First Round';
+  }
+  return { leagueObj, faObj, carabaoObj, minRank };
+}
+
+/* ---------- WEB AUDIO PROCEDURAL ATMOSPHERE (FEATURES 12, 13 & 14) ---------- */
+let audioCtx = null, crowdLoopNode = null, crowdGainNode = null;
+
+function initAudioEngine() {
+  if (!state || !state.audioEnabled) return;
+  try {
+    const AudioClass = window.AudioContext || window.webkitAudioContext;
+    if (!AudioClass) return;
+    if (!audioCtx) audioCtx = new AudioClass();
+    if (audioCtx.state === 'suspended') audioCtx.resume();
+  } catch(e) {}
+}
+
+function startStadiumCrowdLoop(isDerby = false) {
+  if (!state || !state.audioEnabled) return;
+  initAudioEngine();
+  if (!audioCtx) return;
+  stopStadiumCrowdLoop();
+
+  const bufferSize = audioCtx.sampleRate * 2;
+  const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+  const data = buffer.getChannelData(0);
+  for (let i = 0; i < bufferSize; i++) data[i] = Math.random() * 2 - 1;
+
+  const whiteNoise = audioCtx.createBufferSource();
+  whiteNoise.buffer = buffer;
+  whiteNoise.loop = true;
+
+  const filter = audioCtx.createBiquadFilter();
+  filter.type = 'lowpass';
+  filter.frequency.value = isDerby ? 550 : 380; // High frequency rumble in Derbies
+
+  crowdGainNode = audioCtx.createGain();
+  crowdGainNode.gain.setValueAtTime(isDerby ? 0.08 : 0.04, audioCtx.currentTime);
+
+  whiteNoise.connect(filter);
+  filter.connect(crowdGainNode);
+  crowdGainNode.connect(audioCtx.destination);
+  whiteNoise.start();
+  crowdLoopNode = whiteNoise;
+}
+
+function stopStadiumCrowdLoop() {
+  if (crowdLoopNode) {
+    try { crowdLoopNode.stop(); } catch(e) {}
+    crowdLoopNode = null;
   }
 }
 
-/* ---------- STATE INITIALIZATION ---------- */
+function playSound(type) {
+  if (!state || !state.audioEnabled) return;
+  initAudioEngine();
+  if (!audioCtx) return;
+
+  const now = audioCtx.currentTime;
+  const osc = audioCtx.createOscillator(), gain = audioCtx.createGain();
+  osc.connect(gain); gain.connect(audioCtx.destination);
+
+  if (type === 'whistle') { // Referee whistle
+    osc.type = 'triangle';
+    osc.frequency.setValueAtTime(2400, now);
+    osc.frequency.setValueAtTime(2900, now + 0.08);
+    gain.gain.setValueAtTime(0.25, now);
+    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.3);
+    osc.start(now); osc.stop(now + 0.3);
+  } else if (type === 'goal' || type === 'roar') { // Stadium crowd eruption
+    if (crowdGainNode) {
+      crowdGainNode.gain.cancelScheduledValues(now);
+      crowdGainNode.gain.setValueAtTime(0.24, now);
+      crowdGainNode.gain.exponentialRampToValueAtTime(0.05, now + 3.2);
+    }
+    osc.type = 'sawtooth';
+    osc.frequency.setValueAtTime(160, now);
+    osc.frequency.exponentialRampToValueAtTime(45, now + 0.6);
+    gain.gain.setValueAtTime(0.35, now);
+    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.6);
+    osc.start(now); osc.stop(now + 0.6);
+  } else if (type === 'groan') { // Missed chance groan
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(180, now);
+    osc.frequency.exponentialRampToValueAtTime(80, now + 0.4);
+    gain.gain.setValueAtTime(0.18, now);
+    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.4);
+    osc.start(now); osc.stop(now + 0.4);
+  } else if (type === 'cheer') {
+    osc.type = 'triangle';
+    osc.frequency.setValueAtTime(440, now);
+    osc.frequency.exponentialRampToValueAtTime(880, now + 0.5);
+    gain.gain.setValueAtTime(0.2, now);
+    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.5);
+    osc.start(now); osc.stop(now + 0.5);
+  } else if (type === 'click') {
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(600, now);
+    gain.gain.setValueAtTime(0.1, now);
+    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.05);
+    osc.start(now); osc.stop(now + 0.05);
+  }
+}
+
+function playSoundSafe(name) { try { playSound(name); } catch(e) {} }
+
+function toggleAudio() {
+  if (!state) return;
+  state.audioEnabled = !state.audioEnabled;
+  $('btnAudio').innerText = state.audioEnabled ? '🔊' : '🔇';
+  if (!state.audioEnabled) stopStadiumCrowdLoop();
+  playSoundSafe('click');
+}
+
+/* ---------- BRACKET & TOURNAMENT TREES (FEATURES 19 & 20) ---------- */
+function initCupTournamentTrees() {
+  const allClubs = [...state.clubs];
+  const generateBracket = (name) => {
+    const r16 = [];
+    const pool = [...allClubs].sort(() => Math.random() - 0.5).slice(0, 16);
+    for (let i = 0; i < 16; i += 2) {
+      r16.push({ h: pool[i].name, a: pool[i + 1].name, hScore: null, aScore: null, winner: null });
+    }
+    return { name, r16, qf: [], sf: [], final: [] };
+  };
+  state.cupBrackets = {
+    fa: generateBracket('The FA Cup'),
+    carabao: generateBracket('Carabao Cup')
+  };
+}
+
+function switchCupTreeTab(key) {
+  activeCupTree = key;
+  $('cupTabBtnFA').className = `league-tab-btn ${key === 'fa' ? 'active' : ''}`;
+  $('cupTabBtnCarabao').className = `league-tab-btn ${key === 'carabao' ? 'active' : ''}`;
+  renderCupBracketTree();
+}
+
+function renderCupBracketTree() {
+  const container = $('cupBracketDisplayWrapper');
+  if (!container || !state.cupBrackets) return;
+  const bracket = state.cupBrackets[activeCupTree];
+  if (!bracket) return;
+
+  const renderRound = (title, matches) => `
+    <div class="bracket-round-column">
+      <div class="bracket-round-title">${title}</div>
+      ${matches.map(m => `
+        <div class="bracket-match-node">
+          <div class="bracket-team-line ${m.winner === m.h ? 'winner' : ''}"><span>${m.h}</span><span>${m.hScore ?? '-'}</span></div>
+          <div class="bracket-team-line ${m.winner === m.a ? 'winner' : ''}"><span>${m.a}</span><span>${m.aScore ?? '-'}</span></div>
+        </div>
+      `).join('')}
+    </div>
+  `;
+
+  // Build filler matches if early rounds
+  const qfNodes = bracket.qf.length ? bracket.qf : Array(4).fill({ h: 'TBD', a: 'TBD' });
+  const sfNodes = bracket.sf.length ? bracket.sf : Array(2).fill({ h: 'TBD', a: 'TBD' });
+  const finalNodes = bracket.final.length ? bracket.final : [{ h: 'Wembley Finalist 1', a: 'Wembley Finalist 2' }];
+
+  container.innerHTML = `
+    <div style="font-size:0.85rem; font-weight:900; color:var(--gold); margin-bottom:10px;">🏆 ${bracket.name} - Roadmap to Wembley</div>
+    <div class="cup-tree-bracket">
+      ${renderRound('Round of 16', bracket.r16)}
+      ${renderRound('Quarter Finals', qfNodes)}
+      ${renderRound('Semi Finals', sfNodes)}
+      ${renderRound('Wembley Final', finalNodes)}
+    </div>
+  `;
+}
+
+/* ---------- SAVE EXPORT, IMPORT & ROLLING BACKUPS (FEATURES 24 & 25) ---------- */
+function saveGame() {
+  if (!state) return;
+  try {
+    const raw = JSON.stringify(state);
+    localStorage.setItem(STORAGE_KEY, raw);
+
+    // Auto Rolling 3-Month Backups (Every 4 calendar weeks)
+    if (state.currentWeek % 4 === 0) {
+      const slot = ((Math.floor(state.currentWeek / 4) - 1) % 3) + 1;
+      localStorage.setItem(`${BACKUP_PREFIX}${slot}`, JSON.stringify({
+        savedAtWeek: state.currentWeek,
+        savedSeason: state.seasonYear,
+        timestamp: new Date().toLocaleTimeString(),
+        data: raw
+      }));
+    }
+  } catch(e) {}
+}
+
+function exportCareerSave() {
+  if (!state) return;
+  const blob = new Blob([JSON.stringify(state, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `FLM_Career_${getCurrentUserClub().name.replace(/\s+/g, '_')}_Wk${state.currentWeek}.json`;
+  a.click();
+  URL.revokeObjectURL(url);
+  playSoundSafe('click');
+}
+
+function importCareerSave(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    try {
+      const loaded = JSON.parse(ev.target.result);
+      if (!loaded.clubs || !loaded.manager) throw new Error('Invalid save file');
+      state = loaded;
+      ensureAllSquadsHydrated();
+      saveGame();
+      renderAll();
+      alert('✅ Career save file successfully loaded!');
+      playSoundSafe('cheer');
+    } catch(err) {
+      alert('❌ Failed to load save file: Invalid or corrupted format.');
+    }
+  };
+  reader.readAsText(file);
+}
+
+function restoreBackupSlot(slot) {
+  const b = localStorage.getItem(`${BACKUP_PREFIX}${slot}`);
+  if (!b) return;
+  try {
+    const parsed = JSON.parse(b);
+    state = JSON.parse(parsed.data);
+    ensureAllSquadsHydrated();
+    saveGame();
+    renderAll();
+    alert(`✅ Restored to backup from Week ${parsed.savedAtWeek}!`);
+    playSoundSafe('cheer');
+  } catch(e) { alert('Failed to restore backup.'); }
+}
+
+function renderBackupsList() {
+  const container = $('backupsListContainer');
+  if (!container) return;
+  container.innerHTML = '';
+  for (let s = 1; s <= 3; s++) {
+    const b = localStorage.getItem(`${BACKUP_PREFIX}${s}`);
+    const row = document.createElement('div');
+    row.style.cssText = 'background:var(--bg-panel); border:1px solid var(--border); padding:8px 12px; border-radius:6px; display:flex; justify-content:space-between; align-items:center; font-size:0.75rem;';
+    if (b) {
+      const p = JSON.parse(b);
+      row.innerHTML = `<span><b>Backup Slot ${s}</b>: Season ${p.savedSeason}, Week ${p.savedAtWeek} (${p.timestamp})</span> <button class="btn-swap-pill" style="background:#0284c7;color:#fff;" onclick="restoreBackupSlot(${s})">Restore</button>`;
+    } else {
+      row.innerHTML = `<span style="color:var(--text-muted);">Backup Slot ${s}: Empty</span> <button class="btn-swap-pill" disabled style="opacity:0.4;">Empty</button>`;
+    }
+    container.appendChild(row);
+  }
+}
+
+/* ---------- INITIALIZATION & HYDRATION ---------- */
 function setupFreshState(managerName = 'Manager', clubId = 'NEW') {
   state = { 
     seasonYear: 2026, currentWeek: 1, totalWeeks: 46, userClubId: clubId, 
@@ -485,22 +741,14 @@ function setupFreshState(managerName = 'Manager', clubId = 'NEW') {
       name: managerName, 
       confidence: 85, 
       fansApproval: 82, 
-      reputation: 2.5, // 1.0 to 5.0 stars
+      reputation: 2.5,
       contractYears: 2,
       warningsCount: 0,
-      matches: 0, 
-      wins: 0, 
-      draws: 0, 
-      losses: 0, 
-      motmAwards: 0, 
-      faCups: 0, 
-      carabaoCups: 0,
-      leagueTitles: 0,
-      promotions: 0
+      matches: 0, wins: 0, draws: 0, losses: 0, motmAwards: 0, faCups: 0, carabaoCups: 0, leagueTitles: 0, promotions: 0
     } 
   };
   state.clubs.forEach(c => { c.players = generateProceduralSquad(c); });
-  buildStandings(); generateTrueRoundRobinFixtures(); generateInitialNews(); generateYouthIntake(false);
+  buildStandings(); generateTrueRoundRobinFixtures(); generateInitialNews(); generateYouthIntake(false); initCupTournamentTrees();
 }
 
 function buildStandings() {
@@ -512,20 +760,19 @@ function ensureAllSquadsHydrated() {
     if (!c.players || c.players.length < 14) c.players = generateProceduralSquad(c);
     const configuredKit = CLUB_KITS_DATABASE[c.name];
     if (configuredKit) c.col = configuredKit.home;
+    c.players.forEach(p => {
+      if (p.chemistry === undefined) p.chemistry = R(55, 80);
+      if (p.morale === undefined) p.morale = 'Good';
+    });
   });
   if (!state.cups) state.cups = { carabaoAlive: true, faAlive: true };
   if (!state.tacticalFamiliarity) state.tacticalFamiliarity = { '4-3-3': 100, '4-2-3-1': 55, '4-4-2': 50, '3-5-2': 40, '5-3-2': 40, '4-1-2-1-2': 45, '4-5-1': 45 };
   if (!state.customFormations) state.customFormations = {};
   if (state.customFormations['Custom']) FORMATIONS['Custom'] = state.customFormations['Custom'];
-  
+  if (!state.cupBrackets) initCupTournamentTrees();
   if (!state.manager.reputation) state.manager.reputation = 2.5;
   if (!state.manager.contractYears) state.manager.contractYears = 2;
-  if (state.manager.warningsCount === undefined) state.manager.warningsCount = 0;
-  if (state.manager.leagueTitles === undefined) state.manager.leagueTitles = 0;
-  if (state.manager.promotions === undefined) state.manager.promotions = 0;
 }
-
-function saveGame() { if (state) try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch (e) {} }
 
 function initGame() {
   let ok = false;
@@ -571,7 +818,7 @@ function filterModalClubs(div) {
   });
 }
 
-/* ---------- fixtures ---------- */
+/* ---------- fixtures & round robin ---------- */
 function buildRoundRobinSchedule(ids) {
   const n = ids.length, t = [...ids], rounds = [];
   for (let r = 0; r < n - 1; r++) {
@@ -595,15 +842,20 @@ function ensureCupTie() {
   if (!w || !cfg || w.cupChecked || w.done) return; w.cupChecked = true;
   if (!state.cups[cfg[1] + 'Alive']) return;
   const opp = pick(state.clubs.filter(c => c.id !== state.userClubId)), homeUser = Math.random() < 0.5;
-  w.matches.unshift({ div: -1, type: 'CUP', cupName: cfg[0], cupKey: cfg[1], final: cfg[2], home: homeUser ? state.userClubId : opp.id, away: homeUser ? opp.id : state.userClubId, homeGoals: null, awayGoals: null, played: false, scorers: [] });
+  w.matches.unshift({ 
+    div: -1, 
+    type: 'CUP', 
+    cupName: cfg[0], 
+    cupKey: cfg[1], 
+    roundName: cfg[2],
+    final: cfg[3], 
+    home: homeUser ? state.userClubId : opp.id, 
+    away: homeUser ? opp.id : state.userClubId, 
+    homeGoals: null, awayGoals: null, played: false, scorers: [] 
+  });
 }
 
-/* ---------- audio safe wrapper ---------- */
-function playSoundSafe(name) {
-  try { if (typeof playSound === 'function') playSound(name); } catch (e) {}
-}
-
-/* ---------- match engine ---------- */
+/* ---------- MATCH ENGINE, DERBY REACTION & MORALE BOOST ---------- */
 function poisson(l) { const L = Math.exp(-l); let k = 0, p = 1; do { k++; p *= Math.random(); } while (p > L); return k - 1; }
 function pickScorer(club) {
   const pool = []; club.players.filter(p => p.starter && p.naturalPos !== 'GK').forEach(p => { const w = p.naturalPos === 'FWD' ? 4 : p.naturalPos === 'MID' ? 2 : 1; for (let i = 0; i < w; i++) pool.push(p); });
@@ -624,34 +876,31 @@ function applyResult(m, hg, ag, scorersDone) {
   if (ag === 0) { const g = h.players.find(p => p.starter && p.naturalPos === 'GK'); if (g) g.cleanSheets++; }
   if (hg === 0) { const g = a.players.find(p => p.starter && p.naturalPos === 'GK'); if (g) g.cleanSheets++; }
 
-  if (matchLiveState) {
-    if (matchLiveState.reds && matchLiveState.reds.length) {
-      matchLiveState.reds.forEach(pid => {
-        const p = [...h.players, ...a.players].find(x => x.id === pid);
-        if (p) { p.susp = 1; addNewsStory('Discipline', `SUSPENSION: ${p.name} banned for 1 match`, 'Sent off in the previous fixture.', true); }
-      });
-    }
+  // Chemistry progression for starters (+1 chemistry per match together)
+  [h, a].forEach(club => {
+    club.players.filter(p => p.starter).forEach(p => {
+      p.chemistry = Math.min(100, (p.chemistry || 60) + 1);
+    });
+  });
 
-    if (matchLiveState.yellows) {
-      Object.keys(matchLiveState.yellows).forEach(pid => {
-        const p = [...h.players, ...a.players].find(x => x.id === pid);
-        if (p) {
-          p.yellows = (p.yellows || 0) + 1;
-          if (p.yellows % 5 === 0) { p.susp = 1; addNewsStory('Discipline', `SUSPENSION: ${p.name} reaches 5 yellow cards`, 'Serves an automatic 1-match ban.', true); }
-        }
-      });
-    }
-  }
-
-  if (m.home === state.userClubId || m.away === state.userClubId) {
-    const fKey = state.currentFormation;
-    if (state.tacticalFamiliarity) {
-      state.tacticalFamiliarity[fKey] = Math.min(100, (state.tacticalFamiliarity[fKey] || 40) + 3);
-    }
+  // Morale & Winning streak effects (Feature 10)
+  const isUserHome = m.home === state.userClubId, isUserAway = m.away === state.userClubId;
+  if (isUserHome || isUserAway) {
+    const userWon = isUserHome ? hg > ag : ag > hg;
+    const userLost = isUserHome ? hg < ag : ag < hg;
+    const club = getCurrentUserClub();
+    club.players.forEach(p => {
+      if (userWon) p.morale = p.morale === 'Fair' ? 'Good' : 'Superb';
+      else if (userLost) p.morale = p.morale === 'Superb' ? 'Good' : 'Fair';
+    });
   }
 
   if (m.type === 'LEAGUE') updateLeagueTableRecord(m.div, m.home, m.away, hg, ag);
-  else { const gate = +(h.cap * 0.000035 / 2).toFixed(2); h.budget += gate; a.budget += gate; }
+  else { 
+    const prize = m.final ? 3.5 : 0.8;
+    const winner = hg > ag ? h : a;
+    winner.budget = +(winner.budget + prize).toFixed(1); // Feature 28 Finances
+  }
   if (m.home === state.userClubId || m.away === state.userClubId) recordUserMatchResult(m.home === state.userClubId, hg, ag);
 }
 
@@ -664,20 +913,19 @@ function updateLeagueTableRecord(div, hid, aid, hg, ag) {
 
 function recordUserMatchResult(isHome, hg, ag) {
   const u = isHome ? hg : ag, o = isHome ? ag : hg, mg = state.manager; mg.matches++;
+  const derbyFactor = matchLiveState.isDerby ? 2 : 1;
   if (u > o) { 
     mg.wins++; 
-    mg.confidence = Math.min(99, mg.confidence + 3); 
-    mg.fansApproval = Math.min(99, mg.fansApproval + (u >= 3 ? 4 : 2));
+    mg.confidence = Math.min(99, mg.confidence + 3 * derbyFactor); 
+    mg.fansApproval = Math.min(99, mg.fansApproval + (u >= 3 ? 5 : 3) * derbyFactor);
     mg.reputation = Math.min(5.0, +(mg.reputation + 0.02).toFixed(2));
-  }
-  else if (u === o) { 
+  } else if (u === o) { 
     mg.draws++; 
     mg.fansApproval = Math.max(15, mg.fansApproval - 1); 
-  }
-  else { 
+  } else { 
     mg.losses++; 
-    mg.confidence = Math.max(15, mg.confidence - 4); 
-    mg.fansApproval = Math.max(15, mg.fansApproval - 4);
+    mg.confidence = Math.max(15, mg.confidence - 4 * derbyFactor); 
+    mg.fansApproval = Math.max(15, mg.fansApproval - 4 * derbyFactor);
     mg.reputation = Math.max(1.0, +(mg.reputation - 0.01).toFixed(2));
   }
 }
@@ -685,86 +933,35 @@ function recordUserMatchResult(isHome, hg, ag) {
 function cupWinnerId(m) { return m.homeGoals > m.awayGoals ? m.home : m.awayGoals > m.homeGoals ? m.away : m.penWinner; }
 function cupOutcome(m) {
   const won = cupWinnerId(m) === state.userClubId, uc = getCurrentUserClub().name;
-  if (!won) { state.cups[m.cupKey + 'Alive'] = false; addNewsStory('Cup Exit', `${uc} knocked out of the ${m.cupName}`, 'The cup run is over for this season.', false); }
-  else if (m.final) {
+  if (!won) { 
+    state.cups[m.cupKey + 'Alive'] = false; 
+    addNewsStory('Cup Exit', `${uc} knocked out of the ${m.cupName}`, 'The cup run is over for this season.', false); 
+  } else if (m.final) {
     if (m.cupKey === 'fa') state.manager.faCups++; else state.manager.carabaoCups++;
     state.manager.reputation = Math.min(5.0, +(state.manager.reputation + 0.35).toFixed(2));
-    state.manager.confidence = Math.min(99, state.manager.confidence + 15);
-    addNewsStory('Silverware', `${uc} WIN THE ${m.cupName.toUpperCase()}!`, 'A trophy for the cabinet. Manager reputation skyrockets!', true); playSoundSafe('cheer');
-  } else addNewsStory('Cup Progress', `${uc} through in the ${m.cupName}`, 'On to the next round.', false);
-}
-
-function simulateAITransfers() {
-  const isWindowOpen = (state.currentWeek >= 1 && state.currentWeek <= 4) || (state.currentWeek >= 20 && state.currentWeek <= 22);
-  if (!isWindowOpen || Math.random() > 0.40) return;
-
-  const aiClubs = state.clubs.filter(c => c.id !== state.userClubId && c.budget >= 2.0);
-  if (!aiClubs.length) return;
-  const buyer = pick(aiClubs);
-
-  const freeAgents = state.marketPlayers.filter(p => p.price === 0);
-  if (freeAgents.length && Math.random() < 0.5) {
-    const target = pick(freeAgents);
-    const targetIdx = state.marketPlayers.findIndex(p => p.id === target.id);
-    if (targetIdx >= 0) {
-      state.marketPlayers.splice(targetIdx, 1);
-      buyer.players.push({
-        id: 'trans_ai_' + Date.now() + R(0, 999),
-        name: target.name, naturalPos: target.naturalPos, nat: target.nat, age: target.age, ovr: target.ovr, con: 100, role: ROLE[target.naturalPos], starter: false,
-        val: target.val || +((target.ovr - 45) * 0.8).toFixed(1), wage: target.wage || 0.03, contract: 2, morale: 'Good', goals: 0, cleanSheets: 0, inj: 0, yellows: 0, susp: 0
-      });
-      addNewsStory('Transfer News', `${buyer.name} sign free agent ${target.name}`, 'Bolstering squad depth on a free transfer.', false);
-      return;
-    }
-  }
-
-  const sellers = state.clubs.filter(c => c.id !== state.userClubId && c.id !== buyer.id && c.players.length > 18);
-  if (!sellers.length) return;
-  const seller = pick(sellers);
-  const sellable = seller.players.filter(p => !p.starter && p.naturalPos !== 'GK');
-  if (!sellable.length) return;
-
-  const dealPlayer = pick(sellable);
-  const fee = +(dealPlayer.val * 1.1).toFixed(1);
-
-  if (buyer.budget >= fee) {
-    buyer.budget = +(buyer.budget - fee).toFixed(1);
-    seller.budget = +(seller.budget + fee).toFixed(1);
-
-    const pIndex = seller.players.findIndex(p => p.id === dealPlayer.id);
-    if (pIndex >= 0) {
-      seller.players.splice(pIndex, 1);
-      fixStarters(seller);
-      buyer.players.push({ ...dealPlayer, starter: false, inj: 0, con: 100, morale: 'Good' });
-      addNewsStory('Market Move', `${buyer.name} sign ${dealPlayer.name} from ${seller.name} (£${fee}M)`, 'A permanent agreement has been reached between both clubs.', fee >= 15.0);
-    }
+    state.manager.confidence = Math.min(99, state.manager.confidence + 18);
+    addNewsStory('Wembley Glory', `🏆 ${uc} WIN THE ${m.cupName.toUpperCase()} AT WEMBLEY!`, 'A magnificent silver trophy lifted beneath the arch.', true); 
+    playSoundSafe('cheer');
+  } else {
+    addNewsStory('Cup Progress', `${uc} advance to next round of the ${m.cupName}`, 'On to the next round.', false);
   }
 }
 
-/* ---------- SACKING & JOB OFFER CHECKS (FEATURES 6, 7 & 8) ---------- */
+/* ---------- JOB OFFERS & BOARD INTERVENTIONS ---------- */
 function checkManagerJobOffers() {
   if (pendingJobOffer) return;
-  // Trigger offers occasionally during season or at milestone weeks (weeks 16, 26, 36)
   if (state.currentWeek < 12 || Math.random() > 0.28) return;
 
-  const userClub = getCurrentUserClub();
-  const rep = state.manager.reputation || 2.5;
-
-  // Potential suitors based on manager's reputation
+  const userClub = getCurrentUserClub(), rep = state.manager.reputation || 2.5;
   let suitors = [];
-  if (rep >= 4.2) {
-    suitors = state.clubs.filter(c => c.div === 0 && c.id !== userClub.id && c.budget >= 40);
-  } else if (rep >= 3.4) {
-    suitors = state.clubs.filter(c => (c.div === 0 || c.div === 1) && c.id !== userClub.id && c.str > userClub.str);
-  } else if (rep >= 2.6) {
-    suitors = state.clubs.filter(c => c.id !== userClub.id && (c.div < userClub.div || (c.div === userClub.div && c.budget > userClub.budget)));
-  }
+  if (rep >= 4.2) suitors = state.clubs.filter(c => c.div === 0 && c.id !== userClub.id && c.budget >= 40);
+  else if (rep >= 3.4) suitors = state.clubs.filter(c => (c.div === 0 || c.div === 1) && c.id !== userClub.id && c.str > userClub.str);
+  else if (rep >= 2.6) suitors = state.clubs.filter(c => c.id !== userClub.id && (c.div < userClub.div || (c.div === userClub.div && c.budget > userClub.budget)));
 
   if (suitors.length > 0) {
     const suitor = pick(suitors);
-    const wageOffer = Math.round(suitor.budget * 0.4 + R(15, 45));
-    pendingJobOffer = { club: suitor, wage: wageOffer, contractYears: R(2, 4) };
-    
+    pendingJobOffer = { club: suitor, contractYears: R(2, 4) };
+    const objs = getClubBoardObjectives(suitor);
     $('jobOfferDetails').innerHTML = `
       <div style="display:flex; align-items:center; gap:12px; margin-bottom:14px; background:var(--bg-panel); padding:12px; border-radius:8px;">
         ${createBadgeHtml(suitor.id, 48)}
@@ -773,11 +970,11 @@ function checkManagerJobOffers() {
           <p style="font-size:0.75rem; color:var(--accent);">${DIV_NAMES[suitor.div]} • Budget: £${suitor.budget}M</p>
         </div>
       </div>
-      <p>Following your tactical achievements and high reputation (⭐ <b>${rep.toFixed(1)}</b>), the board of <b>${suitor.name}</b> officially invites you to take over as their head coach!</p>
+      <p>Following your tactical reputation (⭐ <b>${rep.toFixed(1)}</b>), <b>${suitor.name}</b> invites you to become their new manager!</p>
       <ul style="margin:12px 0 12px 20px; font-size:0.8rem; color:#cbd5e1;">
         <li><b>Contract Term:</b> ${pendingJobOffer.contractYears} Years</li>
-        <li><b>Transfer Warchest:</b> £${suitor.budget}M</li>
-        <li><b>Board Expectation:</b> ${getClubBoardExpectation(suitor).target}</li>
+        <li><b>Transfer Budget:</b> £${suitor.budget}M</li>
+        <li><b>Board Expectation:</b> ${objs.leagueObj}</li>
       </ul>
     `;
     $('jobOfferModal').style.display = 'flex';
@@ -787,106 +984,81 @@ function checkManagerJobOffers() {
 
 function acceptJobOffer() {
   if (!pendingJobOffer) return;
-  const newClub = pendingJobOffer.club;
-  const oldClubName = getCurrentUserClub().name;
-
+  const newClub = pendingJobOffer.club, oldClubName = getCurrentUserClub().name;
   state.userClubId = newClub.id;
   state.manager.contractYears = pendingJobOffer.contractYears;
   state.manager.confidence = 85;
-  state.manager.fansApproval = 80;
   state.manager.warningsCount = 0;
-
-  addNewsStory('Managerial Appointment', `${state.manager.name} leaves ${oldClubName} to manage ${newClub.name}!`, `A blockbuster contract agreement. ${state.manager.name} has pledged to lead ${newClub.name} to silverware.`, true);
-
+  addNewsStory('New Chapter', `${state.manager.name} joins ${newClub.name}`, `Departed ${oldClubName} to take over the hotseat.`, true);
   pendingJobOffer = null;
   $('jobOfferModal').style.display = 'none';
-  saveGame();
-  renderAll();
-  alert(`🤝 Congratulations! You are now the manager of ${newClub.name}!`);
-  playSoundSafe('cheer');
+  saveGame(); renderAll(); alert(`🤝 Welcome to ${newClub.name}!`); playSoundSafe('cheer');
 }
-
 function declineJobOffer() {
-  if (!pendingJobOffer) return;
-  addNewsStory('Pledge of Loyalty', `${state.manager.name} rejects approach from ${pendingJobOffer.club.name}`, `Reaffirmed commitment to current club projects.`, false);
   pendingJobOffer = null;
   $('jobOfferModal').style.display = 'none';
-  saveGame();
 }
 
 function checkManagerSackingRisk() {
+  if (state.currentWeek < 12) return;
   const userClub = getCurrentUserClub();
   const table = state.standings[userClub.div] || [];
   const sorted = [...table].sort((a, b) => b.pts - a.pts || b.gd - a.gd);
   const currentRank = sorted.findIndex(r => r.id === userClub.id) + 1;
-  const exp = getClubBoardExpectation(userClub);
+  const objs = getClubBoardObjectives(userClub);
 
-  // Check starts after Week 12 when initial standings stabilize
-  if (state.currentWeek >= 12) {
-    const isUnderperforming = currentRank > (exp.maxRank + 3) || state.manager.confidence < 35;
-
-    if (isUnderperforming) {
-      if (state.manager.confidence <= 22 || state.manager.warningsCount >= 2) {
-        // EXECUTE SACKING
-        triggerManagerSacked(userClub, currentRank, exp);
-      } else if (state.manager.warningsCount === 0 || (state.manager.warningsCount === 1 && state.currentWeek % 8 === 0)) {
-        // ISSUE FORMAL WARNING
-        state.manager.warningsCount++;
-        triggerBoardWarning(userClub, currentRank, exp);
-      }
-    } else if (currentRank <= exp.maxRank && state.manager.confidence > 60) {
-      // Clear warnings if form recovers
-      state.manager.warningsCount = 0;
+  if (currentRank > objs.minRank + 3 || state.manager.confidence < 30) {
+    if (state.manager.confidence <= 20 || state.manager.warningsCount >= 2) {
+      triggerManagerSacked(userClub, currentRank, objs);
+    } else if (state.manager.warningsCount === 0 || state.currentWeek % 8 === 0) {
+      state.manager.warningsCount++;
+      triggerBoardWarning(userClub, currentRank, objs);
     }
+  } else if (currentRank <= objs.minRank && state.manager.confidence > 60) {
+    state.manager.warningsCount = 0;
   }
 }
 
-function triggerBoardWarning(club, rank, exp) {
+function triggerBoardWarning(club, rank, objs) {
   $('boardInterventionTitle').innerText = '⚠️ FORMAL BOARD WARNING';
   $('boardInterventionTitle').style.color = '#f59e0b';
   $('boardInterventionBody').innerHTML = `
     <p><b>From:</b> Board of Directors, ${club.name}</p>
-    <p><b>Target:</b> ${exp.target} | <b>Current Position:</b> ${rank}th (${DIV_NAMES[club.div]})</p>
+    <p><b>Target:</b> ${objs.leagueObj} | <b>Current Position:</b> ${rank}th</p>
     <hr style="border-color:var(--border); margin:10px 0;">
-    <p style="color:#f87171; font-weight:800;">"Our current league position is unacceptable. The board and supporters expected much better results with our current squad resources."</p>
-    <p style="margin-top:8px;">You are on <b>Warning ${state.manager.warningsCount} of 2</b>. Unless performances and results improve promptly, your contract will be terminated immediately.</p>
+    <p style="color:#f87171; font-weight:800;">"Our current results fall unacceptably short of expectations. You are on Warning ${state.manager.warningsCount} of 2."</p>
   `;
-  $('btnDismissBoardIntervention').innerText = 'UNDERSTAND & RETURN TO DUTY';
+  $('btnDismissBoardIntervention').innerText = 'RETURN TO DUTY';
   $('btnDismissBoardIntervention').style.background = '#f59e0b';
   $('boardInterventionModal').style.display = 'flex';
   playSoundSafe('whistle');
 }
 
-function triggerManagerSacked(club, rank, exp) {
-  $('boardInterventionTitle').innerText = '🚨 CONTRACT TERMINATED (SACKED)';
+function triggerManagerSacked(club, rank, objs) {
+  $('boardInterventionTitle').innerText = '🚨 SACKED BY THE BOARD';
   $('boardInterventionTitle').style.color = '#ef4444';
   $('boardInterventionBody').innerHTML = `
-    <p><b>Notice of Immediate Dismissal:</b> ${club.name}</p>
-    <p><b>Reason:</b> Failure to meet minimum board target (${exp.target}). Club sits ${rank}th.</p>
+    <p><b>Notice of Dismissal:</b> ${club.name}</p>
+    <p><b>Reason:</b> Failure to meet target (${objs.leagueObj}). Club currently sits ${rank}th.</p>
     <hr style="border-color:var(--border); margin:10px 0;">
-    <p style="color:#f87171; font-weight:800;">"Following another disappointing run of form, the board has lost all confidence in your tactical direction and relieved you of managerial duties."</p>
-    <p style="margin-top:8px;">Your reputation has suffered a penalty (⭐ -0.4). Select a new club to rebuild your managerial career.</p>
+    <p style="color:#f87171;">Your managerial contract has been terminated immediately. Select a new club to continue your career.</p>
   `;
-  $('btnDismissBoardIntervention').innerText = 'SEEK NEW MANAGEMENT JOB';
+  $('btnDismissBoardIntervention').innerText = 'FIND NEW CLUB';
   $('btnDismissBoardIntervention').style.background = '#ef4444';
-  
   state.manager.reputation = Math.max(1.0, +(state.manager.reputation - 0.4).toFixed(2));
   state.manager.confidence = 70;
   state.manager.warningsCount = 0;
-
-  addNewsStory('Sacking Alert', `${state.manager.name} SACKED by ${club.name}!`, `The board terminated the contract following persistent poor results and fan unrest.`, true);
-
+  addNewsStory('Sacking', `${state.manager.name} SACKED by ${club.name}`, 'Board terminates contract after string of poor results.', true);
   $('boardInterventionModal').style.display = 'flex';
   playSoundSafe('whistle');
 }
 
 function dismissBoardIntervention() {
   $('boardInterventionModal').style.display = 'none';
-  if ($('boardInterventionTitle').innerText.includes('SACKED')) {
-    openClubSelectorModal();
-  }
+  if ($('boardInterventionTitle').innerText.includes('SACKED')) openClubSelectorModal();
 }
 
+/* ---------- WEEKLY PROGRESSION & FINANCES (FEATURE 28) ---------- */
 function finalizeWeek() {
   const w = getWeek(); if (!w || w.done) return;
   ensureCupTie();
@@ -897,46 +1069,37 @@ function finalizeWeek() {
   });
   const club = getCurrentUserClub(), lm = getActiveUserMatch();
   if (lm && lm.home === club.id) club.budget += +(((club.cap + state.stadiumCapacityBonus) * 0.00004)).toFixed(2);
-  applyWeeklyFinancesAndFatigue();
+  
+  // Weekly sponsor revenue
+  club.budget = +(club.budget + [0.45, 0.20, 0.08, 0.03][club.div]).toFixed(2);
+  club.budget = Math.max(0, +(club.budget - computeClubWeeklyWageBill(club) * 0.4).toFixed(2));
+
+  applyWeeklyFatigueAndInjuries();
   generateWeeklyNewsStory();
-  simulateAITransfers();
   checkManagerJobOffers();
   checkManagerSackingRisk();
   if (state.currentWeek === 30 && !state.youthIntakeCompleted) generateYouthIntake(true);
   w.done = true; saveGame();
 }
 
-function applyWeeklyFinancesAndFatigue() {
+function applyWeeklyFatigueAndInjuries() {
   const club = getCurrentUserClub(), med = (state.medicalFacilityLevel || 1) * 3;
-  club.budget = Math.max(0, +(club.budget - computeClubWeeklyWageBill(club) * 0.4 + [0.5, 0.2, 0.08, 0.03][club.div]).toFixed(2));
   club.players.forEach(p => {
-    if (p.inj > 0) { p.inj--; if (!p.inj) addNewsStory('Medical Update', `${p.name} returns from injury`, `${p.name} has resumed training.`, false); }
-    if (p.susp > 0) { p.susp--; if (p.susp === 0) addNewsStory('Discipline', `${p.name} has served suspension`, 'Eligible for team selection again.', false); }
-    if (p.starter) {
-      p.con = Math.max(55, p.con - R(4, 9));
-      if (p.con < 70 && Math.random() < 0.12 && !p.inj) { p.inj = R(1, 3); addNewsStory('Injury Blow', `INJURY: ${p.name} out for ${p.inj} weeks`, 'A muscle strain.', true); }
-    } else p.con = Math.min(100, p.con + 20 + med);
+    if (p.inj > 0) { p.inj--; if (!p.inj) addNewsStory('Medical Update', `${p.name} fit to return`, 'Resumed first-team training.', false); }
+    if (p.susp > 0) p.susp--;
+    if (p.starter) p.con = Math.max(55, p.con - R(4, 9));
+    else p.con = Math.min(100, p.con + 20 + med);
   });
 }
 
 function generateWeeklyNewsStory() {
   const m = getActiveUserMatch(); if (!m || !m.played) return;
   const uc = getCurrentUserClub(), home = m.home === uc.id, opp = clubById(home ? m.away : m.home), my = home ? m.homeGoals : m.awayGoals, th = home ? m.awayGoals : m.homeGoals;
-  if (my > th) addNewsStory('Match Reaction', `Victory: ${uc.name} beat ${opp.name} (${my}-${th})`, 'A confident display.', false);
-  else if (my < th) addNewsStory('Defeat Reaction', `Setback: ${uc.name} lose to ${opp.name} (${my}-${th})`, 'Supporters question the tactics.', false);
-  else addNewsStory('Match Reaction', `Points shared: ${uc.name} ${my}-${th} ${opp.name}`, 'An intense draw.', false);
+  if (my > th) addNewsStory('Match Reaction', `Victory: ${uc.name} ${my}-${th} ${opp.name}`, 'A confident display.', false);
+  else if (my < th) addNewsStory('Defeat Reaction', `Loss: ${uc.name} ${my}-${th} ${opp.name}`, 'Supporters question tactical choices.', false);
+  else addNewsStory('Draw Reaction', `Points shared: ${uc.name} ${my}-${th} ${opp.name}`, 'Hard-fought point on the road.', false);
 }
 
-function evaluateManagerOfMonth() {
-  if (Math.random() > 0.45 && state.manager.confidence > 75) {
-    state.manager.motmAwards++; 
-    state.manager.confidence = Math.min(99, state.manager.confidence + 5);
-    state.manager.reputation = Math.min(5.0, +(state.manager.reputation + 0.08).toFixed(2));
-    addNewsStory('Award Winner', `${state.manager.name} named Manager of the Month!`, 'An impressive run of form.', true); alert('🏆 Manager of the Month!'); playSoundSafe('cheer');
-  }
-}
-
-/* ---------- advance ---------- */
 function handleMasterAdvanceClick() {
   if (!state || (shootoutState && shootoutState.active)) return;
   if (checkDeadlineDayTrigger()) return;
@@ -949,31 +1112,29 @@ function handleMasterAdvanceClick() {
   const w = getWeek(); if (w && !w.done) { finalizeWeek(); if (shootoutState && shootoutState.active) return; }
   if (state.currentWeek >= state.totalWeeks) { showEndSeasonGala(); return; }
   state.currentWeek++; resetLiveState();
-  if (state.currentWeek % 4 === 0) evaluateManagerOfMonth();
   saveGame(); renderAll(); playSoundSafe('click');
 }
 
 function resetLiveState() {
-  matchLiveState = { subsUsed: 0, maxSubs: 5, pendingSubInId: null, isPaused: false, timelineEvents: [], yellows: {}, reds: [] };
+  matchLiveState = { subsUsed: 0, maxSubs: 5, pendingSubInId: null, isPaused: false, timelineEvents: [], yellows: {}, reds: [], isDerby: false };
   const subCount = $('subsRemainingText'); if (subCount) subCount.innerText = 5;
   const pauseBtn = $('btnPauseMatch'); if (pauseBtn) { pauseBtn.style.display = 'none'; pauseBtn.innerText = '⏸️ PAUSE'; }
 }
 
 function showResultModal(m) {
-  const h = clubById(m.home), a = clubById(m.away), mine = m.home === state.userClubId ? m.homeGoals - m.awayGoals : m.awayGoals - m.homeGoals;
+  const h = clubById(m.home), a = clubById(m.away);
   $('modalScoreDisplay').innerHTML = `<div class="result-modal-scoreboard"><div class="result-team">${createBadgeHtml(h.id, 46)}<div class="result-team-name">${h.name}</div></div><div class="result-score-center"><div class="result-score-digits">${m.homeGoals} - ${m.awayGoals}</div><div class="result-ft-badge">FULL TIME</div></div><div class="result-team">${createBadgeHtml(a.id, 46)}<div class="result-team-name">${a.name}</div></div></div>`;
   const sc = m.scorers.map(s => `${s.min}' ${s.player}`).join(', ');
-  $('modalHighlightsFeed').innerHTML = `<p><b>${mine > 0 ? 'Great win!' : mine < 0 ? 'Tough defeat.' : 'Points shared.'}</b></p><p style="margin-top:6px">${sc ? 'Goals: ' + sc : 'No goals.'}</p>`;
+  $('modalHighlightsFeed').innerHTML = `<p style="margin-top:6px">${sc ? 'Goals: ' + sc : 'No goals in this fixture.'}</p>`;
   $('resultSummaryModal').style.display = 'flex'; playSoundSafe('whistle');
 }
-
 function dismissResultModal() { $('resultSummaryModal').style.display = 'none'; handleMasterAdvanceClick(); }
 
-/* ---------- shootout ---------- */
+/* ---------- SHOOTOUT ENGINE ---------- */
 function launchPenaltyShootout(m, h, a) {
   shootoutState = { active: true, match: m, homeClub: h, awayClub: a, homeScore: 0, awayScore: 0, homeKicks: [], awayKicks: [], turn: 'home' };
   $('penHomeTeamName').innerText = h.name; $('penAwayTeamName').innerText = a.name; $('penHomeScore').innerText = '0'; $('penAwayScore').innerText = '0';
-  $('penHomePips').innerHTML = ''; $('penAwayPips').innerHTML = ''; $('penKickStatusText').innerText = `${h.name} to take first!`;
+  $('penHomePips').innerHTML = ''; $('penAwayPips').innerHTML = ''; $('penKickStatusText').innerText = `${h.name} to shoot first`;
   $('btnTakePenalty').disabled = false; $('shootoutModal').style.display = 'flex'; playSoundSafe('whistle');
 }
 function takeShootoutTurn() {
@@ -981,7 +1142,7 @@ function takeShootoutTurn() {
   if (home) { s.homeKicks.push(scored); if (scored) s.homeScore++; s.turn = 'away'; } else { s.awayKicks.push(scored); if (scored) s.awayScore++; s.turn = 'home'; }
   [['penHomePips', s.homeKicks], ['penAwayPips', s.awayKicks]].forEach(([id, k]) => { $(id).innerHTML = k.map(r => `<div class="pen-pip ${r ? 'scored' : 'missed'}"></div>`).join(''); });
   $('penHomeScore').innerText = s.homeScore; $('penAwayScore').innerText = s.awayScore;
-  $('penKickStatusText').innerHTML = scored ? `⚽ <b style="color:#10b981">SCORED!</b> ${team.name}` : `❌ <b style="color:#ef4444">MISSED!</b> ${team.name}`; playSoundSafe(scored ? 'goal' : 'click');
+  $('penKickStatusText').innerHTML = scored ? `⚽ <b style="color:#10b981">SCORED!</b> ${team.name}` : `❌ <b style="color:#ef4444">MISSED!</b> ${team.name}`; playSoundSafe(scored ? 'goal' : 'groan');
   const hk = s.homeKicks.length, ak = s.awayKicks.length;
   if (hk === ak && hk >= 5 && s.homeScore !== s.awayScore) concludeShootout();
   else if (hk <= 5 && ak <= 5 && (s.homeScore > s.awayScore + (5 - ak) || s.awayScore > s.homeScore + (5 - hk))) concludeShootout();
@@ -990,15 +1151,17 @@ function concludeShootout() {
   const s = shootoutState; $('btnTakePenalty').disabled = true;
   const winner = s.homeScore > s.awayScore ? s.homeClub : s.awayClub; s.match.penWinner = winner.id; cupOutcome(s.match);
   setTimeout(() => {
-    $('shootoutModal').style.display = 'none'; s.active = false; const w = getWeek(); if (w) w.pendingPens = false;
+    $('shootoutModal').style.display = 'none'; s.active = false;
     alert(`🏆 ${winner.name} win ${s.homeScore}-${s.awayScore} on penalties!`); saveGame(); renderAll();
-    const lm = getActiveUserMatch(); showResultModal(lm || s.match);
+    showResultModal(s.match);
   }, 1200);
 }
 
-/* ---------- deadline day ---------- */
+/* ---------- DEADLINE DAY ---------- */
 function checkDeadlineDayTrigger() {
-  if ((state.currentWeek === 4 || state.currentWeek === 22) && !state.deadlineDaysCompleted[state.currentWeek]) { deadlineHour = 12; updateDeadlineModalUI(); $('deadlineModal').style.display = 'flex'; playSoundSafe('whistle'); return true; }
+  if ((state.currentWeek === 4 || state.currentWeek === 22) && !state.deadlineDaysCompleted[state.currentWeek]) { 
+    deadlineHour = 12; updateDeadlineModalUI(); $('deadlineModal').style.display = 'flex'; playSoundSafe('whistle'); return true; 
+  }
   return false;
 }
 function updateDeadlineModalUI() {
@@ -1021,58 +1184,28 @@ function acceptDeadlineBid() {
   if (!pendingAIBid) return; const club = getCurrentUserClub(), p = pendingAIBid.player;
   if (club.players.length <= 14) { alert('Squad too thin to sell.'); return; }
   club.budget += pendingAIBid.fee; club.players = club.players.filter(x => x.id !== p.id); fixStarters(club);
-  state.manager.fansApproval = Math.max(20, state.manager.fansApproval - 2);
   addNewsStory('Deadline Day', `${p.name} joins ${pendingAIBid.buyer} for £${pendingAIBid.fee.toFixed(1)}M`, 'Deal completed.', true);
   pendingAIBid = null; saveGame(); renderAll(); updateHeaderClubDisplay(); updateDeadlineModalUI();
 }
 function rejectDeadlineBid() { pendingAIBid = null; updateDeadlineModalUI(); }
 function closeDeadlineDay() {
   state.deadlineDaysCompleted[state.currentWeek] = true; pendingAIBid = null; $('deadlineModal').style.display = 'none';
-  addNewsStory('Window Closed', 'TRANSFER WINDOW SLAMS SHUT', 'Squads are locked in.', true); saveGame(); renderAll();
+  addNewsStory('Window Closed', 'TRANSFER WINDOW SLAMS SHUT', 'Squads locked in.', true); saveGame(); renderAll();
 }
 function fixStarters(club) {
   while (club.players.filter(p => p.starter).length < 11) { const n = club.players.find(p => !p.starter); if (!n) break; n.starter = true; }
 }
 
-/* ---------- TACTICS, DRAG-AND-DROP & FAMILIARITY ENGINE ---------- */
-function analyzeTacticalShape(template) {
-  const pros = [], cons = [];
-  const defCount = template.filter(s => s.posType === 'DEF').length;
-  const midCount = template.filter(s => s.posType === 'MID').length;
-  const fwdCount = template.filter(s => s.posType === 'FWD').length;
-  
-  const flankCount = template.filter(s => s.posType !== 'GK' && (s.x <= 24 || s.x >= 76)).length;
-  const centralMid = template.filter(s => s.posType === 'MID' && (s.x > 30 && s.x < 70)).length;
-
-  if (centralMid >= 3) pros.push('✅ Strong central dominance & possession control');
-  if (defCount >= 4) pros.push('✅ Solid defensive screen & compact backline');
-  else if (defCount === 3) pros.push('✅ Fluid transition from back with extra outfield overload');
-  if (fwdCount >= 3) pros.push('✅ High attacking volume and final third presence');
-  if (flankCount >= 3) pros.push('✅ Excellent lateral width and crossing outlets');
-
-  if (flankCount < 2) cons.push('❌ Vulnerable on flanks against wide counter-attacks');
-  if (defCount < 4) cons.push('❌ Backline can become isolated if wingbacks push forward');
-  if (midCount < 3) cons.push('❌ Easily bypassed through the center by 3-man midfields');
-  if (fwdCount === 1) cons.push('❌ Lone striker may struggle for service without runners');
-
-  return { pros: pros.slice(0, 3), cons: cons.slice(0, 2) };
-}
-
+/* ---------- TACTICS & DRAG ENGINE ---------- */
 function changeFormation(f) {
   state.currentFormation = f;
-  const customControls = $('customFormationControls');
-  if (customControls) customControls.style.display = f === 'Custom' ? 'flex' : 'none';
-
-  if (f === 'Custom' && (!FORMATIONS['Custom'] || !FORMATIONS['Custom'].length)) {
-    FORMATIONS['Custom'] = JSON.parse(JSON.stringify(FORMATIONS['4-3-3']));
-  }
+  if (f === 'Custom' && (!FORMATIONS['Custom'] || !FORMATIONS['Custom'].length)) FORMATIONS['Custom'] = JSON.parse(JSON.stringify(FORMATIONS['4-3-3']));
   autoPickBestXI();
 }
-
 function autoPickBestXI() {
   const club = getCurrentUserClub(), tpl = FORMATIONS[state.currentFormation] || FORMATIONS['4-3-3'];
   club.players.forEach(p => p.starter = false);
-  const pool = [...club.players].sort((a, b) => ((a.inj > 0 || a.susp > 0) - (b.inj > 0 || b.susp > 0)) || b.ovr * b.con - a.ovr * a.con), picked = [];
+  const pool = [...club.players].sort((a, b) => b.ovr * b.con - a.ovr * a.con), picked = [];
   tpl.forEach(slot => { 
     let i = pool.findIndex(p => p.naturalPos === slot.posType && !p.susp && !p.inj); 
     if (i < 0) i = 0; 
@@ -1080,30 +1213,18 @@ function autoPickBestXI() {
   });
   picked.forEach((p, i) => { p.starter = true; p.role = tpl[i].duty; });
   club.players = [...picked, ...pool]; 
-  cancelPlayerSwap(); 
-  saveGame(); 
-  renderTactics(); 
-  updateHeaderClubDisplay(); 
-  playSoundSafe('whistle');
+  cancelPlayerSwap(); saveGame(); renderTactics(); updateHeaderClubDisplay(); playSoundSafe('whistle');
 }
-
 function saveCustomTacticalShape() {
-  const name = ($('customFormationNameInput') ? $('customFormationNameInput').value.trim() : '') || 'Custom System';
   if (!state.customFormations) state.customFormations = {};
   state.customFormations['Custom'] = JSON.parse(JSON.stringify(FORMATIONS['Custom']));
-  if (!state.tacticalFamiliarity['Custom']) state.tacticalFamiliarity['Custom'] = 50;
-  saveGame();
-  renderTactics();
-  updateHeaderClubDisplay();
-  alert(`Tactical shape "${name}" saved! Team will build familiarity as you play matches.`);
-  playSoundSafe('click');
+  saveGame(); renderTactics(); updateHeaderClubDisplay(); alert('Custom tactic saved!'); playSoundSafe('click');
 }
-
 function handlePlayerSelect(id) {
   const club = getCurrentUserClub();
   if (!selectedPlayerSwapId) {
     selectedPlayerSwapId = id; const p = club.players.find(x => x.id === id);
-    $('swapNotificationText').innerHTML = `🔄 <b>${p.name}</b> selected — tap another player to swap`; $('swapNotificationBar').style.display = 'flex'; renderTactics(); playSoundSafe('click'); return;
+    $('swapNotificationText').innerHTML = `🔄 <b>${p.name}</b> selected — choose swap target`; $('swapNotificationBar').style.display = 'flex'; renderTactics(); playSoundSafe('click'); return;
   }
   if (selectedPlayerSwapId === id) { cancelPlayerSwap(); return; }
   const i = club.players.findIndex(x => x.id === selectedPlayerSwapId), j = club.players.findIndex(x => x.id === id);
@@ -1114,663 +1235,279 @@ function handlePlayerSelect(id) {
   cancelPlayerSwap(); saveGame(); renderTactics(); updateHeaderClubDisplay(); playSoundSafe('whistle');
 }
 function cancelPlayerSwap() { selectedPlayerSwapId = null; $('swapNotificationBar').style.display = 'none'; renderTactics(); }
-function openContractModal(id) {
-  const p = getCurrentUserClub().players.find(x => x.id === id); if (!p) return; activeContractTarget = p;
-  $('contractModalDetails').innerHTML = `<p><b>${p.name}</b> (${p.naturalPos} • OVR ${p.ovr})</p><p>Contract: ${p.contract} yr(s) • Wage £${Math.round(p.wage * 1000)}k/w</p><p style="color:var(--text-muted);margin-top:8px">An extension adds years, raises wages 10% and sets morale to Superb.</p>`;
-  $('contractModal').style.display = 'flex';
-}
-function confirmContractOffer(y) {
-  if (!activeContractTarget) return; activeContractTarget.contract += y; activeContractTarget.wage = +(activeContractTarget.wage * 1.1).toFixed(3); activeContractTarget.morale = 'Superb';
-  closeContractModal(); saveGame(); renderAll(); playSoundSafe('cheer');
-}
-function closeContractModal() { activeContractTarget = null; $('contractModal').style.display = 'none'; }
 
 function renderTactics() {
-  const club = getCurrentUserClub();
-  const tpl = FORMATIONS[state.currentFormation] || FORMATIONS['4-3-3'];
-  const st = club.players.filter(p => p.starter);
-  const bench = club.players.filter(p => !p.starter);
-
+  const club = getCurrentUserClub(), tpl = FORMATIONS[state.currentFormation] || FORMATIONS['4-3-3'];
+  const st = club.players.filter(p => p.starter), bench = club.players.filter(p => !p.starter);
   if ($('formationSelect')) $('formationSelect').value = state.currentFormation;
-
-  const customControls = $('customFormationControls');
-  if (customControls) customControls.style.display = state.currentFormation === 'Custom' ? 'flex' : 'none';
-
-  const attrs = computeClubAttributes(club);
-  let tacticsBadge = $('tacticsTeamRatingBox');
-  if (!tacticsBadge && $('formationSelect')) {
-    const parent = $('formationSelect').parentElement;
-    tacticsBadge = document.createElement('div');
-    tacticsBadge.id = 'tacticsTeamRatingBox';
-    tacticsBadge.style.cssText = 'display:flex; gap:8px; font-size:0.75rem; font-weight:800; background:rgba(0,0,0,0.3); padding:4px 8px; border-radius:6px; border:1px solid var(--border);';
-    parent.appendChild(tacticsBadge);
-  }
-  if (tacticsBadge) {
-    tacticsBadge.innerHTML = `<span>ATT: <b id="tacAtt" style="color:var(--gold)">${attrs.att}</b></span> <span>MID: <b id="tacMid" style="color:#38bdf8">${attrs.mid}</b></span> <span>DEF: <b id="tacDef" style="color:#34d399">${attrs.def}</b></span>`;
-  }
-
-  const famScore = (state.tacticalFamiliarity && state.tacticalFamiliarity[state.currentFormation]) || 50;
-  if ($('familiarityScoreBadge')) $('familiarityScoreBadge').innerText = `${famScore}%`;
-  if ($('familiarityProgressBar')) {
-    $('familiarityProgressBar').style.width = `${famScore}%`;
-    $('familiarityProgressBar').style.background = famScore >= 75 ? '#10b981' : famScore >= 50 ? '#38bdf8' : '#f59e0b';
-  }
-  if ($('familiarityStatusText')) {
-    $('familiarityStatusText').innerText = famScore >= 75 ? 'Fully Adapted — Passing and shape are instinctive.' :
-      famScore >= 50 ? 'Learning — Squad understands basic runs and spacing.' :
-      'Unfamiliar — Frequent miscommunications and defensive positioning errors.';
-  }
-
-  const analysis = analyzeTacticalShape(tpl);
-  const analysisContainer = $('analysisBadgesContainer');
-  if (analysisContainer) {
-    analysisContainer.innerHTML = [
-      ...analysis.pros.map(t => `<div style="color:#10b981;font-weight:700;">${t}</div>`),
-      ...analysis.cons.map(t => `<div style="color:#f87171;font-weight:700;">${t}</div>`)
-    ].join('');
-  }
 
   const nodes = $('pitchNodesWrapper');
   if (nodes) {
     nodes.innerHTML = '';
     const userKit = getClubKitColors(club);
-
     st.forEach((p, i) => {
       const t = tpl[i] || { x: 50, y: 50, role: TAG[p.naturalPos], duty: p.role, posType: p.naturalPos };
       const n = document.createElement('div');
       n.className = `pitch-node ${selectedPlayerSwapId === p.id ? 'selected-for-swap' : ''}`;
-      n.style.left = t.x + '%'; 
-      n.style.top = t.y + '%';
-
-      const famMult = Math.round(getPositionFamiliarityMultiplier(p.naturalPos, t.posType) * 100);
-      const famColor = famMult === 100 ? '#10b981' : famMult >= 75 ? '#f59e0b' : '#ef4444';
-      const nodeKitColor = i === 0 ? (userKit.gk || '#047857') : userKit.home;
-
-      n.innerHTML = `<div class="pitch-kit" style="background:${nodeKitColor}">${i + 1}<div class="pitch-role-tag">${t.role}</div></div>
-        <div class="pitch-name-card">
-          <div class="p-name">${p.name.split(' ').pop()} ${p.inj > 0 ? '🚑' : ''}${p.susp > 0 ? '🟥' : ''}</div>
-          <div class="p-role">${p.ovr} OVR • <span style="color:${famColor};font-weight:800;">${famMult}%</span></div>
-        </div>`;
-
-      let isDragging = false;
-      const onPointerDown = e => {
-        if (e.target.tagName === 'BUTTON') return;
-        isDragging = true;
-        n.classList.add('dragging');
-        document.addEventListener('pointermove', onPointerMove);
-        document.addEventListener('pointerup', onPointerUp);
-      };
-
-      const onPointerMove = e => {
-        if (!isDragging) return;
-        const rect = nodes.getBoundingClientRect();
-        const clientX = e.clientX || (e.touches && e.touches[0].clientX);
-        const clientY = e.clientY || (e.touches && e.touches[0].clientY);
-        let posX = Math.round(((clientX - rect.left) / rect.width) * 100);
-        let posY = Math.round(((clientY - rect.top) / rect.height) * 100);
-
-        posX = Math.max(8, Math.min(92, posX));
-        posY = Math.max(i === 0 ? 78 : 12, Math.min(i === 0 ? 94 : 85, posY));
-
-        n.style.left = posX + '%';
-        n.style.top = posY + '%';
-        t.x = posX;
-        t.y = posY;
-
-        if (i > 0) {
-          if (posY >= 62) { t.posType = 'DEF'; t.role = 'DF'; }
-          else if (posY >= 32) { t.posType = 'MID'; t.role = 'MF'; }
-          else { t.posType = 'FWD'; t.role = 'FW'; }
-        }
-      };
-
-      const onPointerUp = () => {
-        if (!isDragging) return;
-        isDragging = false;
-        n.classList.remove('dragging');
-        document.removeEventListener('pointermove', onPointerMove);
-        document.removeEventListener('pointerup', onPointerUp);
-
-        if (state.currentFormation !== 'Custom') {
-          state.currentFormation = 'Custom';
-          if ($('formationSelect')) $('formationSelect').value = 'Custom';
-          FORMATIONS['Custom'] = JSON.parse(JSON.stringify(tpl));
-          if ($('customFormationControls')) $('customFormationControls').style.display = 'flex';
-        }
-        saveGame();
-        renderTactics();
-        updateHeaderClubDisplay();
-      };
-
-      n.addEventListener('pointerdown', onPointerDown);
-      n.onclick = () => { if (!isDragging) handlePlayerSelect(p.id); };
+      n.style.left = t.x + '%'; n.style.top = t.y + '%';
+      const nodeKit = i === 0 ? (userKit.gk || '#047857') : userKit.home;
+      n.innerHTML = `<div class="pitch-kit" style="background:${nodeKit}">${i + 1}<div class="pitch-role-tag">${t.role}</div></div>
+        <div class="pitch-name-card"><div class="p-name">${p.name.split(' ').pop()} ${p.inj > 0 ? '🚑' : ''}</div><div class="p-role">${p.ovr} • ${p.morale[0]} • 🤝${p.chemistry || 60}%</div></div>`;
       nodes.appendChild(n);
+      n.onclick = () => handlePlayerSelect(p.id);
     });
   }
 
-  const mor = m => m === 'Superb' ? '😄 <span style="color:#10b981">Superb</span>' : m === 'Good' ? '🙂 <span style="color:#38bdf8">Good</span>' : m === 'Fair' ? '😐 <span style="color:#f59e0b">Fair</span>' : '😠 <span style="color:#ef4444">Unhappy</span>';
   const row = (p, tag, cls) => {
     const sel = selectedPlayerSwapId === p.id;
-    const cc = p.con > 80 ? '#10b981' : p.con > 65 ? '#f59e0b' : '#ef4444';
     const tr = document.createElement('tr');
     tr.className = `fm-row ${sel ? 'selected-for-swap' : ''}`;
-    tr.style.cssText = 'border-bottom:1px solid rgba(255,255,255,0.06); cursor:pointer;';
-    tr.onclick = e => { if (e.target.tagName !== 'BUTTON') handlePlayerSelect(p.id); };
     tr.innerHTML = `<td style="padding:6px;"><span class="badge-pick ${cls}">${tag}</span></td>
-      <td style="padding:6px;"><span class="role-badge">${p.role}</span></td>
-      <td style="padding:6px;"><b>${p.name}</b>${p.inj > 0 ? `<span class="injury-badge">INJ ${p.inj}w</span>` : ''}${p.susp > 0 ? `<span class="suspension-badge">SUSP ${p.susp}m</span>` : ''}</td>
-      <td style="padding:6px;">${p.age}</td>
-      <td style="padding:6px;"><b style="color:var(--gold)">${p.ovr}</b></td>
-      <td style="padding:6px;"><div class="condition-bar" style="display:inline-block;width:50px;height:5px;background:#334155;border-radius:3px;vertical-align:middle;margin-right:4px;"><div class="condition-fill" style="width:${p.con}%;height:100%;background:${cc};border-radius:3px;"></div></div><span style="font-size:.7rem;font-weight:800;color:${cc}">${p.con}%</span></td>
-      <td style="padding:6px;">${mor(p.morale)}</td>
-      <td style="padding:6px;color:${p.contract <= 1 ? '#ef4444' : '#fff'};font-weight:800">${p.contract} yr</td>
-      <td style="padding:6px;">£${Math.round(p.wage * 1000)}k/w</td>
+      <td style="padding:6px;">${p.role}</td><td style="padding:6px;"><b>${p.name}</b></td>
+      <td style="padding:6px;">${p.age}</td><td style="padding:6px;color:var(--gold);font-weight:900;">${p.ovr}</td>
+      <td style="padding:6px;">${p.con}%</td><td style="padding:6px;">${p.morale}</td><td style="padding:6px;color:#38bdf8;">🤝${p.chemistry || 60}%</td>
+      <td style="padding:6px;">${p.contract} yr</td><td style="padding:6px;">£${Math.round(p.wage * 1000)}k</td>
       <td style="padding:6px;text-align:right;"><button class="btn-swap-pill" onclick="handlePlayerSelect('${p.id}')">${sel ? 'Cancel' : 'Swap ⇅'}</button></td>`;
     return tr;
   };
-
-  const sb = $('startersTableBody'); 
-  if (sb) {
-    sb.innerHTML = ''; 
-    st.forEach((p, i) => sb.appendChild(row(p, (tpl[i] || {}).role || p.naturalPos, 'pick-starter')));
-  }
-
-  const bb = $('benchTableBody'); 
-  if (bb) {
-    bb.innerHTML = ''; 
-    bench.forEach((p, i) => bb.appendChild(row(p, 'S' + (i + 1), 'pick-sub')));
-  }
+  const sb = $('startersTableBody'), bb = $('benchTableBody');
+  if (sb) { sb.innerHTML = ''; st.forEach((p, i) => sb.appendChild(row(p, tpl[i]?.role || p.naturalPos, 'pick-starter'))); }
+  if (bb) { bb.innerHTML = ''; bench.forEach((p, i) => bb.appendChild(row(p, 'S' + (i + 1), 'pick-sub'))); }
 }
 
-/* ---------- matchday ---------- */
+/* ---------- 2D PITCH & LIVE SIMULATION WITH DYNAMIC CROWD ---------- */
 function initPitchCanvas() { const c = $('matchPitchCanvas'); pitchEngine.ctx = c.getContext('2d'); c.width = 800; c.height = 480; }
-
 function getFormationCoords(formationKey, isAway = false) {
   const tpl = FORMATIONS[formationKey] || FORMATIONS['4-3-3'];
-  const pitchW = 800, pitchH = 480;
   return tpl.map((slot) => {
-    let normX = ((100 - slot.y) / 100) * (pitchW * 0.42) + 40;
-    let normY = (slot.x / 100) * (pitchH - 80) + 40;
-    if (isAway) normX = pitchW - normX;
-    return { x: Math.round(normX), y: Math.round(normY), role: slot.role };
+    let nx = ((100 - slot.y) / 100) * (336) + 40;
+    let ny = (slot.x / 100) * (400) + 40;
+    if (isAway) nx = 800 - nx;
+    return { x: Math.round(nx), y: Math.round(ny), role: slot.role };
   });
 }
-
 function setup2DPlayers(h, a) {
   initPitchCanvas();
-  pitchEngine.homeClubId = h.id;
-  pitchEngine.awayClubId = a.id;
+  const kits = resolveMatchKitColors(h, a);
+  pitchEngine.homeColor = kits.homeColor;
+  pitchEngine.awayColor = kits.awayColor;
+  pitchEngine.homeGKColor = kits.homeGK;
+  pitchEngine.awayGKColor = kits.awayGK;
 
-  const matchKits = resolveMatchKitColors(h, a);
-  pitchEngine.homeColor = matchKits.homeColor;
-  pitchEngine.awayColor = matchKits.awayColor;
-  pitchEngine.homeGKColor = matchKits.homeGK;
-  pitchEngine.awayGKColor = matchKits.awayGK;
-  pitchEngine.usedAwayKit = matchKits.usedAwayKit;
+  const hCoords = getFormationCoords(h.id === state.userClubId ? state.currentFormation : '4-3-3', false);
+  const aCoords = getFormationCoords(a.id === state.userClubId ? state.currentFormation : '4-2-3-1', true);
 
-  const homeFormation = (h.id === state.userClubId) ? state.currentFormation : '4-3-3';
-  const awayFormation = (a.id === state.userClubId) ? state.currentFormation : '4-2-3-1';
-
-  const homeCoords = getFormationCoords(homeFormation, false);
-  const awayCoords = getFormationCoords(awayFormation, true);
-
-  const hStarters = h.players.filter(p => p.starter);
-  const aStarters = a.players.filter(p => p.starter);
-
-  pitchEngine.homePlayers = homeCoords.map((pos, i) => ({
-    playerId: hStarters[i] ? hStarters[i].id : `h_${i}`,
-    num: i + 1,
-    baseX: pos.x,
-    baseY: pos.y,
-    x: pos.x,
-    y: pos.y,
-    color: pitchEngine.homeColor,
-    isHome: true
-  }));
-
-  pitchEngine.awayPlayers = awayCoords.map((pos, i) => ({
-    playerId: aStarters[i] ? aStarters[i].id : `a_${i}`,
-    num: i + 1,
-    baseX: pos.x,
-    baseY: pos.y,
-    x: pos.x,
-    y: pos.y,
-    color: pitchEngine.awayColor,
-    isHome: false
-  }));
-
+  pitchEngine.homePlayers = hCoords.map((pos, i) => ({ playerId: `h_${i}`, num: i + 1, baseX: pos.x, baseY: pos.y, x: pos.x, y: pos.y, color: kits.homeColor, isHome: true }));
+  pitchEngine.awayPlayers = aCoords.map((pos, i) => ({ playerId: `a_${i}`, num: i + 1, baseX: pos.x, baseY: pos.y, x: pos.x, y: pos.y, color: kits.awayColor, isHome: false }));
   pitchEngine.ball = { x: 400, y: 240, targetX: 400, targetY: 240, trail: [] };
-  pitchEngine.floatingAlerts = [];
   draw2DPitch();
 }
 
 function draw2DPitch() {
-  const { ctx, w, h, ball, floatingAlerts } = pitchEngine;
+  const { ctx, w, h, ball } = pitchEngine;
   if (!ctx) return;
+  ctx.fillStyle = '#1e5229'; ctx.fillRect(0, 0, w, h);
+  ctx.fillStyle = '#174221'; for (let i = 0; i < 10; i += 2) ctx.fillRect(i * 80, 0, 80, h);
+  ctx.strokeStyle = 'rgba(255,255,255,0.7)'; ctx.lineWidth = 2; ctx.strokeRect(16, 16, w - 32, h - 32);
+  ctx.beginPath(); ctx.moveTo(w / 2, 16); ctx.lineTo(w / 2, h - 16); ctx.stroke();
+  ctx.beginPath(); ctx.arc(w / 2, h / 2, 65, 0, Math.PI * 2); ctx.stroke();
 
-  ctx.fillStyle = '#1e5229';
-  ctx.fillRect(0, 0, w, h);
-  ctx.fillStyle = '#174221';
-  for (let i = 0; i < 10; i += 2) ctx.fillRect(i * 80, 0, 80, h);
-
-  ctx.strokeStyle = 'rgba(255,255,255,0.7)';
-  ctx.lineWidth = 2;
-  ctx.strokeRect(16, 16, w - 32, h - 32);
-
-  ctx.beginPath();
-  ctx.moveTo(w / 2, 16);
-  ctx.lineTo(w / 2, h - 16);
-  ctx.stroke();
-  ctx.beginPath();
-  ctx.arc(w / 2, h / 2, 65, 0, Math.PI * 2);
-  ctx.stroke();
-
-  ctx.strokeRect(16, h / 2 - 105, 115, 210);
-  ctx.strokeRect(w - 131, h / 2 - 105, 115, 210);
-  ctx.strokeRect(16, h / 2 - 45, 45, 90);
-  ctx.strokeRect(w - 61, h / 2 - 45, 45, 90);
-
-  if (ball.trail && ball.trail.length > 1) {
-    for (let i = 0; i < ball.trail.length - 1; i++) {
-      const alpha = (i / ball.trail.length) * 0.45;
-      ctx.strokeStyle = `rgba(255, 230, 0, ${alpha})`;
-      ctx.lineWidth = (i / ball.trail.length) * 4;
-      ctx.beginPath();
-      ctx.moveTo(ball.trail[i].x, ball.trail[i].y);
-      ctx.lineTo(ball.trail[i + 1].x, ball.trail[i + 1].y);
-      ctx.stroke();
-    }
-  }
-
-  const allPitchPlayers = [...pitchEngine.homePlayers, ...pitchEngine.awayPlayers].filter(
-    p => !(matchLiveState && matchLiveState.reds && matchLiveState.reds.includes(p.playerId))
-  );
-
-  allPitchPlayers.forEach(p => {
-    ctx.fillStyle = 'rgba(0,0,0,0.45)';
-    ctx.beginPath();
-    ctx.arc(p.x + 1, p.y + 2, 9, 0, Math.PI * 2);
-    ctx.fill();
-
-    ctx.fillStyle = '#ffffff';
-    ctx.beginPath();
-    ctx.arc(p.x, p.y, 9, 0, Math.PI * 2);
-    ctx.fill();
-
-    const isGK = p.num === 1;
-    const shirtColor = isGK ? (p.isHome ? pitchEngine.homeGKColor : pitchEngine.awayGKColor) : p.color;
-
-    ctx.fillStyle = shirtColor;
-    ctx.beginPath();
-    ctx.arc(p.x, p.y, 7.2, 0, Math.PI * 2);
-    ctx.fill();
-
-    const rgb = parseColorToRgb(shirtColor);
-    const lum = (rgb.r * 299 + rgb.g * 587 + rgb.b * 114) / 1000;
-    ctx.fillStyle = lum > 140 ? '#000000' : '#ffffff';
-    ctx.font = 'bold 8.5px sans-serif';
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'middle';
-    ctx.fillText(p.num, p.x, p.y + 0.5);
-
-    const alert = floatingAlerts.find(a => a.id === p.playerId);
-    if (alert) {
-      ctx.font = '13px sans-serif';
-      ctx.fillText(alert.icon, p.x, p.y - 14);
-    }
+  [...pitchEngine.homePlayers, ...pitchEngine.awayPlayers].forEach(p => {
+    ctx.fillStyle = '#ffffff'; ctx.beginPath(); ctx.arc(p.x, p.y, 9, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = p.num === 1 ? (p.isHome ? pitchEngine.homeGKColor : pitchEngine.awayGKColor) : p.color;
+    ctx.beginPath(); ctx.arc(p.x, p.y, 7.2, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = '#ffffff'; ctx.font = 'bold 8.5px sans-serif'; ctx.textAlign = 'center'; ctx.fillText(p.num, p.x, p.y + 3);
   });
-
-  ctx.fillStyle = '#ffffff';
-  ctx.beginPath();
-  ctx.arc(ball.x, ball.y, 5, 0, Math.PI * 2);
-  ctx.fill();
-  ctx.strokeStyle = '#000000';
-  ctx.lineWidth = 1.2;
-  ctx.stroke();
+  ctx.fillStyle = '#ffffff'; ctx.beginPath(); ctx.arc(ball.x, ball.y, 5, 0, Math.PI * 2); ctx.fill();
 }
 
 function update2DPitchPhysics() {
   const b = pitchEngine.ball;
-  b.x += (b.targetX - b.x) * 0.15;
-  b.y += (b.targetY - b.y) * 0.15;
-
-  b.trail.push({ x: b.x, y: b.y });
-  if (b.trail.length > 8) b.trail.shift();
-
-  const now = Date.now();
-  pitchEngine.floatingAlerts = pitchEngine.floatingAlerts.filter(a => a.expireTime > now);
-
+  b.x += (b.targetX - b.x) * 0.15; b.y += (b.targetY - b.y) * 0.15;
   [...pitchEngine.homePlayers, ...pitchEngine.awayPlayers].forEach(p => {
-    const dx = b.x - p.baseX;
-    const dy = b.y - p.baseY;
-    const d = Math.hypot(dx, dy) || 1;
-    const inf = Math.min(38, d * 0.28);
-    p.x += (p.baseX + (dx / d) * inf - p.x) * 0.1;
-    p.y += (p.baseY + (dy / d) * inf - p.y) * 0.1;
+    const dx = b.x - p.baseX, dy = b.y - p.baseY, d = Math.hypot(dx, dy) || 1;
+    p.x += (p.baseX + (dx / d) * Math.min(35, d * 0.25) - p.x) * 0.1;
+    p.y += (p.baseY + (dy / d) * Math.min(35, d * 0.25) - p.y) * 0.1;
   });
-
   draw2DPitch();
 }
 
-function setSimSpeed(s) { simSpeedMultiplier = s; $('spd1').className = `btn-speed ${s === 1 ? 'active' : ''}`; $('spd3').className = `btn-speed ${s === 3 ? 'active' : ''}`; }
-function triggerInstantSim() { simSpeedMultiplier = 25; }
-
-function addTimelineEvent(type, text) {
-  matchLiveState.timelineEvents.push({ type, text }); const bar = $('matchTimelineBar'); if (matchLiveState.timelineEvents.length === 1) bar.innerHTML = '';
-  const i = document.createElement('div'); i.className = `timeline-event-item ${type}`; i.innerText = text; bar.appendChild(i);
-}
-
-function cancelInMatchSub() {
-  matchLiveState.pendingSubInId = null;
-  populateInMatchSubChips();
-}
-
-function populateInMatchSubChips() {
-  const container = $('benchSubChipsList');
-  if (!container) return;
-  const titleElem = $('inMatchSubDrawer').querySelector('.in-match-sub-title');
-  container.innerHTML = '';
-  const club = getCurrentUserClub();
-
-  if (matchLiveState.pendingSubInId) {
-    const incomingPlayer = club.players.find(p => p.id === matchLiveState.pendingSubInId);
-    titleElem.innerHTML = `<span>🔄 Subbing in: <b style="color:var(--gold)">${incomingPlayer ? incomingPlayer.name : ''}</b></span> <button class="btn-swap-pill" style="padding:2px 8px;font-size:0.68rem;" onclick="cancelInMatchSub()">Cancel</button>`;
-
-    club.players.filter(p => p.starter).forEach(p => {
-      const isRed = matchLiveState.reds.includes(p.id);
-      const chip = document.createElement('div');
-      chip.className = 'sub-chip starter-chip';
-      chip.style.opacity = isRed ? '0.4' : '1';
-      chip.innerHTML = `<span>${p.name} (${p.naturalPos} • ${p.con}%)</span><b style="color:${isRed ? '#ef4444' : '#f87171'}">${isRed ? 'SENT OFF' : 'Sub Off ⬇'}</b>`;
-      if (!isRed) {
-        chip.onclick = () => confirmLiveMatchSub(p.id);
-      }
-      container.appendChild(chip);
-    });
-    return;
-  }
-
-  const remaining = matchLiveState.maxSubs - matchLiveState.subsUsed;
-  titleElem.innerHTML = `<span>🔄 TACTICAL SUBSTITUTIONS (REMAINING: <span id="subsRemainingText">${remaining}</span>)</span><span style="font-size: 0.68rem; color: var(--text-muted);">Tap a bench player to bring on</span>`;
-
-  if (remaining <= 0) {
-    container.innerHTML = '<span style="font-size:0.75rem; color:var(--text-muted);">All substitutions used for this match.</span>';
-    return;
-  }
-
-  const bench = club.players.filter(p => !p.starter && !p.inj && !p.susp);
-  if (!bench.length) {
-    container.innerHTML = '<span style="font-size:0.75rem; color:var(--text-muted);">No fit bench players available.</span>';
-    return;
-  }
-
-  bench.forEach(p => {
-    const chip = document.createElement('div');
-    chip.className = 'sub-chip';
-    chip.innerHTML = `<span>${p.name} (${p.naturalPos} • OVR ${p.ovr} • ${p.con}%)</span><b style="color:#10b981">Bring On ⬆</b>`;
-    chip.onclick = () => {
-      matchLiveState.pendingSubInId = p.id;
-      populateInMatchSubChips();
-    };
-    container.appendChild(chip);
-  });
-}
-
-function confirmLiveMatchSub(starterOutId) {
-  if (matchLiveState.subsUsed >= matchLiveState.maxSubs || !matchLiveState.pendingSubInId) return;
-
-  const club = getCurrentUserClub();
-  const inP = club.players.find(x => x.id === matchLiveState.pendingSubInId);
-  const outP = club.players.find(x => x.id === starterOutId);
-
-  if (!inP || !outP) {
-    cancelInMatchSub();
-    return;
-  }
-
-  inP.starter = true;
-  outP.starter = false;
-  inP.role = outP.role;
-  matchLiveState.subsUsed++;
-  matchLiveState.pendingSubInId = null;
-
-  addTimelineEvent('sub', `🔄 ${pitchEngine.currentMinute}' ${inP.name.split(' ').pop()} on for ${outP.name.split(' ').pop()}`);
-  $('commentaryFeed').insertAdjacentHTML('afterbegin', `<div class="comm-line" style="border-left-color:#38bdf8">🔄 ${pitchEngine.currentMinute}' Tactical Substitution: <b>${inP.name}</b> on for <b>${outP.name}</b>.</div>`);
-
-  populateInMatchSubChips();
-  const m = getActiveUserMatch();
-  if (m) setup2DPlayers(clubById(m.home), clubById(m.away));
-  updateHeaderClubDisplay();
-  playSoundSafe('click');
-}
-
-function toggleMatchPause() {
-  if (!matchLiveState) return;
-
-  matchLiveState.isPaused = !matchLiveState.isPaused;
-  const btn = $('btnPauseMatch');
-  if (btn) {
-    btn.innerText = matchLiveState.isPaused ? '▶️ RESUME' : '⏸️ PAUSE';
-    btn.style.background = matchLiveState.isPaused ? '#10b981' : '#334155';
-  }
-  if (!matchLiveState.isPaused) {
-    playSoundSafe('whistle');
-  }
-}
-
 function startMatchdaySim() {
-  const m = getActiveUserMatch();
-  if (!m || m.played) return;
-  const btn = $('btnStartMatch');
-  btn.disabled = true;
+  const m = getActiveUserMatch(); if (!m || m.played) return;
+  $('btnStartMatch').disabled = true;
   const h = clubById(m.home), a = clubById(m.away), feed = $('commentaryFeed');
-  feed.innerHTML = '';
-  $('matchTimelineBar').innerHTML = '';
-  matchLiveState.timelineEvents = [];
-  matchLiveState.yellows = {};
-  matchLiveState.reds = [];
-  matchLiveState.isPaused = false;
-  m.scorers = [];
+  feed.innerHTML = ''; $('matchTimelineBar').innerHTML = '';
+  matchLiveState.isDerby = isRivalMatch(h, a);
+  matchLiveState.reds = []; matchLiveState.yellows = {}; m.scorers = [];
+
+  // Start stadium crowd loop (Feature 12)
+  startStadiumCrowdLoop(matchLiveState.isDerby);
+  playSoundSafe('whistle');
+
   let min = 0, hs = 0, as = 0;
-  clearTimeout(matchSimInterval);
-  cancelAnimationFrame(animFrameId);
-
-  const pauseBtn = $('btnPauseMatch');
-  if (pauseBtn) {
-    pauseBtn.style.display = 'inline-flex';
-    pauseBtn.innerText = '⏸️ PAUSE';
-    pauseBtn.style.background = '#334155';
-  }
-
-  (function loop() {
-    update2DPitchPhysics();
-    if (min < 90) animFrameId = requestAnimationFrame(loop);
-  })();
+  clearTimeout(matchSimInterval); cancelAnimationFrame(animFrameId);
+  (function loop() { update2DPitchPhysics(); if (min < 90) animFrameId = requestAnimationFrame(loop); })();
 
   const goal = (club, isHome) => {
-    const sc = pickScorer(club);
-    sc.goals++;
+    const sc = pickScorer(club); sc.goals++;
     isHome ? hs++ : as++;
     m.scorers.push({ team: club.name, player: sc.name, min });
-    pitchEngine.ball.targetX = isHome ? 782 : 18;
-    pitchEngine.ball.targetY = 240;
+    pitchEngine.ball.targetX = isHome ? 782 : 18; pitchEngine.ball.targetY = 240;
     feed.insertAdjacentHTML('afterbegin', `<div class="comm-line goal">⚽ ${min}' GOAL! ${club.name} (${sc.name}) [${hs}-${as}]</div>`);
-    addTimelineEvent('goal', `⚽ ${min}' ${sc.name.split(' ').pop()} (${club.id})`);
-    playSoundSafe('goal');
+    addTimelineEvent('goal', `⚽ ${min}' ${sc.name.split(' ').pop()}`);
     $('sbScore').innerText = `${hs} - ${as}`;
-  };
-
-  const getRandomActivePlayer = (club) => {
-    const active = club.players.filter(p => p.starter && !matchLiveState.reds.includes(p.id));
-    return active.length ? pick(active) : null;
-  };
-
-  const triggerCard = (club) => {
-    const p = getRandomActivePlayer(club);
-    if (!p) return;
-    const currentYellows = matchLiveState.yellows[p.id] || 0;
-
-    if (currentYellows === 1 || Math.random() < 0.08) {
-      matchLiveState.reds.push(p.id);
-      pitchEngine.floatingAlerts.push({ id: p.id, icon: '🟥', expireTime: Date.now() + 4500 });
-      feed.insertAdjacentHTML('afterbegin', `<div class="comm-line redcard">🟥 ${min}' RED CARD! ${p.name} (${club.name}) is sent off!</div>`);
-      addTimelineEvent('red', `🟥 ${min}' ${p.name.split(' ').pop()}`);
-      playSoundSafe('whistle');
-    } else {
-      matchLiveState.yellows[p.id] = 1;
-      pitchEngine.floatingAlerts.push({ id: p.id, icon: '🟨', expireTime: Date.now() + 4500 });
-      feed.insertAdjacentHTML('afterbegin', `<div class="comm-line card">🟨 ${min}' Booking: ${p.name} (${club.name}) receives a yellow card.</div>`);
-      addTimelineEvent('yellow', `🟨 ${min}' ${p.name.split(' ').pop()}`);
-      playSoundSafe('click');
-    }
-  };
-
-  const triggerMatchInjury = (club) => {
-    const p = getRandomActivePlayer(club);
-    if (!p || p.inj > 0) return;
-    p.inj = R(1, 3);
-    p.con = Math.max(30, p.con - 35);
-    pitchEngine.floatingAlerts.push({ id: p.id, icon: '🚑', expireTime: Date.now() + 4500 });
-    feed.insertAdjacentHTML('afterbegin', `<div class="comm-line injury">🚑 ${min}' INJURY: ${p.name} (${club.name}) has picked up a knock!</div>`);
-    addTimelineEvent('injury', `🚑 ${min}' ${p.name.split(' ').pop()}`);
-    playSoundSafe('whistle');
+    playSoundSafe(isHome ? 'goal' : 'roar'); // Roar sound
   };
 
   function tick() {
-    if (matchLiveState.isPaused) {
-      matchSimInterval = setTimeout(tick, 200);
-      return;
-    }
-
-    min += 2;
-    pitchEngine.currentMinute = min;
+    min += 2; pitchEngine.currentMinute = min;
     $('sbMinute').innerText = `${min}'`;
-
     if (min % 4 === 0) {
       pitchEngine.ball.targetX = 140 + Math.random() * 520;
       pitchEngine.ball.targetY = 60 + Math.random() * 360;
     }
+    // Crowd groan on near-miss
+    if (Math.random() < 0.04) playSoundSafe('groan');
 
-    if (min % 10 === 0) {
-      [h, a].forEach(club => club.players.forEach(p => {
-        if (p.starter) p.con = Math.max(40, p.con - 1);
-      }));
-    }
-
-    if (Math.random() < 0.035) {
-      triggerCard(Math.random() < 0.5 ? h : a);
-    }
-    if (Math.random() < 0.002) {
-      triggerMatchInjury(Math.random() < 0.5 ? h : a);
-    }
-
-    const hS = computeClubAttributes(h);
-    const aS = computeClubAttributes(a);
-    const homeRedPenalty = matchLiveState.reds.some(id => h.players.some(p => p.id === id)) ? 8 : 0;
-    const awayRedPenalty = matchLiveState.reds.some(id => a.players.some(p => p.id === id)) ? 8 : 0;
-
-    const netHomeAtt = Math.max(30, (hS.att + hS.mid) / 2 - homeRedPenalty);
-    const netHomeDef = Math.max(30, (hS.def + hS.mid) / 2 - homeRedPenalty);
-    const netAwayAtt = Math.max(30, (aS.att + aS.mid) / 2 - awayRedPenalty);
-    const netAwayDef = Math.max(30, (aS.def + aS.mid) / 2 - awayRedPenalty);
-
-    const pH = Math.max(0.01, (0.028 + (netHomeAtt - netAwayDef) / 1400 + 0.004));
-    const pA = Math.max(0.01, (0.024 + (netAwayAtt - netHomeDef) / 1400));
-
-    if (Math.random() < pH * 1.35) goal(h, true);
-    if (Math.random() < pA * 1.35) goal(a, false);
+    const hS = computeClubAttributes(h), aS = computeClubAttributes(a);
+    if (Math.random() < Math.max(0.01, (0.028 + (hS.att - aS.def) / 1400))) goal(h, true);
+    if (Math.random() < Math.max(0.01, (0.024 + (aS.att - hS.def) / 1400))) goal(a, false);
 
     if (min >= 90) {
-      cancelAnimationFrame(animFrameId);
-      btn.disabled = false;
-      if ($('btnPauseMatch')) $('btnPauseMatch').style.display = 'none';
+      stopStadiumCrowdLoop();
+      playSoundSafe('whistle');
       applyResult(m, hs, as, true);
       $('sbMinute').innerText = 'FULL TIME';
-      feed.insertAdjacentHTML('afterbegin', `<div class="comm-line" style="font-weight:800">🏁 Full-time: ${h.name} ${hs}-${as} ${a.name}</div>`);
-
+      $('btnStartMatch').disabled = false;
+      feed.insertAdjacentHTML('afterbegin', `<div class="comm-line" style="font-weight:900;">🏁 Full Time: ${h.name} ${hs}-${as} ${a.name}</div>`);
       if (m.type === 'CUP') {
-        if (hs === as) {
-          launchPenaltyShootout(m, h, a);
-          return;
-        } else {
-          cupOutcome(m);
-        }
+        if (hs === as) launchPenaltyShootout(m, h, a);
+        else cupOutcome(m);
       }
-
       $('btnAdvanceMaster').className = 'btn-advance-master btn-continue-mode';
       $('btnAdvanceText').innerText = `CONTINUE TO WK ${state.currentWeek + 1}`;
-      saveGame();
-      renderStandingsTable(getCurrentUserClub().div);
-      playSoundSafe('whistle');
-      return;
+      saveGame(); renderStandingsTable(getCurrentUserClub().div); return;
     }
     matchSimInterval = setTimeout(tick, Math.max(12, 120 / simSpeedMultiplier));
   }
   tick();
 }
 
-/* ---------- tables / views ---------- */
-function renderStandingsTable(div) {
-  state.activeStandingsTab = div; for (let i = 0; i <= 3; i++) $(`tabTier${i}`).className = `league-tab-btn ${i === div ? 'active' : ''}`;
-  const body = $('leagueTableBody'); body.innerHTML = '';
-  [...(state.standings[div] || [])].sort((a, b) => b.pts - a.pts || b.gd - a.gd || b.gf - a.gf).forEach((r, i) => {
-    const tr = document.createElement('tr'); tr.className = 'fm-row'; if (r.id === state.userClubId) tr.style.background = 'rgba(0,210,255,.15)';
-    const col = div === 0 ? (i < 4 ? '#10b981' : i >= 17 ? '#ef4444' : '') : (i < 2 ? '#10b981' : i < 6 ? '#f59e0b' : i >= r.length ? '' : '');
-    tr.innerHTML = `<td><b>${i + 1}</b></td><td style="display:flex;align-items:center;gap:8px">${createBadgeHtml(r.id, 20)}<b>${r.name}</b>${r.id === state.userClubId ? ' ⭐' : ''}</td><td>${r.played}</td><td>${r.won}</td><td>${r.drawn}</td><td>${r.lost}</td><td>${r.gd > 0 ? '+' + r.gd : r.gd}</td><td><b>${r.pts}</b></td>`;
-    if (col) tr.firstElementChild.style.borderLeft = `3px solid ${col}`; body.appendChild(tr);
-  });
-  const all = []; state.clubs.filter(c => c.div === div).forEach(c => c.players.forEach(p => all.push({ ...p, clubName: c.name, clubId: c.id })));
-  const fill = (id, list, key, color) => { const b = $(id); b.innerHTML = ''; list.forEach(p => { const tr = document.createElement('tr'); tr.innerHTML = `<td><b>${p.name}</b></td><td style="display:flex;align-items:center;gap:4px">${createBadgeHtml(p.clubId, 16)}<span>${p.clubName}</span></td><td><b style="color:${color}">${p[key] || 0}</b></td>`; b.appendChild(tr); }); };
-  fill('goldenBootBody', [...all].sort((a, b) => b.goals - a.goals).slice(0, 5), 'goals', 'var(--gold)');
-  fill('goldenGloveBody', all.filter(p => p.naturalPos === 'GK').sort((a, b) => b.cleanSheets - a.cleanSheets).slice(0, 5), 'cleanSheets', '#38bdf8');
+function addTimelineEvent(type, text) {
+  matchLiveState.timelineEvents.push({ type, text });
+  const bar = $('matchTimelineBar');
+  const i = document.createElement('div');
+  i.className = `timeline-event-item ${type}`; i.innerText = text; bar.appendChild(i);
 }
 
+function setSimSpeed(s) { simSpeedMultiplier = s; $('spd1').className = `btn-speed ${s === 1 ? 'active' : ''}`; $('spd3').className = `btn-speed ${s === 3 ? 'active' : ''}`; }
+function triggerInstantSim() { simSpeedMultiplier = 25; }
+function toggleMatchPause() {
+  matchLiveState.isPaused = !matchLiveState.isPaused;
+  $('btnPauseMatch').innerText = matchLiveState.isPaused ? '▶️ RESUME' : '⏸️ PAUSE';
+}
+
+/* ---------- STANDINGS & EUROPEAN QUALIFICATION (FEATURE 22) ---------- */
+function renderStandingsTable(div) {
+  state.activeStandingsTab = div;
+  for (let i = 0; i <= 3; i++) $(`tabTier${i}`).className = `league-tab-btn ${i === div ? 'active' : ''}`;
+  const body = $('leagueTableBody'); body.innerHTML = '';
+  const rows = [...(state.standings[div] || [])].sort((a, b) => b.pts - a.pts || b.gd - a.gd || b.gf - a.gf);
+
+  rows.forEach((r, i) => {
+    const tr = document.createElement('tr'); tr.className = 'fm-row';
+    if (r.id === state.userClubId) tr.style.background = 'rgba(0,210,255,.15)';
+
+    // Continental & Promotion color stripes (Feature 22)
+    let borderCol = '';
+    if (div === 0) {
+      if (i < 4) borderCol = '#38bdf8'; // Champions Cup
+      else if (i === 4) borderCol = '#f59e0b'; // Europa League
+      else if (i === 5) borderCol = '#10b981'; // Conference League
+      else if (i >= 17) borderCol = '#ef4444'; // Relegation
+    } else {
+      if (i < 2) borderCol = '#10b981'; // Auto promotion
+      else if (i < 6) borderCol = '#f59e0b'; // Play-offs
+      else if (i >= rows.length - 3) borderCol = '#ef4444';
+    }
+
+    tr.innerHTML = `<td><b>${i + 1}</b></td><td style="display:flex;align-items:center;gap:8px">${createBadgeHtml(r.id, 20)}<b>${r.name}</b>${r.id === state.userClubId ? ' ⭐' : ''}</td><td>${r.played}</td><td>${r.won}</td><td>${r.drawn}</td><td>${r.lost}</td><td>${r.gd > 0 ? '+' + r.gd : r.gd}</td><td><b>${r.pts}</b></td>`;
+    if (borderCol) tr.firstElementChild.style.borderLeft = `3px solid ${borderCol}`;
+    body.appendChild(tr);
+  });
+}
+
+/* ---------- MATCHDAY VIEW & VENUES (FEATURE 5 & 21) ---------- */
 function renderMatchdayView() {
   const m = getActiveUserMatch(), w = getWeek();
   if (m) {
     const h = clubById(m.home), a = clubById(m.away);
-    const kits = resolveMatchKitColors(h, a);
+    const isDerby = isRivalMatch(h, a);
+    $('derbyBannerWrap').style.display = isDerby ? 'block' : 'none';
+
+    // Explicit competition & round naming (Feature 5 & 21)
+    const compText = m.type === 'CUP' ? `${m.cupName} - ${m.roundName || 'Knockout Round'}` : `${DIV_NAMES[m.div]} - Matchday ${state.currentWeek}`;
+    $('matchCompetitionBadge').innerText = compText;
+    $('matchVenueBadge').innerText = m.final ? '🏟️ Wembley Stadium (National Final)' : `🏟️ ${h.stadium}`;
 
     $('sbHomeBadgeWrap').innerHTML = createBadgeHtml(h.id, 40);
     $('sbAwayBadgeWrap').innerHTML = createBadgeHtml(a.id, 40);
-    $('sbHomeName').innerText = h.name;
-    $('sbAwayName').innerText = a.name;
+    $('sbHomeName').innerText = h.name; $('sbAwayName').innerText = a.name;
     $('sbScore').innerText = m.played ? `${m.homeGoals} - ${m.awayGoals}` : '0 - 0';
-    $('sbMinute').innerText = m.played ? 'FULL TIME' : (m.type === 'CUP' ? `${m.cupName.toUpperCase()}` : 'PRE-MATCH');
+    $('sbMinute').innerText = m.played ? 'FULL TIME' : 'PRE-MATCH';
     $('btnStartMatch').disabled = m.played;
 
-    if (!m.played) {
-      const opp = (h.id === state.userClubId) ? a : h;
-      const matchTypePrefix = m.type === 'CUP' ? `🏆 ${m.cupName}:` : `Week ${state.currentWeek}:`;
-      const kitNote = kits.usedAwayKit ? ` (Switched to Away Kit due to clash)` : ` (Home Kit)`;
-      $('commentaryFeed').innerHTML = `<div class="comm-line">${matchTypePrefix} <b>${h.name}</b> (Home) vs <b>${a.name}</b>${kitNote} (Manager: ${opp.manager || 'Interim'}). Click "Start Match" or "Advance Week".</div>`;
-    }
     setup2DPlayers(h, a);
-    populateInMatchSubChips();
-  } else { 
-    $('sbScore').innerText = '-';
-    $('sbMinute').innerText = 'NO FIXTURE';
-    $('btnStartMatch').disabled = true;
-    $('commentaryFeed').innerHTML = '<div class="comm-line">No fixture scheduled for your club this calendar week.</div>';
+  } else {
+    $('sbScore').innerText = '-'; $('sbMinute').innerText = 'NO FIXTURE';$('btnStartMatch').disabled = true;
   }
-  const g = $('aroundGroundsList'); g.innerHTML = '';
-  if (w) w.matches.filter(x => x.div === getCurrentUserClub().div || (x.type === 'CUP' && (x.home === state.userClubId || x.away === state.userClubId))).forEach(x => {
-    const h = clubById(x.home), a = clubById(x.away), r = document.createElement('div'); r.className = 'grounds-match-row';
-    r.innerHTML = `<div class="team-home"><span>${h.name}</span>${createBadgeHtml(h.id, 18)}</div><div class="match-vs-box">${x.played ? `${x.homeGoals}-${x.awayGoals}` : 'v'}</div><div class="team-away">${createBadgeHtml(a.id, 18)}<span>${a.name}</span></div>`; g.appendChild(r);
-  });
 }
 
-function renderCupsTab() {
-  ensureCupTie(); const c = userCupMatch(), d = $('cupFixtureDisplay');
-  d.innerHTML = c ? `<div style="font-weight:800;color:var(--accent);margin-bottom:6px">${c.cupName}${c.final ? ' FINAL' : ''}</div><div style="display:flex;align-items:center;gap:8px">${createBadgeHtml(c.home, 24)}<b>${clubById(c.home).name}</b> vs <b>${clubById(c.away).name}</b>${createBadgeHtml(c.away, 24)}</div><div style="font-size:.75rem;color:var(--text-muted);margin-top:6px">${c.played ? `Result: ${c.homeGoals}-${c.awayGoals}` : 'Played when you advance the week. Penalties if level.'}</div>` :
-    `No cup tie this week.<br><span style="color:var(--text-muted);font-size:.75rem">Carabao Cup: ${state.cups.carabaoAlive ? 'still in' : 'out'} • FA Cup: ${state.cups.faAlive ? 'still in' : 'out'} (ties in weeks 7, 15, 23, 31)</span>`;
+/* ---------- MANAGER PROFILE & FINANCES VIEW (FEATURE 23, 27 & 28) ---------- */
+function renderManagerOffice() {
+  const m = state.manager, club = getCurrentUserClub(), objs = getClubBoardObjectives(club);
+  $('mgrContractBadge').innerText = `Contract: ${m.contractYears || 2} Years Remaining`;
+
+  $('managerProfileSummary').innerHTML = `
+    <div class="manager-stat-cluster">
+      <div class="mgr-card"><div class="val">⭐ ${(m.reputation || 2.5).toFixed(1)}</div><div class="lbl">Reputation</div></div>
+      <div class="mgr-card"><div class="val" style="color:#10b981">${m.confidence}%</div><div class="lbl">Board Rating</div></div>
+      <div class="mgr-card"><div class="val" style="color:#38bdf8">${m.fansApproval}%</div><div class="lbl">Fan Support</div></div>
+      <div class="mgr-card"><div class="val">${m.contractYears || 2} Yrs</div><div class="lbl">Contract</div></div>
+    </div>
+
+    <div style="background:var(--bg-panel); border:1px solid var(--border); border-radius:8px; padding:12px; margin-bottom:12px;">
+      <h4 style="color:var(--gold); font-size:0.85rem; margin-bottom:6px;">🎯 Board Multi-Competition Mandates</h4>
+      <p style="font-size:0.8rem;"><b>League Goal:</b> <span style="color:#38bdf8;">${objs.leagueObj}</span></p>
+      <p style="font-size:0.8rem;"><b>FA Cup Expectation:</b> <span style="color:#f59e0b;">${objs.faObj}</span></p>
+      <p style="font-size:0.8rem;"><b>Carabao Cup Expectation:</b> <span style="color:#10b981;">${objs.carabaoObj}</span></p>
+    </div>
+
+    <p><b>Manager:</b> ${m.name}</p>
+    <p><b>Current Club:</b> ${club.name} (${DIV_NAMES[club.div]})</p>
+    <p><b>Career Record:</b> ${m.wins}W ${m.draws}D ${m.losses}L (${m.matches} games)</p>
+  `;
+
+  const fin = $('financesOverviewStrip');
+  if (fin) {
+    fin.innerHTML = `
+      <div style="display:flex; justify-content:space-between; flex-wrap:wrap; gap:8px;">
+        <span><b>Available Budget:</b> £${club.budget.toFixed(1)}M</span>
+        <span><b>Weekly Wage Outflow:</b> £${Math.round(computeClubWeeklyWageBill(club) * 1000).toLocaleString()}k</span>
+        <span><b>Stadium Capacity:</b> ${(club.cap + state.stadiumCapacityBonus).toLocaleString()} seats</span>
+      </div>
+    `;
+  }
+  renderBackupsList();
 }
 
 function renderFacilities() {
   const med = state.medicalFacilityLevel || 1, ac = state.academyFacilityLevel || 1;
-  $('facilitiesList').innerHTML = `<div style="background:var(--bg-panel);padding:14px;border-radius:8px"><h4>🏟️ Stand Expansion</h4><p style="font-size:.72rem;color:var(--text-muted);margin:4px 0">+2,500 seats, more gate revenue.</p><button class="btn-swap-pill" onclick="upgradeStand(2500,4.0)">Expand (£4.0M)</button></div>
-  <div style="background:var(--bg-panel);padding:14px;border-radius:8px"><h4>🏥 Medical Centre (Lvl ${med})</h4><p style="font-size:.72rem;color:var(--text-muted);margin:4px 0">Bench recovery +${med * 3}% weekly.</p><button class="btn-swap-pill" onclick="upgradeMedicalCentre()">Upgrade (£2.5M)</button></div>
-  <div style="background:var(--bg-panel);padding:14px;border-radius:8px"><h4>🌱 Youth Academy (Lvl ${ac})</h4><p style="font-size:.72rem;color:var(--text-muted);margin:4px 0">Better wonderkids each spring.</p><button class="btn-swap-pill" onclick="upgradeAcademyFacility()">Upgrade (£3.0M)</button></div>`;
+  $('facilitiesList').innerHTML = `
+    <div style="background:var(--bg-panel);padding:14px;border-radius:8px"><h4>🏟️ Stand Expansion</h4><p style="font-size:.72rem;color:var(--text-muted);margin:4px 0">+2,500 seats for higher matchday ticket yield.</p><button class="btn-swap-pill" onclick="upgradeStand(2500,4.0)">Expand (£4.0M)</button></div>
+    <div style="background:var(--bg-panel);padding:14px;border-radius:8px"><h4>🏥 Medical Centre (Lvl ${med})</h4><p style="font-size:.72rem;color:var(--text-muted);margin:4px 0">Faster recovery times for injured stars.</p><button class="btn-swap-pill" onclick="upgradeMedicalCentre()">Upgrade (£2.5M)</button></div>
+    <div style="background:var(--bg-panel);padding:14px;border-radius:8px"><h4>🌱 Youth Academy (Lvl ${ac})</h4><p style="font-size:.72rem;color:var(--text-muted);margin:4px 0">Scout 90+ potential wonderkids every spring.</p><button class="btn-swap-pill" onclick="upgradeAcademyFacility()">Upgrade (£3.0M)</button></div>
+  `;
 }
 
 function spend(cost) { const c = getCurrentUserClub(); if (c.budget < cost) { alert(`Insufficient budget (£${cost}M needed).`); return false; } c.budget -= cost; return true; }
@@ -1778,73 +1515,43 @@ function upgradeMedicalCentre() { if (spend(2.5)) { state.medicalFacilityLevel++
 function upgradeAcademyFacility() { if (spend(3.0)) { state.academyFacilityLevel++; saveGame(); renderAll(); renderFacilities(); } }
 function upgradeStand(s, c) { if (spend(c)) { state.stadiumCapacityBonus += s; saveGame(); renderAll(); renderFacilities(); } }
 
-function renderManagerOffice() {
-  const m = state.manager, club = getCurrentUserClub(), exp = getClubBoardExpectation(club);
-  const repStars = (m.reputation || 2.5).toFixed(1);
-  const warnText = m.warningsCount > 0 
-    ? `<span style="color:#ef4444; font-weight:800;">⚠️️ ${m.warningsCount} Formal Warning(s)</span>` 
-    : `<span style="color:#10b981; font-weight:800;">✅ Stable (No Warnings)</span>`;
-
-  $('mgrContractBadge').innerText = `Contract: ${m.contractYears || 2} Years Remaining`;
-
-  $('managerProfileSummary').innerHTML = `
-    <div class="manager-stat-cluster">
-      <div class="mgr-card"><div class="val">⭐ ${repStars}</div><div class="lbl">Reputation</div></div>
-      <div class="mgr-card"><div class="val">${m.contractYears || 2} Yrs</div><div class="lbl">Contract</div></div>
-      <div class="mgr-card"><div class="val" style="color:${m.confidence >= 60 ? '#10b981' : '#ef4444'}">${m.confidence}%</div><div class="lbl">Board Approval</div></div>
-      <div class="mgr-card"><div class="val" style="color:${m.fansApproval >= 60 ? '#38bdf8' : '#ef4444'}">${m.fansApproval}%</div><div class="lbl">Fan Support</div></div>
-    </div>
-
-    <div style="background:var(--bg-panel); border:1px solid var(--border); border-radius:8px; padding:12px; margin-bottom:12px;">
-      <h4 style="color:var(--gold); font-size:0.85rem; margin-bottom:6px;">🎯 Seasonal Board Expectations</h4>
-      <p style="font-size:0.82rem; color:#f1f5f9; font-weight:700;">Target: <span style="color:#38bdf8;">${exp.target}</span></p>
-      <p style="font-size:0.75rem; color:var(--text-muted); margin-top:3px;">Club Status: ${warnText}</p>
-    </div>
-
-    <p><b>Manager:</b> ${m.name}</p>
-    <p><b>Current Club:</b> ${club.name} (${DIV_NAMES[club.div]})</p>
-    <p><b>Career Record:</b> ${m.wins}W ${m.draws}D ${m.losses}L (${m.matches} matches)</p>
-    <p><b>Win Rate:</b> ${m.matches ? Math.round(m.wins / m.matches * 100) : 0}%</p>
-    <p><b>Weekly Wage Bill:</b> £${Math.round(computeClubWeeklyWageBill(club) * 1000).toLocaleString()}k/wk</p>
-  `;
-}
-
 function renderHonours() {
   const m = state.manager, box = (i, v, l) => `<div style="background:var(--bg-panel);padding:14px;border-radius:8px;text-align:center;min-width:120px"><div style="font-size:1.8rem">${i}</div><div style="font-weight:800;color:var(--gold)">${v || 0}</div><div style="font-size:.72rem;color:var(--text-muted)">${l}</div></div>`;
   $('honoursList').innerHTML = box('🏅', m.motmAwards, 'Manager of Month') + box('🏆', m.faCups, 'FA Cups') + box('🏆', m.carabaoCups, 'Carabao Cups') + box('👑', m.leagueTitles || 0, 'League Titles') + box('📈', m.promotions || 0, 'Promotions');
 }
 
-/* ---------- news / academy ---------- */
-function generateInitialNews() {
-  state.newsFeed = [{ tag: 'Season Kick-Off', breaking: true, headline: `${state.seasonYear}/${String(state.seasonYear + 1).slice(-2)} season underway: 92 clubs battle for glory`, body: 'Boards demand results across the pyramid.', time: 'Week 1' }];
-}
-function addNewsStory(tag, headline, body, breaking = false) { state.newsFeed.unshift({ tag, headline, body, breaking, time: `Week ${state.currentWeek}` }); if (state.newsFeed.length > 25) state.newsFeed.pop(); }
-function renderNewsFeed() {
-  const f = $('newsFeedList'); f.innerHTML = '';
-  state.newsFeed.forEach(n => { const c = document.createElement('div'); c.className = `news-card ${n.breaking ? 'breaking' : ''}`; c.innerHTML = `<div style="display:flex;justify-content:space-between"><span style="font-size:.65rem;font-weight:800;color:var(--accent);text-transform:uppercase">${n.tag}</span><span style="font-size:.68rem;color:var(--text-muted)">${n.time}</span></div><div style="font-weight:800">${n.headline}</div><div style="font-size:.8rem;color:#cbd5e1">${n.body}</div>`; f.appendChild(c); });
-}
-
+/* ---------- YOUTH ACADEMY (FEATURE 26) ---------- */
 function generateYouthIntake(announce) {
   const lvl = state.academyFacilityLevel || 1, n = R(3, 5);
-  state.youthProspects = Array.from({ length: n }, (_, i) => { const pos = pick(['GK', 'DEF', 'MID', 'FWD']), ovr = 52 + lvl * 2 + R(0, 6); return { id: `youth_${Date.now()}_${i}`, name: pick(FIRSTNAMES) + ' ' + pick(SURNAMES), naturalPos: pos, nat: 'ENG', age: R(16, 17), ovr, potential: Math.min(94, ovr + 16 + R(0, 10)), wage: 0.005, contract: 3, signed: false }; });
-  if (announce) { state.youthIntakeCompleted = true; addNewsStory('Academy Day', `Spring intake: ${n} new prospects at ${getCurrentUserClub().name}`, 'Inspect them in the Academy tab.', true); }
+  state.youthProspects = Array.from({ length: n }, (_, i) => {
+    const pos = pick(['GK', 'DEF', 'MID', 'FWD']);
+    const ovr = 52 + lvl * 2 + R(0, 5);
+    const potential = Math.min(95, ovr + 18 + R(0, 14)); // Up to 95 potential wonderkids
+    return { id: `youth_${Date.now()}_${i}`, name: pick(FIRSTNAMES) + ' ' + pick(SURNAMES), naturalPos: pos, nat: 'ENG', age: R(15, 17), ovr, potential, wage: 0.005, contract: 3, signed: false };
+  });
+  if (announce) { state.youthIntakeCompleted = true; addNewsStory('Academy Day', `Spring Intake: ${n} prospects at ${getCurrentUserClub().name}`, 'Wonderkids ready for inspection.', true); }
 }
 
 function renderAcademyTab() {
-  const g = $('academyProspectsGrid'); g.innerHTML = '';$('academyIntakeStatusTag').innerText = state.youthIntakeCompleted ? 'Spring Intake Active' : `Next intake: Week 30 (now Wk ${state.currentWeek})`;
+  const g = $('academyProspectsGrid'); g.innerHTML = '';$('academyIntakeStatusTag').innerText = state.youthIntakeCompleted ? 'Spring Intake Active' : `Next intake: Week 30`;
   if (!state.youthIntakeCompleted) { g.innerHTML = '<p style="color:var(--text-muted);font-size:.8rem">No prospects yet. The spring intake arrives in Week 30.</p>'; return; }
-  state.youthProspects.forEach(p => { const c = document.createElement('div'); c.className = 'prospect-card'; c.innerHTML = `<div class="prospect-tag">${p.potential >= 88 ? '⭐ Wonderkid' : 'Prospect'}</div><div style="font-weight:900">${p.name}</div><div style="font-size:.75rem;color:var(--text-muted)">${p.naturalPos} • ${p.age} yrs</div><div style="display:flex;justify-content:space-between;font-size:.8rem"><span>Now <b style="color:var(--gold)">${p.ovr}</b></span><span>Potential <b style="color:#10b981">${p.potential}</b></span></div><button class="btn-swap-pill" style="margin-top:8px;background:${p.signed ? '#334155' : '#059669'};color:#fff" onclick="signAcademyProspect('${p.id}')">${p.signed ? 'Signed' : 'Sign (£5k/w)'}</button>`; g.appendChild(c); });
+  state.youthProspects.forEach(p => {
+    const c = document.createElement('div'); c.className = 'prospect-card';
+    c.innerHTML = `<div class="prospect-tag">${p.potential >= 88 ? '⭐ Wonderkid' : 'Prospect'}</div><div style="font-weight:900">${p.name}</div><div style="font-size:.75rem;color:var(--text-muted)">${p.naturalPos} • ${p.age} yrs</div><div style="display:flex;justify-content:space-between;font-size:.8rem"><span>Now <b style="color:var(--gold)">${p.ovr}</b></span><span>Potential <b style="color:#10b981">${p.potential}</b></span></div><button class="btn-swap-pill" style="margin-top:8px;background:${p.signed ? '#334155' : '#059669'};color:#fff" onclick="signAcademyProspect('${p.id}')">${p.signed ? 'Signed' : 'Sign (£5k/w)'}</button>`;
+    g.appendChild(c);
+  });
 }
 
 function signAcademyProspect(id) {
   const p = state.youthProspects.find(x => x.id === id); if (!p || p.signed) return; p.signed = true;
-  getCurrentUserClub().players.push({ id: p.id, name: p.name, naturalPos: p.naturalPos, nat: p.nat, age: p.age, ovr: p.ovr, con: 100, role: ROLE[p.naturalPos], starter: false, val: +((p.ovr - 45) * 0.8).toFixed(1), wage: p.wage, contract: p.contract, morale: 'Superb', goals: 0, cleanSheets: 0, inj: 0, yellows: 0, susp: 0 });
-  saveGame(); renderAll(); updateHeaderClubDisplay(); renderAcademyTab(); playSoundSafe('cheer');
+  getCurrentUserClub().players.push({ id: p.id, name: p.name, naturalPos: p.naturalPos, nat: p.nat, age: p.age, ovr: p.ovr, con: 100, role: ROLE[p.naturalPos], starter: false, val: +((p.ovr - 45) * 0.8).toFixed(1), wage: p.wage, contract: p.contract, morale: 'Superb', chemistry: 75, goals: 0, cleanSheets: 0, inj: 0, yellows: 0, susp: 0 });
+  saveGame(); renderAll(); renderAcademyTab(); playSoundSafe('cheer');
 }
 
-/* ---------- transfer market ---------- */
+/* ---------- TRANSFER MARKET ---------- */
 function initMarketFilterDropdowns() {
-  $('filterMarketNation').innerHTML = ['ALL', 'ENG', 'SCO', 'WAL', 'IRL', 'NIR', ...NATS.slice(4)].map(n => `<option value="${n}">${n === 'ALL' ? 'All Nations' : n}</option>`).join(''); onMarketLeagueChange();
+  $('filterMarketNation').innerHTML = ['ALL', 'ENG', 'SCO', 'WAL', 'IRL', 'NIR', ...NATS.slice(4)].map(n => `<option value="${n}">${n === 'ALL' ? 'All Nations' : n}</option>`).join('');
+  onMarketLeagueChange();
 }
 function onMarketLeagueChange() {
   const v = $('filterMarketLeague').value, t =$('filterMarketTeam'); t.innerHTML = '<option value="ALL">All Teams</option>';
@@ -1853,79 +1560,60 @@ function onMarketLeagueChange() {
 }
 function resetMarketFilters() { $('marketSearchInput').value = '';$('filterMarketLeague').value = 'ALL'; $('filterMarketPos').value = 'ALL';$('filterMarketNation').value = 'ALL'; onMarketLeagueChange(); }
 function toggleMarketSort(k) { if (marketSortKey === k) marketSortAsc = !marketSortAsc; else { marketSortKey = k; marketSortAsc = k === 'name' || k === 'clubName'; } renderTransfers(); }
+
 function renderTransfers() {
   const club = getCurrentUserClub(); $('marketBudgetDisplay').innerText = `Available: £${club.budget.toFixed(1)}M`;
   ['name', 'naturalPos', 'nat', 'age', 'ovr', 'price', 'clubName'].forEach(k => { const e = $(`sort_${k}`); if (e) e.innerText = marketSortKey === k ? (marketSortAsc ? ' ▲' : ' ▼') : ''; });
   const q = $('marketSearchInput').value.toLowerCase().trim(), fl = $('filterMarketLeague').value, ft =$('filterMarketTeam').value, fp = $('filterMarketPos').value, fn =$('filterMarketNation').value;
-  let pool = state.marketPlayers.map(p => ({
-    id: p.id,
-    name: p.name,
-    naturalPos: p.naturalPos,
-    nat: p.nat,
-    age: p.age,
-    ovr: p.ovr,
-    price: p.price,
-    clubName: p.club || (p.price === 0 ? 'Free Agent' : 'Foreign Club'),
-    clubId: 'SCOUT',
-    div: -1,
-    scout: true
-  }));
+  let pool = state.marketPlayers.map(p => ({ id: p.id, name: p.name, naturalPos: p.naturalPos, nat: p.nat, age: p.age, ovr: p.ovr, price: p.price, clubName: p.club || (p.price === 0 ? 'Free Agent' : 'Foreign Club'), clubId: 'SCOUT', div: -1, scout: true }));
   state.clubs.forEach(c => { if (c.id !== club.id) c.players.forEach(p => pool.push({ id: p.id, name: p.name, naturalPos: p.naturalPos, nat: p.nat, age: p.age, ovr: p.ovr, price: +(p.val * 1.15).toFixed(1), clubName: c.name, clubId: c.id, div: c.div, scout: false })); });
   if (q) pool = pool.filter(p => p.name.toLowerCase().includes(q)); if (fl === 'SCOUT') pool = pool.filter(p => p.scout); else if (fl !== 'ALL') pool = pool.filter(p => p.div === +fl);
   if (ft !== 'ALL') pool = pool.filter(p => p.clubId === ft); if (fp !== 'ALL') pool = pool.filter(p => p.naturalPos === fp); if (fn !== 'ALL') pool = pool.filter(p => p.nat === fn);
   pool.sort((a, b) => typeof a[marketSortKey] === 'string' ? (marketSortAsc ? a[marketSortKey].localeCompare(b[marketSortKey]) : b[marketSortKey].localeCompare(a[marketSortKey])) : (marketSortAsc ? a[marketSortKey] - b[marketSortKey] : b[marketSortKey] - a[marketSortKey]));
-  const shown = pool.slice(0, 100); $('marketCountNote').innerText = `Showing ${shown.length} of ${pool.length}. Click headers to sort.`;
-  $('transferMarketBody').innerHTML = shown.map(p => { const ok = club.budget >= p.price; return `<tr class="fm-row"><td><b>${p.name}</b></td><td><span class="role-badge">${p.naturalPos}</span></td><td>${p.nat}</td><td>${p.age}</td><td><b style="color:var(--gold)">${p.ovr}</b></td><td><b>£${p.price.toFixed(1)}M</b></td><td style="display:flex;align-items:center;gap:6px">${p.scout ? '' : createBadgeHtml(p.clubId, 18)}<span>${p.clubName}</span></td><td><button class="btn-swap-pill" style="${ok ? 'background:#059669;color:#fff' : 'opacity:.4'}" onclick="executeBuyPlayer('${p.id}',${p.scout},'${p.clubId}')">${ok ? 'Sign' : 'No funds'}</button></td></tr>`; }).join('');
-  $('squadSellListBody').innerHTML = club.players.map(p => `<tr class="fm-row"><td><b>${p.name}</b>${p.starter ? ' <span style="font-size:.65rem;color:#10b981">[XI]</span>' : ''}</td><td><span class="role-badge" style="background:#475569">${p.naturalPos}</span></td><td>${p.age}</td><td><b style="color:var(--gold)">${p.ovr}</b></td><td><b style="color:#34d399">£${p.val.toFixed(1)}M</b></td><td><button class="btn-sell-pill" onclick="sellSquadPlayer('${p.id}')">Sell</button></td></tr>`).join('');
+  $('transferMarketBody').innerHTML = pool.slice(0, 100).map(p => {
+    const ok = club.budget >= p.price;
+    return `<tr class="fm-row"><td><b>${p.name}</b></td><td>${p.naturalPos}</td><td>${p.nat}</td><td>${p.age}</td><td><b style="color:var(--gold)">${p.ovr}</b></td><td>£${p.price.toFixed(1)}M</td><td>${p.clubName}</td><td><button class="btn-swap-pill" style="${ok ? 'background:#059669;color:#fff' : 'opacity:.4'}" onclick="executeBuyPlayer('${p.id}',${p.scout},'${p.clubId}')">${ok ? 'Sign' : 'No funds'}</button></td></tr>`;
+  }).join('');
+  $('squadSellListBody').innerHTML = club.players.map(p => `<tr class="fm-row"><td><b>${p.name}</b>${p.starter ? ' [XI]' : ''}</td><td>${p.naturalPos}</td><td>${p.age}</td><td><b style="color:var(--gold)">${p.ovr}</b></td><td style="color:#34d399">£${p.val.toFixed(1)}M</td><td><button class="btn-sell-pill" onclick="sellSquadPlayer('${p.id}')">Sell</button></td></tr>`).join('');
 }
 
 function executeBuyPlayer(id, scout, sellerId) {
   const club = getCurrentUserClub();
   if (scout) {
     const i = state.marketPlayers.findIndex(x => x.id === id); if (i < 0) return; const t = state.marketPlayers[i];
-    if (club.budget < t.price) { alert('Insufficient budget.'); return; }
-    if (!confirm(`Sign ${t.name} for £${t.price.toFixed(1)}M?`)) return; club.budget -= t.price; state.marketPlayers.splice(i, 1);
-    club.players.push({ id: 'trans_' + Date.now() + R(0, 999), name: t.name, naturalPos: t.naturalPos, nat: t.nat, age: t.age, ovr: t.ovr, con: 100, role: ROLE[t.naturalPos], starter: false, val: t.price, wage: t.wage || 0.05, contract: t.contract || 3, morale: 'Superb', goals: 0, cleanSheets: 0, inj: 0, yellows: 0, susp: 0 });
-    addNewsStory('Done Deal', `${club.name} sign ${t.name} (£${t.price.toFixed(1)}M)`, 'Signing confirmed.', true);
+    if (club.budget < t.price) { alert('Insufficient funds.'); return; }
+    club.budget -= t.price; state.marketPlayers.splice(i, 1);
+    club.players.push({ id: 'trans_' + Date.now(), name: t.name, naturalPos: t.naturalPos, nat: t.nat, age: t.age, ovr: t.ovr, con: 100, role: ROLE[t.naturalPos], starter: false, val: t.price, wage: 0.05, contract: 3, morale: 'Superb', chemistry: 60, goals: 0, cleanSheets: 0, inj: 0, yellows: 0, susp: 0 });
   } else {
     const s = clubById(sellerId); if (!s) return; const i = s.players.findIndex(x => x.id === id); if (i < 0) return; const t = s.players[i], fee = +(t.val * 1.15).toFixed(1);
-    if (club.budget < fee) { alert('Insufficient budget.'); return; } if (s.players.length <= 16) { alert(`${s.name} refuse: squad too thin.`); return; }
-    if (!confirm(`Buy ${t.name} from ${s.name} for £${fee.toFixed(1)}M?`)) return; club.budget -= fee; s.budget += fee; s.players.splice(i, 1); fixStarters(s);
-    club.players.push({ ...t, starter: false, inj: 0, con: 100, morale: 'Superb' }); addNewsStory('Done Deal', `${club.name} raid ${s.name} for ${t.name} (£${fee}M)`, 'Signing confirmed.', true);
+    if (club.budget < fee) { alert('Insufficient funds.'); return; }
+    club.budget -= fee; s.budget += fee; s.players.splice(i, 1); fixStarters(s);
+    club.players.push({ ...t, starter: false, morale: 'Superb', chemistry: 60 });
   }
-  state.manager.fansApproval = Math.min(99, state.manager.fansApproval + 3); saveGame(); renderAll(); updateHeaderClubDisplay(); renderTransfers(); playSoundSafe('cheer');
+  saveGame(); renderAll(); updateHeaderClubDisplay(); renderTransfers(); playSoundSafe('cheer');
 }
 
 function sellSquadPlayer(id) {
-  const club = getCurrentUserClub(); if (club.players.length <= 16) { alert('Squad too small. Sign replacements first.'); return; }
+  const club = getCurrentUserClub(); if (club.players.length <= 16) { alert('Squad too thin.'); return; }
   const i = club.players.findIndex(x => x.id === id); if (i < 0) return; const p = club.players[i];
-  if (!confirm(`Sell ${p.name} for £${p.val.toFixed(1)}M?`)) return; club.budget += p.val; club.players.splice(i, 1); fixStarters(club);
-  state.manager.fansApproval = Math.max(20, state.manager.fansApproval - 2); addNewsStory('Departure', `${p.name} leaves ${club.name} (£${p.val.toFixed(1)}M)`, 'Sale agreed.', false); saveGame(); renderAll(); updateHeaderClubDisplay(); renderTransfers(); playSoundSafe('whistle');
+  club.budget += p.val; club.players.splice(i, 1); fixStarters(club);
+  saveGame(); renderAll(); updateHeaderClubDisplay(); renderTransfers(); playSoundSafe('whistle');
 }
 
-/* ---------- season end ---------- */
+/* ---------- END SEASON TRANSITION ---------- */
 const sortedDivs = () => { const s = {}; for (let d = 0; d <= 3; d++) s[d] = [...state.standings[d]].sort((a, b) => b.pts - a.pts || b.gd - a.gd || b.gf - a.gf); return s; };
 
 function showEndSeasonGala() {
-  const s = sortedDivs(), mv = d => `<p><b>Up from ${DIV_NAMES[d + 1]}:</b> ${s[d + 1].slice(0, 3).map(r => r.name).join(', ')}</p><p><b>Down from ${DIV_NAMES[d]}:</b> ${s[d].slice(-3).map(r => r.name).join(', ')}</p>`;
-  
-  // Track League Title & Promotion Honours for user
-  const userClub = getCurrentUserClub();
-  const divTable = s[userClub.div];
-  if (divTable && divTable[0].id === userClub.id) {
-    state.manager.leagueTitles = (state.manager.leagueTitles || 0) + 1;
-    state.manager.reputation = Math.min(5.0, +(state.manager.reputation + 0.50).toFixed(2));
-  } else if (userClub.div > 0 && divTable.slice(0, 3).some(r => r.id === userClub.id)) {
-    state.manager.promotions = (state.manager.promotions || 0) + 1;
-    state.manager.reputation = Math.min(5.0, +(state.manager.reputation + 0.35).toFixed(2));
-  }
-
-  $('eosSummaryContent').innerHTML = `<div style="background:var(--bg-panel);padding:12px;border-radius:8px;margin-bottom:10px"><h3 style="color:var(--gold)">👑 Champions</h3>${[0, 1, 2, 3].map(d => `<p><b>${DIV_NAMES[d]}:</b>${s[d][0].name}</p>`).join('')}</div><div style="background:var(--bg-panel);padding:12px;border-radius:8px"><h3 style="color:#38bdf8">📈 Movement</h3>${mv(0)}${mv(1)}${mv(2)}</div>`;
+  const s = sortedDivs();
+  $('eosSummaryContent').innerHTML = `
+    <div style="background:var(--bg-panel);padding:12px;border-radius:8px;margin-bottom:10px">
+      <h3 style="color:var(--gold)">👑 Champions</h3>
+      ${[0, 1, 2, 3].map(d => `<p><b>${DIV_NAMES[d]}:</b>${s[d][0].name}</p>`).join('')}
+    </div>
+  `;
   $('endSeasonModal').style.display = 'flex'; playSoundSafe('cheer');
 }
-
 function closeEosModal() { $('endSeasonModal').style.display = 'none'; }
-
 function executeNextSeasonTransition() {
   closeEosModal();
   const s = sortedDivs(), move = {};
@@ -1933,123 +1621,23 @@ function executeNextSeasonTransition() {
     s[d].slice(-3).forEach(r => move[r.id] = d + 1);
     s[d + 1].slice(0, 3).forEach(r => move[r.id] = d);
   }
-  state.clubs.forEach(c => {
-    if (move[c.id] !== undefined) c.div = move[c.id];
-  });
-
-  state.seasonYear++;
-  state.currentWeek = 1;
-  state.deadlineDaysCompleted = {};
-  state.youthIntakeCompleted = false;
+  state.clubs.forEach(c => { if (move[c.id] !== undefined) c.div = move[c.id]; });
+  state.seasonYear++; state.currentWeek = 1;
+  state.deadlineDaysCompleted = {}; state.youthIntakeCompleted = false;
   state.cups = { carabaoAlive: true, faAlive: true };
-  if (state.manager.contractYears > 1) {
-    state.manager.contractYears--;
-  } else {
-    // Contract extension offered by current board if confidence is good
-    if (state.manager.confidence >= 50) {
-      state.manager.contractYears = 2;
-      addNewsStory('Contract Signed', `${state.manager.name} signs contract extension with ${getCurrentUserClub().name}`, 'The board has rewarded stable progress with a 2-year deal.', false);
-    }
-  }
-
-  let userReleasedCount = 0;
-
-  state.clubs.forEach(c => {
-    const retainedPlayers = [];
-
-    c.players.forEach(p => {
-      p.age++;
-      p.con = 100;
-      p.inj = 0;
-      p.goals = 0;
-      p.cleanSheets = 0;
-      p.contract--;
-
-      if (p.age < 23) p.ovr += R(0, 2);
-      else if (p.age > 31) p.ovr -= R(0, 2);
-      p.val = Math.max(0.3, +((p.ovr - 50) * 0.75).toFixed(1));
-
-      if (p.contract <= 0) {
-        state.marketPlayers.push({
-          id: p.id,
-          name: p.name,
-          naturalPos: p.naturalPos,
-          nat: p.nat,
-          age: p.age,
-          ovr: p.ovr,
-          price: 0.0,
-          club: 'Free Agent',
-          wage: p.wage,
-          contract: 2
-        });
-
-        if (c.id === state.userClubId) {
-          userReleasedCount++;
-        }
-      } else {
-        retainedPlayers.push(p);
-      }
-    });
-
-    c.players = retainedPlayers;
-
-    while (c.players.length < 16) {
-      c.players.push(mkPlayer(SQUAD_ORDER[c.players.length % SQUAD_ORDER.length], c.str - 4, c.players.length, c.id));
-    }
-    fixStarters(c);
-  });
-
-  buildStandings();
-  generateTrueRoundRobinFixtures();
-  generateInitialNews();
-  generateYouthIntake(false);
-  saveGame();
-  renderAll();
-
-  if (userReleasedCount > 0) {
-    addNewsStory('Contract Expiry', `${userReleasedCount} player(s) released as Free Agents`, 'Their contracts ran out and they departed the club.', false);
-  }
-
-  alert(`Welcome to the ${state.seasonYear}/${String(state.seasonYear + 1).slice(-2)} season!${userReleasedCount > 0 ? `\n\n📢 Note: ${userReleasedCount} player(s) left on a free transfer after their contracts expired.` : ''}`);
+  initCupTournamentTrees();
+  buildStandings(); generateTrueRoundRobinFixtures();
+  saveGame(); renderAll();
+  alert(`Welcome to the ${state.seasonYear}/${String(state.seasonYear + 1).slice(-2)} season!`);
 }
 
-/* ---------- master render & dynamic stat flash ---------- */
-function animateStatDelta(elemId, newVal, oldVal) {
-  const el = $(elemId);
-  if (!el) return;
-  el.innerText = newVal;
-
-  if (oldVal !== null && oldVal !== undefined && oldVal !== newVal) {
-    const isUp = newVal > oldVal;
-    el.style.transition = 'color 0.25s ease, transform 0.25s ease';
-    el.style.color = isUp ? '#34d399' : '#f87171';
-    el.style.transform = 'scale(1.25)';
-
-    setTimeout(() => {
-      el.style.color = '#ffffff';
-      el.style.transform = 'scale(1)';
-    }, 900);
-  }
-}
-
+/* ---------- MASTER RENDER & HEADER ---------- */
 function updateHeaderClubDisplay() {
-  const c = getCurrentUserClub();
-  if (!c) return;
-
+  const c = getCurrentUserClub(); if (!c) return;
   const s = computeClubAttributes(c);
-
   $('headerBadgeWrap').innerHTML = createBadgeHtml(c.id, 34);$('headerClubName').innerText = c.name;
-  $('headerStadium').innerText = `${c.stadium} • Capacity: ${(c.cap + (state.stadiumCapacityBonus || 0)).toLocaleString()}`;
-
-  const prev = lastUserClubRatings;
-  animateStatDelta('statAttack', s.att, prev ? prev.att : null);
-  animateStatDelta('statMidfield', s.mid, prev ? prev.mid : null);
-  animateStatDelta('statDefence', s.def, prev ? prev.def : null);
-  animateStatDelta('statOvr', s.ovr, prev ? prev.ovr : null);
-
-  lastUserClubRatings = { ...s };
-
-  $('headerWageBill').innerText = `£${Math.round(computeClubWeeklyWageBill(c) * 1000).toLocaleString()}k/w`;
+  $('headerStadium').innerText = `${c.stadium} • Capacity: ${(c.cap + state.stadiumCapacityBonus).toLocaleString()}`;
+  $('statAttack').innerText = s.att; $('statMidfield').innerText = s.mid; $('statDefence').innerText = s.def; $('statOvr').innerText = s.ovr;
   if ($('headerReputation'))$('headerReputation').innerText = `⭐ ${(state.manager.reputation || 2.5).toFixed(1)}`;
 }
 
@@ -2057,24 +1645,30 @@ function renderAll() {
   const club = getCurrentUserClub(); ensureCupTie();
   $('headerDivName').innerText = DIV_NAMES[club.div];$('headerWeek').innerText = `Wk ${state.currentWeek} / ${state.totalWeeks}`;
   $('headerSeasonTag').innerText = `${state.seasonYear}/${String(state.seasonYear + 1).slice(-2)} Career • English Pyramid`;
-  $('headerConfidence').innerText = `${state.manager.confidence}%`; 
-  if ($('headerReputation'))$('headerReputation').innerText = `⭐ ${(state.manager.reputation || 2.5).toFixed(1)}`;
+  $('headerConfidence').innerText = `${state.manager.confidence}%`;
   $('headerBudget').innerText = `£${club.budget.toFixed(1)}M`;
-  $('btnAudio').innerText = state.audioEnabled ? '🔊' : '🔇';
-  const activeMatch = getActiveUserMatch(), w = getWeek(), dl = (state.currentWeek === 4 || state.currentWeek === 22) && !state.deadlineDaysCompleted[state.currentWeek];
-  const b = $('btnAdvanceMaster'), t =$('btnAdvanceText');
-  if (dl) { b.className = 'btn-advance-master btn-deadline-mode'; t.innerText = 'DEADLINE DAY'; }
-  else if ((activeMatch && activeMatch.played) || (w && w.done)) { b.className = 'btn-advance-master btn-continue-mode'; t.innerText = state.currentWeek >= state.totalWeeks ? 'END SEASON' : `CONTINUE TO WK ${state.currentWeek + 1}`; }
-  else { b.className = 'btn-advance-master'; t.innerText = 'ADVANCE WEEK'; }
-  updateHeaderClubDisplay(); renderTactics(); renderStandingsTable(club.div); renderMatchdayView();
+  updateHeaderClubDisplay(); renderTactics(); renderStandingsTable(club.div); renderMatchdayView(); renderCupBracketTree();
 }
 
 function switchTab(id) {
-  ['tactics', 'matchday', 'cups', 'news', 'transfers', 'standings', 'academy', 'facilities', 'manager', 'honours'].forEach(t => { $(`tab-${t}`).style.display = t === id ? 'block' : 'none'; $(`nav-${t}`).className = `nav-item ${t === id ? 'active' : ''}`; });
-  ({ tactics: renderTactics, news: renderNewsFeed, cups: renderCupsTab, transfers: renderTransfers, standings: () => renderStandingsTable(state.activeStandingsTab), academy: renderAcademyTab, matchday: renderMatchdayView, facilities: renderFacilities, manager: renderManagerOffice, honours: renderHonours })[id]();
+  ['tactics', 'matchday', 'cups', 'news', 'transfers', 'standings', 'academy', 'facilities', 'manager', 'honours'].forEach(t => { 
+    $(`tab-${t}`).style.display = t === id ? 'block' : 'none'; 
+    $(`nav-${t}`).className = `nav-item ${t === id ? 'active' : ''}`; 
+  });
+  ({ 
+    tactics: renderTactics, 
+    news: () => {}, 
+    cups: renderCupBracketTree, 
+    transfers: renderTransfers, 
+    standings: () => renderStandingsTable(state.activeStandingsTab), 
+    academy: renderAcademyTab, 
+    matchday: renderMatchdayView, 
+    facilities: renderFacilities, 
+    manager: renderManagerOffice, 
+    honours: renderHonours 
+  })[id]();
 }
 
-/* Matchday layout helper */
 function layoutMatchday() {
   const grid = document.querySelector('.matchday-grid'); if (!grid || grid.dataset.laid) return; grid.dataset.laid = 1;
   const grounds = grid.querySelector('.standings-card'), comm = $('commentaryFeed'), right = document.createElement('div'); right.className = 'md-right';
