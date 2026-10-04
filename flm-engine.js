@@ -38,7 +38,7 @@ let pitchEngine = {
   homePlayers: [], 
   awayPlayers: [], 
   ball: { x: 400, y: 240, targetX: 400, targetY: 240, trail: [] }, 
-  floatingAlerts: [], // Array of { id, icon, expireTime }
+  floatingAlerts: [], 
   w: 800, 
   h: 480 
 };
@@ -54,7 +54,7 @@ const TAG = { GK: 'GK', DEF: 'DF', MID: 'MF', FWD: 'FW' };
 const DIV_NAMES = ['Premier League', 'Championship', 'League One', 'League Two'];
 const CUP_WEEKS = { 7: ['Carabao Cup', 'carabao', false], 15: ['Carabao Cup', 'carabao', true], 23: ['The FA Cup', 'fa', false], 31: ['The FA Cup', 'fa', true] };
 
-const LEAGUES = ('Arsenal,Aston Villa,Bournemouth,Brentford,Brighton,Chelsea,Crystal Palace,Everton,Fulham,Leeds United,Liverpool,Manchester City,Manchester United,Newcastle United,Nottingham Forest,Sunderland,Tottenham,Coventry City,Ipsworth Town,Hull City|' +
+const LEAGUES = ('Arsenal,Aston Villa,Bournemouth,Brentford,Brighton,Chelsea,Crystal Palace,Everton,Fulham,Leeds United,Liverpool,Manchester City,Manchester United,Newcastle United,Nottingham Forest,Sunderland,Tottenham,Coventry City,Ipswich Town,Hull City|' +
   'Leicester City,Southampton,Burnley,Middlesbrough,West Brom,Norwich City,Sheffield United,West Ham,Watford,Wolves,Stoke City,Swansea City,Bristol City,Millwall,Preston,QPR,Blackburn,Derby County,Portsmouth,Oxford United,Sheffield Wednesday,Plymouth Argyle,Birmingham City,Charlton|' +
   'Wrexham,Bolton,Stockport,Leyton Orient,Huddersfield,Lincoln City,Reading,Wycombe,Barnsley,Peterborough,Blackpool,Rotherham,Cardiff City,Bradford City,Stevenage,Mansfield Town,Exeter City,Northampton,Burton Albion,Wigan,Luton Town,Port Vale,Doncaster,Crawley Town|' +
   'Notts County,Walsall,Chesterfield,Swindon,Gillingham,Salford City,Grimsby Town,Bromley,Crewe Alexandra,Colchester,Fleetwood,Tranmere,AFC Wimbledon,Barrow,Cheltenham,Harrogate,MK Dons,Accrington Stanley,Newport County,Bristol Rovers,Carlisle,Shrewsbury,Morecambe,Oldham Athletic').split('|').map(s => s.split(','));
@@ -95,14 +95,12 @@ function generateProceduralSquad(c) {
   const real = typeof REAL_SQUADS !== 'undefined' && REAL_SQUADS[c.name];
   if (!real) return SQUAD_ORDER.map((pos, i) => mkPlayer(pos, c.str, i, c.id));
   
-  // Real player hydration
   const all = real.map(([name, pos, ovr, age, nat], i) => Object.assign(mkPlayer(pos, ovr, i, c.id), { 
     name, ovr, age: age || R(20, 32), nat: nat || 'ENG', starter: false,
     val: Math.max(0.3, +((ovr - 50) * 0.75).toFixed(1)), 
     wage: Math.max(0.01, +((ovr - 45) * 0.003).toFixed(3)) 
   })).sort((a, b) => b.ovr - a.ovr);
   
-  // Assemble a balanced starting XI by position
   const need = { GK: 1, DEF: 4, MID: 3, FWD: 3 }, xi = [];
   Object.keys(need).forEach(pos => { 
     for (let k = 0; k < need[pos]; k++) { 
@@ -111,7 +109,6 @@ function generateProceduralSquad(c) {
     } 
   });
   
-  // Fill the remainder of the 22-man squad
   const squad = [...xi, ...all]; 
   let i = squad.length;
   while (squad.length < 22) squad.push(mkPlayer(SQUAD_ORDER[squad.length % SQUAD_ORDER.length], c.str - 6, i++, c.id));
@@ -175,6 +172,7 @@ function createBadgeHtml(id, size = 30) {
     </svg>
   </span>`;
 }
+
 function computeClubAttributes(club) {
   const st = club.players.filter(p => p.starter);
   const avg = (arr, fb) => arr.length ? Math.round(arr.reduce((s, x) => s + x.ovr * (x.inj > 0 ? 0.6 : 0.8 + 0.2 * x.con / 100), 0) / arr.length) : fb;
@@ -287,7 +285,6 @@ function applyResult(m, hg, ag, scorersDone) {
   if (ag === 0) { const g = h.players.find(p => p.starter && p.naturalPos === 'GK'); if (g) g.cleanSheets++; }
   if (hg === 0) { const g = a.players.find(p => p.starter && p.naturalPos === 'GK'); if (g) g.cleanSheets++; }
 
-  // Apply disciplinary records post-match
   if (matchLiveState) {
     if (matchLiveState.reds && matchLiveState.reds.length) {
       matchLiveState.reds.forEach(pid => {
@@ -317,18 +314,21 @@ function applyResult(m, hg, ag, scorersDone) {
   else { const gate = +(h.cap * 0.000035 / 2).toFixed(2); h.budget += gate; a.budget += gate; }
   if (m.home === state.userClubId || m.away === state.userClubId) recordUserMatchResult(m.home === state.userClubId, hg, ag);
 }
+
 function updateLeagueTableRecord(div, hid, aid, hg, ag) {
   const t = state.standings[div]; if (!t) return;
   const h = t.find(r => r.id === hid), a = t.find(r => r.id === aid); if (!h || !a) return;
   h.played++; a.played++; h.gf += hg; h.ga += ag; a.gf += ag; a.ga += hg; h.gd = h.gf - h.ga; a.gd = a.gf - a.ga;
   if (hg > ag) { h.won++; h.pts += 3; a.lost++; } else if (hg < ag) { a.won++; a.pts += 3; h.lost++; } else { h.drawn++; a.drawn++; h.pts++; a.pts++; }
 }
+
 function recordUserMatchResult(isHome, hg, ag) {
   const u = isHome ? hg : ag, o = isHome ? ag : hg, mg = state.manager; mg.matches++;
   if (u > o) { mg.wins++; mg.confidence = Math.min(99, mg.confidence + 3); mg.fansApproval = Math.min(99, mg.fansApproval + (u >= 3 ? 4 : 2)); }
   else if (u === o) { mg.draws++; mg.fansApproval = Math.max(20, mg.fansApproval - 1); }
   else { mg.losses++; mg.confidence = Math.max(25, mg.confidence - 4); mg.fansApproval = Math.max(20, mg.fansApproval - 4); }
 }
+
 function cupWinnerId(m) { return m.homeGoals > m.awayGoals ? m.home : m.awayGoals > m.homeGoals ? m.away : m.penWinner; }
 function cupOutcome(m) {
   const won = cupWinnerId(m) === state.userClubId, uc = getCurrentUserClub().name;
@@ -339,7 +339,6 @@ function cupOutcome(m) {
   } else addNewsStory('Cup Progress', `${uc} through in the ${m.cupName}`, 'On to the next round.', false);
 }
 
-/* ---------- AI CPU TRANSFER MARKET SIMULATION ---------- */
 function simulateAITransfers() {
   const isWindowOpen = (state.currentWeek >= 1 && state.currentWeek <= 4) || (state.currentWeek >= 20 && state.currentWeek <= 22);
   if (!isWindowOpen || Math.random() > 0.40) return;
@@ -657,7 +656,11 @@ function setup2DPlayers(h, a) {
   const homeCoords = getFormationCoords(homeFormation, false);
   const awayCoords = getFormationCoords(awayFormation, true);
 
+  const hStarters = h.players.filter(p => p.starter);
+  const aStarters = a.players.filter(p => p.starter);
+
   pitchEngine.homePlayers = homeCoords.map((pos, i) => ({
+    playerId: hStarters[i] ? hStarters[i].id : `h_${i}`,
     num: i + 1,
     baseX: pos.x,
     baseY: pos.y,
@@ -667,6 +670,7 @@ function setup2DPlayers(h, a) {
   }));
 
   pitchEngine.awayPlayers = awayCoords.map((pos, i) => ({
+    playerId: aStarters[i] ? aStarters[i].id : `a_${i}`,
     num: i + 1,
     baseX: pos.x,
     baseY: pos.y,
@@ -675,7 +679,8 @@ function setup2DPlayers(h, a) {
     color: pitchEngine.awayColor
   }));
 
-  pitchEngine.ball = { x: 400, y: 240, targetX: 400, targetY: 240 };
+  pitchEngine.ball = { x: 400, y: 240, targetX: 400, targetY: 240, trail: [] };
+  pitchEngine.floatingAlerts = [];
   draw2DPitch();
 }
 
@@ -683,18 +688,15 @@ function draw2DPitch() {
   const { ctx, w, h, ball, floatingAlerts } = pitchEngine;
   if (!ctx) return;
 
-  // Grass pitch & mowed stripes
   ctx.fillStyle = '#1e5229';
   ctx.fillRect(0, 0, w, h);
   ctx.fillStyle = '#174221';
   for (let i = 0; i < 10; i += 2) ctx.fillRect(i * 80, 0, 80, h);
 
-  // Pitch lines
   ctx.strokeStyle = 'rgba(255,255,255,0.7)';
   ctx.lineWidth = 2;
   ctx.strokeRect(16, 16, w - 32, h - 32);
 
-  // Halfway line & center circle
   ctx.beginPath();
   ctx.moveTo(w / 2, 16);
   ctx.lineTo(w / 2, h - 16);
@@ -703,13 +705,11 @@ function draw2DPitch() {
   ctx.arc(w / 2, h / 2, 65, 0, Math.PI * 2);
   ctx.stroke();
 
-  // Penalty boxes & goal areas
   ctx.strokeRect(16, h / 2 - 105, 115, 210);
   ctx.strokeRect(w - 131, h / 2 - 105, 115, 210);
   ctx.strokeRect(16, h / 2 - 45, 45, 90);
   ctx.strokeRect(w - 61, h / 2 - 45, 45, 90);
 
-  // Draw Shot / Ball Trajectory Trails
   if (ball.trail && ball.trail.length > 1) {
     for (let i = 0; i < ball.trail.length - 1; i++) {
       const alpha = (i / ball.trail.length) * 0.45;
@@ -722,35 +722,29 @@ function draw2DPitch() {
     }
   }
 
-  // Draw Player Dots with Team Styling
   const allPitchPlayers = [...pitchEngine.homePlayers, ...pitchEngine.awayPlayers];
   allPitchPlayers.forEach(p => {
-    // Outer shadow / border
     ctx.fillStyle = 'rgba(0,0,0,0.45)';
     ctx.beginPath();
     ctx.arc(p.x + 1, p.y + 2, 9, 0, Math.PI * 2);
     ctx.fill();
 
-    // Outer kit ring (contrasting trim)
-    ctx.fillStyle = p.num === 1 ? '#eab308' : '#ffffff'; // GK has gold trim
+    ctx.fillStyle = p.num === 1 ? '#eab308' : '#ffffff';
     ctx.beginPath();
     ctx.arc(p.x, p.y, 9, 0, Math.PI * 2);
     ctx.fill();
 
-    // Main jersey color fill
     ctx.fillStyle = p.num === 1 ? '#047857' : p.color;
     ctx.beginPath();
     ctx.arc(p.x, p.y, 7.2, 0, Math.PI * 2);
     ctx.fill();
 
-    // Kit Number
     ctx.fillStyle = '#ffffff';
     ctx.font = 'bold 8.5px sans-serif';
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
     ctx.fillText(p.num, p.x, p.y + 0.5);
 
-    // Render Floating Alerts (Card / Injury over player's head)
     const alert = floatingAlerts.find(a => a.id === p.playerId);
     if (alert) {
       ctx.font = '13px sans-serif';
@@ -758,7 +752,6 @@ function draw2DPitch() {
     }
   });
 
-  // Ball with outline
   ctx.fillStyle = '#ffffff';
   ctx.beginPath();
   ctx.arc(ball.x, ball.y, 5, 0, Math.PI * 2);
@@ -773,130 +766,12 @@ function update2DPitchPhysics() {
   b.x += (b.targetX - b.x) * 0.15;
   b.y += (b.targetY - b.y) * 0.15;
 
-  // Record trail positions for smooth line rendering
   b.trail.push({ x: b.x, y: b.y });
   if (b.trail.length > 8) b.trail.shift();
 
-  // Expire floating in-match badge alerts
   const now = Date.now();
   pitchEngine.floatingAlerts = pitchEngine.floatingAlerts.filter(a => a.expireTime > now);
 
-  // Player physics towards ball
-  [...pitchEngine.homePlayers, ...pitchEngine.awayPlayers].forEach(p => {
-    const dx = b.x - p.baseX;
-    const dy = b.y - p.baseY;
-    const d = Math.hypot(dx, dy) || 1;
-    const inf = Math.min(38, d * 0.28);
-    p.x += (p.baseX + (dx / d) * inf - p.x) * 0.1;
-    p.y += (p.baseY + (dy / d) * inf - p.y) * 0.1;
-  });
-
-  draw2DPitch();
-}
-
-function draw2DPitch() {
-  const { ctx, w, h, ball, floatingAlerts } = pitchEngine;
-  if (!ctx) return;
-
-  // Grass pitch & mowed stripes
-  ctx.fillStyle = '#1e5229';
-  ctx.fillRect(0, 0, w, h);
-  ctx.fillStyle = '#174221';
-  for (let i = 0; i < 10; i += 2) ctx.fillRect(i * 80, 0, 80, h);
-
-  // Pitch lines
-  ctx.strokeStyle = 'rgba(255,255,255,0.7)';
-  ctx.lineWidth = 2;
-  ctx.strokeRect(16, 16, w - 32, h - 32);
-
-  // Halfway line & center circle
-  ctx.beginPath();
-  ctx.moveTo(w / 2, 16);
-  ctx.lineTo(w / 2, h - 16);
-  ctx.stroke();
-  ctx.beginPath();
-  ctx.arc(w / 2, h / 2, 65, 0, Math.PI * 2);
-  ctx.stroke();
-
-  // Penalty boxes & goal areas
-  ctx.strokeRect(16, h / 2 - 105, 115, 210);
-  ctx.strokeRect(w - 131, h / 2 - 105, 115, 210);
-  ctx.strokeRect(16, h / 2 - 45, 45, 90);
-  ctx.strokeRect(w - 61, h / 2 - 45, 45, 90);
-
-  // Draw Shot / Ball Trajectory Trails
-  if (ball.trail && ball.trail.length > 1) {
-    for (let i = 0; i < ball.trail.length - 1; i++) {
-      const alpha = (i / ball.trail.length) * 0.45;
-      ctx.strokeStyle = `rgba(255, 230, 0, ${alpha})`;
-      ctx.lineWidth = (i / ball.trail.length) * 4;
-      ctx.beginPath();
-      ctx.moveTo(ball.trail[i].x, ball.trail[i].y);
-      ctx.lineTo(ball.trail[i + 1].x, ball.trail[i + 1].y);
-      ctx.stroke();
-    }
-  }
-
-  // Draw Player Dots with Team Styling
-  const allPitchPlayers = [...pitchEngine.homePlayers, ...pitchEngine.awayPlayers];
-  allPitchPlayers.forEach(p => {
-    // Outer shadow / border
-    ctx.fillStyle = 'rgba(0,0,0,0.45)';
-    ctx.beginPath();
-    ctx.arc(p.x + 1, p.y + 2, 9, 0, Math.PI * 2);
-    ctx.fill();
-
-    // Outer kit ring (contrasting trim)
-    ctx.fillStyle = p.num === 1 ? '#eab308' : '#ffffff'; // GK has gold trim
-    ctx.beginPath();
-    ctx.arc(p.x, p.y, 9, 0, Math.PI * 2);
-    ctx.fill();
-
-    // Main jersey color fill
-    ctx.fillStyle = p.num === 1 ? '#047857' : p.color;
-    ctx.beginPath();
-    ctx.arc(p.x, p.y, 7.2, 0, Math.PI * 2);
-    ctx.fill();
-
-    // Kit Number
-    ctx.fillStyle = '#ffffff';
-    ctx.font = 'bold 8.5px sans-serif';
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'middle';
-    ctx.fillText(p.num, p.x, p.y + 0.5);
-
-    // Render Floating Alerts (Card / Injury over player's head)
-    const alert = floatingAlerts.find(a => a.id === p.playerId);
-    if (alert) {
-      ctx.font = '13px sans-serif';
-      ctx.fillText(alert.icon, p.x, p.y - 14);
-    }
-  });
-
-  // Ball with outline
-  ctx.fillStyle = '#ffffff';
-  ctx.beginPath();
-  ctx.arc(ball.x, ball.y, 5, 0, Math.PI * 2);
-  ctx.fill();
-  ctx.strokeStyle = '#000000';
-  ctx.lineWidth = 1.2;
-  ctx.stroke();
-}
-
-function update2DPitchPhysics() {
-  const b = pitchEngine.ball;
-  b.x += (b.targetX - b.x) * 0.15;
-  b.y += (b.targetY - b.y) * 0.15;
-
-  // Record trail positions for smooth line rendering
-  b.trail.push({ x: b.x, y: b.y });
-  if (b.trail.length > 8) b.trail.shift();
-
-  // Expire floating in-match badge alerts
-  const now = Date.now();
-  pitchEngine.floatingAlerts = pitchEngine.floatingAlerts.filter(a => a.expireTime > now);
-
-  // Player physics towards ball
   [...pitchEngine.homePlayers, ...pitchEngine.awayPlayers].forEach(p => {
     const dx = b.x - p.baseX;
     const dy = b.y - p.baseY;
@@ -1066,7 +941,12 @@ function startMatchdaySim() {
     return active.length ? pick(active) : null;
   };
 
-if (currentYellows === 1 || Math.random() < 0.08) {
+  const triggerCard = (club) => {
+    const p = getRandomActivePlayer(club);
+    if (!p) return;
+    const currentYellows = matchLiveState.yellows[p.id] || 0;
+
+    if (currentYellows === 1 || Math.random() < 0.08) {
       matchLiveState.reds.push(p.id);
       pitchEngine.floatingAlerts.push({ id: p.id, icon: '🟥', expireTime: Date.now() + 4500 });
       feed.insertAdjacentHTML('afterbegin', `<div class="comm-line redcard">🟥 ${min}' RED CARD! ${p.name} (${club.name}) is sent off!</div>`);
@@ -1081,12 +961,18 @@ if (currentYellows === 1 || Math.random() < 0.08) {
     }
   };
 
-p.inj = R(1, 3);
+  const triggerMatchInjury = (club) => {
+    const p = getRandomActivePlayer(club);
+    if (!p || p.inj > 0) return;
+    p.inj = R(1, 3);
     p.con = Math.max(30, p.con - 35);
     pitchEngine.floatingAlerts.push({ id: p.id, icon: '🚑', expireTime: Date.now() + 4500 });
     feed.insertAdjacentHTML('afterbegin', `<div class="comm-line injury">🚑 ${min}' INJURY: ${p.name} (${club.name}) is down in pain!</div>`);
     addTimelineEvent('injury', `🚑 ${min}' ${p.name.split(' ').pop()}`);
     playSound('whistle');
+    if (club.id === state.userClubId) {
+      populateInMatchSubChips();
+    }
   };
 
   function tick() {
@@ -1146,7 +1032,7 @@ p.inj = R(1, 3);
     if (min >= 90) {
       cancelAnimationFrame(animFrameId);
       btn.disabled = false;
-      if ($('btnPauseMatch'))$('btnPauseMatch').style.display = 'none';
+      if ($('btnPauseMatch')) $('btnPauseMatch').style.display = 'none';
       applyResult(m, hs, as, true);
       $('sbMinute').innerText = 'FULL TIME';
       feed.insertAdjacentHTML('afterbegin', `<div class="comm-line" style="font-weight:800">🏁 Full-time: ${h.name} ${hs}-${as} ${a.name}</div>`);
@@ -1194,35 +1080,18 @@ function renderMatchdayView() {
     $('sbHomeBadgeWrap').innerHTML = createBadgeHtml(h.id, 40);$('sbAwayBadgeWrap').innerHTML = createBadgeHtml(a.id, 40); $('sbHomeName').innerText = h.name; $('sbAwayName').innerText = a.name;
     $('sbScore').innerText = m.played ? `${m.homeGoals} - ${m.awayGoals}` : '0 - 0'; $('sbMinute').innerText = m.played ? 'FULL TIME' : (m.type === 'CUP' ? `${m.cupName.toUpperCase()}` : 'PRE-MATCH'); $('btnStartMatch').disabled = m.played;
     if (!m.played) {
+      const opp = (h.id === state.userClubId) ? a : h;
       const matchTypePrefix = m.type === 'CUP' ? `🏆 ${m.cupName}:` : `Week ${state.currentWeek}:`;
-      $('commentaryFeed').innerHTML = `<div class="comm-line">${matchTypePrefix} ${h.name} vs ${a.name}. Click "Start Match" or "Advance Week".</div>`;
+      $('commentaryFeed').innerHTML = `<div class="comm-line">${matchTypePrefix} <b>${h.name}</b> vs <b>${a.name}</b> (Manager: ${opp.manager || 'Interim'}). Click "Start Match" or "Advance Week".</div>`;
     }
- const hStarters = h.players.filter(p => p.starter);
-  const aStarters = a.players.filter(p => p.starter);
-
-  pitchEngine.homePlayers = homeCoords.map((pos, i) => ({
-    playerId: hStarters[i] ? hStarters[i].id : `h_${i}`,
-    num: i + 1,
-    baseX: pos.x,
-    baseY: pos.y,
-    x: pos.x,
-    y: pos.y,
-    color: pitchEngine.homeColor
-  }));
-
-  pitchEngine.awayPlayers = awayCoords.map((pos, i) => ({
-    playerId: aStarters[i] ? aStarters[i].id : `a_${i}`,
-    num: i + 1,
-    baseX: pos.x,
-    baseY: pos.y,
-    x: pos.x,
-    y: pos.y,
-    color: pitchEngine.awayColor
-  }));
-
-  pitchEngine.ball = { x: 400, y: 240, targetX: 400, targetY: 240, trail: [] };
-  pitchEngine.floatingAlerts = [];
-  draw2DPitch();
+    setup2DPlayers(h, a); populateInMatchSubChips();
+  } else { $('sbScore').innerText = '-';$('sbMinute').innerText = 'NO FIXTURE'; $('btnStartMatch').disabled = true; $('commentaryFeed').innerHTML = '<div class="comm-line">No fixture scheduled for your club this calendar week.</div>'; }
+  const g = $('aroundGroundsList'); g.innerHTML = '';
+  if (w) w.matches.filter(x => x.div === getCurrentUserClub().div || (x.type === 'CUP' && (x.home === state.userClubId || x.away === state.userClubId))).forEach(x => {
+    const h = clubById(x.home), a = clubById(x.away), r = document.createElement('div'); r.className = 'grounds-match-row';
+    r.innerHTML = `<div class="team-home"><span>${h.name}</span>${createBadgeHtml(h.id, 18)}</div><div class="match-vs-box">${x.played ? `${x.homeGoals}-${x.awayGoals}` : 'v'}</div><div class="team-away">${createBadgeHtml(a.id, 18)}<span>${a.name}</span></div>`; g.appendChild(r);
+  });
+}
 
 function renderCupsTab() {
   ensureCupTie(); const c = userCupMatch(), d = $('cupFixtureDisplay');
