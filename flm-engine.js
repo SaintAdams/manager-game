@@ -29,6 +29,8 @@ let state = null, selectedPlayerSwapId = null, wizardChosenClubId = 'NEW', activ
   deadlineHour = 12, pendingAIBid = null, pendingJobOffer = null, shootoutState = null, simSpeedMultiplier = 1,
   matchSimInterval = null, animFrameId = null, marketSortKey = 'ovr', marketSortAsc = false, activeCupTree = 'fa';
 
+let lastUserClubRatings = null;
+
 let matchLiveState = {
   subsUsed: 0,
   maxSubs: 5,
@@ -576,7 +578,7 @@ function toggleAudio() {
   playSoundSafe('click');
 }
 
-/* ---------- BRACKET & TOURNAMENT TREES (SAFE GENERATOR) ---------- */
+/* ---------- BRACKETS & CUPS ---------- */
 function initCupTournamentTrees() {
   const generateBracket = (name) => {
     const r16 = [];
@@ -632,6 +634,7 @@ function renderCupBracketTree() {
   `;
 }
 
+/* ---------- SAVE EXPORT, IMPORT & ROLLING BACKUPS ---------- */
 function saveGame() {
   if (!state) return;
   try {
@@ -715,6 +718,7 @@ function renderBackupsList() {
   }
 }
 
+/* ---------- INITIALIZATION & HYDRATION ---------- */
 function setupFreshState(managerName = 'Manager', clubId = 'NEW') {
   state = { 
     seasonYear: 2026, currentWeek: 1, totalWeeks: 46, userClubId: clubId, 
@@ -1295,10 +1299,15 @@ function fixStarters(club) {
   while (club.players.filter(p => p.starter).length < 11) { const n = club.players.find(p => !p.starter); if (!n) break; n.starter = true; }
 }
 
-/* ---------- TACTICS & DRAG ENGINE ---------- */
+/* ---------- TACTICS & INTERACTIVE DRAG ENGINE ---------- */
 function changeFormation(f) {
   state.currentFormation = f;
-  if (f === 'Custom' && (!FORMATIONS['Custom'] || !FORMATIONS['Custom'].length)) FORMATIONS['Custom'] = JSON.parse(JSON.stringify(FORMATIONS['4-3-3']));
+  const customControls = $('customFormationControls');
+  if (customControls) customControls.style.display = f === 'Custom' ? 'flex' : 'none';
+
+  if (f === 'Custom' && (!FORMATIONS['Custom'] || !FORMATIONS['Custom'].length)) {
+    FORMATIONS['Custom'] = JSON.parse(JSON.stringify(FORMATIONS['4-3-3']));
+  }
   autoPickBestXI();
 }
 
@@ -1317,9 +1326,15 @@ function autoPickBestXI() {
 }
 
 function saveCustomTacticalShape() {
+  const name = ($('customFormationNameInput') ? $('customFormationNameInput').value.trim() : '') || 'Custom System';
   if (!state.customFormations) state.customFormations = {};
   state.customFormations['Custom'] = JSON.parse(JSON.stringify(FORMATIONS['Custom']));
-  saveGame(); renderTactics(); updateHeaderClubDisplay(); alert('Custom tactic saved!'); playSoundSafe('click');
+  if (!state.tacticalFamiliarity['Custom']) state.tacticalFamiliarity['Custom'] = 50;
+  saveGame();
+  renderTactics();
+  updateHeaderClubDisplay();
+  alert(`Tactical shape "${name}" saved!`);
+  playSoundSafe('click');
 }
 
 function handlePlayerSelect(id) {
@@ -1349,20 +1364,94 @@ function renderTactics() {
   const st = club.players.filter(p => p.starter), bench = club.players.filter(p => !p.starter);
   if ($('formationSelect')) $('formationSelect').value = state.currentFormation;
 
+  const customControls = $('customFormationControls');
+  if (customControls) customControls.style.display = state.currentFormation === 'Custom' ? 'flex' : 'none';
+
+  // Familiarity Display Updates
+  const famScore = (state.tacticalFamiliarity && state.tacticalFamiliarity[state.currentFormation]) || 50;
+  if ($('familiarityScoreBadge')) $('familiarityScoreBadge').innerText = `${famScore}%`;
+  if ($('familiarityProgressBar')) {
+    $('familiarityProgressBar').style.width = `${famScore}%`;
+    $('familiarityProgressBar').style.background = famScore >= 75 ? '#10b981' : famScore >= 50 ? '#38bdf8' : '#f59e0b';
+  }
+
+  // Interactive 2D Pitch Nodes & Full Drag Engine
   const nodes = $('pitchNodesWrapper');
   if (nodes) {
     nodes.innerHTML = '';
     const userKit = getClubKitColors(club);
+
     st.forEach((p, i) => {
       const t = tpl[i] || { x: 50, y: 50, role: TAG[p.naturalPos], duty: p.role, posType: p.naturalPos };
       const n = document.createElement('div');
       n.className = `pitch-node ${selectedPlayerSwapId === p.id ? 'selected-for-swap' : ''}`;
-      n.style.left = t.x + '%'; n.style.top = t.y + '%';
+      n.style.left = t.x + '%'; 
+      n.style.top = t.y + '%';
+
+      const famMult = Math.round(getPositionFamiliarityMultiplier(p.naturalPos, t.posType) * 100);
+      const famColor = famMult === 100 ? '#10b981' : famMult >= 75 ? '#f59e0b' : '#ef4444';
       const nodeKit = i === 0 ? (userKit.gk || '#047857') : userKit.home;
+
       n.innerHTML = `<div class="pitch-kit" style="background:${nodeKit}">${i + 1}<div class="pitch-role-tag">${t.role}</div></div>
-        <div class="pitch-name-card"><div class="p-name">${p.name.split(' ').pop()} ${p.inj > 0 ? '🚑' : ''}</div><div class="p-role">${p.ovr} • ${(p.morale || 'Good')[0]} • 🤝${p.chemistry || 60}%</div></div>`;
+        <div class="pitch-name-card">
+          <div class="p-name">${p.name.split(' ').pop()} ${p.inj > 0 ? '🚑' : ''}</div>
+          <div class="p-role">${p.ovr} OVR • <span style="color:${famColor};font-weight:800;">${famMult}%</span></div>
+        </div>`;
+
+      // Full Drag Engine
+      let isDragging = false;
+      const onPointerDown = e => {
+        if (e.target.tagName === 'BUTTON') return;
+        isDragging = true;
+        n.classList.add('dragging');
+        document.addEventListener('pointermove', onPointerMove);
+        document.addEventListener('pointerup', onPointerUp);
+      };
+
+      const onPointerMove = e => {
+        if (!isDragging) return;
+        const rect = nodes.getBoundingClientRect();
+        const clientX = e.clientX || (e.touches && e.touches[0].clientX);
+        const clientY = e.clientY || (e.touches && e.touches[0].clientY);
+        let posX = Math.round(((clientX - rect.left) / rect.width) * 100);
+        let posY = Math.round(((clientY - rect.top) / rect.height) * 100);
+
+        posX = Math.max(8, Math.min(92, posX));
+        posY = Math.max(i === 0 ? 78 : 12, Math.min(i === 0 ? 94 : 85, posY));
+
+        n.style.left = posX + '%';
+        n.style.top = posY + '%';
+        t.x = posX;
+        t.y = posY;
+
+        if (i > 0) {
+          if (posY >= 62) { t.posType = 'DEF'; t.role = 'DF'; }
+          else if (posY >= 32) { t.posType = 'MID'; t.role = 'MF'; }
+          else { t.posType = 'FWD'; t.role = 'FW'; }
+        }
+      };
+
+      const onPointerUp = () => {
+        if (!isDragging) return;
+        isDragging = false;
+        n.classList.remove('dragging');
+        document.removeEventListener('pointermove', onPointerMove);
+        document.removeEventListener('pointerup', onPointerUp);
+
+        if (state.currentFormation !== 'Custom') {
+          state.currentFormation = 'Custom';
+          if ($('formationSelect')) $('formationSelect').value = 'Custom';
+          FORMATIONS['Custom'] = JSON.parse(JSON.stringify(tpl));
+          if ($('customFormationControls')) $('customFormationControls').style.display = 'flex';
+        }
+        saveGame();
+        renderTactics();
+        updateHeaderClubDisplay();
+      };
+
+      n.addEventListener('pointerdown', onPointerDown);
+      n.onclick = () => { if (!isDragging) handlePlayerSelect(p.id); };
       nodes.appendChild(n);
-      n.onclick = () => handlePlayerSelect(p.id);
     });
   }
 
@@ -1453,6 +1542,96 @@ function update2DPitchPhysics() {
   draw2DPitch();
 }
 
+/* In-Match Substitutions Drawer Functions */
+function cancelInMatchSub() {
+  matchLiveState.pendingSubInId = null;
+  populateInMatchSubChips();
+}
+
+function populateInMatchSubChips() {
+  const container = $('benchSubChipsList');
+  if (!container) return;
+  const drawer = $('inMatchSubDrawer');
+  const titleElem = drawer ? drawer.querySelector('.in-match-sub-title') : null;
+  container.innerHTML = '';
+  const club = getCurrentUserClub();
+
+  if (matchLiveState.pendingSubInId) {
+    const incomingPlayer = club.players.find(p => p.id === matchLiveState.pendingSubInId);
+    if (titleElem) {
+      titleElem.innerHTML = `<span>🔄 Subbing in: <b style="color:var(--gold)">${incomingPlayer ? incomingPlayer.name : ''}</b></span> <button class="btn-swap-pill" style="padding:2px 8px;font-size:0.68rem;" onclick="cancelInMatchSub()">Cancel</button>`;
+    }
+
+    club.players.filter(p => p.starter).forEach(p => {
+      const isRed = matchLiveState.reds.includes(p.id);
+      const chip = document.createElement('div');
+      chip.className = 'sub-chip starter-chip';
+      chip.style.opacity = isRed ? '0.4' : '1';
+      chip.innerHTML = `<span>${p.name} (${p.naturalPos} • ${p.con}%)</span><b style="color:${isRed ? '#ef4444' : '#f87171'}">${isRed ? 'SENT OFF' : 'Sub Off ⬇'}</b>`;
+      if (!isRed) {
+        chip.onclick = () => confirmLiveMatchSub(p.id);
+      }
+      container.appendChild(chip);
+    });
+    return;
+  }
+
+  const remaining = matchLiveState.maxSubs - matchLiveState.subsUsed;
+  if (titleElem) {
+    titleElem.innerHTML = `<span>🔄 TACTICAL SUBSTITUTIONS (REMAINING: <span id="subsRemainingText">${remaining}</span>)</span><span style="font-size: 0.68rem; color: var(--text-muted);">Tap a bench player to bring on</span>`;
+  }
+
+  if (remaining <= 0) {
+    container.innerHTML = '<span style="font-size:0.75rem; color:var(--text-muted);">All substitutions used for this match.</span>';
+    return;
+  }
+
+  const bench = club.players.filter(p => !p.starter && !p.inj && !p.susp);
+  if (!bench.length) {
+    container.innerHTML = '<span style="font-size:0.75rem; color:var(--text-muted);">No fit bench players available.</span>';
+    return;
+  }
+
+  bench.forEach(p => {
+    const chip = document.createElement('div');
+    chip.className = 'sub-chip';
+    chip.innerHTML = `<span>${p.name} (${p.naturalPos} • OVR ${p.ovr} • ${p.con}%)</span><b style="color:#10b981">Bring On ⬆</b>`;
+    chip.onclick = () => {
+      matchLiveState.pendingSubInId = p.id;
+      populateInMatchSubChips();
+    };
+    container.appendChild(chip);
+  });
+}
+
+function confirmLiveMatchSub(starterOutId) {
+  if (matchLiveState.subsUsed >= matchLiveState.maxSubs || !matchLiveState.pendingSubInId) return;
+
+  const club = getCurrentUserClub();
+  const inP = club.players.find(x => x.id === matchLiveState.pendingSubInId);
+  const outP = club.players.find(x => x.id === starterOutId);
+
+  if (!inP || !outP) {
+    cancelInMatchSub();
+    return;
+  }
+
+  inP.starter = true;
+  outP.starter = false;
+  inP.role = outP.role;
+  matchLiveState.subsUsed++;
+  matchLiveState.pendingSubInId = null;
+
+  addTimelineEvent('sub', `🔄 ${pitchEngine.currentMinute}' ${inP.name.split(' ').pop()} on for ${outP.name.split(' ').pop()}`);
+  const feed = $('commentaryFeed');
+  if (feed) feed.insertAdjacentHTML('afterbegin', `<div class="comm-line" style="border-left-color:#38bdf8">🔄 ${pitchEngine.currentMinute}' Tactical Substitution: <b>${inP.name}</b> on for <b>${outP.name}</b>.</div>`);
+
+  populateInMatchSubChips();
+  const m = getActiveUserMatch();
+  if (m) setup2DPlayers(clubById(m.home), clubById(m.away));
+  playSoundSafe('click');
+}
+
 function startMatchdaySim() {
   const m = getActiveUserMatch(); if (!m || m.played) return;
   if ($('btnStartMatch')) $('btnStartMatch').disabled = true;
@@ -1461,6 +1640,13 @@ function startMatchdaySim() {
   if ($('matchTimelineBar')) $('matchTimelineBar').innerHTML = '';
   matchLiveState.isDerby = isRivalMatch(h, a);
   matchLiveState.reds = []; matchLiveState.yellows = {}; m.scorers = [];
+
+  const pauseBtn = $('btnPauseMatch');
+  if (pauseBtn) {
+    pauseBtn.style.display = 'inline-flex';
+    pauseBtn.innerText = '⏸️ PAUSE';
+    pauseBtn.style.background = '#334155';
+  }
 
   startStadiumCrowdLoop(matchLiveState.isDerby);
   playSoundSafe('whistle');
@@ -1481,6 +1667,11 @@ function startMatchdaySim() {
   };
 
   function tick() {
+    if (matchLiveState.isPaused) {
+      matchSimInterval = setTimeout(tick, 200);
+      return;
+    }
+
     min += 2; pitchEngine.currentMinute = min;
     if ($('sbMinute')) $('sbMinute').innerText = `${min}'`;
     if (min % 4 === 0) {
@@ -1494,11 +1685,13 @@ function startMatchdaySim() {
     if (Math.random() < Math.max(0.01, (0.024 + (aS.att - hS.def) / 1400))) goal(a, false);
 
     if (min >= 90) {
+      cancelAnimationFrame(animFrameId);
       stopStadiumCrowdLoop();
       playSoundSafe('whistle');
       applyResult(m, hs, as, true);
       if ($('sbMinute')) $('sbMinute').innerText = 'FULL TIME';
       if ($('btnStartMatch')) $('btnStartMatch').disabled = false;
+      if ($('btnPauseMatch')) $('btnPauseMatch').style.display = 'none';
       if (feed) feed.insertAdjacentHTML('afterbegin', `<div class="comm-line" style="font-weight:900;">🏁 Full Time: ${h.name} ${hs}-${as} ${a.name}</div>`);
       if (m.type === 'CUP') {
         if (hs === as) launchPenaltyShootout(m, h, a);
@@ -1531,9 +1724,10 @@ function setSimSpeed(s) {
 function triggerInstantSim() { simSpeedMultiplier = 25; }
 function toggleMatchPause() {
   matchLiveState.isPaused = !matchLiveState.isPaused;
-  if ($('btnPauseMatch'))$('btnPauseMatch').innerText = matchLiveState.isPaused ? '▶️ RESUME' : '⏸️ PAUSE';
+  if ($('btnPauseMatch')) $('btnPauseMatch').innerText = matchLiveState.isPaused ? '▶️ RESUME' : '⏸️ PAUSE';
 }
 
+/* ---------- STANDINGS & EUROPEAN QUALIFICATION ---------- */
 function renderStandingsTable(div) {
   state.activeStandingsTab = div;
   for (let i = 0; i <= 3; i++) {
@@ -1567,26 +1761,28 @@ function renderStandingsTable(div) {
   });
 }
 
+/* ---------- MATCHDAY VIEW & VENUES ---------- */
 function renderMatchdayView() {
   const m = getActiveUserMatch(), w = getWeek();
   if (m) {
     const h = clubById(m.home), a = clubById(m.away);
     const isDerby = isRivalMatch(h, a);
-    if ($('derbyBannerWrap'))$('derbyBannerWrap').style.display = isDerby ? 'block' : 'none';
+    if ($('derbyBannerWrap')) $('derbyBannerWrap').style.display = isDerby ? 'block' : 'none';
 
     const compText = m.type === 'CUP' ? `${m.cupName} - ${m.roundName || 'Knockout Round'}` : `${DIV_NAMES[m.div]} - Matchday ${state.currentWeek}`;
-    if ($('matchCompetitionBadge'))$('matchCompetitionBadge').innerText = compText;
-    if ($('matchVenueBadge'))$('matchVenueBadge').innerText = m.final ? '🏟️ Wembley Stadium (National Final)' : `🏟️ ${h.stadium}`;
+    if ($('matchCompetitionBadge')) $('matchCompetitionBadge').innerText = compText;
+    if ($('matchVenueBadge')) $('matchVenueBadge').innerText = m.final ? '🏟️ Wembley Stadium (National Final)' : `🏟️ ${h.stadium}`;
 
-    if ($('sbHomeBadgeWrap'))$('sbHomeBadgeWrap').innerHTML = createBadgeHtml(h.id, 40);
-    if ($('sbAwayBadgeWrap'))$('sbAwayBadgeWrap').innerHTML = createBadgeHtml(a.id, 40);
-    if ($('sbHomeName'))$('sbHomeName').innerText = h.name; 
-    if ($('sbAwayName'))$('sbAwayName').innerText = a.name;
-    if ($('sbScore'))$('sbScore').innerText = m.played ? `${m.homeGoals} - ${m.awayGoals}` : '0 - 0';
+    if ($('sbHomeBadgeWrap')) $('sbHomeBadgeWrap').innerHTML = createBadgeHtml(h.id, 40);
+    if ($('sbAwayBadgeWrap')) $('sbAwayBadgeWrap').innerHTML = createBadgeHtml(a.id, 40);
+    if ($('sbHomeName')) $('sbHomeName').innerText = h.name; 
+    if ($('sbAwayName')) $('sbAwayName').innerText = a.name;
+    if ($('sbScore')) $('sbScore').innerText = m.played ? `${m.homeGoals} - ${m.awayGoals}` : '0 - 0';
     if ($('sbMinute'))$('sbMinute').innerText = m.played ? 'FULL TIME' : 'PRE-MATCH';
     if ($('btnStartMatch'))$('btnStartMatch').disabled = m.played;
 
     setup2DPlayers(h, a);
+    populateInMatchSubChips();
   } else {
     if ($('sbScore'))$('sbScore').innerText = '-'; 
     if ($('sbMinute'))$('sbMinute').innerText = 'NO FIXTURE';
@@ -1594,6 +1790,7 @@ function renderMatchdayView() {
   }
 }
 
+/* ---------- MANAGER PROFILE & FINANCES VIEW ---------- */
 function renderManagerOffice() {
   const m = state.manager, club = getCurrentUserClub(), objs = getClubBoardObjectives(club);
   if ($('mgrContractBadge'))$('mgrContractBadge').innerText = `Contract: ${m.contractYears || 2} Years Remaining`;
@@ -1653,6 +1850,7 @@ function renderHonours() {
   }
 }
 
+/* ---------- YOUTH ACADEMY ---------- */
 function generateYouthIntake(announce) {
   const lvl = state.academyFacilityLevel || 1, n = R(3, 5);
   state.youthProspects = Array.from({ length: n }, (_, i) => {
@@ -1683,6 +1881,7 @@ function signAcademyProspect(id) {
   saveGame(); renderAll(); renderAcademyTab(); playSoundSafe('cheer');
 }
 
+/* ---------- TRANSFER MARKET ---------- */
 function initMarketFilterDropdowns() {
   if ($('filterMarketNation')) {$('filterMarketNation').innerHTML = ['ALL', 'ENG', 'SCO', 'WAL', 'IRL', 'NIR', ...NATS.slice(4)].map(n => `<option value="${n}">${n === 'ALL' ? 'All Nations' : n}</option>`).join('');
   }
@@ -1772,6 +1971,7 @@ function sellSquadPlayer(id) {
   saveGame(); renderAll(); updateHeaderClubDisplay(); renderTransfers(); playSoundSafe('whistle');
 }
 
+/* ---------- END SEASON TRANSITION ---------- */
 const sortedDivs = () => { const s = {}; for (let d = 0; d <= 3; d++) s[d] = [...state.standings[d]].sort((a, b) => b.pts - a.pts || b.gd - a.gd || b.gf - a.gf); return s; };
 
 function showEndSeasonGala() {
@@ -1859,7 +2059,7 @@ function switchTab(id) {
 function layoutMatchday() {
   const grid = document.querySelector('.matchday-grid'); 
   if (!grid || grid.dataset.laid) return; 
-  grid.dataset.laid = 1;
+  grid.dataset.laid = '1';
   const grounds = grid.querySelector('.standings-card'), comm = $('commentaryFeed');
   if (grounds && comm && comm.previousElementSibling) {
     const right = document.createElement('div'); right.className = 'md-right';
