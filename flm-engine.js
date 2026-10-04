@@ -64,10 +64,197 @@ const LEAGUES = ('Arsenal,Aston Villa,Bournemouth,Brentford,Brighton,Chelsea,Cry
   'Wrexham,Bolton,Stockport,Leyton Orient,Huddersfield,Lincoln City,Reading,Wycombe,Barnsley,Peterborough,Blackpool,Rotherham,Cardiff City,Bradford City,Stevenage,Mansfield Town,Exeter City,Northampton,Burton Albion,Wigan,Luton Town,Port Vale,Doncaster,Crawley Town|' +
   'Notts County,Walsall,Chesterfield,Swindon,Gillingham,Salford City,Grimsby Town,Bromley,Crewe Alexandra,Colchester,Fleetwood,Tranmere,AFC Wimbledon,Barrow,Cheltenham,Harrogate,MK Dons,Accrington Stanley,Newport County,Bristol Rovers,Carlisle,Shrewsbury,Morecambe,Oldham Athletic').split('|').map(s => s.split(','));
 
+/* ---------- 92-CLUB AUTHENTIC KIT DATABASE ---------- */
+const CLUB_KITS_DATABASE = {
+  // Premier League
+  'Arsenal': { home: '#dc2626', away: '#09090b', gk: '#f59e0b' },
+  'Aston Villa': { home: '#7b113a', away: '#f8fafc', gk: '#f59e0b' },
+  'Bournemouth': { home: '#b91c1c', away: '#38bdf8', gk: '#10b981' },
+  'Brentford': { home: '#dc2626', away: '#f43f5e', gk: '#10b981' },
+  'Brighton': { home: '#0284c7', away: '#f59e0b', gk: '#10b981' },
+  'Chelsea': { home: '#1d4ed8', away: '#fef08a', gk: '#f59e0b' },
+  'Crystal Palace': { home: '#1d4ed8', away: '#f8fafc', gk: '#10b981' },
+  'Everton': { home: '#1e40af', away: '#fef08a', gk: '#10b981' },
+  'Fulham': { home: '#f8fafc', away: '#dc2626', gk: '#10b981' },
+  'Leeds United': { home: '#f8fafc', away: '#f59e0b', gk: '#10b981' },
+  'Liverpool': { home: '#b91c1c', away: '#f8fafc', gk: '#10b981' },
+  'Manchester City': { home: '#38bdf8', away: '#0f172a', gk: '#10b981' },
+  'Manchester United': { home: '#b91c1c', away: '#0f172a', gk: '#10b981' },
+  'Newcastle United': { home: '#171717', away: '#f8fafc', gk: '#047857' },
+  'Nottingham Forest': { home: '#dc2626', away: '#38bdf8', gk: '#10b981' },
+  'Sunderland': { home: '#dc2626', away: '#0284c7', gk: '#10b981' },
+  'Tottenham': { home: '#f8fafc', away: '#0f172a', gk: '#f59e0b' },
+  'Coventry City': { home: '#38bdf8', away: '#475569', gk: '#10b981' },
+  'Ipswich Town': { home: '#1d4ed8', away: '#78350f', gk: '#f59e0b' },
+  'Hull City': { home: '#f59e0b', away: '#0f172a', gk: '#10b981' },
+
+  // Championship
+  'Leicester City': { home: '#1d4ed8', away: '#f59e0b', gk: '#0f172a' },
+  'Southampton': { home: '#dc2626', away: '#0f172a', gk: '#10b981' },
+  'Burnley': { home: '#7b113a', away: '#f8fafc', gk: '#10b981' },
+  'Middlesbrough': { home: '#dc2626', away: '#0284c7', gk: '#10b981' },
+  'West Brom': { home: '#1e40af', away: '#f59e0b', gk: '#10b981' },
+  'Norwich City': { home: '#facc15', away: '#065f46', gk: '#dc2626' },
+  'Sheffield United': { home: '#dc2626', away: '#0f172a', gk: '#10b981' },
+  'West Ham': { home: '#7b113a', away: '#0f172a', gk: '#10b981' },
+  'Watford': { home: '#facc15', away: '#475569', gk: '#0284c7' },
+  'Wolves': { home: '#f59e0b', away: '#0f172a', gk: '#dc2626' },
+  'Stoke City': { home: '#dc2626', away: '#0f172a', gk: '#10b981' },
+  'Swansea City': { home: '#f8fafc', away: '#581c87', gk: '#f59e0b' },
+  'Bristol City': { home: '#dc2626', away: '#f8fafc', gk: '#10b981' },
+  'Millwall': { home: '#1e3a8a', away: '#f8fafc', gk: '#f59e0b' },
+  'Preston': { home: '#f8fafc', away: '#f59e0b', gk: '#10b981' },
+  'QPR': { home: '#1d4ed8', away: '#dc2626', gk: '#10b981' },
+  'Blackburn': { home: '#0284c7', away: '#dc2626', gk: '#f59e0b' },
+  'Derby County': { home: '#f8fafc', away: '#0284c7', gk: '#f59e0b' },
+  'Portsmouth': { home: '#1e40af', away: '#f8fafc', gk: '#f59e0b' },
+  'Oxford United': { home: '#f59e0b', away: '#dc2626', gk: '#0284c7' },
+  'Sheffield Wednesday': { home: '#1d4ed8', away: '#f59e0b', gk: '#10b981' },
+  'Plymouth Argyle': { home: '#064e3b', away: '#f8fafc', gk: '#f59e0b' },
+  'Birmingham City': { home: '#1d4ed8', away: '#dc2626', gk: '#f59e0b' },
+  'Charlton': { home: '#dc2626', away: '#f8fafc', gk: '#10b981' },
+
+  // League One
+  'Wrexham': { home: '#dc2626', away: '#059669', gk: '#f59e0b' },
+  'Bolton': { home: '#f8fafc', away: '#0f172a', gk: '#10b981' },
+  'Stockport': { home: '#1d4ed8', away: '#f8fafc', gk: '#f59e0b' },
+  'Leyton Orient': { home: '#dc2626', away: '#f8fafc', gk: '#0284c7' },
+  'Huddersfield': { home: '#0284c7', away: '#0f172a', gk: '#f59e0b' },
+  'Lincoln City': { home: '#dc2626', away: '#0f172a', gk: '#10b981' },
+  'Reading': { home: '#1d4ed8', away: '#dc2626', gk: '#f59e0b' },
+  'Wycombe': { home: '#0284c7', away: '#dc2626', gk: '#f59e0b' },
+  'Barnsley': { home: '#dc2626', away: '#f8fafc', gk: '#10b981' },
+  'Peterborough': { home: '#1d4ed8', away: '#f8fafc', gk: '#f59e0b' },
+  'Blackpool': { home: '#f97316', away: '#f8fafc', gk: '#10b981' },
+  'Rotherham': { home: '#dc2626', away: '#0f172a', gk: '#10b981' },
+  'Cardiff City': { home: '#1d4ed8', away: '#dc2626', gk: '#f59e0b' },
+  'Bradford City': { home: '#7b113a', away: '#f8fafc', gk: '#0284c7' },
+  'Stevenage': { home: '#dc2626', away: '#0284c7', gk: '#10b981' },
+  'Mansfield Town': { home: '#f59e0b', away: '#1d4ed8', gk: '#10b981' },
+  'Exeter City': { home: '#dc2626', away: '#0f172a', gk: '#10b981' },
+  'Northampton': { home: '#7b113a', away: '#f8fafc', gk: '#0284c7' },
+  'Burton Albion': { home: '#facc15', away: '#0f172a', gk: '#0284c7' },
+  'Wigan': { home: '#1d4ed8', away: '#dc2626', gk: '#f59e0b' },
+  'Luton Town': { home: '#f97316', away: '#f8fafc', gk: '#10b981' },
+  'Port Vale': { home: '#f8fafc', away: '#0f172a', gk: '#10b981' },
+  'Doncaster': { home: '#dc2626', away: '#0284c7', gk: '#10b981' },
+  'Crawley Town': { home: '#dc2626', away: '#f8fafc', gk: '#10b981' },
+
+  // League Two
+  'Notts County': { home: '#171717', away: '#0284c7', gk: '#f59e0b' },
+  'Walsall': { home: '#dc2626', away: '#0f172a', gk: '#10b981' },
+  'Chesterfield': { home: '#1d4ed8', away: '#f8fafc', gk: '#f59e0b' },
+  'Swindon': { home: '#dc2626', away: '#0284c7', gk: '#10b981' },
+  'Gillingham': { home: '#1d4ed8', away: '#f8fafc', gk: '#f59e0b' },
+  'Salford City': { home: '#dc2626', away: '#0f172a', gk: '#10b981' },
+  'Grimsby Town': { home: '#171717', away: '#dc2626', gk: '#10b981' },
+  'Bromley': { home: '#f8fafc', away: '#0284c7', gk: '#f59e0b' },
+  'Crewe Alexandra': { home: '#dc2626', away: '#059669', gk: '#10b981' },
+  'Colchester': { home: '#1d4ed8', away: '#f59e0b', gk: '#10b981' },
+  'Fleetwood': { home: '#dc2626', away: '#0f172a', gk: '#10b981' },
+  'Tranmere': { home: '#f8fafc', away: '#1d4ed8', gk: '#f59e0b' },
+  'AFC Wimbledon': { home: '#1e3a8a', away: '#f8fafc', gk: '#f59e0b' },
+  'Barrow': { home: '#1d4ed8', away: '#0f172a', gk: '#f59e0b' },
+  'Cheltenham': { home: '#dc2626', away: '#0284c7', gk: '#10b981' },
+  'Harrogate': { home: '#facc15', away: '#0284c7', gk: '#10b981' },
+  'MK Dons': { home: '#f8fafc', away: '#dc2626', gk: '#10b981' },
+  'Accrington Stanley': { home: '#dc2626', away: '#1d4ed8', gk: '#10b981' },
+  'Newport County': { home: '#f59e0b', away: '#0f172a', gk: '#0284c7' },
+  'Bristol Rovers': { home: '#1d4ed8', away: '#f8fafc', gk: '#f59e0b' },
+  'Carlisle': { home: '#1d4ed8', away: '#f59e0b', gk: '#10b981' },
+  'Shrewsbury': { home: '#1d4ed8', away: '#dc2626', gk: '#f59e0b' },
+  'Morecambe': { home: '#dc2626', away: '#f8fafc', gk: '#10b981' },
+  'Oldham Athletic': { home: '#1d4ed8', away: '#f97316', gk: '#f59e0b' }
+};
+
+/* ---------- COLOR PARSER & CLASH DETECTION ---------- */
+function parseColorToRgb(colorStr) {
+  if (!colorStr) return { r: 50, g: 50, b: 50 };
+  if (colorStr.startsWith('#')) {
+    const hex = colorStr.replace('#', '');
+    const num = parseInt(hex.length === 3 ? hex.split('').map(c => c + c).join('') : hex, 16);
+    return { r: (num >> 16) & 255, g: (num >> 8) & 255, b: num & 255 };
+  }
+  if (colorStr.startsWith('hsl')) {
+    const m = colorStr.match(/\d+/g);
+    if (!m) return { r: 50, g: 50, b: 50 };
+    const h = +m[0] / 360, s = +m[1] / 100, l = +m[2] / 100;
+    if (s === 0) {
+      const val = Math.round(l * 255);
+      return { r: val, g: val, b: val };
+    }
+    const hue2rgb = (p, q, t) => {
+      if (t < 0) t += 1; if (t > 1) t -= 1;
+      if (t < 1/6) return p + (q - p) * 6 * t;
+      if (t < 1/2) return q;
+      if (t < 2/3) return p + (q - p) * (2/3 - t) * 6;
+      return p;
+    };
+    const q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+    const p = 2 * l - q;
+    return {
+      r: Math.round(hue2rgb(p, q, h + 1/3) * 255),
+      g: Math.round(hue2rgb(p, q, h) * 255),
+      b: Math.round(hue2rgb(p, q, h - 1/3) * 255)
+    };
+  }
+  return { r: 50, g: 50, b: 50 };
+}
+
+function getKitColorDistance(c1, c2) {
+  const rgb1 = parseColorToRgb(c1), rgb2 = parseColorToRgb(c2);
+  return Math.sqrt(
+    Math.pow(rgb1.r - rgb2.r, 2) +
+    Math.pow(rgb1.g - rgb2.g, 2) +
+    Math.pow(rgb1.b - rgb2.b, 2)
+  );
+}
+
+function getClubKitColors(club) {
+  const configured = CLUB_KITS_DATABASE[club.name];
+  if (configured) return configured;
+  const rgb = parseColorToRgb(club.col);
+  const brightness = (rgb.r * 299 + rgb.g * 587 + rgb.b * 114) / 1000;
+  return {
+    home: club.col,
+    away: brightness > 128 ? '#0f172a' : '#f8fafc',
+    gk: '#047857'
+  };
+}
+
+function resolveMatchKitColors(homeClub, awayClub) {
+  const hKits = getClubKitColors(homeClub);
+  const aKits = getClubKitColors(awayClub);
+
+  const homeColor = hKits.home;
+  let awayColor = aKits.home;
+  let usedAwayKit = false;
+
+  // If away team's home kit visually clashes with home team's kit
+  if (getKitColorDistance(homeColor, awayColor) < 110) {
+    awayColor = aKits.away;
+    usedAwayKit = true;
+    // Edge-case fallback: if away kit also clashes with home kit, use pure contrast
+    if (getKitColorDistance(homeColor, awayColor) < 90) {
+      const rgb = parseColorToRgb(homeColor);
+      const bright = (rgb.r * 299 + rgb.g * 587 + rgb.b * 114) / 1000;
+      awayColor = bright > 130 ? '#0f172a' : '#f8fafc';
+    }
+  }
+
+  let hGK = hKits.gk || '#047857';
+  let aGK = aKits.gk || '#f59e0b';
+  if (getKitColorDistance(homeColor, hGK) < 90) hGK = '#f59e0b';
+  if (getKitColorDistance(awayColor, aGK) < 90 || getKitColorDistance(hGK, aGK) < 70) aGK = '#38bdf8';
+
+  return { homeColor, awayColor, homeGK: hGK, awayGK: aGK, usedAwayKit };
+}
+
 const CLUBS_DATABASE = [];
 LEAGUES.forEach((names, div) => names.forEach(n => {
   const nu = n === 'Newcastle United'; let h = 0; for (const ch of n) h = (h * 31 + ch.charCodeAt(0)) % 360;
   const managerName = (typeof REAL_MANAGERS !== 'undefined' && REAL_MANAGERS[n]) || (pick(FIRSTNAMES) + ' ' + pick(SURNAMES));
+  const clubKit = CLUB_KITS_DATABASE[n] || { home: `hsl(${h},60%,38%)`, away: '#ffffff', gk: '#047857' };
   CLUBS_DATABASE.push({ 
     id: nu ? 'NEW' : 'C' + CLUBS_DATABASE.length, 
     name: n, 
@@ -76,7 +263,7 @@ LEAGUES.forEach((names, div) => names.forEach(n => {
     stadium: nu ? "St James' Park" : n + ' Stadium',
     cap: nu ? 52305 : [42000, 26000, 14000, 7000][div] + R(0, 8000), 
     budget: [60, 20, 8, 3][div] + R(0, 10), 
-    col: `hsl(${h},60%,38%)`, 
+    col: clubKit.home, 
     str: [76, 66, 58, 52][div] + R(-4, 4) 
   });
 }));
@@ -245,7 +432,11 @@ function buildStandings() {
 }
 
 function ensureAllSquadsHydrated() {
-  state.clubs.forEach(c => { if (!c.players || c.players.length < 14) c.players = generateProceduralSquad(c); });
+  state.clubs.forEach(c => { 
+    if (!c.players || c.players.length < 14) c.players = generateProceduralSquad(c);
+    const configuredKit = CLUB_KITS_DATABASE[c.name];
+    if (configuredKit) c.col = configuredKit.home;
+  });
   if (!state.cups) state.cups = { carabaoAlive: true, faAlive: true };
   if (!state.tacticalFamiliarity) state.tacticalFamiliarity = { '4-3-3': 100, '4-2-3-1': 55, '4-4-2': 50, '3-5-2': 40, '5-3-2': 40, '4-1-2-1-2': 45, '4-5-1': 45 };
   if (!state.customFormations) state.customFormations = {};
@@ -726,6 +917,8 @@ function renderTactics() {
   const nodes = $('pitchNodesWrapper');
   if (nodes) {
     nodes.innerHTML = '';
+    const userKit = getClubKitColors(club);
+
     st.forEach((p, i) => {
       const t = tpl[i] || { x: 50, y: 50, role: TAG[p.naturalPos], duty: p.role, posType: p.naturalPos };
       const n = document.createElement('div');
@@ -736,8 +929,9 @@ function renderTactics() {
       // Position Familiarity Rating
       const famMult = Math.round(getPositionFamiliarityMultiplier(p.naturalPos, t.posType) * 100);
       const famColor = famMult === 100 ? '#10b981' : famMult >= 75 ? '#f59e0b' : '#ef4444';
+      const nodeKitColor = i === 0 ? (userKit.gk || '#047857') : userKit.home;
 
-      n.innerHTML = `<div class="pitch-kit" style="background:${i === 0 ? '#047857' : (club.col || '#0284c7')}">${i + 1}<div class="pitch-role-tag">${t.role}</div></div>
+      n.innerHTML = `<div class="pitch-kit" style="background:${nodeKitColor}">${i + 1}<div class="pitch-role-tag">${t.role}</div></div>
         <div class="pitch-name-card">
           <div class="p-name">${p.name.split(' ').pop()} ${p.inj > 0 ? '🚑' : ''}${p.susp > 0 ? '🟥' : ''}</div>
           <div class="p-role">${p.ovr} OVR • <span style="color:${famColor};font-weight:800;">${famMult}%</span></div>
@@ -851,8 +1045,14 @@ function setup2DPlayers(h, a) {
   initPitchCanvas();
   pitchEngine.homeClubId = h.id;
   pitchEngine.awayClubId = a.id;
-  pitchEngine.homeColor = h.col;
-  pitchEngine.awayColor = a.col === h.col ? '#ef4444' : a.col;
+
+  // Resolve authentic home/away match kits & automatic anti-clash
+  const matchKits = resolveMatchKitColors(h, a);
+  pitchEngine.homeColor = matchKits.homeColor;
+  pitchEngine.awayColor = matchKits.awayColor;
+  pitchEngine.homeGKColor = matchKits.homeGK;
+  pitchEngine.awayGKColor = matchKits.awayGK;
+  pitchEngine.usedAwayKit = matchKits.usedAwayKit;
 
   const homeFormation = (h.id === state.userClubId) ? state.currentFormation : '4-3-3';
   const awayFormation = (a.id === state.userClubId) ? state.currentFormation : '4-2-3-1';
@@ -870,7 +1070,8 @@ function setup2DPlayers(h, a) {
     baseY: pos.y,
     x: pos.x,
     y: pos.y,
-    color: pitchEngine.homeColor
+    color: pitchEngine.homeColor,
+    isHome: true
   }));
 
   pitchEngine.awayPlayers = awayCoords.map((pos, i) => ({
@@ -880,7 +1081,8 @@ function setup2DPlayers(h, a) {
     baseY: pos.y,
     x: pos.x,
     y: pos.y,
-    color: pitchEngine.awayColor
+    color: pitchEngine.awayColor,
+    isHome: false
   }));
 
   pitchEngine.ball = { x: 400, y: 240, targetX: 400, targetY: 240, trail: [] };
@@ -937,17 +1139,25 @@ function draw2DPitch() {
     ctx.arc(p.x + 1, p.y + 2, 9, 0, Math.PI * 2);
     ctx.fill();
 
-    ctx.fillStyle = p.num === 1 ? '#eab308' : '#ffffff';
+    // Outer border trim
+    ctx.fillStyle = '#ffffff';
     ctx.beginPath();
     ctx.arc(p.x, p.y, 9, 0, Math.PI * 2);
     ctx.fill();
 
-    ctx.fillStyle = p.num === 1 ? '#047857' : p.color;
+    // Outfield jersey vs GK jersey
+    const isGK = p.num === 1;
+    const shirtColor = isGK ? (p.isHome ? pitchEngine.homeGKColor : pitchEngine.awayGKColor) : p.color;
+
+    ctx.fillStyle = shirtColor;
     ctx.beginPath();
     ctx.arc(p.x, p.y, 7.2, 0, Math.PI * 2);
     ctx.fill();
 
-    ctx.fillStyle = '#ffffff';
+    // High contrast squad number
+    const rgb = parseColorToRgb(shirtColor);
+    const lum = (rgb.r * 299 + rgb.g * 587 + rgb.b * 114) / 1000;
+    ctx.fillStyle = lum > 140 ? '#000000' : '#ffffff';
     ctx.font = 'bold 8.5px sans-serif';
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
@@ -1270,15 +1480,29 @@ function renderMatchdayView() {
   const m = getActiveUserMatch(), w = getWeek();
   if (m) {
     const h = clubById(m.home), a = clubById(m.away);
-    $('sbHomeBadgeWrap').innerHTML = createBadgeHtml(h.id, 40);$('sbAwayBadgeWrap').innerHTML = createBadgeHtml(a.id, 40); $('sbHomeName').innerText = h.name; $('sbAwayName').innerText = a.name;
-    $('sbScore').innerText = m.played ? `${m.homeGoals} - ${m.awayGoals}` : '0 - 0'; $('sbMinute').innerText = m.played ? 'FULL TIME' : (m.type === 'CUP' ? `${m.cupName.toUpperCase()}` : 'PRE-MATCH'); $('btnStartMatch').disabled = m.played;
+    const kits = resolveMatchKitColors(h, a);
+
+    $('sbHomeBadgeWrap').innerHTML = createBadgeHtml(h.id, 40);
+    $('sbAwayBadgeWrap').innerHTML = createBadgeHtml(a.id, 40);
+    $('sbHomeName').innerText = h.name;
+    $('sbAwayName').innerText = a.name;
+    $('sbScore').innerText = m.played ? `${m.homeGoals} - ${m.awayGoals}` : '0 - 0';
+    $('sbMinute').innerText = m.played ? 'FULL TIME' : (m.type === 'CUP' ? `${m.cupName.toUpperCase()}` : 'PRE-MATCH');
+    $('btnStartMatch').disabled = m.played;
+
     if (!m.played) {
       const opp = (h.id === state.userClubId) ? a : h;
       const matchTypePrefix = m.type === 'CUP' ? `🏆 ${m.cupName}:` : `Week ${state.currentWeek}:`;
-      $('commentaryFeed').innerHTML = `<div class="comm-line">${matchTypePrefix} <b>${h.name}</b> vs <b>${a.name}</b> (Manager: ${opp.manager || 'Interim'}). Click "Start Match" or "Advance Week".</div>`;
+      const kitNote = kits.usedAwayKit ? ` (Switched to Away Kit due to clash)` : ` (Home Kit)`;
+      $('commentaryFeed').innerHTML = `<div class="comm-line">${matchTypePrefix} <b>${h.name}</b> (Home) vs <b>${a.name}</b>${kitNote} (Manager: ${opp.manager || 'Interim'}). Click "Start Match" or "Advance Week".</div>`;
     }
-    setup2DPlayers(h, a); populateInMatchSubChips();
-  } else { $('sbScore').innerText = '-';$('sbMinute').innerText = 'NO FIXTURE'; $('btnStartMatch').disabled = true; $('commentaryFeed').innerHTML = '<div class="comm-line">No fixture scheduled for your club this calendar week.</div>'; }
+    setup2DPlayers(h, a);
+    populateInMatchSubChips();
+  } else { 
+    $('sbScore').innerText = '-';
+    $('sbMinute').innerText = 'NO FIXTURE';$('btnStartMatch').disabled = true;
+    $('commentaryFeed').innerHTML = '<div class="comm-line">No fixture scheduled for your club this calendar week.</div>';
+  }
   const g = $('aroundGroundsList'); g.innerHTML = '';
   if (w) w.matches.filter(x => x.div === getCurrentUserClub().div || (x.type === 'CUP' && (x.home === state.userClubId || x.away === state.userClubId))).forEach(x => {
     const h = clubById(x.home), a = clubById(x.away), r = document.createElement('div'); r.className = 'grounds-match-row';
