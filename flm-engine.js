@@ -42,7 +42,11 @@ let matchLiveState = {
   isDerby: false,
   shoutModifier: 0,
   shoutExpires: 0,
-  lastShoutMinute: -20
+  lastShoutMinute: -20,
+  momentum: 0,
+  playerRatings: {},
+  shotsHome: 0,
+  shotsAway: 0
 };
 
 let pitchEngine = { 
@@ -711,7 +715,7 @@ function renderBackupsList() {
 function setupFreshState(managerName = 'Manager', clubId = 'NEW') {
   state = { 
     seasonYear: 2026, currentWeek: 1, totalWeeks: 46, userClubId: clubId, 
-    currentFormation: '4-3-3', audioEnabled: true, activeStandingsTab: 0,
+    currentFormation: '4-3-3', teamMentality: 'Balanced', playingStyle: 'Balanced', audioEnabled: true, activeStandingsTab: 0,
     medicalFacilityLevel: 1, academyFacilityLevel: 1, stadiumCapacityBonus: 0, 
     clubs: JSON.parse(JSON.stringify(CLUBS_DATABASE)),
     marketPlayers: JSON.parse(JSON.stringify(TRANSFER_SCOUT_POOL)), 
@@ -754,6 +758,8 @@ function ensureAllSquadsHydrated() {
   if (!state.cups) state.cups = { carabaoAlive: true, faAlive: true };
   if (!state.tacticalFamiliarity) state.tacticalFamiliarity = { '4-3-3': 100, '4-2-3-1': 55, '4-4-2': 50, '3-5-2': 40, '5-3-2': 40, '4-1-2-1-2': 45, '4-5-1': 45 };
   if (!state.customFormations) state.customFormations = {};
+  if (!state.teamMentality) state.teamMentality = 'Balanced';
+  if (!state.playingStyle) state.playingStyle = 'Balanced';
   if (state.customFormations['Custom']) FORMATIONS['Custom'] = state.customFormations['Custom'];
   if (!state.cupBrackets) initCupTournamentTrees();
   if (!state.manager.reputation) state.manager.reputation = 2.5;
@@ -1185,7 +1191,7 @@ function handleMasterAdvanceClick() {
 }
 
 function resetLiveState() {
-  matchLiveState = { subsUsed: 0, maxSubs: 5, pendingSubInId: null, isPaused: false, timelineEvents: [], yellows: {}, reds: [], isDerby: false, shoutModifier: 0, shoutExpires: 0, lastShoutMinute: -20 };
+  matchLiveState = { subsUsed: 0, maxSubs: 5, pendingSubInId: null, isPaused: false, timelineEvents: [], yellows: {}, reds: [], isDerby: false, shoutModifier: 0, shoutExpires: 0, lastShoutMinute: -20, momentum: 0, playerRatings: {}, shotsHome: 0, shotsAway: 0 };
   const subCount = $('subsRemainingText'); if (subCount) subCount.innerText = 5;
   const pauseBtn = $('btnPauseMatch'); if (pauseBtn) { pauseBtn.style.display = 'none'; pauseBtn.innerText = '⏸️ PAUSE'; }
 }
@@ -1196,8 +1202,10 @@ function showResultModal(m) {
     $('modalScoreDisplay').innerHTML = `<div class="result-modal-scoreboard"><div class="result-team">${createBadgeHtml(h.id, 46)}<div class="result-team-name">${h.name}</div></div><div class="result-score-center"><div class="result-score-digits">${m.homeGoals} - ${m.awayGoals}</div><div class="result-ft-badge">FULL TIME</div></div><div class="result-team">${createBadgeHtml(a.id, 46)}<div class="result-team-name">${a.name}</div></div></div>`;
   }
   const sc = m.scorers.map(s => `${s.min}' ${s.player}`).join(', ');
+  const motm = selectManOfMatch(m); const motmRating = motm ? (matchLiveState.playerRatings[motm.id] || 6.5).toFixed(1) : '6.5';
+  if (motm && getCurrentUserClub().players.some(p=>p.id===motm.id)) state.manager.motmAwards = (state.manager.motmAwards||0)+1;
   if ($('modalHighlightsFeed')) {
-    $('modalHighlightsFeed').innerHTML = `<p style="margin-top:6px">${sc ? 'Goals: ' + sc : 'No goals in this fixture.'}</p>`;
+    $('modalHighlightsFeed').innerHTML = `<p style="margin-top:6px">${sc ? 'Goals: ' + sc : 'No goals in this fixture.'}</p>${motm ? `<div style="margin-top:10px;padding:10px;background:#0f172a;border-radius:8px;border-left:3px solid var(--gold)"><b style="color:var(--gold)">⭐ MAN OF THE MATCH</b><br>${motm.name} • Rating ${motmRating}</div>` : ''}`;
   }
   if ($('resultSummaryModal')) $('resultSummaryModal').style.display = 'flex'; 
   playSoundSafe('whistle');
@@ -1364,10 +1372,55 @@ function handlePlayerSelect(id) {
 
 function cancelPlayerSwap() { selectedPlayerSwapId = null; if ($('swapNotificationBar')) $('swapNotificationBar').style.display = 'none'; renderTactics(); }
 
+const MENTALITY_MODIFIERS = {
+  'Very Defensive': { attack: 0.78, defence: 1.25, tempo: 0.82 },
+  'Defensive': { attack: 0.88, defence: 1.15, tempo: 0.90 },
+  'Balanced': { attack: 1.00, defence: 1.00, tempo: 1.00 },
+  'Positive': { attack: 1.10, defence: 0.95, tempo: 1.08 },
+  'Attacking': { attack: 1.20, defence: 0.85, tempo: 1.16 },
+  'All Out Attack': { attack: 1.35, defence: 0.70, tempo: 1.25 }
+};
+const STYLE_MODIFIERS = {
+  'Balanced': { attack: 1.00, defence: 1.00, event: 1.00 },
+  'Possession': { attack: 0.96, defence: 1.08, event: 0.88 },
+  'Gegenpress': { attack: 1.14, defence: 0.92, event: 1.18 },
+  'Counter Attack': { attack: 1.08, defence: 1.04, event: 0.94 },
+  'Direct': { attack: 1.10, defence: 0.94, event: 1.10 },
+  'Park The Bus': { attack: 0.72, defence: 1.28, event: 0.72 },
+  'Route One': { attack: 1.05, defence: 0.90, event: 1.14 }
+};
+function changeMentality(v) { state.teamMentality = v; saveGame(); renderTactics(); updateHeaderClubDisplay(); }
+function changePlayingStyle(v) { state.playingStyle = v; saveGame(); renderTactics(); updateHeaderClubDisplay(); }
+function getUserTacticalModifiers() {
+  const m = MENTALITY_MODIFIERS[state.teamMentality] || MENTALITY_MODIFIERS.Balanced;
+  const st = STYLE_MODIFIERS[state.playingStyle] || STYLE_MODIFIERS.Balanced;
+  const fam = ((state.tacticalFamiliarity && state.tacticalFamiliarity[state.currentFormation]) || 50) / 100;
+  return { attack:m.attack*st.attack*(0.85+fam*0.15), defence:m.defence*st.defence*(0.88+fam*0.12), event:m.tempo*st.event };
+}
+function renderTacticalAnalysis(club, tpl, starters) {
+  const box = $('analysisBadgesContainer'); if (!box) return;
+  const attrs = computeClubAttributes(club);
+  const outOfPosition = starters.filter((p,i) => tpl[i] && getPositionFamiliarityMultiplier(p.naturalPos,tpl[i].posType) < .9).length;
+  const avgFit = Math.round(starters.reduce((n,p)=>n+(p.con||100),0)/Math.max(1,starters.length));
+  const avgChem = Math.round(starters.reduce((n,p)=>n+(p.chemistry||60),0)/Math.max(1,starters.length));
+  const xs = tpl.slice(1).map(x=>x.x), spread = xs.length ? Math.max(...xs)-Math.min(...xs) : 0;
+  const items = [
+    {ok:attrs.mid >= attrs.def-3, text:attrs.mid >= attrs.def-3 ? 'Strong midfield balance' : 'Midfield could be overrun'},
+    {ok:outOfPosition===0, text:outOfPosition===0 ? 'All players in familiar positions' : `${outOfPosition} player${outOfPosition===1?'':'s'} out of position`},
+    {ok:avgFit>=75, text:`Average starting fitness: ${avgFit}%`},
+    {ok:avgChem>=70, text:`Team chemistry: ${avgChem}%`},
+    {ok:spread>=60, text:spread>=60 ? 'Good attacking width' : 'Narrow shape may congest central areas'},
+    {ok:(state.tacticalFamiliarity[state.currentFormation]||50)>=70, text:`${state.currentFormation} familiarity: ${state.tacticalFamiliarity[state.currentFormation]||50}%`},
+    {ok:state.teamMentality!=='All Out Attack', text:`${state.teamMentality} mentality with ${state.playingStyle} style`}
+  ];
+  box.innerHTML=items.map(x=>`<div style="color:${x.ok?'#34d399':'#fbbf24'}">${x.ok?'✅':'⚠️'} ${x.text}</div>`).join('');
+}
 function renderTactics() {
   const club = getCurrentUserClub(), tpl = FORMATIONS[state.currentFormation] || FORMATIONS['4-3-3'];
   const st = club.players.filter(p => p.starter), bench = club.players.filter(p => !p.starter);
   if ($('formationSelect')) $('formationSelect').value = state.currentFormation;
+  if ($('mentalitySelect')) $('mentalitySelect').value = state.teamMentality;
+  if ($('playingStyleSelect')) $('playingStyleSelect').value = state.playingStyle;
 
   const customControls = $('customFormationControls');
   if (customControls) customControls.style.display = state.currentFormation === 'Custom' ? 'flex' : 'none';
@@ -1475,6 +1528,7 @@ function renderTactics() {
       <td style="padding:6px;text-align:right;"><button class="btn-swap-pill" onclick="handlePlayerSelect('${p.id}')">${sel ? 'Cancel' : 'Swap ⇅'}</button></td>`;
     return tr;
   };
+  renderTacticalAnalysis(club, tpl, st);
   const sb = $('startersTableBody'), bb = $('benchTableBody');
   if (sb) { sb.innerHTML = ''; st.forEach((p, i) => sb.appendChild(row(p, (tpl[i] && tpl[i].role) || p.naturalPos, 'pick-starter'))); }
   if (bb) { bb.innerHTML = ''; bench.forEach((p, i) => bb.appendChild(row(p, 'S' + (i + 1), 'pick-sub'))); }
@@ -1648,6 +1702,8 @@ function startMatchdaySim() {
   if (feed) feed.innerHTML = ''; 
   if ($('matchTimelineBar')) $('matchTimelineBar').innerHTML = '';
   matchLiveState.isDerby = isRivalMatch(h, a);
+  matchLiveState.momentum = 0; matchLiveState.playerRatings = {}; matchLiveState.shotsHome = 0; matchLiveState.shotsAway = 0;
+  [...h.players.filter(p=>p.starter), ...a.players.filter(p=>p.starter)].forEach(p=>matchLiveState.playerRatings[p.id]=6.5);
   matchLiveState.reds = []; matchLiveState.yellows = {}; m.scorers = [];
 
   const pauseBtn = $('btnPauseMatch');
@@ -1674,6 +1730,9 @@ function startMatchdaySim() {
 
   const goal = (club, isHome) => {
     const sc = pickScorer(club); sc.goals++;
+    matchLiveState.playerRatings[sc.id] = Math.min(10, (matchLiveState.playerRatings[sc.id] || 6.5) + 1.1);
+    const userScored = club.id === state.userClubId; matchLiveState.momentum = Math.max(-100, Math.min(100, matchLiveState.momentum + (userScored ? 30 : -30)));
+    renderMomentumMeter();
     isHome ? hs++ : as++;
     m.scorers.push({ team: club.name, player: sc.name, min });
     pitchEngine.ball.targetX = isHome ? 782 : 18; pitchEngine.ball.targetY = 240;
@@ -1705,10 +1764,17 @@ function startMatchdaySim() {
     const userHome = h.id === state.userClubId;
     const hShout = userHome ? matchLiveState.shoutModifier : 0;
     const aShout = !userHome ? matchLiveState.shoutModifier : 0;
+    const tMod = getUserTacticalModifiers();
+    const hAtk = userHome ? tMod.attack : 1, aAtk = !userHome ? tMod.attack : 1;
+    const hDef = userHome ? tMod.defence : 1, aDef = !userHome ? tMod.defence : 1;
+    const eventMod = tMod.event || 1;
     const hRedPenalty = matchLiveState.reds.filter(id => h.players.some(p => p.id === id)).length * 0.006;
     const aRedPenalty = matchLiveState.reds.filter(id => a.players.some(p => p.id === id)).length * 0.006;
-    if (Math.random() < Math.max(0.006, (0.028 + (hS.att - aS.def) / 1400) * (1 + hShout) - hRedPenalty)) goal(h, true);
-    if (Math.random() < Math.max(0.006, (0.024 + (aS.att - hS.def) / 1400) * (1 + aShout) - aRedPenalty)) goal(a, false);
+    const momentumHome = userHome ? matchLiveState.momentum/1500 : -matchLiveState.momentum/1500;
+    if (Math.random() < Math.max(0.006, ((0.028 + (hS.att*hAtk - aS.def*aDef) / 1400) * (1 + hShout) - hRedPenalty + momentumHome) * eventMod)) { matchLiveState.shotsHome++; goal(h, true); }
+    if (Math.random() < Math.max(0.006, ((0.024 + (aS.att*aAtk - hS.def*hDef) / 1400) * (1 + aShout) - aRedPenalty - momentumHome) * eventMod)) { matchLiveState.shotsAway++; goal(a, false); }
+    matchLiveState.momentum *= 0.985;
+    if (min % 6 === 0) renderMomentumMeter();
 
     if (min >= 90) {
       cancelAnimationFrame(animFrameId);
@@ -1756,6 +1822,18 @@ function toggleMatchPause() {
 }
 
 
+function renderMomentumMeter() {
+  const fill=$('momentumFill'), label=$('momentumLabel'); if(!fill||!label) return;
+  const v=Math.max(-100,Math.min(100,matchLiveState.momentum||0));
+  fill.style.left = v < 0 ? `${50+v/2}%` : '50%'; fill.style.width=`${Math.abs(v)/2}%`;
+  fill.style.background=v>=0?'#10b981':'#ef4444';
+  label.innerText=Math.abs(v)<15?'Match evenly balanced':v>0?'Your team has the momentum':'Opposition pressure building';
+}
+function selectManOfMatch(m) {
+  const h=clubById(m.home), a=clubById(m.away), all=[...h.players,...a.players];
+  all.forEach(p=>{ if(matchLiveState.playerRatings[p.id]===undefined && p.starter) matchLiveState.playerRatings[p.id]=6.5+Math.random()*.6; });
+  return all.filter(p=>matchLiveState.playerRatings[p.id]!==undefined).sort((x,y)=>matchLiveState.playerRatings[y.id]-matchLiveState.playerRatings[x.id])[0];
+}
 /* ---------- MATCHDAY & STATS UPGRADE ---------- */
 function renderAroundGrounds() {
   const box = $('aroundGroundsList');

@@ -318,6 +318,12 @@
               <option value="Custom">Custom System</option>
             </select>
             <button class="btn-swap-pill" style="background:#2563eb; color:#fff;" onclick="autoPickBestXI()">⚡ Auto Pick XI</button>
+            <select id="mentalitySelect" class="tactics-select" onchange="changeMentality(this.value)" title="Team mentality">
+              <option>Very Defensive</option><option>Defensive</option><option selected>Balanced</option><option>Positive</option><option>Attacking</option><option>All Out Attack</option>
+            </select>
+            <select id="playingStyleSelect" class="tactics-select" onchange="changePlayingStyle(this.value)" title="Playing style">
+              <option selected>Balanced</option><option>Possession</option><option>Gegenpress</option><option>Counter Attack</option><option>Direct</option><option>Park The Bus</option><option>Route One</option>
+            </select>
           </div>
 
           <div style="display:flex; flex-direction:column; justify-content:center; gap:3px;">
@@ -438,6 +444,10 @@
               </div>
             </div>
 
+            <div style="background:#090e18;border:1px solid var(--border);border-radius:8px;padding:7px 10px;">
+              <div style="display:flex;justify-content:space-between;font-size:.65rem;font-weight:800;color:var(--text-muted);"><span>OPPOSITION</span><span id="momentumLabel">Match evenly balanced</span><span>YOUR TEAM</span></div>
+              <div style="position:relative;height:8px;background:#334155;border-radius:4px;margin-top:5px;overflow:hidden;"><div style="position:absolute;left:50%;top:0;bottom:0;width:1px;background:#fff;z-index:2;"></div><div id="momentumFill" style="position:absolute;left:50%;width:0;height:100%;background:#10b981;transition:all .3s;"></div></div>
+            </div>
             <div class="match-timeline-bar" id="matchTimelineBar">
               <span style="font-size: 0.72rem; color: var(--text-muted);">Match timeline will record goals, bookings, and substitutions here.</span>
             </div>
