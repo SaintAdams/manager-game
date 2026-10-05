@@ -39,7 +39,10 @@ let matchLiveState = {
   timelineEvents: [],
   yellows: {},
   reds: [],
-  isDerby: false
+  isDerby: false,
+  shoutModifier: 0,
+  shoutExpires: 0,
+  lastShoutMinute: -20
 };
 
 let pitchEngine = { 
@@ -1182,7 +1185,7 @@ function handleMasterAdvanceClick() {
 }
 
 function resetLiveState() {
-  matchLiveState = { subsUsed: 0, maxSubs: 5, pendingSubInId: null, isPaused: false, timelineEvents: [], yellows: {}, reds: [], isDerby: false };
+  matchLiveState = { subsUsed: 0, maxSubs: 5, pendingSubInId: null, isPaused: false, timelineEvents: [], yellows: {}, reds: [], isDerby: false, shoutModifier: 0, shoutExpires: 0, lastShoutMinute: -20 };
   const subCount = $('subsRemainingText'); if (subCount) subCount.innerText = 5;
   const pauseBtn = $('btnPauseMatch'); if (pauseBtn) { pauseBtn.style.display = 'none'; pauseBtn.innerText = '⏸️ PAUSE'; }
 }
@@ -1695,10 +1698,17 @@ function startMatchdaySim() {
       pitchEngine.ball.targetY = 60 + Math.random() * 360;
     }
     if (Math.random() < 0.04) playSoundSafe('groan');
-
+    if (matchLiveState.shoutExpires && min > matchLiveState.shoutExpires) matchLiveState.shoutModifier = 0;
+    if (min % 2 === 0) updateShoutButtons();
+    if (Math.random() < 0.018) createDisciplineOrInjuryEvent(Math.random() < 0.5 ? h : a, true, min, feed);
     const hS = computeClubAttributes(h), aS = computeClubAttributes(a);
-    if (Math.random() < Math.max(0.01, (0.028 + (hS.att - aS.def) / 1400))) goal(h, true);
-    if (Math.random() < Math.max(0.01, (0.024 + (aS.att - hS.def) / 1400))) goal(a, false);
+    const userHome = h.id === state.userClubId;
+    const hShout = userHome ? matchLiveState.shoutModifier : 0;
+    const aShout = !userHome ? matchLiveState.shoutModifier : 0;
+    const hRedPenalty = matchLiveState.reds.filter(id => h.players.some(p => p.id === id)).length * 0.006;
+    const aRedPenalty = matchLiveState.reds.filter(id => a.players.some(p => p.id === id)).length * 0.006;
+    if (Math.random() < Math.max(0.006, (0.028 + (hS.att - aS.def) / 1400) * (1 + hShout) - hRedPenalty)) goal(h, true);
+    if (Math.random() < Math.max(0.006, (0.024 + (aS.att - hS.def) / 1400) * (1 + aShout) - aRedPenalty)) goal(a, false);
 
     if (min >= 90) {
       cancelAnimationFrame(animFrameId);
@@ -1745,6 +1755,83 @@ function toggleMatchPause() {
   if ($('btnPauseMatch')) $('btnPauseMatch').innerText = matchLiveState.isPaused ? '▶️ RESUME' : '⏸️ PAUSE';
 }
 
+
+/* ---------- MATCHDAY & STATS UPGRADE ---------- */
+function renderAroundGrounds() {
+  const box = $('aroundGroundsList');
+  const w = getWeek();
+  if (!box || !w) return;
+  const matches = w.matches.filter(m => m.type === 'LEAGUE' && !(m.home === state.userClubId || m.away === state.userClubId));
+  box.innerHTML = matches.map(m => {
+    const h = clubById(m.home), a = clubById(m.away);
+    const score = m.played ? `${m.homeGoals}-${m.awayGoals}` : 'v';
+    return `<div class="grounds-match-row"><div class="team-home">${h.name}${createBadgeHtml(h.id,18)}</div><div class="match-vs-box">${score}</div><div class="team-away">${createBadgeHtml(a.id,18)}${a.name}</div></div>`;
+  }).join('') || '<div style="font-size:.75rem;color:var(--text-muted)">No other league fixtures this week.</div>';
+}
+function renderPlayerLeaderboards() {
+  const players = [];
+  state.clubs.forEach(c => c.players.forEach(p => players.push({ player:p, club:c })));
+  const boot = players.filter(x => (x.player.goals || 0) > 0).sort((a,b) => (b.player.goals||0)-(a.player.goals||0) || b.player.ovr-a.player.ovr).slice(0,10);
+  const glove = players.filter(x => x.player.naturalPos === 'GK').sort((a,b) => (b.player.cleanSheets||0)-(a.player.cleanSheets||0) || b.player.ovr-a.player.ovr).slice(0,10);
+  if ($('goldenBootBody')) $('goldenBootBody').innerHTML = boot.map(x => `<tr class="fm-row"><td><b>${x.player.name}</b></td><td>${x.club.name}</td><td><b style="color:var(--gold)">${x.player.goals||0}</b></td></tr>`).join('') || '<tr><td colspan="3">No goals recorded yet.</td></tr>';
+  if ($('goldenGloveBody')) $('goldenGloveBody').innerHTML = glove.map(x => `<tr class="fm-row"><td><b>${x.player.name}</b></td><td>${x.club.name}</td><td><b style="color:#38bdf8">${x.player.cleanSheets||0}</b></td></tr>`).join('');
+}
+function updateShoutButtons() {
+  const wrap = $('matchShoutControls');
+  if (!wrap) return;
+  const cooldown = pitchEngine.currentMinute - matchLiveState.lastShoutMinute < 10;
+  wrap.querySelectorAll('button').forEach(b => b.disabled = cooldown);
+  const status = $('matchShoutStatus');
+  if (status) status.innerText = cooldown ? `Next shout available in ${10-(pitchEngine.currentMinute-matchLiveState.lastShoutMinute)} mins` : 'Choose a touchline shout';
+}
+function issueMatchShout(type) {
+  if (pitchEngine.currentMinute - matchLiveState.lastShoutMinute < 10) return;
+  const m = getActiveUserMatch();
+  if (!m || m.played || pitchEngine.currentMinute <= 0) return;
+  const club = getCurrentUserClub();
+  const averageMorale = club.players.filter(p=>p.starter).reduce((n,p)=>n+(p.morale==='Superb'?3:p.morale==='Good'?2:p.morale==='Fair'?1:0),0)/11;
+  let mod = 0, text = '';
+  if (type === 'encourage') { mod = averageMorale < 2.2 ? 0.18 : 0.08; text = '👏 ENCOURAGE'; }
+  if (type === 'demand') { mod = averageMorale >= 2 ? 0.15 : -0.08; text = '📣 DEMAND MORE'; }
+  if (type === 'praise') { mod = averageMorale >= 2.2 ? 0.12 : -0.05; text = '🙌 PRAISE'; }
+  if (type === 'calm') { mod = Object.keys(matchLiveState.yellows).length ? 0.10 : 0.04; text = '🧊 CALM DOWN'; }
+  matchLiveState.shoutModifier = mod;
+  matchLiveState.shoutExpires = pitchEngine.currentMinute + 12;
+  matchLiveState.lastShoutMinute = pitchEngine.currentMinute;
+  const outcome = mod >= 0 ? 'The players respond positively.' : 'The shout appears to unsettle the team.';
+  if ($('commentaryFeed')) $('commentaryFeed').insertAdjacentHTML('afterbegin', `<div class="comm-line" style="border-left-color:${mod>=0?'#10b981':'#ef4444'}">${text}: ${outcome}</div>`);
+  addTimelineEvent('sub', `${pitchEngine.currentMinute}' ${text}`);
+  updateShoutButtons();
+}
+function createDisciplineOrInjuryEvent(club, isHome, minute, feed) {
+  const available = club.players.filter(p => p.starter && !matchLiveState.reds.includes(p.id));
+  if (!available.length) return;
+  const p = pick(available);
+  const roll = Math.random();
+  if (roll < 0.58) {
+    matchLiveState.yellows[p.id] = (matchLiveState.yellows[p.id] || 0) + 1;
+    p.yellows = (p.yellows || 0) + 1;
+    const second = matchLiveState.yellows[p.id] >= 2;
+    if (second) {
+      matchLiveState.reds.push(p.id); p.susp = Math.max(p.susp||0,1);
+      addTimelineEvent('red', `🟥 ${minute}' ${p.name.split(' ').pop()}`);
+      if (feed) feed.insertAdjacentHTML('afterbegin', `<div class="comm-line" style="border-left-color:#ef4444">🟥 ${minute}' SECOND YELLOW! ${p.name} is sent off.</div>`);
+    } else {
+      if (p.yellows >= 5) p.susp = Math.max(p.susp||0,1);
+      addTimelineEvent('yellow', `🟨 ${minute}' ${p.name.split(' ').pop()}`);
+      if (feed) feed.insertAdjacentHTML('afterbegin', `<div class="comm-line" style="border-left-color:#f59e0b">🟨 ${minute}' Booking for ${p.name}.</div>`);
+    }
+  } else if (roll < 0.72) {
+    matchLiveState.reds.push(p.id); p.susp = Math.max(p.susp||0,2);
+    addTimelineEvent('red', `🟥 ${minute}' ${p.name.split(' ').pop()}`);
+    if (feed) feed.insertAdjacentHTML('afterbegin', `<div class="comm-line" style="border-left-color:#ef4444">🟥 ${minute}' RED CARD! ${p.name} is dismissed.</div>`);
+  } else {
+    const weeks = R(1,4); p.inj = weeks;
+    addTimelineEvent('injury', `🚑 ${minute}' ${p.name.split(' ').pop()}`);
+    if (feed) feed.insertAdjacentHTML('afterbegin', `<div class="comm-line" style="border-left-color:#ec4899">🚑 ${minute}' ${p.name} has picked up an injury (${weeks} week${weeks===1?'':'s'}).</div>`);
+  }
+}
+
 /* ---------- STANDINGS & EUROPEAN QUALIFICATION ---------- */
 function renderStandingsTable(div) {
   state.activeStandingsTab = div;
@@ -1777,6 +1864,7 @@ function renderStandingsTable(div) {
     if (borderCol) tr.firstElementChild.style.borderLeft = `3px solid ${borderCol}`;
     body.appendChild(tr);
   });
+  renderPlayerLeaderboards();
 }
 
 /* ---------- MATCHDAY VIEW & VENUES ---------- */
@@ -1801,6 +1889,8 @@ function renderMatchdayView() {
 
     setup2DPlayers(h, a);
     populateInMatchSubChips();
+    renderAroundGrounds();
+    updateShoutButtons();
   } else {
     if ($('sbScore'))$('sbScore').innerText = '-'; 
     if ($('sbMinute'))$('sbMinute').innerText = 'NO FIXTURE';

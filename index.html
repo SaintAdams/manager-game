@@ -463,6 +463,14 @@
               </div>
             </div>
 
+            <div id="matchShoutControls" style="background:var(--bg-panel);border:1px solid var(--border);border-radius:8px;padding:9px;display:flex;gap:6px;align-items:center;flex-wrap:wrap;">
+              <span style="font-size:.72rem;font-weight:900;color:var(--accent);margin-right:4px;">TOUCHLINE SHOUTS</span>
+              <button class="btn-swap-pill" onclick="issueMatchShout('encourage')">👏 Encourage</button>
+              <button class="btn-swap-pill" onclick="issueMatchShout('demand')">📣 Demand More</button>
+              <button class="btn-swap-pill" onclick="issueMatchShout('praise')">🙌 Praise</button>
+              <button class="btn-swap-pill" onclick="issueMatchShout('calm')">🧊 Calm Down</button>
+              <span id="matchShoutStatus" style="font-size:.68rem;color:var(--text-muted);margin-left:auto;">Choose a touchline shout</span>
+            </div>
             <div class="in-match-sub-drawer" id="inMatchSubDrawer">
               <div class="in-match-sub-title">
                 <span>🔄 TACTICAL SUBSTITUTIONS (REMAINING: <span id="subsRemainingText">5</span>)</span>
